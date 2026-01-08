@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UI Style Guide Demo</title>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&family=Secular+One&display=swap" rel="stylesheet" />
+  <!-- Tailwind (CDN for quick demo) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Rubik', 'Segoe UI', 'Tahoma', 'Verdana', 'sans-serif'],
+            secular: ['Secular One', 'sans-serif'],
+          },
+          colors: {
+            darkgreen: '#1a472a',
+            darkergreen: '#131e1e',
+            olive: '#5c6d3f',
+            overlay: '#48680E',
+          },
+          boxShadow: {
+            card: '0 1px 3px rgba(0,0,0,0.12)',
+            cardLg: '0 8px 16px rgba(0,0,0,0.18)',
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    :root {
+      --dark-green: #1a472a;
+      --dark-green-darker: #131e1e;
+      --olive-green: #5c6d3f;
+      --overlay: #48680E;
+    }
+    body { font-family: 'Rubik', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc; color: #111827; }
+    .secular { font-family: 'Secular One', sans-serif; }
+    /* Utility for hero overlay demo */
+    .hero-bg { background-image: url('/images/historical-map.png'); }
+    .icon { width: 1rem; height: 1rem; }
+    .icon-lg { width: 2.5rem; height: 2.5rem; }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- Mono icon sprites -->
+  <svg aria-hidden="true" class="hidden">
+    <symbol id="icon-search" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 10-.71.71l.27.28v.78l5 5L20.5 19l-5-5zm-6 0a4.5 4.5 0 110-9 4.5 4.5 0 010 9z" />
+    </symbol>
+    <symbol id="icon-book" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M5 3h11a2 2 0 012 2v14a1 1 0 01-1.2.98L13 19.5l-3.8.48A2 2 0 015 18V3z" />
+    </symbol>
+    <symbol id="icon-map" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M9 3l6 2 5-2v15l-5 2-6-2-5 2V5l5-2zM9 5.3v12.4l4 1.3V6.6L9 5.3zM7 5.9L5 6.6v12l2-.8V5.9zm10-.5l-2 .8v12.9l2-.8V5.4z" />
+    </symbol>
+    <symbol id="icon-building" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M4 20V8l7-5 7 5v12h-2v-2H6v2H4zm4-8v2h2v-2H8zm0-3v2h2V9H8zm4 3v2h2v-2h-2zm0-3v2h2V9h-2z" />
+    </symbol>
+    <symbol id="icon-compass" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 3a9 9 0 110 18 9 9 0 010-18zm4.5 5l-3 7-7 3 3-7 7-3zm-5.2 5.2a1 1 0 100-2 1 1 0 000 2z" />
+    </symbol>
+  </svg>
+  <div class="relative min-h-screen overflow-hidden">
+    <!-- Fixed background + overlay -->
+    <div class="absolute inset-0 hero-bg bg-cover bg-center"></div>
+    <div class="absolute inset-0 bg-overlay/70"></div>
+
+    <header class="relative z-10 bg-white shadow-sm">
+      <div class="max-w-6xl w-11/12 mx-auto px-4 py-4 flex items-center justify-between">
+        <div class="text-darkgreen font-bold text-xl">לוגו</div>
+        <nav class="flex items-center gap-6 text-darkgreen">
+          <div class="relative group">
+            <button class="flex items-center gap-1">מחקר <span class="text-xs">▼</span></button>
+            <div class="absolute right-0 mt-2 bg-white rounded-md shadow-card opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+              <a class="block px-4 py-2 hover:bg-gray-50">מאמרים</a>
+              <a class="block px-4 py-2 hover:bg-gray-50">נתונים</a>
+            </div>
+          </div>
+          <a class="hover:text-olive">אודות</a>
+          <a class="hover:text-olive">צור קשר</a>
+        </nav>
+        <div class="bg-darkgreen text-white px-3 py-2 rounded-md flex items-center gap-2 text-sm">
+          <svg class="icon text-white" aria-hidden="true"><use href="#icon-search" /></svg>
+          <input class="bg-transparent placeholder-white/70 focus:outline-none w-32" placeholder="חיפוש" />
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="relative z-10 min-h-[80vh] flex flex-col">
+      <div class="flex-1 max-w-6xl mx-auto w-11/12 flex flex-col justify-center py-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+          <div class="text-white text-right">
+            <h1 class="secular text-5xl md:text-7xl font-bold mb-4">כותרת גיבור</h1>
+            <h2 class="secular text-3xl md:text-4xl mb-8">תת כותרת ברורה</h2>
+            <div class="flex justify-end gap-4">
+              <a class="bg-darkergreen text-white px-6 py-3 rounded-md shadow-card transition hover:shadow-cardLg">פעולה ראשית</a>
+              <a class="bg-white/10 text-white px-6 py-3 rounded-md border border-white/30 shadow-card transition hover:bg-white/20 hover:shadow-cardLg">פעולה משנית</a>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-6 justify-items-center">
+            <div class="bg-darkgreen rounded-md h-[165px] w-[220px] shadow-card hover:shadow-cardLg transition text-white flex flex-col items-center justify-center">
+              <svg class="icon-lg text-white mb-3" aria-hidden="true"><use href="#icon-book" /></svg>
+              <div class="secular text-2xl font-bold">קטגוריה</div>
+            </div>
+            <div class="bg-darkgreen rounded-md h-[165px] w-[220px] shadow-card hover:shadow-cardLg transition text-white flex flex-col items-center justify-center">
+              <svg class="icon-lg text-white mb-3" aria-hidden="true"><use href="#icon-map" /></svg>
+              <div class="secular text-2xl font-bold">קטגוריה</div>
+            </div>
+            <div class="bg-darkgreen rounded-md h-[165px] w-[220px] shadow-card hover:shadow-cardLg transition text-white flex flex-col items-center justify-center">
+              <svg class="icon-lg text-white mb-3" aria-hidden="true"><use href="#icon-building" /></svg>
+              <div class="secular text-2xl font-bold">קטגוריה</div>
+            </div>
+            <div class="bg-darkgreen rounded-md h-[165px] w-[220px] shadow-card hover:shadow-cardLg transition text-white flex flex-col items-center justify-center">
+              <svg class="icon-lg text-white mb-3" aria-hidden="true"><use href="#icon-compass" /></svg>
+              <div class="secular text-2xl font-bold">קטגוריה</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Body content on neutral background -->
+  <main class="bg-gray-50 py-16">
+    <div class="max-w-6xl mx-auto w-11/12 space-y-12">
+      <!-- Section + cards -->
+      <section class="bg-white shadow-card p-8 space-y-6">
+        <h2 class="secular text-4xl font-bold text-emerald-900 text-right">כותרת מקטע</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          <article class="bg-white shadow-card p-6 flex flex-col gap-3">
+            <h3 class="text-xl secular text-gray-800">כותרת כרטיס</h3>
+            <p class="text-gray-600 leading-relaxed">תיאור קצר עם היררכיה ברורה. צבע גוף הוא gray-600.</p>
+            <div class="flex justify-between text-gray-500 text-sm items-center">
+              <span>עדכון: 12.09.2025</span>
+              <span class="text-emerald-900 text-base">⬇</span>
+            </div>
+          </article>
+          <article class="bg-white shadow-card p-6 flex flex-col gap-3">
+            <h3 class="text-xl secular text-gray-800">כותרת כרטיס</h3>
+            <p class="text-gray-600 leading-relaxed">תיאור קצר נוסף כדי להראות ריווח וגובה שורה.</p>
+            <div class="flex justify-between text-gray-500 text-sm items-center">
+              <span>עדכון: 02.08.2025</span>
+              <span class="text-emerald-900 text-base">⬇</span>
+            </div>
+          </article>
+        </div>
+        <a class="flex items-center gap-2 text-xl font-bold text-olive hover:text-darkgreen justify-end">כל המאמרים <span>⬅</span></a>
+      </section>
+
+      <!-- Updates list -->
+      <section class="bg-white shadow-card p-8 space-y-4">
+        <h2 class="secular text-3xl font-bold text-emerald-900 text-right">עדכונים</h2>
+        <div class="space-y-3">
+          <article class="border-b border-gray-200 pb-2">
+            <h3 class="text-md secular text-gray-800">כותרת קצרה</h3>
+            <small class="text-gray-500 text-xs">עדכון אחרון: 11.09.2025 | שם מחבר</small>
+            <p class="text-gray-600 text-sm leading-relaxed">תיאור תמציתי של השינוי.</p>
+          </article>
+          <article class="border-b border-gray-200 pb-2">
+            <h3 class="text-md secular text-gray-800">עוד עדכון</h3>
+            <small class="text-gray-500 text-xs">עדכון אחרון: 01.09.2025 | שם מחבר</small>
+            <p class="text-gray-600 text-sm leading-relaxed">פסקה קצרה שמדגימה חלוקה עם קו תחתון.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- Sources list -->
+      <section class="bg-white shadow-card p-8 space-y-4">
+        <h2 class="secular text-3xl font-bold text-emerald-900 text-right">מקורות</h2>
+        <ul class="space-y-3">
+          <li>
+            <a class="flex flex-row gap-3 hover:bg-gray-50 p-3 rounded transition" href="#">
+              <svg class="icon text-gray-700 mt-1" aria-hidden="true"><use href="#icon-book" /></svg>
+              <div class="flex flex-col">
+                <h3 class="text-base secular text-black">שם מקור</h3>
+                <p class="text-xs text-gray-600">שם הפרסום</p>
+                <span class="text-xs text-gray-500">שם מחבר</span>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a class="flex flex-row gap-3 hover:bg-gray-50 p-3 rounded transition" href="#">
+              <svg class="icon text-gray-700 mt-1" aria-hidden="true"><use href="#icon-book" /></svg>
+              <div class="flex flex-col">
+                <h3 class="text-base secular text-black">שם מקור נוסף</h3>
+                <p class="text-xs text-gray-600">כתב עת</p>
+                <span class="text-xs text-gray-500">שם מחבר</span>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Credits & citation -->
+      <section class="space-y-6">
+        <h2 class="secular text-3xl font-bold text-emerald-900 text-right">צוות המחקר</h2>
+        <div class="grid md:grid-cols-3 gap-6">
+          <article class="bg-white shadow-card p-6 flex flex-col gap-2">
+            <h3 class="text-xl secular text-gray-800">שם חוקר</h3>
+            <p class="text-gray-600">תפקיד</p>
+            <span class="text-gray-500 text-sm">אוניברסיטה</span>
+          </article>
+          <article class="bg-white shadow-card p-6 flex flex-col gap-2">
+            <h3 class="text-xl secular text-gray-800">שם חוקר</h3>
+            <p class="text-gray-600">תפקיד</p>
+            <span class="text-gray-500 text-sm">אוניברסיטה</span>
+          </article>
+          <article class="bg-white shadow-card p-6 flex flex-col gap-2">
+            <h3 class="text-xl secular text-gray-800">שם חוקר</h3>
+            <p class="text-gray-600">תפקיד</p>
+            <span class="text-gray-500 text-sm">אוניברסיטה</span>
+          </article>
+        </div>
+
+        <div class="bg-gray-50 border border-gray-200 p-6 relative flex items-start gap-4">
+          <textarea class="w-full bg-transparent text-gray-800 border-none focus:outline-none leading-relaxed" rows="2">Citation text goes here...</textarea>
+          <button class="absolute left-4 top-4 bg-emerald-900 text-white px-4 py-2 rounded flex items-center gap-2 text-sm hover:bg-emerald-950 transition">
+            📋 העתק
+          </button>
+        </div>
+      </section>
+
+      <!-- Footer bar sample -->
+      <footer class="bg-darkgreen text-white py-4">
+        <div class="flex justify-center gap-10 text-base">
+          <a class="flex items-center gap-2 transition-opacity hover:opacity-80" href="#">קישור <span>↗</span></a>
+          <a class="flex items-center gap-2 transition-opacity hover:opacity-80" href="#">קישור <span>↗</span></a>
+          <a class="flex items-center gap-2 transition-opacity hover:opacity-80" href="#">קישור <span>↗</span></a>
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <!-- Implementation notes -->
+  <section class="bg-white border-t border-gray-200 py-12">
+    <div class="max-w-6xl mx-auto w-10/12 space-y-4 text-right">
+      <h2 class="secular text-3xl font-bold text-emerald-900">הנחיות יישום מהירות</h2>
+      <ul class="list-disc pr-6 space-y-2 text-gray-700">
+        <li>הוסיפו את הפונטים Rubik ו-Secular One; הגדירו `.secular` לכותרות.</li>
+        <li>צרו טוקנים: `--dark-green #1a472a`, `--dark-green-darker #131e1e`, `--olive-green #5c6d3f` והשתמשו בהם בצבעי Tailwind מותאמים.</li>
+        <li>כפתור ראשי: `bg-[#131e1e] text-white px-6 py-3 rounded-md shadow-card hover:shadow-cardLg transition`.</li>
+        <li>כרטיס/מקטע: `bg-white shadow-card p-6` או `p-8`; ללא גבול, פינות מרובעות/מעוגלות קלות.</li>
+        <li>אריח קטגוריה: `bg-[var(--dark-green)] rounded-md h-[165px] w-[220px] grid place-content-center text-white shadow-card hover:shadow-cardLg`.</li>
+        <li>קישורי רשימות (מקורות): `flex gap-3 hover:bg-gray-50 p-3 rounded transition` עם כותרת `text-blue-800` ומטה-דטה אפורה.</li>
+        <li>שימרו RTL כברירת מחדל (`dir="rtl"` ב-html), החליפו ל-LTR בנתונים/טבלאות לפי צורך.</li>
+        <li>הצללה עדינה (`shadow-card`) להפרדה; גבולות רק ברשימות או תיבות טקסט עדינות.</li>
+      </ul>
+    </div>
+  </section>
+</body>
+</html>

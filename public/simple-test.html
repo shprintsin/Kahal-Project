@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Direct Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .test-section {
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .success {
+            border-color: #4CAF50;
+            background: #f1f8f4;
+        }
+        .error {
+            border-color: #f44336;
+            background: #fef1f0;
+        }
+        img {
+            max-width: 100%;
+            border: 1px solid #ccc;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Simple Direct R2 Test</h1>
+    <p>Testing direct access to R2 files without any proxy or complex logic.</p>
+
+    <div>
+        <button onclick="testImage()">1. Test Image (Direct)</button>
+        <button onclick="testMarkdownFetch()">2. Test Markdown (Fetch)</button>
+        <button onclick="testAll()">3. Test All</button>
+    </div>
+
+    <div class="grid">
+        <!-- Image Test -->
+        <div class="test-section" id="imageSection">
+            <h2>📷 Image Test (Direct &lt;img&gt; tag)</h2>
+            <p>URL: <code id="imageUrl"></code></p>
+            <div id="imageResult"></div>
+        </div>
+
+        <!-- Markdown Test -->
+        <div class="test-section" id="markdownSection">
+            <h2>📝 Markdown Test (Direct Fetch)</h2>
+            <p>URL: <code id="mdUrl"></code></p>
+            <div id="markdownResult"></div>
+        </div>
+    </div>
+
+    <script>
+        // Test URLs from Polltax collection
+        const IMAGE_URL = 'https://pub-c084dc5a07ad420f8f56f3973ac35898.r2.dev/collections/Polltax/V50_1762/scans/V50_220_1L.png';
+        const MD_URL = 'https://pub-c084dc5a07ad420f8f56f3973ac35898.r2.dev/collections/Polltax/V50_1762/md/V50_220_1L.md';
+
+        document.getElementById('imageUrl').textContent = IMAGE_URL;
+        document.getElementById('mdUrl').textContent = MD_URL;
+
+        function testImage() {
+            console.log('Testing image with direct <img> tag...');
+            const imageSection = document.getElementById('imageSection');
+            const imageResult = document.getElementById('imageResult');
+            
+            imageResult.innerHTML = '<p>Loading image...</p>';
+            
+            const img = new Image();
+            
+            img.onload = function() {
+                console.log('✅ Image loaded successfully!');
+                console.log('Image dimensions:', img.width, 'x', img.height);
+                imageSection.className = 'test-section success';
+                imageResult.innerHTML = `
+                    <p style="color: green;">✅ <strong>SUCCESS!</strong> Image loaded directly from R2.</p>
+                    <p>Dimensions: ${img.width} x ${img.height}</p>
+                    <img src="${IMAGE_URL}" alt="Test image" style="max-width: 100%;" />
+                `;
+            };
+            
+            img.onerror = function() {
+                console.error('❌ Image failed to load');
+                imageSection.className = 'test-section error';
+                imageResult.innerHTML = `
+                    <p style="color: red;">❌ <strong>FAILED!</strong> Could not load image.</p>
+                    <p>This might be a CORS issue or invalid URL.</p>
+                `;
+            };
+            
+            img.src = IMAGE_URL;
+        }
+
+        async function testMarkdownFetch() {
+            console.log('Testing markdown with direct fetch...');
+            const markdownSection = document.getElementById('markdownSection');
+            const markdownResult = document.getElementById('markdownResult');
+            
+            markdownResult.innerHTML = '<p>Fetching markdown...</p>';
+            
+            try {
+                console.log('Fetching from:', MD_URL);
+                const response = await fetch(MD_URL);
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', [...response.headers.entries()]);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const text = await response.text();
+                console.log('✅ Markdown fetched successfully!');
+                console.log('Content length:', text.length, 'characters');
+                console.log('First 100 chars:', text.substring(0, 100));
+                
+                markdownSection.className = 'test-section success';
+                markdownResult.innerHTML = `
+                    <p style="color: green;">✅ <strong>SUCCESS!</strong> Markdown fetched directly from R2.</p>
+                    <p>Content length: ${text.length} characters</p>
+                    <h3>Raw Content:</h3>
+                    <pre>${text}</pre>
+                    <h3>Rendered as HTML (simple):</h3>
+                    <div style="border: 1px solid #ddd; padding: 15px; background: white; direction: rtl; text-align: right;">
+                        ${text.split('\n').map(line => `<p>${line || '&nbsp;'}</p>`).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                console.error('❌ Markdown fetch failed:', error);
+                markdownSection.className = 'test-section error';
+                markdownResult.innerHTML = `
+                    <p style="color: red;">❌ <strong>FAILED!</strong> ${error.message}</p>
+                    <p>This is likely a CORS issue - browser blocks the fetch request.</p>
+                    <pre>${error.stack}</pre>
+                `;
+            }
+        }
+
+        async function testAll() {
+            testImage();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await testMarkdownFetch();
+        }
+
+        // Auto-run on load
+        window.addEventListener('load', () => {
+            console.log('Page loaded, running tests...');
+            setTimeout(testAll, 500);
+        });
+    </script>
+</body>
+</html>
