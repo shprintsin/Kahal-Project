@@ -1,0 +1,166 @@
+app/admin/editors/map-editor.tsx(32,39): error TS2307: Cannot find module '@/app/admin/maps/field-configs' or its corresponding type declarations.
+app/archive/VolumeViewer.tsx(15,3): error TS7031: Binding element 'volume' implicitly has an 'any' type.
+app/archive/VolumeViewer.tsx(16,3): error TS7031: Binding element 'collectionId' implicitly has an 'any' type.
+app/archive/VolumeViewer.tsx(17,3): error TS7031: Binding element 'volumeId' implicitly has an 'any' type.
+app/collections/[collectionId]/volumes/[volumeId]/VolumeViewer.tsx(30,41): error TS18048: 'volume.pages' is possibly 'undefined'.
+app/collections/[collectionId]/volumes/[volumeId]/VolumeViewer.tsx(46,11): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+app/collections/[collectionId]/volumes/[volumeId]/VolumeViewer.tsx(46,24): error TS18048: 'volume.metadata' is possibly 'undefined'.
+app/components/bookview/searchBooks.tsx(5,10): error TS2305: Module '"@/lib/api"' has no exported member 'getBooks'.
+app/components/bookview/searchBooks.tsx(36,61): error TS2353: Object literal may only specify known properties, and 'shallow' does not exist in type 'NavigateOptions'.
+app/components/bookview/searchBooks.tsx(81,27): error TS2339: Property 'slug' does not exist on type 'Book'.
+app/components/bookview/searchBooks.tsx(84,44): error TS2339: Property 'slug' does not exist on type 'Book'.
+app/components/bookview/searchBooks.tsx(87,31): error TS2339: Property 'he' does not exist on type 'string'.
+app/components/bookview/searchBooks.tsx(90,25): error TS2339: Property 'author' does not exist on type 'Book'.
+app/components/bookview/searchBooks.tsx(93,103): error TS2339: Property 'source' does not exist on type 'string'.
+app/components/bookview/searchBooks.tsx(95,26): error TS2339: Property 'author' does not exist on type 'Book'.
+app/components/collections/browse/BlocksView.tsx(36,20): error TS18048: 'volume.metadata' is possibly 'undefined'.
+app/components/collections/browse/BlocksView.tsx(39,42): error TS18048: 'volume.pages' is possibly 'undefined'.
+app/components/collections/browse/BlocksView.tsx(41,18): error TS18048: 'volume.metadata' is possibly 'undefined'.
+app/components/collections/browse/BlocksView.tsx(42,70): error TS18048: 'volume.metadata' is possibly 'undefined'.
+app/components/collections/browse/BlocksView.tsx(66,20): error TS18048: 'collection.volumes' is possibly 'undefined'.
+app/components/collections/browse/CollectionDetailView.tsx(60,20): error TS2488: Type 'IVolumeEntry[] | undefined' must have a '[Symbol.iterator]()' method that returns an iterator.
+app/components/collections/browse/CollectionDetailView.tsx(107,53): error TS18048: 'collection.volumes' is possibly 'undefined'.
+app/components/collections/browse/CollectionDetailView.tsx(113,56): error TS18048: 'collection.volumes' is possibly 'undefined'.
+app/components/collections/browse/DetailsView.tsx(30,22): error TS18048: 'volume.metadata' is possibly 'undefined'.
+app/components/collections/browse/DetailsView.tsx(32,20): error TS18048: 'volume.metadata' is possibly 'undefined'.
+app/components/collections/browse/DetailsView.tsx(32,36): error TS2339: Property 'title_en' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/browse/DetailsView.tsx(33,64): error TS18048: 'volume.metadata' is possibly 'undefined'.
+app/components/collections/browse/DetailsView.tsx(33,80): error TS2339: Property 'title_en' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/browse/DetailsView.tsx(36,44): error TS18048: 'volume.pages' is possibly 'undefined'.
+app/components/collections/browse/DetailsView.tsx(38,20): error TS18048: 'volume.metadata' is possibly 'undefined'.
+app/components/collections/browse/DetailsView.tsx(39,69): error TS18048: 'volume.metadata' is possibly 'undefined'.
+app/components/collections/browse/DetailsView.tsx(57,18): error TS18048: 'collection.volumes' is possibly 'undefined'.
+app/components/collections/browse/DetailsView.tsx(60,18): error TS18048: 'collection.volumes' is possibly 'undefined'.
+app/components/collections/browse/DetailsView.tsx(66,24): error TS18048: 'volume.metadata' is possibly 'undefined'.
+app/components/collections/browse/DetailsView.tsx(69,18): error TS18048: 'collection.volumes' is possibly 'undefined'.
+app/components/collections/browse/DetailsView.tsx(71,23): error TS18048: 'collection.volumes' is possibly 'undefined'.
+app/components/collections/browse/ThumbnailsView.tsx(36,20): error TS18048: 'volume.metadata' is possibly 'undefined'.
+app/components/collections/browse/ThumbnailsView.tsx(39,42): error TS18048: 'volume.pages' is possibly 'undefined'.
+app/components/collections/browse/ThumbnailsView.tsx(63,20): error TS18048: 'collection.volumes' is possibly 'undefined'.
+app/components/collections/LeftSidebar.tsx(33,19): error TS2345: Argument of type 'RefObject<HTMLDivElement | null>' is not assignable to parameter of type 'RefObject<HTMLElement>'.
+  Type 'HTMLDivElement | null' is not assignable to type 'HTMLElement'.
+    Type 'null' is not assignable to type 'HTMLElement'.
+app/components/collections/RightSidebar.tsx(56,18): error TS18048: 'volume.pages' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(58,31): error TS2339: Property 'page_id' does not exist on type 'VolumePage'.
+app/components/collections/RightSidebar.tsx(78,66): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(81,18): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(81,27): error TS2339: Property 'title_en' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(84,68): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(84,77): error TS2339: Property 'title_en' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(88,18): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(91,56): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(95,18): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(98,56): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(102,18): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(102,27): error TS2339: Property 'year_content' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(105,56): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(105,65): error TS2339: Property 'year_content' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(112,14): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(112,23): error TS2339: Property 'archive' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(118,56): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(118,65): error TS2339: Property 'archive' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(121,20): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(121,29): error TS2339: Property 'archive' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(124,58): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(124,67): error TS2339: Property 'archive' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(128,20): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(128,29): error TS2339: Property 'archive' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(131,58): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(131,67): error TS2339: Property 'archive' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(135,20): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(135,29): error TS2339: Property 'archive' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(138,58): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(138,67): error TS2339: Property 'archive' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(146,14): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(146,23): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(150,20): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(150,29): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(153,58): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(153,67): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(157,20): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(157,29): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(160,58): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(160,67): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(164,20): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(164,29): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(167,58): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(167,67): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(171,20): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(171,29): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(174,58): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(174,67): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(182,14): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(182,23): error TS2339: Property 'source_url' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/RightSidebar.tsx(186,25): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/RightSidebar.tsx(186,34): error TS2339: Property 'source_url' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/StandaloneViewer.tsx(40,41): error TS18048: 'volume.pages' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(25,14): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(27,12): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(27,21): error TS2339: Property 'title_en' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(28,51): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(28,60): error TS2339: Property 'title_en' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(67,14): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(67,23): error TS2339: Property 'source_url' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(71,25): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(71,34): error TS2339: Property 'source_url' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(90,16): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(93,55): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(96,16): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(96,25): error TS2339: Property 'year_content' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(99,55): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(99,64): error TS2339: Property 'year_content' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(108,16): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(111,55): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(120,14): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(120,23): error TS2339: Property 'archive' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(126,57): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(126,66): error TS2339: Property 'archive' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(128,20): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(128,29): error TS2339: Property 'archive' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(131,59): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(131,68): error TS2339: Property 'archive' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(134,20): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(134,29): error TS2339: Property 'archive' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(137,59): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(137,68): error TS2339: Property 'archive' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(140,20): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(140,29): error TS2339: Property 'archive' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(143,59): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(143,68): error TS2339: Property 'archive' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(151,14): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(151,23): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(155,20): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(155,29): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(158,59): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(158,68): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(161,20): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(161,29): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(164,59): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(164,68): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(167,20): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(167,29): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(170,59): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(170,68): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(173,20): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(173,29): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/collections/VolumeDetailsSection.tsx(176,59): error TS18048: 'metadata' is possibly 'undefined'.
+app/components/collections/VolumeDetailsSection.tsx(176,68): error TS2339: Property 'publication' does not exist on type '{ title?: string | undefined; description?: string | undefined; year?: number | undefined; language?: string | undefined; }'.
+app/components/pages_components/CategoriesWidget.tsx(3,10): error TS2305: Module '"@/app/Data"' has no exported member 'categories'.
+app/components/pages_components/CategoriesWidget.tsx(11,28): error TS7006: Parameter 'category' implicitly has an 'any' type.
+app/components/pages_components/PostPage.tsx(6,33): error TS2307: Cannot find module '@/payload-types' or its corresponding type declarations.
+app/components/pages_components/PostSideBar.tsx(8,31): error TS7031: Binding element 'post' implicitly has an 'any' type.
+app/components/ui/resizable.tsx(12,51): error TS2339: Property 'PanelGroup' does not exist on type 'typeof import("C:/cde/proje/kahal/unified/unified/node_modules/.pnpm/react-resizable-panels@4.3._f3962be21a39ef2dc171d131368bf21a/node_modules/react-resizable-panels/dist/react-resizable-panels")'.
+app/components/ui/resizable.tsx(14,25): error TS2339: Property 'PanelGroup' does not exist on type 'typeof import("C:/cde/proje/kahal/unified/unified/node_modules/.pnpm/react-resizable-panels@4.3._f3962be21a39ef2dc171d131368bf21a/node_modules/react-resizable-panels/dist/react-resizable-panels")'.
+app/components/ui/resizable.tsx(35,51): error TS2339: Property 'PanelResizeHandle' does not exist on type 'typeof import("C:/cde/proje/kahal/unified/unified/node_modules/.pnpm/react-resizable-panels@4.3._f3962be21a39ef2dc171d131368bf21a/node_modules/react-resizable-panels/dist/react-resizable-panels")'.
+app/components/ui/resizable.tsx(39,25): error TS2339: Property 'PanelResizeHandle' does not exist on type 'typeof import("C:/cde/proje/kahal/unified/unified/node_modules/.pnpm/react-resizable-panels@4.3._f3962be21a39ef2dc171d131368bf21a/node_modules/react-resizable-panels/dist/react-resizable-panels")'.
+app/components/ui/resizable.tsx(52,26): error TS2339: Property 'PanelResizeHandle' does not exist on type 'typeof import("C:/cde/proje/kahal/unified/unified/node_modules/.pnpm/react-resizable-panels@4.3._f3962be21a39ef2dc171d131368bf21a/node_modules/react-resizable-panels/dist/react-resizable-panels")'.
+app/documents/layout.tsx(15,28): error TS2322: Type 'Document[]' is not assignable to type 'import("C:/cde/proje/kahal/unified/unified/types/document").Document[]'.
+  Type 'Document' is missing the following properties from type 'Document': id, slug, lang, status, and 2 more.
+app/posts/page.tsx(31,58): error TS2339: Property 'publishedAt' does not exist on type 'Post'.
+data/book.tsx(1,29): error TS2307: Cannot find module '@/types/book' or its corresponding type declarations.
+data/mockupdataset.ts(8,3): error TS2741: Property 'tags' is missing in type '{ id: string; slug: string; title: string; category: string; status: "published"; maturity: "verified"; version: string; created_at: Date; last_updated: Date; temporal_coverage: { start_year: number; end_year: number; }; ... 7 more ...; resources: ({ ...; } | ... 1 more ... | { ...; })[]; }' but required in type 'ResearchDataset<any>'.
+data/mockupdataset.ts(193,3): error TS2741: Property 'tags' is missing in type '{ id: string; slug: string; title: string; category: string; status: "published"; maturity: "experimental"; version: string; created_at: Date; last_updated: Date; temporal_coverage: { ...; }; license: LicenseType.CC0; description: string; variables_schema: ({ ...; } | { ...; })[]; resources: ({ ...; } | { ...; })[]; }' but required in type 'ResearchDataset<any>'.
+lib/i18n/load-translations.ts(3,18): error TS2307: Cannot find module 'js-yaml' or its corresponding type declarations.
+lib/mongodb.ts(4,22): error TS2307: Cannot find module 'mongoose' or its corresponding type declarations.
+lib/mongodb.ts(44,65): error TS7006: Parameter 'mongoose' implicitly has an 'any' type.

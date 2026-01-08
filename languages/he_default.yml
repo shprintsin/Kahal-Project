@@ -1,0 +1,166 @@
+lang: Hebrew
+isRtl: true
+
+# Common translations
+common:
+  welcome: ברוכים הבאים
+  cancel: ביטול
+  save: שמירה
+  edit: עריכה
+  delete: מחיקה
+  create: יצירה
+  search: חיפוש
+  filter: סינון
+  export: ייצוא
+  import: ייבוא
+  actions: פעולות
+  status: סטטוס
+  published: פורסם
+  draft: טיוטה
+  archived: בארכיון
+
+# Navigation
+nav:
+  content: תוכן
+  posts: פוסטים
+  pages: עמודים
+  categories: קטגוריות
+  tags: תגיות
+  taxonomyManager: מנהל טקסונומיה
+  research: מחקר
+  collections: אוספים
+  documents: מסמכים
+  artifacts: חפצים
+  artifactCategories: קטגוריות חפצים
+  series: סדרות
+  datasets: מערכי נתונים
+  layers: שכבות
+  maps: מפות
+  system: מערכת
+  media: מדיה
+  menus: תפריטים
+  users: משתמשים
+  settings: הגדרות
+  places: מקומות
+  periods: תקופות
+  regions: אזורים
+
+# Page titles and descriptions
+pages:
+  tags:
+    title: תגיות
+    description: ניהול תגיות לארגון תוכן
+  categories:
+    title: קטגוריות
+    description: ניהול קטגוריות תוכן
+  artifactCategories:
+    title: קטגוריות חפצים
+    description: ניהול קטגוריות לחפצים היסטוריים
+  places:
+    title: מקומות
+    description: ניהול מיקומים גיאוגרפיים
+  periods:
+    title: תקופות
+    description: ניהול תקופות היסטוריות
+  regions:
+    title: אזורים
+    description: ניהול אזורים גיאוגרפיים
+  artifacts:
+    title: חפצים
+    description: ניהול חפצים היסטוריים
+  datasets:
+    title: מערכי נתונים
+    description: ניהול מערכי נתונים למחקר
+  maps:
+    title: מפות
+    description: ניהול מפות ושכבות
+  media:
+    title: ספריית מדיה
+    description: ניהול תמונות וקבצים
+  pages:
+    title: עמודים
+    description: ניהול עמודים סטטיים
+  archives:
+    title: ארכיונים
+    description: ניהול ארכיונים
+  posts:
+    title: פוסטים
+    description: ניהול פוסטים בבלוג
+  users:
+    title: משתמשים
+    description: ניהול משתמשים
+  documents:
+    title: מסמכים
+    description: ניהול מסמכי MD
+  collections:
+    title: אוספים
+    description: ניהול אוספים היסטוריים
+  layers:
+    title: שכבות
+    description: ניהול שכבות GIS
+
+# Admin dashboard
+admin:
+  dashboard: לוח בקרה
+  welcomeBack: ברוך שובך
+  quickActions: פעולות מהירות
+  recentActivity: פעילות אחרונה
+  systemInfo: מידע מערכת
+  version: גרסה
+  createNewPost: צור פוסט חדש
+  createNewPage: צור עמוד חדש
+  uploadMedia: העלה מדיה
+  startWriting: התחל לכתוב
+  addPage: הוסף עמוד
+  addFiles: הוסף קבצים
+  checkSections: בדוק קטעים לפעילות
+  panelDetails: פרטי הפאנל
+
+# Forms
+forms:
+  title: כותרת
+  slug: סלאג
+  description: תיאור
+  content: תוכן
+  status: סטטוס
+  language: שפה
+  category: קטגוריה
+  tags: תגיות
+  thumbnail: תמונה ראשית
+  publishedAt: תאריך פרסום
+  createdAt: נוצר ב
+  updatedAt: עודכן ב
+
+# Table headers
+table:
+  title: כותרת
+  slug: סלאג
+  status: סטטוס
+  author: מחבר
+  date: תאריך
+  actions: פעולות
+  edit: עריכה
+  delete: מחיקה
+  view: צפייה
+
+# Buttons
+buttons:
+  new: חדש
+  save: שמור
+  cancel: בטל
+  delete: מחק
+  edit: ערוך
+  back: חזור
+  next: הבא
+  previous: הקודם
+  submit: שלח
+  upload: העלה
+
+# Messages
+messages:
+  saved: נשמר בהצלחה
+  deleted: נמחק בהצלחה
+  error: שגיאה
+  loading: טוען...
+  noData: אין נתונים
+  confirmDelete: האם אתה בטוח שברצונך למחוק?

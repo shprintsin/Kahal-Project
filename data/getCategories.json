@@ -1,0 +1,75 @@
+{
+    "data": {
+      "Categories": {
+        "limit": 10,
+        "page": 1,
+        "hasNextPage": false,
+        "totalDocs": 4,
+        "totalPages": 1,
+        "docs": [
+          {
+            "title": "היסטוריה כלכלית",
+            "image": {
+              "url": "/api/media/file/Screenshot%202025-04-30%20230211.png",
+              "thumbnailURL": "/api/media/file/Screenshot%202025-04-30%20230211-300x11.png",
+              "caption": null,
+              "alt": null
+            },
+            "slug": "history",
+            "description": "דף לדוגמא",
+            "breadcrumbs": [
+              {
+                "label": "כלכלה",
+                "url": "/economy"
+              },
+              {
+                "label": "היסטוריה כלכלית",
+                "url": "/economy/history"
+              }
+            ]
+          },
+          {
+            "title": "דוקומנטציה",
+            "image": {
+              "url": "/api/media/file/Screenshot%202025-04-10%20193853.png",
+              "thumbnailURL": "/api/media/file/Screenshot%202025-04-10%20193853-300x88.png",
+              "caption": null,
+              "alt": null
+            },
+            "slug": "",
+            "description": "זה תיאור לדוגמא של דוקומנטציה",
+            "breadcrumbs": [
+              {
+                "label": "דוקומנטציה",
+                "url": "/"
+              }
+            ]
+          },
+          {
+            "title": "דמוגרפיה",
+            "image": null,
+            "slug": "deomgraphy",
+            "description": null,
+            "breadcrumbs": [
+              {
+                "label": "דמוגרפיה",
+                "url": "/deomgraphy"
+              }
+            ]
+          },
+          {
+            "title": "כלכלה",
+            "image": null,
+            "slug": "economy",
+            "description": null,
+            "breadcrumbs": [
+              {
+                "label": "כלכלה",
+                "url": "/economy"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }

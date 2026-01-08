@@ -1,0 +1,53 @@
+
+> kahal-unified@0.1.0 build
+> prisma generate && next build
+
+Prisma schema loaded from prisma\schema.prisma
+
+Γ£ö Generated Prisma Client (v5.22.0) to .\node_modules\.pnpm\@prisma+client@5.22.0_prisma@5.22.0\node_modules\@prisma\client in 329ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Help us improve the Prisma ORM for everyone. Share your feedback in a short 2-min survey: https://pris.ly/orm/survey/release-5-22
+
+Γû▓ Next.js 16.1.1 (Turbopack)
+- Environments: .env.local
+- Experiments (use with caution):
+  ┬╖ serverActions
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 14.1s
+  Running TypeScript ...
+  Collecting page data using 19 workers ...
+  Generating static pages using 19 workers (0/53) ...
+Error fetching collections: Error: Dynamic server usage: Route /collections couldn't be rendered statically because it used revalidate: 0 fetch http://localhost:3000/api/collections /collections. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at eu (C:\cde\proje\kahal\unified\unified\.next\server\chunks\[root-of-the-server]__286bc59b._.js:1:41959)
+    at <unknown> (C:\cde\proje\kahal\unified\unified\.next\server\chunks\[root-of-the-server]__286bc59b._.js:5:11949)
+    at <unknown> (C:\cde\proje\kahal\unified\unified\.next\server\chunks\[root-of-the-server]__286bc59b._.js:1:37583)
+    at <unknown> (C:\cde\proje\kahal\unified\unified\.next\server\chunks\[root-of-the-server]__286bc59b._.js:1:37128) {
+  description: "Route /collections couldn't be rendered statically because it used revalidate: 0 fetch http://localhost:3000/api/collections /collections. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error fetching series: Error: Dynamic server usage: Route /collections couldn't be rendered statically because it used no-store fetch http://localhost:3000/api/series /collections. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at eu (C:\cde\proje\kahal\unified\unified\.next\server\chunks\[root-of-the-server]__286bc59b._.js:1:41959)
+    at <unknown> (C:\cde\proje\kahal\unified\unified\.next\server\chunks\[root-of-the-server]__286bc59b._.js:5:14778)
+    at <unknown> (C:\cde\proje\kahal\unified\unified\.next\server\chunks\[root-of-the-server]__286bc59b._.js:1:37583)
+    at <unknown> (C:\cde\proje\kahal\unified\unified\.next\server\chunks\[root-of-the-server]__286bc59b._.js:1:37128) {
+  description: "Route /collections couldn't be rendered statically because it used no-store fetch http://localhost:3000/api/series /collections. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+  Generating static pages using 19 workers (13/53) 
+Γ¿» useSearchParams() should be wrapped in a suspense boundary at page "/collections". Read more: https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
+    at Q (C:\cde\proje\kahal\unified\unified\.next\server\chunks\ssr\befc6_next_f99910e9._.js:2:2111)
+    at o (C:\cde\proje\kahal\unified\unified\.next\server\chunks\ssr\befc6_next_f99910e9._.js:4:5307)
+    at r (C:\cde\proje\kahal\unified\unified\.next\server\chunks\ssr\app_components_collections_browse_CollectionsBrowse_tsx_abc71fb1._.js:1:2698)
+    at an (C:\cde\proje\kahal\unified\unified\node_modules\.pnpm\next@16.1.1_@babel+core@7.2_39b5f7bf9254f45631682e0d132e5fc2\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:84360)
+    at ai (C:\cde\proje\kahal\unified\unified\node_modules\.pnpm\next@16.1.1_@babel+core@7.2_39b5f7bf9254f45631682e0d132e5fc2\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:86179)
+    at ai (C:\cde\proje\kahal\unified\unified\node_modules\.pnpm\next@16.1.1_@babel+core@7.2_39b5f7bf9254f45631682e0d132e5fc2\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:104708)
+    at al (C:\cde\proje\kahal\unified\unified\node_modules\.pnpm\next@16.1.1_@babel+core@7.2_39b5f7bf9254f45631682e0d132e5fc2\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:107953)
+    at as (C:\cde\proje\kahal\unified\unified\node_modules\.pnpm\next@16.1.1_@babel+core@7.2_39b5f7bf9254f45631682e0d132e5fc2\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:105368)
+    at al (C:\cde\proje\kahal\unified\unified\node_modules\.pnpm\next@16.1.1_@babel+core@7.2_39b5f7bf9254f45631682e0d132e5fc2\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:108192)
+    at aE (C:\cde\proje\kahal\unified\unified\node_modules\.pnpm\next@16.1.1_@babel+core@7.2_39b5f7bf9254f45631682e0d132e5fc2\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:118036)
+Error occurred prerendering page "/collections". Read more: https://nextjs.org/docs/messages/prerender-error
+Export encountered an error on /collections/page: /collections, exiting the build.
+Γ¿» Next.js build worker exited with code: 1 and signal: null

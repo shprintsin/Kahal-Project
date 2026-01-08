@@ -1,0 +1,166 @@
+lang: English
+isRtl: false
+
+# Common translations
+common:
+  welcome: Welcome
+  cancel: Cancel
+  save: Save
+  edit: Edit
+  delete: Delete
+  create: Create
+  search: Search
+  filter: Filter
+  export: Export
+  import: Import
+  actions: Actions
+  status: Status
+  published: Published
+  draft: Draft
+  archived: Archived
+
+# Navigation
+nav:
+  content: Content
+  posts: Posts
+  pages: Pages
+  categories: Categories
+  tags: Tags
+  taxonomyManager: Taxonomy Manager
+  research: Research
+  collections: Collections
+  documents: Documents
+  artifacts: Artifacts
+  artifactCategories: Artifact Categories
+  series: Series
+  datasets: Datasets
+  layers: Layers
+  maps: Maps
+  system: System
+  media: Media
+  menus: Menus
+  users: Users
+  settings: Settings
+  places: Places
+  periods: Periods
+  regions: Regions
+
+# Page titles and descriptions
+pages:
+  tags:
+    title: Tags
+    description: Manage tags for content organization
+  categories:
+    title: Categories
+    description: Manage content categories
+  artifactCategories:
+    title: Artifact Categories
+    description: Manage categories for historical artifacts
+  places:
+    title: Places
+    description: Manage geographic locations
+  periods:
+    title: Periods
+    description: Manage historical periods
+  regions:
+    title: Regions
+    description: Manage geographic regions
+  artifacts:
+    title: Artifacts
+    description: Manage historical artifacts
+  datasets:
+    title: Datasets
+    description: Manage research datasets
+  maps:
+    title: Maps
+    description: Manage maps and layers
+  media:
+    title: Media Library
+    description: Manage images and files
+  pages:
+    title: Pages
+    description: Manage static pages
+  archives:
+    title: Archives
+    description: Manage archives
+  posts:
+    title: Posts
+    description: Manage blog posts
+  users:
+    title: Users
+    description: Manage users
+  documents:
+    title: Documents
+    description: Manage MD documents
+  collections:
+    title: Collections
+    description: Manage historical collections
+  layers:
+    title: Layers
+    description: Manage GIS layers
+
+# Admin dashboard
+admin:
+  dashboard: Dashboard
+  welcomeBack: Welcome back
+  quickActions: Quick Actions
+  recentActivity: Recent Activity
+  systemInfo: System Info
+  version: Version
+  createNewPost: Create New Post
+  createNewPage: Create New Page
+  uploadMedia: Upload Media
+  startWriting: Start writing
+  addPage: Add a page
+  addFiles: Add files
+  checkSections: Check sections for activity
+  panelDetails: Panel details
+
+# Forms
+forms:
+  title: Title
+  slug: Slug
+  description: Description
+  content: Content
+  status: Status
+  language: Language
+  category: Category
+  tags: Tags
+  thumbnail: Thumbnail
+  publishedAt: Published At
+  createdAt: Created At
+  updatedAt: Updated At
+
+# Table headers
+table:
+  title: Title
+  slug: Slug
+  status: Status
+  author: Author
+  date: Date
+  actions: Actions
+  edit: Edit
+  delete: Delete
+  view: View
+
+# Buttons
+buttons:
+  new: New
+  save: Save
+  cancel: Cancel
+  delete: Delete
+  edit: Edit
+  back: Back
+  next: Next
+  previous: Previous
+  submit: Submit
+  upload: Upload
+
+# Messages
+messages:
+  saved: Saved successfully
+  deleted: Deleted successfully
+  error: Error
+  loading: Loading...
+  noData: No data
+  confirmDelete: Are you sure you want to delete?

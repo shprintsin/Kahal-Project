@@ -1,0 +1,125 @@
+.postSection {
+  padding: 4rem 0;
+  background-color: #f8f9fa;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.PubGrid {
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+}
+
+.Box {
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 60%;
+}
+
+.BoxPosts {
+  background: white;
+  
+  padding: 2rem;
+  width: 40%;
+}
+
+.sectionTitle {
+  text-align: right;
+  margin-bottom: 2rem;
+  font-family: 'Secular One', sans-serif;
+  color: var(--dark-green);
+  font-size: 2.5rem;
+}
+
+.postsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  width: 100%;
+}
+
+.Listitem {
+  background: white;
+  /* border-radius: 8px; */
+  
+  padding: 1.5rem;
+  transition: transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+
+
+.postContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+}
+
+.postTitle {
+  font-size: 1.2rem;
+  font-family: 'Secular One', sans-serif;
+  color: #333;
+  margin: 0;
+}
+
+.postExcerpt {
+  color: #666;
+  line-height: 1.6;
+  flex-grow: 1;
+}
+
+.postMeta {
+  display: flex;
+  justify-content: space-between;
+  color: #888;
+  font-size: 0.9rem;
+  margin-top: auto;
+}
+
+.sourcesSection {
+  height: 540px;
+  
+  background: white;
+  
+  width: 40%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sourcesTitle {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.sourcesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sourceItem {
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.sourceItem:last-child {
+  border-bottom: none;
+}
+
+.sourceLink {
+  color: #0066cc;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.sourceLink:hover {
+  color: #004d99;
+} 
+

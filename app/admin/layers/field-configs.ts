@@ -1,0 +1,141 @@
+import { FieldConfig } from "@/app/admin/components/editors/form-field-renderer";
+
+export function createLayerFieldConfigs(): Record<string, FieldConfig> {
+  return {
+    slug: {
+      name: "slug",
+      label: "Slug",
+      type: "text",
+      placeholder: "unique-layer-identifier",
+      description: "URL-friendly identifier for this layer",
+      required: true,
+    },
+    name: {
+      name: "name",
+      label: "Name",
+      type: "text",
+      placeholder: "Layer Name",
+      description: "Display name for this layer",
+      required: true,
+    },
+    description: {
+      name: "description",
+      label: "Description",
+      type: "textarea",
+      placeholder: "Describe this layer...",
+      description: "Brief description of the layer content",
+    },
+    status: {
+      name: "status",
+      label: "Status",
+      type: "select",
+      options: [
+        { value: "draft", label: "Draft" },
+        { value: "published", label: "Published" },
+        { value: "archived", label: "Archived" },
+      ],
+      description: "Publishing status",
+      required: true,
+    },
+    type: {
+      name: "type",
+      label: "Layer Type",
+      type: "select",
+      options: [
+        { value: "POINTS", label: "Points" },
+        { value: "POLYGONS", label: "Polygons" },
+        { value: "POLYLINES", label: "Polylines" },
+        { value: "MULTI_POLYGONS", label: "Multi-Polygons" },
+        { value: "RASTER", label: "Raster" },
+      ],
+      description: "GeoJSON geometry type",
+      required: true,
+    },
+    categoryId: {
+      name: "categoryId",
+      label: "Category",
+      type: "select",
+      options: [], // Will be populated from database
+      description: "Optional category for organization",
+    },
+    citationText: {
+      name: "citationText",
+      label: "Citation",
+      type: "textarea",
+      placeholder: "How to cite this data...",
+      description: "Citation information for this layer",
+    },
+    codebookText: {
+      name: "codebookText",
+      label: "Codebook",
+      type: "textarea",
+      placeholder: "Data dictionary and field descriptions...",
+      description: "Documentation of data fields and values",
+    },
+    sources: {
+      name: "sources",
+      label: "Sources",
+      type: "textarea",
+      placeholder: "Data sources and references...",
+      description: "Original data sources",
+    },
+    license: {
+      name: "license",
+      label: "License",
+      type: "text",
+      placeholder: "CC BY 4.0, Public Domain, etc.",
+      description: "Data license",
+    },
+    maturity: {
+      name: "maturity",
+      label: "Data Maturity",
+      type: "select",
+      options: [
+        { value: "Raw", label: "Raw" },
+        { value: "Preliminary", label: "Preliminary" },
+        { value: "Provisional", label: "Provisional" },
+        { value: "Validated", label: "Validated" },
+      ],
+      description: "Quality/validation status of the data",
+    },
+    minYear: {
+      name: "minYear",
+      label: "Minimum Year",
+      type: "number",
+      placeholder: "1900",
+      description: "Earliest year covered by this data",
+    },
+    maxYear: {
+      name: "maxYear",
+      label: "Maximum Year",
+      type: "number",
+      placeholder: "2000",
+      description: "Latest year covered by this data",
+    },
+    sourceType: {
+      name: "sourceType",
+      label: "Source Type",
+      type: "select",
+      options: [
+        { value: "database", label: "Database (Stored)" },
+        { value: "url", label: "External URL" },
+        { value: "inline", label: "Inline" },
+      ],
+      description: "How the GeoJSON data is stored",
+    },
+    sourceUrl: {
+      name: "sourceUrl",
+      label: "Source URL",
+      type: "text",
+      placeholder: "https://example.com/data.geojson",
+      description: "External URL for GeoJSON data (if applicable)",
+    },
+    downloadUrl: {
+      name: "downloadUrl",
+      label: "Download URL",
+      type: "text",
+      placeholder: "https://example.com/download.zip",
+      description: "Optional download link for raw data",
+    },
+  };
+}

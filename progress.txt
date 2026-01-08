@@ -1,0 +1,5 @@
+
+- [x] Fix remaining build errors (collections route)
+- [x] Refactor to Server Actions (collections, documents, archive)
+- [x] Refactor Pages and Posts to Server Actions & SSG (restored generateStaticParams)
+- [x] Verify build success (npm run build passed, TS check passed)

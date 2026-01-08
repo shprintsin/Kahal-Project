@@ -1,0 +1,824 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Page {
+  id                 String             @id @default(uuid()) @db.Uuid
+  createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  title              String
+  slug               String             @unique
+  content            String?
+  excerpt            String?
+  sources            String?
+  citations          String?
+  language           AppLanguage        @default(HE)
+  translationGroupId String?            @default(uuid()) @map("translation_group_id") @db.Uuid
+  status             ContentStatus      @default(draft)
+  authorId           String?            @map("author_id") @db.Uuid
+  parentId           String?            @map("parent_id") @db.Uuid
+  metaDescription    String?            @map("meta_description")
+  metaKeywords       String?            @map("meta_keywords")
+  thumbnailId        String?            @map("thumbnail_id") @db.Uuid
+  template           String?            @default("default")
+  menuOrder          Int                @default(0) @map("menu_order")
+  showInMenu         Boolean            @default(true) @map("show_in_menu")
+  author             User?              @relation(fields: [authorId], references: [id])
+  parent             Page?              @relation("PageHierarchy", fields: [parentId], references: [id])
+  children           Page[]             @relation("PageHierarchy")
+  thumbnail          Media?             @relation("PageThumbnail", fields: [thumbnailId], references: [id])
+  regions            Region[]           @relation("PageToRegion")
+  tags               Tag[]              @relation("PageToTag")
+  menuItems          MenuItem[]         @relation("MenuItemToPage")
+  footerItems        FooterColumnItem[] @relation("FooterItemToPage")
+
+  @@index([translationGroupId])
+  @@index([status])
+  @@map("pages")
+}
+
+model Post {
+  id                 String        @id @default(uuid()) @db.Uuid
+  translationGroupId String        @default(uuid()) @map("translation_group_id") @db.Uuid
+  language           AppLanguage   @default(HE)
+  title              String
+  slug               String        @unique
+  content            String?
+  sources            String?
+  excerpt            String?
+  status             ContentStatus @default(draft)
+  authorId           String?       @map("author_id") @db.Uuid
+  thumbnailId        String?       @map("thumbnail_id") @db.Uuid
+  createdAt          DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+  tags               PostTag[]
+  author             User?         @relation(fields: [authorId], references: [id])
+  thumbnail          Media?        @relation("PostThumbnail", fields: [thumbnailId], references: [id])
+  categories         Category[]    @relation("CategoryToPost")
+  regions            Region[]      @relation("PostToRegion")
+
+  @@index([translationGroupId])
+  @@index([status])
+  @@map("posts")
+}
+
+model PostTag {
+  postId String @map("post_id") @db.Uuid
+  tagId  String @map("tag_id") @db.Uuid
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+  @@map("post_tags")
+}
+
+model User {
+  id            String     @id @default(uuid()) @db.Uuid
+  email         String     @unique
+  name          String?
+  passwordHash  String?    @map("password_hash")
+  role          UserRole   @default(CONTRIBUTOR)
+  createdAt     DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  emailVerified DateTime?  @map("email_verified")
+  image         String?
+  accounts      Account[]
+  pageTexts     PageText[]
+  pages         Page[]
+  posts         Post[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(uuid()) @db.Uuid
+  userId            String  @map("user_id") @db.Uuid
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(uuid()) @db.Uuid
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id") @db.Uuid
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+enum UserRole {
+  ADMIN
+  EDITOR
+  CONTRIBUTOR
+
+  @@map("user_role")
+}
+
+enum ContentLanguage {
+  PL
+  HE
+  EN
+  YD
+  RS
+  LIT
+  LAT
+  DE
+  NA
+
+  @@map("content_language")
+}
+
+enum AppLanguage {
+  PL
+  HE
+  EN
+
+  @@map("app_language")
+}
+
+enum ContentStatus {
+  draft
+  published
+  archived
+  changes_requested
+
+  @@map("content_status")
+}
+
+model ResearchDataset {
+  id               String            @id @default(uuid()) @db.Uuid
+  slug             String            @unique
+  titleI18n        Json?             @default("{}") @map("title_i18n")
+  codebookTextI18n Json?             @default("{}") @map("codebook_text_i18n")
+  status           ContentStatus     @default(draft)
+  maturity         DataMaturity      @default(Provisional)
+  version          String?           @default("1.0.0")
+  license          String?
+  thumbnailId      String?           @map("thumbnail_id") @db.Uuid
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+  description      String?           @default("")
+  title            String            @default("Untitled Dataset")
+  categoryId       String?           @map("category_id") @db.Uuid
+  citationText     String?
+  codebookText     String?
+  maxYear          Int?              @map("max_year")
+  minYear          Int?              @map("min_year")
+  sources          String?
+  isVisible        Boolean           @default(true) @map("is_visible")
+  sourcesI18n      Json?             @default("{}") @map("sources_i18n")
+  descriptionI18n  Json?             @default("{}") @map("description_i18n")
+  resources        DatasetResource[]
+  category         Category?         @relation(fields: [categoryId], references: [id])
+  thumbnail        Media?            @relation("DatasetThumbnail", fields: [thumbnailId], references: [id])
+  regions          Region[]          @relation("RegionToResearchDataset")
+
+  @@index([status])
+  @@map("research_datasets")
+}
+
+model DatasetResource {
+  id          String           @id @default(uuid()) @db.Uuid
+  datasetId   String?          @map("dataset_id") @db.Uuid
+  url         String
+  isMainFile  Boolean          @default(false) @map("is_main_file")
+  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  name        String
+  slug        String           @unique
+  format      ResouceType      @default(UNKNOWN)
+  filename    String?
+  mimeType    String?
+  excerptI18n Json?            @default("{}") @map("excerpt_i18n")
+  mapId       String?          @map("map_id") @db.Uuid
+  dataset     ResearchDataset? @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  map         Map?             @relation(fields: [mapId], references: [id], onDelete: Cascade)
+
+  @@map("dataset_resources")
+}
+
+model Map {
+  id                String                @id @default(uuid()) @db.Uuid
+  slug              String                @unique
+  titleI18n         Json?                 @default("{}") @map("title_i18n")
+  descriptionI18n   Json?                 @default("{}") @map("description_i18n")
+  year              Int?
+  version           String?               @default("1.0.0")
+  thumbnailId       String?               @map("thumbnail_id") @db.Uuid
+  config            Json?                 @default("{}")
+  globalStyleConfig Json?                 @default("{}") @map("global_style_config")
+  referenceLinks    Json?                 @default("[]") @map("reference_links")
+  createdAt         DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime              @updatedAt @map("updated_at") @db.Timestamptz(6)
+  description       String?
+  period            String?
+  title             String                @default("Untitled")
+  yearMax           Int?                  @map("year_max")
+  yearMin           Int?                  @map("year_min")
+  categoryId        String?               @map("category_id") @db.Uuid
+  status            ContentStatus         @default(draft)
+  resources         DatasetResource[]
+  layers            MapLayerAssociation[]
+  category          Category?             @relation(fields: [categoryId], references: [id])
+  thumbnail         Media?                @relation("MapThumbnail", fields: [thumbnailId], references: [id])
+  regions           Region[]              @relation("MapToRegion")
+  tags              Tag[]                 @relation("MapToTag")
+
+  @@map("maps")
+}
+
+model Layer {
+  id               String                @id @default(uuid()) @db.Uuid
+  slug             String                @unique
+  name             String                @default("Untitled")
+  nameI18n         Json?                 @default("{}") @map("name_i18n")
+  description      String?               @default("")
+  descriptionI18n  Json?                 @default("{}") @map("description_i18n")
+  filename         String?               @default("")
+  status           ContentStatus         @default(draft)
+  version          String?               @default("1.0.0")
+  categoryId       String?               @map("category_id") @db.Uuid
+  type             LayerType             @default(POINTS)
+  citationText     String?               @map("citation_text")
+  citationTextI18n Json?                 @default("{}") @map("citation_text_i18n")
+  codebookText     String?               @map("codebook_text")
+  codebookTextI18n Json?                 @default("{}") @map("codebook_text_i18n")
+  sources          String?
+  sourcesI18n      Json?                 @default("{}") @map("sources_i18n")
+  license          String?
+  maturity         DataMaturity          @default(Provisional)
+  minYear          Int?                  @map("min_year")
+  maxYear          Int?                  @map("max_year")
+  sourceType       LayerSourceType       @default(database) @map("source_type")
+  sourceUrl        String?               @map("source_url")
+  downloadUrl      String?               @map("download_url")
+  geoJsonData      Json?                 @map("geojson_data")
+  styleConfig      Json                  @default("{}") @map("style_config")
+  thumbnail        String?               @map("thumbnail")
+  createdAt        DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime              @updatedAt @map("updated_at") @db.Timestamptz(6)
+  category         Category?             @relation(fields: [categoryId], references: [id])
+  maps             MapLayerAssociation[]
+  regions          Region[]              @relation("LayerToRegion")
+  tags             Tag[]                 @relation("LayerToTag")
+
+  @@index([status])
+  @@index([categoryId])
+  @@map("layers")
+}
+
+model MapLayerAssociation {
+  id                 String   @id @default(uuid()) @db.Uuid
+  mapId              String   @map("map_id") @db.Uuid
+  layerId            String   @map("layer_id") @db.Uuid
+  zIndex             Int      @default(0) @map("z_index")
+  isVisible          Boolean  @default(true) @map("is_visible")
+  isVisibleByDefault Boolean  @default(true) @map("is_visible_by_default")
+  styleOverride      Json?    @map("style_override")
+  interactionConfig  Json?    @default("{}") @map("interaction_config")
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  layer              Layer    @relation(fields: [layerId], references: [id], onDelete: Cascade)
+  map                Map      @relation(fields: [mapId], references: [id], onDelete: Cascade)
+
+  @@unique([mapId, layerId])
+  @@index([mapId])
+  @@index([layerId])
+  @@map("map_layer_associations")
+}
+
+enum ResouceType {
+  XLSX
+  CSV
+  JSON
+  PDF
+  HTML
+  DOCX
+  ZIP
+  TXT
+  XLS
+  PNG
+  JPG
+  TIFF
+  URL
+  UNKNOWN
+}
+
+enum DataMaturity {
+  Raw
+  Preliminary
+  Provisional
+  Validated
+
+  @@map("data_maturity")
+}
+
+enum LayerType {
+  POINTS
+  POLYGONS
+  POLYLINES
+  MULTI_POLYGONS
+  RASTER
+}
+
+enum LayerSourceType {
+  url
+  database
+  inline
+
+  @@map("layer_source_type")
+}
+
+model Collection {
+  id              String   @id @default(uuid()) @db.Uuid
+  nameI18n        Json     @default("{}") @map("name_i18n")
+  descriptionI18n Json?    @default("{}") @map("description_i18n")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  thumbnailId     String?  @map("thumbnail_id") @db.Uuid
+  name            String   @default("Untitled")
+  referenceCode   String?  @map("reference_code")
+  yearMax         Int?     @map("year_max")
+  yearMin         Int?     @map("year_min")
+  thumbnail       Media?   @relation("CollectionThumbnail", fields: [thumbnailId], references: [id])
+  series          Series[]
+  regions         Region[] @relation("CollectionToRegion")
+  tags            Tag[]    @relation("CollectionToTag")
+
+  @@map("collections")
+}
+
+model Series {
+  id                String            @id @default(uuid()) @db.Uuid
+  collectionId      String?           @map("collection_id") @db.Uuid
+  nameI18n          Json              @default("{}") @map("name_i18n")
+  descriptionI18n   Json?             @default("{}") @map("description_i18n")
+  indexNumber       Int?              @map("index_number")
+  volumeLabelFormat String?           @map("volume_label_format")
+  thumbnailId       String?           @map("thumbnail_id") @db.Uuid
+  createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  slug              String            @unique
+  name              String            @default("Untitled")
+  description       String?
+  license           String?
+  period            String?
+  sourceLink        String?           @map("source_link")
+  sources           String?
+  author            String?
+  editor            String?
+  referenceCode     String?           @map("reference_code")
+  yearMax           Int?              @map("year_max")
+  yearMin           Int?              @map("year_min")
+  languages         ContentLanguage[] @map("languages")
+  collection        Collection?       @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  thumbnail         Media?            @relation("SeriesThumbnail", fields: [thumbnailId], references: [id])
+  volumes           Volume[]
+  categories        Category[]        @relation("CategoryToSeries")
+  regions           Region[]          @relation("RegionToSeries")
+  tags              Tag[]             @relation("SeriesToTag")
+
+  @@map("series")
+}
+
+model Volume {
+  id                String            @id @default(uuid()) @db.Uuid
+  seriesId          String?           @map("series_id") @db.Uuid
+  indexNumber       Int?              @map("index_number")
+  titleI18n         Json              @default("{}") @map("title_i18n")
+  descriptionI18n   Json?             @default("{}") @map("description_i18n")
+  languageOfContent String?           @map("language_of_content")
+  yearContent       Int?              @map("year_content")
+  thumbnailId       String?           @map("thumbnail_id") @db.Uuid
+  createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  slug              String            @unique
+  title             String            @default("Untitled")
+  description       String?
+  license           String?
+  sourceLink        String?           @map("source_link")
+  sources           String?
+  year              Int?
+  author            String?
+  editor            String?
+  languages         ContentLanguage[] @map("languages")
+  yearMax           Int?              @map("year_max")
+  yearMin           Int?              @map("year_min")
+  pages             VolumePage[]
+  series            Series?           @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  thumbnail         Media?            @relation("VolumeThumbnail", fields: [thumbnailId], references: [id])
+  regions           Region[]          @relation("RegionToVolume")
+
+  @@map("volumes")
+}
+
+model VolumePage {
+  id            String      @id @default(uuid()) @db.Uuid
+  volumeId      String?     @map("volume_id") @db.Uuid
+  sequenceIndex Int         @map("sequence_index")
+  label         String      @default("")
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  isVisible     Boolean     @default(true) @map("is_visible")
+  data          PageData?
+  images        PageImage[]
+  texts         PageText[]
+  volume        Volume?     @relation(fields: [volumeId], references: [id], onDelete: Cascade)
+  artifacts     Artifact[]  @relation("ArtifactToVolumePage")
+
+  @@map("volume_pages")
+}
+
+model Artifact {
+  id                 String            @id @default(uuid()) @db.Uuid
+  slug               String            @unique
+  content            String            @default("")
+  contentI18n        Json              @default("{}") @map("content_i18n")
+  year               Int?
+  dateDisplay        String?           @map("date_display")
+  dateSort           DateTime?         @map("date_sort")
+  excerpt            String?
+  excerptI18n        Json?             @default("{}") @map("excerpt_i18n")
+  createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  description        String?
+  descriptionI18n    Json?             @default("{}") @map("description_i18n")
+  displayScans       Boolean           @default(true) @map("display_scans")
+  displayTexts       Boolean           @default(true) @map("display_texts")
+  sources            Json              @default("[]")
+  title              String            @default("")
+  titleI18n          Json              @default("{}") @map("title_i18n")
+  artifactCategoryId String?           @map("artifact_category_id") @db.Uuid
+  artifactCategory   ArtifactCategory? @relation(fields: [artifactCategoryId], references: [id])
+  periods            Period[]          @relation("ArtifactToPeriod")
+  places             Place[]           @relation("ArtifactToPlace")
+  regions            Region[]          @relation("ArtifactToRegion")
+  tags               Tag[]             @relation("ArtifactToTag")
+  pages              VolumePage[]      @relation("ArtifactToVolumePage")
+
+  @@map("artifacts")
+}
+
+model PageText {
+  id            String      @id @default(uuid()) @db.Uuid
+  pageId        String      @map("page_id") @db.Uuid
+  content       String
+  type          TextType    @default(TRANSCRIPTION)
+  language      AppLanguage
+  textAccuracy  Int?        @map("text_accuracy")
+  contributorId String?     @map("contributor_id") @db.Uuid
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  contributor   User?       @relation(fields: [contributorId], references: [id])
+  page          VolumePage  @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@map("page_texts")
+}
+
+model PageData {
+  id        String     @id @default(uuid()) @db.Uuid
+  pageId    String     @unique @map("page_id") @db.Uuid
+  ocrData   Json       @map("ocr_data")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  page      VolumePage @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@map("page_data")
+}
+
+model PageImage {
+  id            String       @id @default(uuid()) @db.Uuid
+  pageId        String       @map("page_id") @db.Uuid
+  storageFileId String       @map("storage_file_id") @db.Uuid
+  useType       ImageUseType @default(original_scan) @map("use_type")
+  createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  page          VolumePage   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  storageFile   StorageFile  @relation(fields: [storageFileId], references: [id])
+
+  @@map("page_images")
+}
+
+enum TextType {
+  TRANSCRIPTION
+  TRANSLATION
+}
+
+model StorageFile {
+  id         String      @id @default(uuid()) @db.Uuid
+  bucketName String      @default("kahal") @map("bucket_name")
+  storageKey String      @unique @map("storage_key")
+  filename   String
+  mimeType   String?     @map("mime_type")
+  sizeBytes  Float?      @map("size_bytes")
+  hashEtag   String?     @map("hash_etag")
+  publicUrl  String?     @map("public_url")
+  isPublic   Boolean     @default(true) @map("is_public")
+  width      Int?
+  height     Int?
+  createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  media      Media[]
+  pageImages PageImage[]
+
+  @@map("storage_files")
+}
+
+model Media {
+  id                      String            @id @default(uuid()) @db.Uuid
+  filename                String
+  url                     String
+  storageFileId           String?           @map("storage_file_id") @db.Uuid
+  altTextI18n             Json?             @default("{}") @map("alt_text_i18n")
+  createdAt               DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  thumbnailForCategory    Category[]        @relation("CategoryThumbnail")
+  thumbnailForCollections Collection[]      @relation("CollectionThumbnail")
+  thumbnailForMaps        Map[]             @relation("MapThumbnail")
+  storageFile             StorageFile?      @relation(fields: [storageFileId], references: [id])
+  thumbnailForPages       Page[]            @relation("PageThumbnail")
+  thumbnailForPosts       Post[]            @relation("PostThumbnail")
+  thumbnailForDataset     ResearchDataset[] @relation("DatasetThumbnail")
+  thumbnailForSeries      Series[]          @relation("SeriesThumbnail")
+  thumbnailForVolumes     Volume[]          @relation("VolumeThumbnail")
+
+  @@map("media")
+}
+
+enum ImageUseType {
+  original_scan
+  thumbnail
+  crop
+}
+
+model Place {
+  id                   String                @id @default(uuid()) @db.Uuid
+  geoname              String                @unique
+  geocode              String                @unique
+  lat                  Float?
+  lon                  Float?
+  countryCode          String                @map("country_code")
+  admin1               String?
+  admin2               String?
+  administrativePlaces AdministrativePlace[]
+  artifacts            Artifact[]            @relation("ArtifactToPlace")
+
+  @@map("places")
+}
+
+model AdministrativePlace {
+  id        String  @id @default(uuid()) @db.Uuid
+  name      String
+  year      String?
+  source    String?
+  admin1    String?
+  admin2    String?
+  jewishPop Int?    @map("jewish_pop")
+  totalPop  Int?    @map("total_pop")
+  placeId   String? @map("place_id") @db.Uuid
+  place     Place?  @relation(fields: [placeId], references: [id])
+
+  @@map("administrative_places")
+}
+
+model Tag {
+  id          String       @id @default(uuid()) @db.Uuid
+  slug        String       @unique
+  nameI18n    Json         @default("{}") @map("name_i18n")
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  name        String       @default("Untitled")
+  posts       PostTag[]
+  artifacts   Artifact[]   @relation("ArtifactToTag")
+  collections Collection[] @relation("CollectionToTag")
+  layers      Layer[]      @relation("LayerToTag")
+  maps        Map[]        @relation("MapToTag")
+  pages       Page[]       @relation("PageToTag")
+  series      Series[]     @relation("SeriesToTag")
+
+  @@map("tags")
+}
+
+model Region {
+  id          String            @id @default(uuid()) @db.Uuid
+  slug        String            @unique
+  name        String            @default("Untitled")
+  nameI18n    Json              @default("{}") @map("name_i18n")
+  createdAt   DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  artifacts   Artifact[]        @relation("ArtifactToRegion")
+  collections Collection[]      @relation("CollectionToRegion")
+  layers      Layer[]           @relation("LayerToRegion")
+  maps        Map[]             @relation("MapToRegion")
+  pages       Page[]            @relation("PageToRegion")
+  posts       Post[]            @relation("PostToRegion")
+  datasets    ResearchDataset[] @relation("RegionToResearchDataset")
+  series      Series[]          @relation("RegionToSeries")
+  volumes     Volume[]          @relation("RegionToVolume")
+
+  @@map("regions")
+}
+
+model Category {
+  id          String            @id @default(uuid()) @db.Uuid
+  title       String
+  slug        String            @unique
+  thumbnailId String?           @map("thumbnail_id") @db.Uuid
+  createdAt   DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  titleI18n   Json              @default("{}") @map("title_i18n")
+  thumbnail   Media?            @relation("CategoryThumbnail", fields: [thumbnailId], references: [id])
+  layers      Layer[]
+  maps        Map[]
+  datasets    ResearchDataset[]
+  posts       Post[]            @relation("CategoryToPost")
+  series      Series[]          @relation("CategoryToSeries")
+
+  @@map("categories")
+}
+
+model ArtifactCategory {
+  id        String     @id @default(uuid()) @db.Uuid
+  slug      String     @unique
+  title     String     @default("Untitled")
+  titleI18n Json       @default("{}") @map("title_i18n")
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  artifacts Artifact[]
+
+  @@map("artifact_categories")
+}
+
+model Period {
+  id        String     @id @default(uuid()) @db.Uuid
+  slug      String     @unique
+  name      String     @default("Untitled")
+  nameI18n  Json       @default("{}") @map("name_i18n")
+  dateStart DateTime?  @map("date_start") @db.Timestamptz(6)
+  dateEnd   DateTime?  @map("date_end") @db.Timestamptz(6)
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  artifacts Artifact[] @relation("ArtifactToPeriod")
+
+  @@map("periods")
+}
+
+enum ItemVariant {
+  DEFAULT
+  BUTTON_SOLID
+  BUTTON_OUTLINE
+  CARD
+
+  @@map("item_variant")
+}
+
+enum MenuType {
+  LINK_LIST
+  RICH_TEXT
+
+  @@map("menu_type")
+}
+
+enum MenuLocation {
+  HEADER
+  HERO_GRID
+  HERO_ACTIONS
+  HERO_STRIP
+  FOOTER
+
+  @@map("menu_location")
+}
+
+model Menu {
+  id        String       @id @default(uuid()) @db.Uuid
+  location  MenuLocation @unique
+  createdAt DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+  items     MenuItem[]
+
+  @@map("menus")
+}
+
+model MenuItem {
+  id        String      @id @default(uuid()) @db.Uuid
+  menuId    String      @map("menu_id") @db.Uuid
+  parentId  String?     @map("parent_id") @db.Uuid
+  label     String      @default("")
+  labelI18n Json        @default("{}") @map("label_i18n")
+  icon      String?
+  variant   ItemVariant @default(DEFAULT)
+  order     Int         @default(0)
+  pageId    String?     @map("page_id") @db.Uuid
+  url       String?
+  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  menu      Menu        @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  parent    MenuItem?   @relation("MenuItemHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children  MenuItem[]  @relation("MenuItemHierarchy")
+  page      Page?       @relation("MenuItemToPage", fields: [pageId], references: [id], onDelete: SetNull)
+
+  @@index([menuId, order])
+  @@index([parentId])
+  @@map("menu_items")
+}
+
+model FooterColumn {
+  id          String             @id @default(uuid()) @db.Uuid
+  type        MenuType
+  order       Int                @default(0)
+  title       String             @default("")
+  titleI18n   Json               @default("{}") @map("title_i18n")
+  content     String?            @default("")
+  contentI18n Json?              @default("{}") @map("content_i18n")
+  createdAt   DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  items       FooterColumnItem[]
+
+  @@map("footer_columns")
+}
+
+model FooterColumnItem {
+  id             String       @id @default(uuid()) @db.Uuid
+  footerColumnId String       @map("footer_column_id") @db.Uuid
+  label          String       @default("")
+  labelI18n      Json         @default("{}") @map("label_i18n")
+  icon           String?
+  order          Int          @default(0)
+  pageId         String?      @map("page_id") @db.Uuid
+  url            String?
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+  footerColumn   FooterColumn @relation(fields: [footerColumnId], references: [id], onDelete: Cascade)
+  page           Page?        @relation("FooterItemToPage", fields: [pageId], references: [id], onDelete: SetNull)
+
+  @@index([footerColumnId, order])
+  @@map("footer_column_items")
+}
+
+model SiteSettings {
+  id            String   @id @default(uuid()) @db.Uuid
+  key           String   @unique
+  copyrightText String   @default("") @map("copyright_text")
+  copyrightI18n Json     @default("{}") @map("copyright_i18n")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("site_settings")
+}
+
+model Document {
+  id            String          @id @default(uuid()) @db.Uuid
+  slug          String          @unique
+  title         String
+  titleEn       String?         @map("title_en")
+  description   String?
+  descriptionEn String?         @map("description_en")
+  category      String?
+  year          Int?
+  reference     String?
+  referenceUrl  String?         @map("reference_url")
+  scanUrl       String?         @map("scan_url")
+  scanZip       String?         @map("scan_zip")
+  lang          ContentLanguage @default(PL)
+  status        ContentStatus   @default(draft)
+  license       String?
+  volume        String?
+  createdAt     DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  pages         DocumentPage[]
+
+  @@index([slug])
+  @@index([category])
+  @@map("documents")
+}
+
+model DocumentPage {
+  id         String   @id @default(uuid()) @db.Uuid
+  documentId String   @map("document_id") @db.Uuid
+  index      Int
+  content    String
+  contentHe  String?
+  contentEn  String?
+  filename   String?
+  bookmark   String?
+  highlights Json?    @default("[]")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, index])
+  @@index([documentId])
+  @@map("document_pages")
+}
