@@ -37,7 +37,3 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## Architecture
-
-This project has been refactored to use **Server Actions** for data fetching, resolving build-time API dependency issues and improving performance. All data interactions are handled through direct Prisma calls in server-side actions located in `app/actions` and `app/admin/actions`.
