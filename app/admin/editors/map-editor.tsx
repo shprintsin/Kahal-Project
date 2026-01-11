@@ -83,12 +83,6 @@ export function MapEditor({ map, mode }: MapEditorProps) {
           popup: dbLayer.styleConfig?.popup,
           filter: dbLayer.styleConfig?.filter,
         };
-        // console.log(`Reconstructed layer "${layer.name}":`, { 
-          sourceType: layer.sourceType, 
-          hasUrl: !!layer.url, 
-          hasData: !!layer.data,
-          featureCount: layer.data?.features?.length || 0
-        });
         return layer;
       });
 
@@ -133,10 +127,6 @@ export function MapEditor({ map, mode }: MapEditorProps) {
     setIsSubmitting(true);
     
     try {
-      // console.log("Submitting map data:", {
-        ...data,
-        config: data.config ? "Config present with " + (data.config.layers?.length || 0) + " layers" : "No config"
-      });
 
       // Ensure config is properly serialized
       const submitData = {

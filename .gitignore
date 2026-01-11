@@ -9,7 +9,7 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-
+/code
 # testing
 /coverage
 
@@ -35,7 +35,12 @@ yarn-error.log*
 
 # vercel
 .vercel
+create-admin.ts
+create-admin-supabase.ts
+scripts/create-admin.ts
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.vercel

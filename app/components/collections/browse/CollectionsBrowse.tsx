@@ -28,18 +28,6 @@ export default function CollectionsBrowse({ collections, allSeries }: Collection
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // Debug logging
-  // console.log('=== CollectionsBrowse Debug ===');
-  // console.log('Collections:', {
-    type: Array.isArray(collections) ? 'Array' : typeof collections,
-    count: Array.isArray(collections) ? collections.length : 'N/A',
-    first: collections?.[0]
-  });
-  // console.log('AllSeries:', {
-    type: Array.isArray(allSeries) ? 'Array' : typeof allSeries,
-    count: Array.isArray(allSeries) ? allSeries.length : 'N/A',
-    first: allSeries?.[0]
-  });
 
   // Helper to get search param with fallback
   const getParam = useCallback((key: string, fallback: string | null = null) => {
@@ -134,11 +122,6 @@ export default function CollectionsBrowse({ collections, allSeries }: Collection
           return res.json();
         })
         .then((data) => {
-          // console.log('Volumes data received:', {
-            type: Array.isArray(data) ? 'Array' : typeof data,
-            count: Array.isArray(data) ? data.length : 'N/A',
-            sample: data?.[0]
-          });
           
           // Ensure data is an array
           if (Array.isArray(data)) {
@@ -467,13 +450,6 @@ export default function CollectionsBrowse({ collections, allSeries }: Collection
                               collectionId = series?.collectionId;
                             }
                             
-                            // console.log('VolumeGrid render:', {
-                              selectedSeriesId,
-                              activeTab,
-                              collectionId,
-                              volumesCount: selectedSeriesVolumes.length,
-                              volumes: selectedSeriesVolumes
-                            });
                             
                             return (
                               <VolumeGrid 

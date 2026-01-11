@@ -72,14 +72,6 @@ export interface ListLayersOptions {
 export async function createLayer(data: LayerFormData) {
   try {
     // console.log("=== CREATE LAYER START ===");
-    // console.log("Layer data:", {
-      slug: data.slug,
-      name: data.name,
-      type: data.type,
-      sourceType: data.sourceType,
-      hasGeoJsonData: !!data.geoJsonData,
-      hasStyleConfig: !!data.styleConfig,
-    });
     // console.log("StyleConfig:", JSON.stringify(data.styleConfig, null, 2));
 
     const layer = await prisma.layer.create({
@@ -138,12 +130,6 @@ export async function createLayer(data: LayerFormData) {
 export async function updateLayer(id: string, data: Partial<LayerFormData>) {
   try {
     // console.log("=== UPDATE LAYER START ===");
-    // console.log("Updating layer:", id);
-    // console.log("Update data:", {
-      hasStyleConfig: !!data.styleConfig,
-      styleConfigType: typeof data.styleConfig,
-      styleConfig: JSON.stringify(data.styleConfig, null, 2),
-    });
 
     // Check if layer is used in any maps
     const layerWithMaps = await prisma.layer.findUnique({

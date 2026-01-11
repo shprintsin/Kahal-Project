@@ -25,7 +25,7 @@ const rubik = Rubik({
 });
 
 export const metadata: Metadata = {
-  title: "Kahal Project",
+  title: "Kahal",
   description: "Digital Archive of Jewish Communities",
 };
 
