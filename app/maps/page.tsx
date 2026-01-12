@@ -1,16 +1,17 @@
-import { notFound } from 'next/navigation'
-import { MapsPageClient } from './MapsPageClient'
+import { listMapsAPI } from '@/app/admin/actions/maps';
+import { listCategoriesAPI } from '@/app/admin/actions/categories';
+
+// Force dynamic rendering to ensure fresh data
+export const dynamic = 'force-dynamic';
 
 export default async function MapsPage() {
-  // Fetch data server-side
-  const { getMaps, getCategories } = await import('@/lib/api');
   
   const [mapsData, categoriesData] = await Promise.all([
-    getMaps(),
-    getCategories(),
+    listMapsAPI({ status: 'published', limit: 100 }),
+    listCategoriesAPI({}),
   ]);
 
-  const maps = (mapsData.docs || []).map((m) => ({
+  const maps = (mapsData.maps || []).map((m: any) => ({
     id: m.id,
     title: m.title,
     excerpt: m.description,
@@ -23,7 +24,7 @@ export default async function MapsPage() {
     layerCount: m.layerCount
   }));
 
-  const categories = (categoriesData.docs || []).map((c) => ({
+  const categories = (categoriesData.categories || []).map((c) => ({
     name: c.title,
     count: 0,
     slug: `/categories/${c.slug}`,

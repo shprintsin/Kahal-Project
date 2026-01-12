@@ -1,17 +1,17 @@
-import { LayersPageClient } from './LayersPageClient'
+import { listLayersAPI } from '@/app/admin/actions/layers';
+import { listCategoriesAPI } from '@/app/admin/actions/categories';
 
 // Force dynamic rendering to ensure fresh data
 export const dynamic = 'force-dynamic';
 
 export default async function LayersPage() {
-  const { getLayers, getCategories } = await import('@/lib/api');
   
   const [layersData, categoriesData] = await Promise.all([
-    getLayers(),
-    getCategories(),
+    listLayersAPI({ status: 'published', limit: 100 }),
+    listCategoriesAPI({}),
   ]);
 
-  const layers = (layersData.docs || []).map((l: any) => ({
+  const layers = (layersData.layers || []).map((l: any) => ({
     id: l.id,
     name: l.name,
     description: l.description,
@@ -20,12 +20,12 @@ export default async function LayersPage() {
     category: l.category?.title,
     minYear: l.minYear,
     maxYear: l.maxYear,
-    mapCount: l._count?.maps || 0,
+    mapCount: l.mapsCount || 0,
     thumbnail: l.thumbnail,
     createdAt: l.createdAt
   }));
 
-  const categories = (categoriesData.docs || []).map((c) => ({
+  const categories = (categoriesData.categories || []).map((c) => ({
     name: c.title,
     count: 0,
     slug: `/categories/${c.slug}`,

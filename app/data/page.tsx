@@ -1,16 +1,17 @@
-import { notFound } from 'next/navigation'
-import { DatasetsPageClient } from './DatasetsPageClient'
+import { listDatasetsAPI } from '@/app/admin/actions/datasets';
+import { listCategoriesAPI } from '@/app/admin/actions/categories';
+
+// Force dynamic rendering to ensure fresh data
+export const dynamic = 'force-dynamic';
 
 export default async function DatasetsPage() {
-  // Fetch data server-side
-  const { getDatasets, getCategories } = await import('@/lib/api');
   
   const [datasetsData, categoriesData] = await Promise.all([
-    getDatasets(),
-    getCategories(),
+    listDatasetsAPI({ status: 'published', limit: 100 }),
+    listCategoriesAPI({}),
   ]);
 
-  const datasets = (datasetsData.docs || []).map((d) => ({
+  const datasets = (datasetsData.datasets || []).map((d) => ({
     id: d.id,
     title: d.title,
     excerpt: d.description,
@@ -21,7 +22,7 @@ export default async function DatasetsPage() {
     resourceCount: d.resourceCount
   }));
 
-  const categories = (categoriesData.docs || []).map((c) => ({
+  const categories = (categoriesData.categories || []).map((c) => ({
     name: c.title,
     count: 0,
     slug: `/categories/${c.slug}`,

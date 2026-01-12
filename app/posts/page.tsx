@@ -1,4 +1,4 @@
-import { getPosts } from '@/lib/api';
+import { listPostsAPI } from '@/app/admin/actions/posts';
 import Header from '@/app/components/layout/header/Header';
 import GlobalFooter from '@/app/components/layout/GlobalFooter';
 import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data';
@@ -9,7 +9,7 @@ import { FaDownload } from 'react-icons/fa';
 export const dynamic = 'force-dynamic'; // Since we might want fresh data or if static generation isn't enough
 
 export default async function PostsPage() {
-    const { docs: posts } = await getPosts();
+    const { posts } = await listPostsAPI({ status: 'published', limit: 100 });
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50 bg-opacity-50" dir="rtl">
