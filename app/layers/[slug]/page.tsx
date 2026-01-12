@@ -1,8 +1,7 @@
 import { notFound } from "next/navigation";
 import { LayerDetailClient } from "./LayerDetailClient";
 
-// Force dynamic rendering
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function LayerDetailPage({
   params,
@@ -10,8 +9,8 @@ export default async function LayerDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const { getLayer } = await import("@/lib/api");
-  const layer = await getLayer(slug);
+  const { getLayerBySlug } = await import("@/app/admin/actions/layers");
+  const layer = await getLayerBySlug(slug);
 
   if (!layer) {
     notFound();

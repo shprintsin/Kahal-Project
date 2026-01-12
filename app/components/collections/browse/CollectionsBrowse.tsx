@@ -110,9 +110,8 @@ export default function CollectionsBrowse({ collections, allSeries }: Collection
     
     if (selectedSeriesId) {
       setLoadingVolumes(true);
-      const API_URL = process.env.NEXT_PUBLIC_ADMIN_API_URL || 'http://localhost:3001';
-      // console.log('Fetching volumes for series:', selectedSeriesId, 'from:', API_URL);
-      
+      const API_URL = process.env.NEXT_PUBLIC_ADMIN_API_URL || '';
+
       fetch(`${API_URL}/api/series/${selectedSeriesId}/volumes`)
         .then((res) => {
           // console.log('Volumes response status:', res.status);

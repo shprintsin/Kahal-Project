@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import DatasetLandingPage from '@/app/components/pages_components/DatasetLandingPage';
-import { getDataset } from '@/lib/api';
+import { getDatasetBySlug } from '@/app/admin/actions/datasets';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -8,7 +8,7 @@ interface PageProps {
 
 export default async function DatasetPage({ params }: PageProps) {
   const { slug } = await params;
-  const apiDataset = await getDataset(slug);
+  const apiDataset = await getDatasetBySlug(slug);
 
   if (!apiDataset) {
     notFound();

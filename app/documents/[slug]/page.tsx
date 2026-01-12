@@ -1,6 +1,6 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
-import { getDocumentBySlug } from '@/lib/api';
+import { getDocumentBySlug } from '@/app/admin/actions/documents';
 import { ArchiveLayout } from '@/app/archive/ui/ArchiveLayout';
 import { DocumentViewer } from '@/app/documents/ui/DocumentViewer';
 import { DocumentSidebar } from '@/app/documents/ui/DocumentSidebar';
@@ -14,7 +14,8 @@ interface PageProps {
 
 export default async function DocumentPage({ params }: PageProps) {
   const { slug } = await params;
-  const document = await getDocumentBySlug(slug);
+  const result = await getDocumentBySlug(slug);
+  const document = result.success ? result.data : null;
 
   if (!document) {
     notFound();

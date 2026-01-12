@@ -2,7 +2,7 @@ import CollectionsBrowse from '@/app/components/collections/browse/CollectionsBr
 import { getAllCollectionsWithSeries, getAllSeries } from '@/app/actions/collections';
 import { Suspense } from 'react';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function CollectionsPageView() {
   const [collections, allSeries] = await Promise.all([

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { LibrarySidebar } from './ui/LibrarySidebar';
 import { Document } from '@/types/document';
 import { Loader2 } from 'lucide-react';
@@ -13,9 +13,7 @@ interface DocumentsClientLayoutProps {
 
 export function DocumentsClientLayout({ children, documents }: DocumentsClientLayoutProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState("");
-  const docSlug = searchParams.get('doc'); // Actually, route param [slug] is better but user wants ?doc= style?
+  const [searchQuery, setSearchQuery] = useState(""); 
   // Wait, if we use /documents/[slug], we don't need ?doc=. 
   // The plan said: "clicking a doc navigates to /documents/[slug]".
   // So selectedSlug should be derived from the path, but `useSelectedLayoutSegment` is tricky in a layout if it's dynamic.

@@ -6,7 +6,7 @@ import { Card, CardHeader, CardContent, CardFooter } from '@/app/components/layo
 import Link from 'next/link';
 import { FaDownload } from 'react-icons/fa';
 
-export const dynamic = 'force-dynamic'; // Since we might want fresh data or if static generation isn't enough
+export const revalidate = 60;
 
 export default async function PostsPage() {
     const { posts } = await listPostsAPI({ status: 'published', limit: 100 });
@@ -28,7 +28,7 @@ export default async function PostsPage() {
                                     {post.excerpt || "לחץ לקריאה נוספת..."}
                                 </CardContent>
                                 <CardFooter className="mt-auto flex justify-between items-center text-sm text-gray-500 pt-4 border-t border-gray-100">
-                                    <span>{new Date(post.publishedAt || "").toLocaleDateString("he-IL")}</span>
+                                    <span>{new Date(post.createdAt || "").toLocaleDateString("he-IL")}</span>
                                     <FaDownload className="text-gray-400 group-hover:text-[#0d4d2c] transition-colors" />
                                 </CardFooter>
                             </Card>

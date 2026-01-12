@@ -1,8 +1,8 @@
 import { listMapsAPI } from '@/app/admin/actions/maps';
 import { listCategoriesAPI } from '@/app/admin/actions/categories';
+import { MapsPageClient } from './MapsPageClient';
 
-// Force dynamic rendering to ensure fresh data
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function MapsPage() {
   

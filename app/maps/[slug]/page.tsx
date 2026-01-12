@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { MapViewerClient } from './MapViewerClient';
-import { getMap } from '@/lib/api';
+import { getMapBySlug } from '@/app/admin/actions/maps';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -8,11 +8,11 @@ interface PageProps {
 
 export default async function MapPage({ params }: PageProps) {
   const { slug } = await params;
-  const apiMap = await getMap(slug);
+  const apiMap = await getMapBySlug(slug);
 
   if (!apiMap) {
     notFound();
   }
 
-  return <MapViewerClient map={apiMap} />;
+  return <MapViewerClient map={apiMap as any} />;
 }

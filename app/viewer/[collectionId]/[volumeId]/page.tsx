@@ -15,20 +15,25 @@ interface PageProps {
   }>;
 }
 
+function getApiUrl(): string {
+  if (process.env.NEXT_PUBLIC_ADMIN_API_URL) return process.env.NEXT_PUBLIC_ADMIN_API_URL;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return 'http://localhost:3000';
+}
+
 async function getVolumeData(
   collectionId: string,
   volumeId: string
 ): Promise<IVolumeEntry | null> {
   try {
-    const API_URL = process.env.NEXT_PUBLIC_ADMIN_API_URL || 'http://localhost:3001';
-    const res = await fetch(`${API_URL}/api/collections/${collectionId}/volumes/${volumeId}`, {
+    const res = await fetch(`${getApiUrl()}/api/collections/${collectionId}/volumes/${volumeId}`, {
       cache: 'no-store',
     });
-    
+
     if (!res.ok) {
       return null;
     }
-    
+
     return res.json();
   } catch (error) {
     console.error('Error fetching volume:', error);

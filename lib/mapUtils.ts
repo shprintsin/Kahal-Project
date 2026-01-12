@@ -99,8 +99,7 @@ export async function mapLayout(container: HTMLElement, config: MapConfig): Prom
         let fetchUrl: string | null = null;
         
         if (layerConfig.sourceType === 'database' && layerConfig.id) {
-          // Fetch from our GeoJSON API endpoint
-          const apiUrl = process.env.NEXT_PUBLIC_ADMIN_API_URL || 'http://localhost:3001';
+          const apiUrl = process.env.NEXT_PUBLIC_ADMIN_API_URL || '';
           fetchUrl = `${apiUrl}/api/geo/geojson/${layerConfig.id}`;
           // console.log(`Layer "${layerConfig.name}" - fetching from database via ${fetchUrl}`);
         } else if (layerConfig.url) {

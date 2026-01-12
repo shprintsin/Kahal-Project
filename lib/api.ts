@@ -7,13 +7,15 @@ function getBaseUrl(): string {
   if (typeof window !== 'undefined') {
     return '';
   }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
   return `http://localhost:${process.env.PORT || 3000}`;
 }
 
 async function fetchAPI<T>(endpoint: string): Promise<T> {
   const baseUrl = getBaseUrl();
   const url = baseUrl ? `${baseUrl}${endpoint}` : endpoint;
-  // console.log(`[API] Fetching: ${url}`);
 
   try {
     const res = await fetch(url, {
@@ -21,7 +23,7 @@ async function fetchAPI<T>(endpoint: string): Promise<T> {
       headers: {
         'Content-Type': 'application/json',
       },
-      cache: 'no-store', // For development; adjust for production
+      next: { revalidate: 60 },
     });
 
     if (!res.ok) {

@@ -1,8 +1,8 @@
 import { listLayersAPI } from '@/app/admin/actions/layers';
 import { listCategoriesAPI } from '@/app/admin/actions/categories';
+import { LayersPageClient } from './LayersPageClient';
 
-// Force dynamic rendering to ensure fresh data
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function LayersPage() {
   

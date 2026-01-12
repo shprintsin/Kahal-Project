@@ -2,8 +2,7 @@ import React from 'react';
 import { getDocumentsMetadata } from '@/app/admin/actions/documents';
 import { DocumentsClientLayout } from './client-layout';
 
-// This is a Server Component layout
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 export default async function DocumentsLayout({
   children,
 }: {

@@ -1,8 +1,8 @@
 import { listDatasetsAPI } from '@/app/admin/actions/datasets';
 import { listCategoriesAPI } from '@/app/admin/actions/categories';
+import { DatasetsPageClient } from './DatasetsPageClient';
 
-// Force dynamic rendering to ensure fresh data
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function DatasetsPage() {
   
@@ -14,7 +14,7 @@ export default async function DatasetsPage() {
   const datasets = (datasetsData.datasets || []).map((d) => ({
     id: d.id,
     title: d.title,
-    excerpt: d.description,
+    excerpt: d.description || undefined,
     thumbnail: d.thumbnail?.url,
     slug: `/data/${d.slug}`,
     date: d.createdAt ? new Date(d.createdAt).toLocaleDateString("he-IL") : null,
