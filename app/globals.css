@@ -6,8 +6,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-rubik), "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-secular), "Secular One", sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -147,7 +148,7 @@
 }
 
 .secular {
-  font-family: var(--font-secular), "Secular One", sans-serif;
+  font-family: var(--font-display);
 }
 
 .bg-dark-green {
@@ -186,7 +187,6 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-rubik), "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   }
 }
 

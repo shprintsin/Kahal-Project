@@ -111,7 +111,7 @@ export default function CollectionDetailView({ collection }: CollectionDetailVie
 
           {/* Page Title */}
           <div className="bg-white shadow-sm p-8 space-y-3">
-            <h1 className="secular text-4xl font-bold text-[var(--dark-green)] font-['Secular_One']">{collection.id}</h1>
+            <h1 className="secular text-4xl font-bold text-[var(--dark-green)] font-display">{collection.id}</h1>
             <p className="text-gray-600">אוסף זה כולל {volumesCount} כרכים מתועדים</p>
           </div>
 

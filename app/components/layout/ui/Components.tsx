@@ -174,7 +174,7 @@ export const RowSection = ({children,className}: {children: React.ReactNode, cla
 }
 {/* <article key={post.id} className="bg-white p-6 shadow-sm">
                 <div className="flex flex-col gap-4 h-full">
-                  <h3 className="text-xl font-['Secular_One'] text-gray-800">{post.title}</h3>
+                  <h3 className="text-xl font-display text-gray-800">{post.title}</h3>
                   <p className="text-gray-600 leading-relaxed flex-grow">{post.excerpt}</p>
                   <div className="flex justify-between text-gray-500 text-sm mt-auto">
                     <span>{post.date}</span>
@@ -193,7 +193,7 @@ export const Card = ({children,className}: {children: React.ReactNode, className
 
 export const CardHeader = ({children,className}: {children: React.ReactNode, className?:string}) => {
     return (
-        <h3 className={cx("text-xl font-['Secular_One'] text-gray-800",className)}>{children}</h3>
+        <h3 className={cx("text-xl font-display text-gray-800",className)}>{children}</h3>
     )
 }
 

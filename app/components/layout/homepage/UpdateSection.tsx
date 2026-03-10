@@ -35,7 +35,7 @@ export default function UpdateSection({ posts, sources }: PostSectionProps) {
           <div className="flex flex-col gap-8 w-full flex-grow">
             {posts.map((post) => (
               <article className='border-b border-b-1 border-gray-200 pb-2' key={post.id}>
-                <h3 className='text-md font-["Secular_One"] text-gray-800'>{post.title}</h3>
+                <h3 className='text-md font-display text-gray-800'>{post.title}</h3>
                 <small className='text-gray-500 text-xs'>עדכון אחרון: {post.date} | {post.author}</small>
                 <p className='text-gray-600 text-sm leading-relaxed mb-1'>{post.excerpt}</p>
               </article>

@@ -28,7 +28,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             <Header navigation={navigation} />
             <main className="flex-grow container mx-auto px-4 py-8">
                 <Col className="w-10/12 mx-auto">
-                    <h1 className="text-4xl font-bold mb-8 font-['Secular_One'] text-gray-900 border-b pb-4">{page.title}</h1>
+                    <h1 className="text-4xl font-bold mb-8 font-display text-gray-900 border-b pb-4">{page.title}</h1>
                     <div
                         className="prose prose-lg max-w-none text-right"
                         dir="rtl"

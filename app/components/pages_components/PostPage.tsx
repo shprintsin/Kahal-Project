@@ -83,8 +83,8 @@ export default function PostPage({ post }: { post: PostData }) {
                 <div
                   className="prose prose-lg max-w-none p-4 md:p-8 lg:p-12
                     leading-relaxed text-gray-800 
-                    [&>h1]:text-4xl [&>h1]:font-bold [&>h1]:text-brand-dark [&>h1]:mb-6 [&>h1]:mt-8 [&>h1]:font-['Secular_One']
-                    [&>h2]:text-3xl [&>h2]:font-bold [&>h2]:text-brand-primary [&>h2]:mb-4 [&>h2]:mt-6 [&>h2]:font-['Secular_One']
+                    [&>h1]:text-4xl [&>h1]:font-bold [&>h1]:text-brand-dark [&>h1]:mb-6 [&>h1]:mt-8 [&>h1]:font-display
+                    [&>h2]:text-3xl [&>h2]:font-bold [&>h2]:text-brand-primary [&>h2]:mb-4 [&>h2]:mt-6 [&>h2]:font-display
                     [&>h3]:text-2xl [&>h3]:font-semibold [&>h3]:text-brand-primary [&>h3]:mb-3 [&>h3]:mt-5
                     [&>p]:mb-4 [&>p]:leading-8 [&>p]:text-gray-700
                     [&>ul]:mb-4 [&>ul]:mr-6 [&>ul]:list-disc
@@ -134,7 +134,7 @@ export default function PostPage({ post }: { post: PostData }) {
                 <div className="flex flex-col gap-8 w-full flex-grow">
                   {post.sources.map((source) => (
                     <article className='border-b border-b-1 border-gray-200 pb-2' key={source.id}>
-                      <h3 className='text-md font-["Secular_One"] text-gray-800'>{source.title}</h3>
+                      <h3 className='text-md font-display text-gray-800'>{source.title}</h3>
                       <small className='text-gray-500 text-xs'>עדכון אחרון: {source.year} | {source.author}</small>
                     </article>
                   ))}

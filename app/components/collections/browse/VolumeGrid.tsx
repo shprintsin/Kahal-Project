@@ -69,7 +69,7 @@ export default function VolumeGrid({ volumes, collectionId }: VolumeGridProps) {
 
             {/* Info */}
             <div className="p-3 text-right">
-              <h3 className="font-bold text-sm line-clamp-2 mb-1 group-hover:text-brand-primary font-['Secular_One']" dir="rtl">
+              <h3 className="font-bold text-sm line-clamp-2 mb-1 group-hover:text-brand-primary font-display" dir="rtl">
                 {title}
               </h3>
               {volume.indexNumber !== undefined && (

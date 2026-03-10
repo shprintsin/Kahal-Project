@@ -53,7 +53,7 @@ export default function HomePageComponent({
                 <div className="flex flex-col md:flex-row gap-6 md:gap-10 justify-around">
                   {/* Left Column */}
                   <Col className="w-full md:w-6/12">
-                    <div className="text-right font-['Secular_One'] mb-6 md:mb-12 mt-4 md:mt-8">
+                    <div className="text-right font-display mb-6 md:mb-12 mt-4 md:mt-8">
                       <h1 className="text-white text-3xl sm:text-5xl md:text-6xl lg:text-8xl font-bold mb-2">{heroText.title}</h1>
                       <h2 className="text-white text-lg sm:text-2xl md:text-3xl lg:text-4xl mb-4 md:mb-6">{heroText.subtitle}</h2>
                     </div>

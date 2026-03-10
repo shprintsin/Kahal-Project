@@ -22,7 +22,7 @@ export default function VolumeDetailsSection({
       <div className="max-w-7xl mx-auto px-8 py-8">
         {/* Title Section */}
         <div className="mb-6 text-right">
-          <h1 className="text-3xl font-bold text-brand-dark mb-2 font-['Secular_One']">
+          <h1 className="text-3xl font-bold text-brand-dark mb-2 font-display">
             {title}
           </h1>
         </div>
@@ -100,28 +100,28 @@ export default function VolumeDetailsSection({
           <div className="lg:col-span-1 space-y-6">
             {volume.sources && (
               <div>
-                <h3 className="text-sm font-semibold text-brand-dark mb-3 font-['Secular_One']">מקורות</h3>
+                <h3 className="text-sm font-semibold text-brand-dark mb-3 font-display">מקורות</h3>
                 <p className="text-sm text-gray-700">{volume.sources}</p>
               </div>
             )}
             
             {volume.author && (
               <div>
-                <h3 className="text-sm font-semibold text-brand-dark mb-3 font-['Secular_One']">מחבר</h3>
+                <h3 className="text-sm font-semibold text-brand-dark mb-3 font-display">מחבר</h3>
                 <p className="text-sm text-gray-700">{volume.author}</p>
               </div>
             )}
 
             {volume.editor && (
               <div>
-                <h3 className="text-sm font-semibold text-brand-dark mb-3 font-['Secular_One']">עורך</h3>
+                <h3 className="text-sm font-semibold text-brand-dark mb-3 font-display">עורך</h3>
                 <p className="text-sm text-gray-700">{volume.editor}</p>
               </div>
             )}
 
             {volume.license && (
               <div>
-                <h3 className="text-sm font-semibold text-brand-dark mb-3 font-['Secular_One']">רישיון</h3>
+                <h3 className="text-sm font-semibold text-brand-dark mb-3 font-display">רישיון</h3>
                 <p className="text-sm text-gray-700">{volume.license}</p>
               </div>
             )}
