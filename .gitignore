@@ -34,9 +34,9 @@ yarn-error.log*
 .env*
 !.env.production.example
 
-# docker-compose (contains DB credentials)
+# docker-compose (local dev may contain credentials)
 docker-compose.yml
-docker-compose*.yml
+!docker-compose.production.yml
 
 # vercel
 .vercel
