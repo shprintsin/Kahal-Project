@@ -1,10 +1,8 @@
 import { getPageBySlug, listPagesAPI } from '@/app/admin/actions/pages';
 import { notFound } from 'next/navigation';
 import { serializeLexical } from '@/lib/lexical';
-import Header from '@/app/components/layout/header/Header';
-import GlobalFooter from '@/app/components/layout/GlobalFooter';
-import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data';
 import { Col } from '@/app/components/StyledComponent';
+import SiteLayout from '@/app/components/layout/SiteLayout';
 
 export async function generateStaticParams() {
     const { pages } = await listPagesAPI({ limit: 1000, status: 'published' });
@@ -24,9 +22,8 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     const htmlContent = serializeLexical(page.content);
 
     return (
-        <div className="flex flex-col min-h-screen bg-white" dir="rtl">
-            <Header navigation={navigation} />
-            <main className="flex-grow container mx-auto px-4 py-8">
+        <SiteLayout className="bg-white">
+            <div className="container mx-auto px-4 py-8">
                 <Col className="w-10/12 mx-auto">
                     <h1 className="text-4xl font-bold mb-8 font-display text-gray-900 border-b pb-4">{page.title}</h1>
                     <div
@@ -35,8 +32,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                         dangerouslySetInnerHTML={{ __html: htmlContent }}
                     />
                 </Col>
-            </main>
-            <GlobalFooter links={footerLinksMockData} copyrightText={copyrightTextMockData} />
-        </div>
+            </div>
+        </SiteLayout>
     );
 }

@@ -1,7 +1,5 @@
 import { listPostsAPI } from '@/app/admin/actions/posts';
-import Header from '@/app/components/layout/header/Header';
-import GlobalFooter from '@/app/components/layout/GlobalFooter';
-import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data';
+import SiteLayout from '@/app/components/layout/SiteLayout';
 import { Card, CardHeader, CardContent, CardFooter } from '@/app/components/layout/ui/Components';
 import Link from 'next/link';
 import { FaDownload } from 'react-icons/fa';
@@ -12,9 +10,8 @@ export default async function PostsPage() {
     const { posts } = await listPostsAPI({ status: 'published', limit: 100 });
 
     return (
-        <div className="flex flex-col min-h-screen bg-gray-50 bg-opacity-50" dir="rtl">
-            <Header navigation={navigation} />
-            <main className="container mx-auto px-4 py-8 flex-grow">
+        <SiteLayout>
+            <div className="container mx-auto px-4 py-8">
                 <h1 className="text-4xl font-bold mb-8 font-display text-gray-900 border-b pb-4">מאגר הנתונים</h1>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -35,8 +32,7 @@ export default async function PostsPage() {
                         </Link>
                     ))}
                 </div>
-            </main>
-            <GlobalFooter links={footerLinksMockData} copyrightText={copyrightTextMockData} />
-        </div>
+            </div>
+        </SiteLayout>
     )
 }

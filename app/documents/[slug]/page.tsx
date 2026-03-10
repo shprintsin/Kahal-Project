@@ -1,12 +1,8 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import { getDocumentBySlug } from '@/app/admin/actions/documents';
-import { ArchiveLayout } from '@/app/archive/ui/ArchiveLayout';
 import { DocumentViewer } from '@/app/documents/ui/DocumentViewer';
 import { DocumentSidebar } from '@/app/documents/ui/DocumentSidebar';
-import Header from '@/app/components/layout/header/Header';
-import GlobalFooter from '@/app/components/layout/GlobalFooter';
-import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data';
 
 interface PageProps {
   params: Promise<{ slug: string }>;

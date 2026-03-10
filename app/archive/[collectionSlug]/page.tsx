@@ -4,9 +4,7 @@ import { NavigationSidebar } from '../ui/NavigationSidebar';
 import { CollectionView } from '../ui/CollectionView';
 import { Breadcrumbs } from '../ui/Breadcrumbs';
 import { notFound } from 'next/navigation';
-import Header from '@/app/components/layout/header/Header';
-import GlobalFooter from '@/app/components/layout/GlobalFooter';
-import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data';
+import SiteLayout from '@/app/components/layout/SiteLayout';
 
 interface PageProps {
   params: Promise<{
@@ -29,33 +27,29 @@ export default async function CollectionPage({ params }: PageProps) {
     }
     
     return (
-      <div className="min-h-screen flex flex-col bg-gray-50">
-        <Header navigation={navigation} />
-        <div className="flex-1">
-          <ArchiveLayout
-            sidebar={
-              <NavigationSidebar 
-                collections={collections}
-                selectedCollectionSlug={collectionSlug}
-                selectedSeriesSlug={null}
+      <SiteLayout>
+        <ArchiveLayout
+          sidebar={
+            <NavigationSidebar
+              collections={collections}
+              selectedCollectionSlug={collectionSlug}
+              selectedSeriesSlug={null}
+            />
+          }
+          content={
+            <>
+              <Breadcrumbs items={[
+                { label: 'ארכיון', href: '/archive', isActive: false },
+                { label: collection.nameI18n?.he || collection.name, isActive: true }
+              ]} />
+              <CollectionView
+                collection={collection}
+                collectionSlug={collectionSlug}
               />
-            }
-            content={
-              <>
-                <Breadcrumbs items={[
-                  { label: 'ארכיון', href: '/archive', isActive: false },
-                  { label: collection.nameI18n?.he || collection.name, isActive: true }
-                ]} />
-                <CollectionView 
-                  collection={collection}
-                  collectionSlug={collectionSlug}
-                />
-              </>
-            }
-          />
-        </div>
-        <GlobalFooter links={footerLinksMockData} copyrightText={copyrightTextMockData} />
-      </div>
+            </>
+          }
+        />
+      </SiteLayout>
     );
   } catch (error) {
     console.error('Error loading collection:', error);
