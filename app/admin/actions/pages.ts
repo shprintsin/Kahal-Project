@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { toISOStringSafe } from "@/lib/utils";
 import { revalidatePath } from "@/utils/safe-revalidate";
 import { Prisma } from "@prisma/client";
 
@@ -297,8 +298,8 @@ export async function listPagesAPI(options: ListPagesOptions = {}) {
         : null,
       hasChildren: page._count.children > 0,
       childrenCount: page._count.children,
-      createdAt: page.createdAt.toISOString(),
-      updatedAt: page.updatedAt.toISOString(),
+      createdAt: toISOStringSafe(page.createdAt),
+      updatedAt: toISOStringSafe(page.updatedAt),
     }));
 
     return {
@@ -422,8 +423,8 @@ export async function getPageBySlug(slug: string, options: GetPageOptions = {}) 
       tags: page.tags,
       regions: page.regions,
       translations,
-      createdAt: page.createdAt.toISOString(),
-      updatedAt: page.updatedAt.toISOString(),
+      createdAt: toISOStringSafe(page.createdAt),
+      updatedAt: toISOStringSafe(page.updatedAt),
     };
   } catch (error) {
     console.error("Error getting page:", error);

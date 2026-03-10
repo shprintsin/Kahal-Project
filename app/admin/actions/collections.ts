@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { toISOStringSafe } from "@/lib/utils";
 import { revalidatePath } from "@/utils/safe-revalidate";
 
 // --- Types ---
@@ -404,7 +405,7 @@ export async function getSeriesBySlugs(collectionSlug: string, seriesSlug: strin
       languageOfContent: v.languageOfContent,
       yearContent: v.yearContent,
       thumbnailId: v.thumbnailId,
-      createdAt: v.createdAt.toISOString(),
+      createdAt: toISOStringSafe(v.createdAt),
       thumbnail: v.thumbnail
         ? {
             id: v.thumbnail.id,
@@ -801,7 +802,7 @@ export async function getSeriesDetailBySlug(slug: string) {
       collectionId: series.collectionId,
       indexNumber: v.indexNumber,
       year: v.year,
-      createdAt: v.createdAt.toISOString(),
+      createdAt: toISOStringSafe(v.createdAt),
       thumbnail: v.thumbnail
         ? {
             id: v.thumbnail.id,
@@ -845,7 +846,7 @@ export async function getVolumesBySeriesId(seriesId: string) {
     descriptionI18n: v.descriptionI18n,
     indexNumber: v.indexNumber,
     year: v.year,
-    createdAt: v.createdAt.toISOString(),
+    createdAt: toISOStringSafe(v.createdAt),
     seriesId: v.seriesId,
     collectionId: v.series?.collectionId || '',
     series: v.series,
@@ -893,7 +894,7 @@ export async function getVolumesBySeriesSlug(seriesSlug: string) {
     descriptionI18n: v.descriptionI18n,
     indexNumber: v.indexNumber,
     year: v.year,
-    createdAt: v.createdAt.toISOString(),
+    createdAt: toISOStringSafe(v.createdAt),
     seriesId: v.seriesId,
     collectionId: v.series?.collectionId || '',
     series: v.series,
@@ -937,7 +938,7 @@ export async function listCollectionsWithSeries() {
     name: c.name,
     nameI18n: c.nameI18n,
     descriptionI18n: c.descriptionI18n,
-    createdAt: c.createdAt.toISOString(),
+    createdAt: toISOStringSafe(c.createdAt),
     thumbnail: c.thumbnail
       ? {
           id: c.thumbnail.id,
@@ -956,7 +957,7 @@ export async function listCollectionsWithSeries() {
       descriptionI18n: s.descriptionI18n,
       collectionId: c.id,
       indexNumber: s.indexNumber,
-      createdAt: s.createdAt.toISOString(),
+      createdAt: toISOStringSafe(s.createdAt),
       thumbnail: s.thumbnail
         ? {
             id: s.thumbnail.id,

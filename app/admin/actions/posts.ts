@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { toISOStringSafe } from "@/lib/utils";
 import { revalidatePath } from "@/utils/safe-revalidate";
 import { Prisma } from "@prisma/client";
 
@@ -438,8 +439,8 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
         slug: region.slug,
         name: region.name,
       })),
-      createdAt: post.createdAt.toISOString(),
-      updatedAt: post.updatedAt.toISOString(),
+      createdAt: toISOStringSafe(post.createdAt),
+      updatedAt: toISOStringSafe(post.updatedAt),
     }));
 
     return {
@@ -546,8 +547,8 @@ export async function getPostBySlug(slug: string) {
       tags: post.tags.map((pt) => pt.tag),
       regions: post.regions,
       translations,
-      createdAt: post.createdAt.toISOString(),
-      updatedAt: post.updatedAt.toISOString(),
+      createdAt: toISOStringSafe(post.createdAt),
+      updatedAt: toISOStringSafe(post.updatedAt),
     };
   } catch (error) {
     console.error("Error getting post:", error);

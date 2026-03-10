@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { toISOStringSafe } from "@/lib/utils";
 import { revalidatePath } from "@/utils/safe-revalidate";
 import { Prisma } from "@prisma/client";
 
@@ -481,8 +482,8 @@ export async function listMapsAPI(options: ListMapsOptions = {}) {
         : null,
       layerCount: map._count.layers,
       resourceCount: map._count.resources,
-      createdAt: map.createdAt.toISOString(),
-      updatedAt: map.updatedAt.toISOString(),
+      createdAt: toISOStringSafe(map.createdAt),
+      updatedAt: toISOStringSafe(map.updatedAt),
     }));
 
     return {
@@ -625,8 +626,8 @@ export async function getMapBySlug(
           isVisible: layer.isVisible,
           isVisibleByDefault: layer.isVisibleByDefault,
           zIndex: layer.zIndex,
-          createdAt: layer.createdAt.toISOString(),
-          updatedAt: layer.updatedAt.toISOString(),
+          createdAt: toISOStringSafe(layer.createdAt),
+          updatedAt: toISOStringSafe(layer.updatedAt),
         })),
       }),
       ...(includeResources && {
@@ -640,11 +641,11 @@ export async function getMapBySlug(
           format: resource.format,
           isMainFile: resource.isMainFile,
           excerpt: getLocalizedField(null, resource.excerptI18n, lang),
-          createdAt: resource.createdAt.toISOString(),
+          createdAt: toISOStringSafe(resource.createdAt),
         })),
       }),
-      createdAt: map.createdAt.toISOString(),
-      updatedAt: map.updatedAt.toISOString(),
+      createdAt: toISOStringSafe(map.createdAt),
+      updatedAt: toISOStringSafe(map.updatedAt),
     };
   } catch (error) {
     console.error("Error getting map:", error);
