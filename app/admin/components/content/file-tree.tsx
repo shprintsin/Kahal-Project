@@ -78,78 +78,45 @@ export function FileTree({
   isDashboardActive,
   className,
 }: FileTreeProps) {
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [expandedFolders, setExpandedFolders] = React.useState<Set<string>>(
-    new Set()
-  );
-  
-  // Selection Mode
-  const [isSelectionMode, setIsSelectionMode] = React.useState(false);
-  const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
-  
-  // Category Filter
-  const [categoryFilter, setCategoryFilter] = React.useState<string | null>(null);
-
-  // Get unique categories
-  const categories = React.useMemo(() => {
-    const cats = new Set<string>();
+  // Flatten items recursively
+  const flatItems = React.useMemo(() => {
+    const results: FileTreeItem[] = [];
     const traverse = (nodes: FileTreeItem[]) => {
       nodes.forEach(node => {
-        if (node.category) cats.add(node.category);
-        if (node.children) traverse(node.children);
+        if (node.type === 'file') {
+          results.push(node);
+        }
+        if (node.children) {
+          traverse(node.children);
+        }
       });
     };
     traverse(items);
-    return Array.from(cats);
+    
+    // Sort by slug or name
+    return results.sort((a, b) => {
+      const nameA = a.slug || a.name || '';
+      const nameB = b.slug || b.name || '';
+      return nameA.localeCompare(nameB);
+    });
   }, [items]);
+
+  // Selection Mode
+  const [isSelectionMode, setIsSelectionMode] = React.useState(false);
+  const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
+
+  // Search
+  const [searchQuery, setSearchQuery] = React.useState("");
 
   // Filter items
   const filteredItems = React.useMemo(() => {
-    if (!searchQuery.trim() && !categoryFilter) return items;
+    if (!searchQuery.trim()) return flatItems;
     
     const query = searchQuery.toLowerCase();
-    
-    // Helper to check if item matches filter
-    const matchesFilter = (item: FileTreeItem) => {
-      const matchesSearch = !query || 
-        (item.slug || item.name).toLowerCase().includes(query);
-      const matchesCategory = !categoryFilter || 
-        item.category === categoryFilter;
-      return matchesSearch && matchesCategory;
-    };
-
-    const filterRecursive = (nodes: FileTreeItem[]): FileTreeItem[] => {
-      return nodes.map(node => {
-        // If it's a folder, check children first
-        if (node.children) {
-          const filteredChildren = filterRecursive(node.children);
-          // If folder has matching children, return it with those children
-          if (filteredChildren.length > 0) {
-            return { ...node, children: filteredChildren };
-          }
-        }
-        
-        // If it's a file (or empty folder), check if it matches itself
-        if (matchesFilter(node)) return node;
-        
-        return null;
-      }).filter((n): n is FileTreeItem => n !== null);
-    };
-    
-    return filterRecursive(items);
-  }, [items, searchQuery, categoryFilter]);
-
-  const toggleFolder = (id: string) => {
-    setExpandedFolders((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
-  };
+    return flatItems.filter(item => 
+      (item.slug || item.name).toLowerCase().includes(query)
+    );
+  }, [flatItems, searchQuery]);
 
   const handleSelectionChange = (id: string, checked: boolean) => {
     setSelectedIds(prev => {
@@ -223,7 +190,7 @@ export function FileTree({
               </div>
             )}
 
-            {/* Search & Filter */}
+            {/* Search */}
             <div className="flex gap-1">
               <div className="relative flex-1">
                 <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30" />
@@ -232,45 +199,9 @@ export function FileTree({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search files..."
-                  className="h-7 pl-7 pr-2 text-xs bg-white/5 border-white/10 text-white placeholder:text-white/30"
+                  className="h-7 pl-7 pr-2 text-xs bg-white/5 border-white/10 text-white placeholder:text-white/30 rounded-md"
                 />
               </div>
-              
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="icon"
-                    className={cn(
-                      "h-7 w-7 text-white/50 hover:text-white hover:bg-white/10",
-                      categoryFilter && "text-blue-400 bg-blue-500/10"
-                    )}
-                  >
-                    <Filter className="w-3.5 h-3.5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="bg-[#252525] border-white/10 text-white min-w-[150px]" align="end">
-                  <DropdownMenuLabel className="text-xs text-white/40">Filter by Category</DropdownMenuLabel>
-                  <DropdownMenuItem 
-                    onClick={() => setCategoryFilter(null)}
-                    className="text-xs cursor-pointer hover:bg-white/10 flex justify-between"
-                  >
-                    All
-                    {!categoryFilter && <Check className="w-3 h-3 text-blue-400" />}
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-white/10" />
-                  {categories.map(cat => (
-                    <DropdownMenuItem 
-                      key={cat}
-                      onClick={() => setCategoryFilter(cat)}
-                      className="text-xs cursor-pointer hover:bg-white/10 flex justify-between"
-                    >
-                      {cat}
-                      {categoryFilter === cat && <Check className="w-3 h-3 text-blue-400" />}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
           </div>
 
@@ -297,10 +228,7 @@ export function FileTree({
 
             <FileTreeList
               items={filteredItems}
-              level={0}
               currentFileId={currentFileId}
-              expandedFolders={expandedFolders}
-              onToggleFolder={toggleFolder}
               onFileSelect={onFileSelect}
               onFileDelete={onFileDelete} // Pass original for single delete
               onFileRename={onFileRename}
@@ -334,10 +262,7 @@ export function FileTree({
 
 interface FileTreeListProps {
   items: FileTreeItem[];
-  level: number;
   currentFileId?: string;
-  expandedFolders: Set<string>;
-  onToggleFolder: (id: string) => void;
   onFileSelect?: (item: FileTreeItem) => void;
   onFileDelete?: (ids: string[]) => void;
   onFileRename?: (id: string, newName: string) => void;
@@ -348,10 +273,7 @@ interface FileTreeListProps {
 
 function FileTreeList({
   items,
-  level,
   currentFileId,
-  expandedFolders,
-  onToggleFolder,
   onFileSelect,
   onFileDelete,
   onFileRename,
@@ -365,23 +287,13 @@ function FileTreeList({
         <FileTreeNode
           key={item.id}
           item={item}
-          level={level}
           isActive={currentFileId === item.id}
-          isExpanded={expandedFolders.has(item.id)}
-          onToggle={() => onToggleFolder(item.id)}
           onSelect={() => onFileSelect?.(item)}
           onDelete={() => onFileDelete?.([item.id])} // Wrap single ID in array
           onRename={(newName) => onFileRename?.(item.id, newName)}
-          expandedFolders={expandedFolders}
-          onToggleFolder={onToggleFolder}
-          onFileSelect={onFileSelect}
-          onFileDelete={onFileDelete}
-          onFileRename={onFileRename}
-          currentFileId={currentFileId}
           isSelectionMode={isSelectionMode}
           isSelected={selectedIds.has(item.id)}
           onSelectionChange={onSelectionChange}
-          selectedIds={selectedIds}
         />
       ))}
     </div>
@@ -390,44 +302,24 @@ function FileTreeList({
 
 interface FileTreeNodeProps {
   item: FileTreeItem;
-  level: number;
   isActive: boolean;
-  isExpanded: boolean;
-  onToggle: () => void;
   onSelect: () => void;
   onDelete: () => void;
   onRename: (newName: string) => void;
-  expandedFolders: Set<string>;
-  onToggleFolder: (id: string) => void;
-  onFileSelect?: (item: FileTreeItem) => void;
-  onFileDelete?: (ids: string[]) => void;
-  onFileRename?: (id: string, newName: string) => void;
-  currentFileId?: string;
   isSelectionMode: boolean;
   isSelected: boolean;
   onSelectionChange: (id: string, checked: boolean) => void;
-  selectedIds: Set<string>;
 }
 
 function FileTreeNode({
   item,
-  level,
   isActive,
-  isExpanded,
-  onToggle,
   onSelect,
   onDelete,
   onRename,
-  expandedFolders,
-  onToggleFolder,
-  onFileSelect,
-  onFileDelete,
-  onFileRename,
-  currentFileId,
   isSelectionMode,
   isSelected,
   onSelectionChange,
-  selectedIds,
 }: FileTreeNodeProps) {
   const [isRenaming, setIsRenaming] = React.useState(false);
   const [renameName, setRenameName] = React.useState(item.slug || item.name);
@@ -448,10 +340,8 @@ function FileTreeNode({
     setIsRenaming(false);
   };
 
-  const isFolder = item.type === "folder";
-  const hasChildren = item.children && item.children.length > 0;
-  
   // Display Name: prefer slug, fallback to name
+  // Truncate logic can reside in CSS
   const displayName = item.slug || item.name;
 
   return (
@@ -460,12 +350,11 @@ function FileTreeNode({
         <ContextMenuTrigger>
           <div
             className={cn(
-              "group flex items-center gap-1 py-1 px-2 rounded text-sm transition-colors cursor-pointer",
-              "hover:bg-white/10",
-              isActive && !isSelectionMode && "bg-blue-600/20 text-blue-400",
-              isSelected && isSelectionMode && "bg-blue-600/20"
+              "group flex items-center gap-2 py-1.5 px-3 rounded-md text-sm transition-all cursor-pointer",
+              "hover:bg-white/5",
+              isActive && !isSelectionMode && "bg-blue-600/20 text-blue-400 shadow-sm",
+              isSelected && isSelectionMode && "bg-blue-600/30"
             )}
-            style={{ paddingLeft: `${isSelectionMode ? 8 : level * 12 + 8}px` }}
             onClick={(e) => {
               // If selection mode, toggle selection
               if (isSelectionMode) {
@@ -480,39 +369,18 @@ function FileTreeNode({
                 <Checkbox 
                   checked={isSelected}
                   onCheckedChange={(checked) => onSelectionChange(item.id, !!checked)}
-                  className="border-white/20 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                  className="border-white/20 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 h-3.5 w-3.5"
                 />
               </div>
             )}
 
-            {/* Expand/Collapse Icon */}
-            {isFolder && !isSelectionMode && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onToggle();
-                }}
-                className="flex-shrink-0 w-4 h-4 flex items-center justify-center text-white/40 hover:text-white"
-              >
-                {isExpanded ? (
-                  <ChevronDown className="w-3 h-3" />
-                ) : (
-                  <ChevronRight className="w-3 h-3" />
-                )}
-              </button>
-            )}
-
             {/* Icon & Status */}
             <div className="relative flex-shrink-0">
-              <span className={cn("text-white/50", isActive && "text-blue-400")}>
-                {isFolder ? (
-                  isExpanded ? <FolderOpen className="w-4 h-4" /> : <Folder className="w-4 h-4" />
-                ) : (
-                  <FileText className="w-4 h-4" />
-                )}
+              <span className={cn("text-white/40", isActive && "text-blue-400")}>
+                 <FileText className="w-4 h-4" />
               </span>
               {/* Status Dot Indicator for files */}
-              {item.status && !isFolder && (
+              {item.status && (
                 <div className="absolute -bottom-0.5 -right-0.5 bg-[#1a1a1a] rounded-full p-[1px]">
                   <StatusDot status={item.status} size="sm" className="w-1.5 h-1.5" />
                 </div>
@@ -531,7 +399,7 @@ function FileTreeNode({
                   if (e.key === "Enter") handleRename();
                   if (e.key === "Escape") setIsRenaming(false);
                 }}
-                className="flex-1 bg-white/10 border border-white/20 rounded px-1 text-xs text-white outline-none ml-1 h-5"
+                className="flex-1 bg-white/10 border border-white/20 rounded px-1.5 py-0.5 text-xs text-white outline-none h-6 w-full"
                 onClick={(e) => e.stopPropagation()}
               />
             ) : (
@@ -543,9 +411,10 @@ function FileTreeNode({
                   }
                 }}
                 className={cn(
-                  "flex-1 text-left truncate transition-colors ml-1 select-none",
-                  isActive ? "text-blue-400 font-medium" : "text-white/80"
+                  "flex-1 text-left truncate transition-colors select-none text-xs",
+                  isActive ? "text-blue-400 font-medium" : "text-white/70 group-hover:text-white/90"
                 )}
+                title={displayName}
               >
                 {displayName}
               </div>
@@ -553,7 +422,7 @@ function FileTreeNode({
 
             {/* Inline Actions (only when not in selection mode and not renaming) */}
             {!isSelectionMode && !isRenaming && (
-              <div className="opacity-0 group-hover:opacity-100 flex items-center ml-auto">
+              <div className="hidden group-hover:flex items-center ml-auto">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -561,7 +430,7 @@ function FileTreeNode({
                     e.stopPropagation();
                     setIsRenaming(true);
                   }}
-                  className="h-5 w-5 text-white/40 hover:text-white hover:bg-white/10"
+                  className="h-5 w-5 text-white/30 hover:text-white hover:bg-white/10 rounded-sm"
                 >
                   <Edit2 className="w-3 h-3" />
                 </Button>
@@ -569,17 +438,17 @@ function FileTreeNode({
             )}
           </div>
         </ContextMenuTrigger>
-        <ContextMenuContent className="bg-[#252525] border-white/10 text-white w-48">
+        <ContextMenuContent className="bg-[#252525] border-white/10 text-white w-48 shadow-xl">
           <ContextMenuItem 
             onClick={() => setIsRenaming(true)}
-            className="hover:bg-white/10 cursor-pointer text-xs"
+            className="hover:bg-white/10 cursor-pointer text-xs focus:bg-white/10 focus:text-white"
           >
-            <Edit2 className="w-3.5 h-3.5 mr-2" />
+            <Edit2 className="w-3.5 h-3.5 mr-2 text-white/50" />
             Rename
           </ContextMenuItem>
           <ContextMenuItem 
             onClick={onDelete}
-            className="hover:bg-white/10 cursor-pointer text-xs text-red-400 focus:text-red-400"
+            className="hover:bg-white/10 cursor-pointer text-xs text-red-400 focus:text-red-400 focus:bg-white/10"
           >
             <Trash2 className="w-3.5 h-3.5 mr-2" />
             Delete
@@ -587,30 +456,13 @@ function FileTreeNode({
           <ContextMenuSeparator className="bg-white/10" />
           <ContextMenuItem 
             onClick={() => onSelectionChange(item.id, true)}
-            className="hover:bg-white/10 cursor-pointer text-xs"
+            className="hover:bg-white/10 cursor-pointer text-xs focus:bg-white/10 focus:text-white"
           >
-            <CheckSquare className="w-3.5 h-3.5 mr-2" />
+            <CheckSquare className="w-3.5 h-3.5 mr-2 text-white/50" />
             Select
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
-
-      {/* Children */}
-      {isFolder && isExpanded && hasChildren && (
-        <FileTreeList
-          items={item.children!}
-          level={level + 1}
-          currentFileId={currentFileId}
-          expandedFolders={expandedFolders}
-          onToggleFolder={onToggleFolder}
-          onFileSelect={onFileSelect}
-          onFileDelete={onFileDelete}
-          onFileRename={onFileRename}
-          isSelectionMode={isSelectionMode}
-          selectedIds={selectedIds}
-          onSelectionChange={onSelectionChange}
-        />
-      )}
     </div>
   );
 }

@@ -14,7 +14,8 @@ import {
 } from "@/app/admin/components/content";
 import type { ContentLanguage, ContentStatus } from "@/app/admin/types/content-system.types";
 import type { FileTreeItem } from "@/app/admin/components/content/file-tree";
-import { createPost, updatePost } from "@/app/admin/actions/posts";
+import { createPost, updatePost, uploadMedia } from "@/app/admin/actions/posts";
+import { generateSlugFromTitle } from "@/app/admin/utils/slug-generator";
 
 interface PostEditorClientProps {
   post: any;
@@ -53,6 +54,10 @@ function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientP
   const [license, setLicense] = React.useState("");
   const [attachments, setAttachments] = React.useState<any[]>([]);
 
+  // Thumbnail
+  const [thumbnailId, setThumbnailId] = React.useState<string | undefined>(post?.thumbnail?.id);
+  const [thumbnailUrl, setThumbnailUrl] = React.useState<string | null>(post?.thumbnail?.url || null);
+
   // Initialize post data in language provider - only once per ID
   React.useEffect(() => {
     if (post) {
@@ -72,6 +77,37 @@ function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientP
   // Handlers
   const handleFieldChange = (field: string, value: string) => {
     updateField(field, value);
+
+    // Auto-generate slug from title if English and (isNew or slug is empty)
+    if (field === "title") {
+      const autoSlug = generateSlugFromTitle(value);
+      if (autoSlug) {
+        if (isNew || !slug) {
+          updateField("slug", autoSlug);
+        }
+      }
+    }
+
+    setIsDirty(true);
+  };
+
+  const handleThumbnailChange = async (file: File) => {
+    try {
+      // Import is already added at top
+      const media = await uploadMedia(file);
+      setThumbnailId(media.id);
+      setThumbnailUrl(media.url);
+      toast.success("Thumbnail uploaded");
+      setIsDirty(true);
+    } catch (err) {
+      console.error(err);
+      toast.error("Upload failed");
+    }
+  };
+
+  const handleThumbnailRemove = () => {
+    setThumbnailId(undefined);
+    setThumbnailUrl(null);
     setIsDirty(true);
   };
 
@@ -84,6 +120,7 @@ function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientP
         content,
         excerpt,
         status,
+        thumbnail_id: thumbnailId,
         categoryIds: category ? [category] : [],
         tagNames: postTags,
       };
@@ -199,6 +236,9 @@ function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientP
       tagSuggestions={allTags}
       attachments={attachments}
       onAttachmentsChange={setAttachments}
+      thumbnailUrl={thumbnailUrl}
+      onThumbnailChange={handleThumbnailChange}
+      onThumbnailRemove={handleThumbnailRemove}
     />
   );
 

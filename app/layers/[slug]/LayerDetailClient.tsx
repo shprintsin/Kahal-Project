@@ -1,32 +1,12 @@
 "use client"
 
-import { useState } from 'react'
 import Header from '@/app/components/layout/header/Header'
 import GlobalFooter from '@/app/components/layout/GlobalFooter'
 import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data'
 import { MapPreview } from "@/app/maps/[slug]/components/MapPreview"
-import { Calendar, Download, FileText, Info, Link as LinkIcon, Loader2 } from "lucide-react"
-import { Button } from '@/components/ui/button'
-import { fetchAndDownloadGeoJson } from '@/lib/downloadGeoJson'
+import { Calendar, FileText, Link as LinkIcon, Download, Info } from "lucide-react"
 
 export function LayerDetailClient({ layer }: { layer: any }) {
-  const [downloading, setDownloading] = useState(false)
-
-  const handleGeoJsonDownload = async () => {
-    setDownloading(true)
-    try {
-      await fetchAndDownloadGeoJson(
-        layer.id,
-        layer.name,
-        layer.geoJsonData,
-        layer.sourceUrl,
-      )
-    } catch (err) {
-      console.error(`Failed to download layer "${layer.name}":`, err)
-    } finally {
-      setDownloading(false)
-    }
-  }
   
   /**
    * Load map preview settings from layer configuration
@@ -93,11 +73,11 @@ export function LayerDetailClient({ layer }: { layer: any }) {
                      </div>
                      <h1 className="secular text-4xl text-[var(--dark-green)] mb-6 leading-tight">{layer.name}</h1>
                      
-                     <div className="h-[500px] mb-8 shadow-md rounded-xl overflow-hidden border border-gray-200 bg-gray-100">
+                     <div className="h-[500px] mb-8 shadow-md overflow-hidden border border-gray-200 bg-gray-100">
                         <MapPreview map={previewMap as any} />
                      </div>
 
-                     <div className="prose max-w-none bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                     <div className="prose max-w-none bg-white p-8 shadow-sm border border-gray-100">
                         <h2 className="text-2xl font-bold mb-4 secular text-gray-800">תיאור השכבה</h2>
                          <p className="whitespace-pre-wrap text-gray-700 leading-relaxed text-lg">
                             {layer.description || "אין תיאור זמין."}
@@ -108,7 +88,7 @@ export function LayerDetailClient({ layer }: { layer: any }) {
                 {/* Metadata Sections */}
                 <div className="space-y-6">
                     {(layer.citationText || layer.sources || layer.codebookText) && (
-                        <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 space-y-8">
+                        <div className="bg-white p-8 shadow-sm border border-gray-100 space-y-8">
                             {layer.citationText && (
                                 <div>
                                     <h3 className="text-xl font-bold mb-3 flex items-center gap-2 text-gray-800 secular">
@@ -146,7 +126,7 @@ export function LayerDetailClient({ layer }: { layer: any }) {
 
             {/* Sidebar info */}
             <div className="space-y-6">
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 sticky top-4">
+                <div className="bg-white p-6 shadow-sm border border-gray-100 sticky top-4">
                     <h3 className="text-lg font-bold mb-4 border-b pb-2 text-gray-800 secular">פרטים נוספים</h3>
                     <ul className="space-y-4 text-sm">
                         <li className="flex justify-between items-center border-b border-gray-50 pb-2">
@@ -166,9 +146,9 @@ export function LayerDetailClient({ layer }: { layer: any }) {
                         </li>
                     </ul>
 
-                    <div className="mt-8 space-y-3">
-                        {layer.downloadUrl && (
-                            <a
+                    {layer.downloadUrl && (
+                        <div className="mt-8">
+                            <a 
                                 href={layer.downloadUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -177,21 +157,8 @@ export function LayerDetailClient({ layer }: { layer: any }) {
                                 <Download className="w-4 h-4" />
                                 הורדת נתונים מלאים
                             </a>
-                        )}
-                        <Button
-                            variant="outline"
-                            className="w-full justify-center gap-2 font-bold"
-                            onClick={handleGeoJsonDownload}
-                            disabled={downloading}
-                        >
-                            {downloading ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                                <Download className="w-4 h-4" />
-                            )}
-                            הורדת GeoJSON
-                        </Button>
-                    </div>
+                        </div>
+                    )}
                 </div>
             </div>
 

@@ -72,7 +72,7 @@ function LayerCard({ layer }: { layer: LayerSummary }) {
         <div className="mt-auto flex gap-4">
           <a
             href={`/layers/${layer.slug}`}
-            className="inline-flex items-center gap-2 text-emerald-700 font-bold secular hover:translate-x-[-4px] transition-transform duration-200"
+            className="inline-flex items-center gap-2 text-emerald-700 font-bold secular"
           >
             צפה בשכבה
             <Layers className="h-4 w-4" />

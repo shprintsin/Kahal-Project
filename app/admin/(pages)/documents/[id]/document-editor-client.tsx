@@ -376,6 +376,7 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
                         placeholder="https://..."
                         value={referenceUrl}
                         onChange={(e) => handleMetadataChange(setReferenceUrl, e.target.value)}
+                        dir="ltr"
                      />
                  </div>
             </SidebarField>
@@ -387,6 +388,7 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
                         placeholder="https://...pdf"
                         value={scanUrl}
                         onChange={(e) => handleMetadataChange(setScanUrl, e.target.value)}
+                        dir="ltr"
                      />
                  </div>
             </SidebarField>

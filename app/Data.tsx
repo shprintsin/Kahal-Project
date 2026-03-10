@@ -167,7 +167,17 @@ export const HomeCategories: CategoryButton[] = [
 ]
 
 
-export const GetIcons = ({icon,className}:{icon:string,className:string}) => {
+import * as LucideIcons from "lucide-react";
+
+export const GetIcons = ({icon, className}: {icon: string, className: string}) => {
+  // 1. Try Lucide Icons (from Admin Panel)
+  // The admin panel saves icon names like "Home", "User", "Settings"
+  const LucideIcon = (LucideIcons as any)[icon];
+  if (LucideIcon) {
+    return <LucideIcon className={className} />;
+  }
+
+  // 2. Fallback to Legacy FontAwesome (from hardcoded Data.tsx)
   switch (icon) {
     case "FaSearch":
       return <FaSearch className={className} />;
@@ -197,18 +207,6 @@ export const GetIcons = ({icon,className}:{icon:string,className:string}) => {
       return <FaArrowLeft className={className} />;
     case "FaCode":
       return <FaArrowLeft className={className} />;
-    case "FaDatabase":
-      return <FaDatabase className={className} />;
-    case "FaSearch":
-      return <FaSearch className={className} />;
-    case "FaHome":
-      return <FaHome className={className} />;
-    case "FaBook":
-      return <FaBook className={className} />;
-    case "FaArchive":
-      return <FaArchive className={className} />;
-    case "FaChevronDown":
-      return <FaChevronDown className={className} />;
     default:
       return null;
   }

@@ -188,32 +188,28 @@ export function PolygonConfig({ layer, onUpdate }: PolygonConfigProps) {
       {/* Border Weight & Fill Opacity in one row */}
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <div className="flex justify-between items-center">
-            <Label className="text-xs">Weight</Label>
-            <span className="text-xs text-muted-foreground">{style.weight}px</span>
-          </div>
-          <Slider
+          <Label className="text-xs">Weight (px)</Label>
+          <Input
+            type="number"
             min={0}
-            max={10}
+            max={20}
             step={0.5}
-            value={[style.weight || 1]}
-            onValueChange={(vals) => handleStyleChange({ weight: vals[0] })}
-            className="py-1"
+            value={style.weight || 1}
+            onChange={(e) => handleStyleChange({ weight: e.target.valueAsNumber })}
+            className="h-8 font-mono text-xs"
           />
         </div>
 
         <div className="space-y-1.5">
-          <div className="flex justify-between items-center">
-            <Label className="text-xs">Opacity</Label>
-            <span className="text-xs text-muted-foreground">{((style.opacity || 0.2) * 100).toFixed(0)}%</span>
-          </div>
-          <Slider
+          <Label className="text-xs">Opacity (0-1)</Label>
+          <Input
+            type="number"
             min={0}
             max={1}
-            step={0.05}
-            value={[style.opacity ?? 0.2]}
-            onValueChange={(vals) => handleStyleChange({ opacity: vals[0] })}
-            className="py-1"
+            step={0.1}
+            value={style.opacity ?? 0.2}
+            onChange={(e) => handleStyleChange({ opacity: e.target.valueAsNumber })}
+            className="h-8 font-mono text-xs"
           />
         </div>
       </div>

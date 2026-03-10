@@ -14,6 +14,7 @@ export function createMapFieldConfigs(): MapFieldConfigs {
         type: "text",
         placeholder: "map-slug",
         description: "URL-friendly identifier",
+        className: "text-left ltr",
       },
       {
         name: "titleI18n.en",

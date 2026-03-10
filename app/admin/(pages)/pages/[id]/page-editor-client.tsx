@@ -15,6 +15,8 @@ import {
 import type { ContentLanguage, ContentStatus } from "@/app/admin/types/content-system.types";
 import type { FileTreeItem } from "@/app/admin/components/content/file-tree";
 import { createPage, updatePage } from "@/app/admin/actions/pages";
+import { uploadMedia } from "@/app/admin/actions/posts";
+import { generateSlugFromTitle } from "@/app/admin/utils/slug-generator";
 
 interface PageEditorClientProps {
   page: any;
@@ -50,6 +52,10 @@ function EditorInner({ page, tags, pages, isNew }: PageEditorClientProps) {
   const [isPublic, setIsPublic] = React.useState(true);
   const [license, setLicense] = React.useState("");
   const [attachments, setAttachments] = React.useState<any[]>([]);
+  
+  // Thumbnail
+  const [thumbnailId, setThumbnailId] = React.useState<string | undefined>(page?.thumbnail?.id);
+  const [thumbnailUrl, setThumbnailUrl] = React.useState<string | null>(page?.thumbnail?.url || null);
 
   // Initialize page data in language provider - only once per ID
   React.useEffect(() => {
@@ -70,6 +76,39 @@ function EditorInner({ page, tags, pages, isNew }: PageEditorClientProps) {
   // Handlers
   const handleFieldChange = (field: string, value: string) => {
     updateField(field, value);
+    
+    // Auto-generate slug from title if English and (isNew or slug is empty)
+    if (field === "title") {
+      const autoSlug = generateSlugFromTitle(value);
+      if (autoSlug) {
+        // Only update if it's a new page or the current slug is empty
+        // We can also allow updating if the current slug exactly matches the *previous* title's slug, but that's stateful.
+        // Let's stick to safe: New pages or empty slugs.
+        if (isNew || !slug) {
+          updateField("slug", autoSlug);
+        }
+      }
+    }
+
+    setIsDirty(true);
+  };
+
+  const handleThumbnailChange = async (file: File) => {
+    try {
+      const media = await uploadMedia(file);
+      setThumbnailId(media.id);
+      setThumbnailUrl(media.url);
+      toast.success("Thumbnail uploaded");
+      setIsDirty(true);
+    } catch (err) {
+      console.error(err);
+      toast.error("Upload failed");
+    }
+  };
+
+  const handleThumbnailRemove = () => {
+    setThumbnailId(undefined);
+    setThumbnailUrl(null);
     setIsDirty(true);
   };
 
@@ -83,6 +122,7 @@ function EditorInner({ page, tags, pages, isNew }: PageEditorClientProps) {
         excerpt,
         status,
         template,
+        thumbnail_id: thumbnailId,
         tagNames: pageTags,
       };
 
@@ -203,6 +243,9 @@ function EditorInner({ page, tags, pages, isNew }: PageEditorClientProps) {
       tagSuggestions={allTags}
       attachments={attachments}
       onAttachmentsChange={setAttachments}
+      thumbnailUrl={thumbnailUrl}
+      onThumbnailChange={handleThumbnailChange}
+      onThumbnailRemove={handleThumbnailRemove}
     />
   );
 

@@ -113,7 +113,7 @@ export function TagInput({ tags, selectedTagIds, onTagsChange, onCreateTag }: Ta
       {selectedTags.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {selectedTags.map(tag => (
-            <Badge key={tag.id} variant="secondary" className="gap-1 pr-1">
+            <Badge key={tag.id} variant="secondary" className="gap-1 pr-1 bg-white/10 text-white hover:bg-white/20 border-white/10">
               {getTagName(tag)}
               <button
                 type="button"

@@ -16,6 +16,8 @@ interface DocumentPageRendererProps {
 
   shouldRenderContent?: boolean;
   contentOverride?: string | null;
+  viewMode?: 'single' | 'side-by-side';
+  isSecondary?: boolean;
 }
 
 // Simple heuristic to detect if text is primarily Hebrew
@@ -30,19 +32,23 @@ export const DocumentPageRenderer = React.memo(function DocumentPageRenderer({
   isFirstPage, 
   isLastPage,
   shouldRenderContent = true,
-  contentOverride
+  contentOverride,
+  viewMode = 'single',
+  isSecondary = false
 }: DocumentPageRendererProps) {
   const contentToRender = contentOverride || page.content;
   const isRtl = isHebrew(contentToRender);
+  const isSplit = viewMode === 'side-by-side';
 
   return (
     <div 
-      id={`page-${page.index}`} 
+      id={!isSecondary ? `page-${page.index}` : undefined} 
       className={cn(
-        // Reduced from 210mm to 180mm, smaller padding
-        "relative w-full max-w-[180mm] mx-auto bg-white shadow-md mb-6 p-[15mm] min-h-[250mm] overflow-hidden",
+        "relative w-full mx-auto bg-white overflow-hidden transition-shadow",
+        isSplit 
+            ? "border border-gray-200 rounded-lg p-6 min-h-[400px]" 
+            : "max-w-[180mm] shadow-md mb-6 p-[15mm] min-h-[250mm] hover:shadow-lg",
         "print:shadow-none print:mb-0 print:break-after-page",
-        "transition-shadow hover:shadow-lg",
         isRtl ? "dir-rtl" : "dir-ltr"
       )}
       dir={isRtl ? "rtl" : "ltr"}
@@ -51,7 +57,7 @@ export const DocumentPageRenderer = React.memo(function DocumentPageRenderer({
       {/* Page Header / Number */}
       <div className="absolute top-3 left-3 right-3 flex justify-between text-[10px] text-gray-400 select-none font-sans">
         <span>{page.filename || 'Untitled'}</span>
-        <span>Page {page.index + 1}</span>
+        <span>Page {page.index + 1} {isSecondary ? '(Secondary)' : ''}</span>
       </div>
 
       {shouldRenderContent ? (
@@ -108,6 +114,7 @@ export const DocumentPageRenderer = React.memo(function DocumentPageRenderer({
               rehypePlugins={[rehypeRaw, rehypeSlug, rehypeKatex]}
               components={{
                 p: ({ node, children, ...props }) => <p {...props}>{children}</p>,
+                img: ({ node, ...props }) => <img {...props} className="max-w-full h-auto mx-auto" />,
               }}
             >
               {contentToRender}
@@ -116,7 +123,7 @@ export const DocumentPageRenderer = React.memo(function DocumentPageRenderer({
         </div>
       ) : (
         /* Skeleton / Placeholder when not visible */
-        <div className="flex items-center justify-center h-[200mm] text-gray-100">
+        <div className="flex items-center justify-center p-20 text-gray-100">
            <div className="text-4xl animate-pulse">...</div>
         </div>
       )}
@@ -128,11 +135,12 @@ export const DocumentPageRenderer = React.memo(function DocumentPageRenderer({
     </div>
   );
 }, (prev, next) => {
-  // Custom comparison to ensure we only re-render if essential props change
-  // or if visibility state changes
   return (
     prev.page.id === next.page.id && 
-    prev.page.content === next.page.content && // Content strictly shouldn't change for same ID usually
-    prev.shouldRenderContent === next.shouldRenderContent
+    prev.page.content === next.page.content && 
+    prev.shouldRenderContent === next.shouldRenderContent &&
+    prev.contentOverride === next.contentOverride &&
+    prev.viewMode === next.viewMode &&
+    prev.isSecondary === next.isSecondary
   );
 });
