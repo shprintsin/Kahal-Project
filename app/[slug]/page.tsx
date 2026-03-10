@@ -5,10 +5,14 @@ import { Col } from '@/app/components/StyledComponent';
 import SiteLayout from '@/app/components/layout/SiteLayout';
 
 export async function generateStaticParams() {
-    const { pages } = await listPagesAPI({ limit: 1000, status: 'published' });
-    return pages.map((page) => ({
-        slug: page.slug,
-    }));
+    try {
+        const { pages } = await listPagesAPI({ limit: 1000, status: 'published' });
+        return pages.map((page) => ({
+            slug: page.slug,
+        }));
+    } catch {
+        return [];
+    }
 }
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {

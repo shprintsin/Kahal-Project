@@ -5,10 +5,14 @@ import { serializeLexical } from '@/lib/lexical';
 import SiteLayout from '@/app/components/layout/SiteLayout';
 
 export async function generateStaticParams() {
-    const { posts } = await listPostsAPI({ limit: 1000, status: 'published' });
-    return posts.map((post) => ({
-        slug: post.slug,
-    }));
+    try {
+        const { posts } = await listPostsAPI({ limit: 1000, status: 'published' });
+        return posts.map((post) => ({
+            slug: post.slug,
+        }));
+    } catch {
+        return [];
+    }
 }
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {

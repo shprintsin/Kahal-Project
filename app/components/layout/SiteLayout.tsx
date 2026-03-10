@@ -24,8 +24,14 @@ export default async function SiteLayout({
   children: React.ReactNode
   className?: string
 }) {
-  const headerMenu = await getMenuByLocation("HEADER")
-  const navigation = headerMenu?.items.map(mapMenuItemToNavItem) || fallbackNavigation
+  let navigation = fallbackNavigation
+  try {
+    const headerMenu = await getMenuByLocation("HEADER")
+    if (headerMenu?.items?.length) {
+      navigation = headerMenu.items.map(mapMenuItemToNavItem)
+    }
+  } catch {}
+
 
   return (
     <div className={`flex flex-col min-h-screen bg-gray-50 ${className || ""}`} dir="rtl">
