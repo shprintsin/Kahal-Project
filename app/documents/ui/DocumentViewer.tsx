@@ -14,32 +14,37 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const containerRef = useRef<HTMLDivElement>(null);
-  
-  const [currentPage, setCurrentPage] = useState(1);
+  const isInitialMount = useRef(true);
+
+  const [currentPage, setCurrentPage] = useState(() => {
+    return 1;
+  });
   const [zoom, setZoom] = useState(100);
   const [language, setLanguage] = useState<'original' | 'he' | 'en'>('original');
-  
-  // Initialize from URL
+
+  // Initialize from URL params
   useEffect(() => {
     const pageParam = searchParams.get('page');
     if (pageParam) {
       const page = parseInt(pageParam, 10);
       if (!isNaN(page) && page >= 1 && page <= document.pages.length) {
         setCurrentPage(page);
-        // Scroll to page on mount
-        setTimeout(() => {
-          const el = window.document.getElementById(`page-${page - 1}`);
-          el?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
+        if (isInitialMount.current) {
+          setTimeout(() => {
+            const el = window.document.getElementById(`page-${page - 1}`);
+            el?.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        }
       }
     }
-  }, []);
+    isInitialMount.current = false;
+  }, [searchParams, document.pages.length]);
 
   // Track current page via IntersectionObserver
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
-    
-    document.pages.forEach((page, index) => {
+
+    document.pages.forEach((_, index) => {
       const el = window.document.getElementById(`page-${index}`);
       if (el) {
         const observer = new IntersectionObserver(
@@ -62,12 +67,16 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
     };
   }, [document.pages]);
 
-  // Update URL when page changes
+  // Update URL when page changes (skip initial mount to avoid unnecessary replace)
   useEffect(() => {
+    if (isInitialMount.current) return;
+
     const params = new URLSearchParams(searchParams.toString());
+    if (params.get('page') === String(currentPage)) return;
+
     params.set('page', String(currentPage));
     router.replace(`?${params.toString()}`, { scroll: false });
-  }, [currentPage]);
+  }, [currentPage, router, searchParams]);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);

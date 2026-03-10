@@ -94,7 +94,7 @@ export default function CollectionDetailView({ collection }: CollectionDetailVie
       <Header navigation={navigation} />
 
       <main className="flex-1">
-        <div className="max-w-7xl w-11/12 mx-auto px-4 py-12 space-y-6">
+        <div className="max-w-7xl w-full px-4 md:w-11/12 mx-auto py-8 md:py-12 space-y-6">
           {/* Breadcrumb / meta */}
           <div className="bg-white shadow-sm p-6 flex items-center justify-between">
             <div className="flex items-center gap-2 text-[var(--dark-green)] text-sm font-medium">
@@ -131,7 +131,7 @@ export default function CollectionDetailView({ collection }: CollectionDetailVie
           </div>
 
           {/* View Controls */}
-          <div className="bg-white shadow-sm p-6 flex flex-wrap items-center justify-between gap-4">
+          <div className="bg-white shadow-sm p-4 md:p-6 flex flex-col sm:flex-row flex-wrap items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <span className="text-sm text-gray-700">תצוגה</span>
               <div className="flex gap-2">

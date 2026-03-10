@@ -24,13 +24,14 @@ export function useVolumeData(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchVolume = async () => {
+  const fetchVolume = async (signal?: AbortSignal) => {
     try {
       setLoading(true);
       setError(null);
 
       const response = await fetch(
-        `/api/collections/${collectionId}/volumes/${volumeId}`
+        `/api/collections/${collectionId}/volumes/${volumeId}`,
+        { signal }
       );
 
       if (!response.ok) {
@@ -38,18 +39,28 @@ export function useVolumeData(
       }
 
       const data = await response.json();
-      setVolume(data);
+      if (!signal?.aborted) {
+        setVolume(data);
+      }
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error'));
+      if (err instanceof DOMException && err.name === 'AbortError') return;
+      if (!signal?.aborted) {
+        setError(err instanceof Error ? err : new Error('Unknown error'));
+      }
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) {
+        setLoading(false);
+      }
     }
   };
 
   useEffect(() => {
-    if (collectionId && volumeId) {
-      fetchVolume();
-    }
+    if (!collectionId || !volumeId) return;
+
+    const controller = new AbortController();
+    fetchVolume(controller.signal);
+
+    return () => controller.abort();
   }, [collectionId, volumeId]);
 
   return {

@@ -1,7 +1,7 @@
 import React from 'react';
-import { FaArrowLeft, FaBook, FaDatabase, FaDownload } from 'react-icons/fa';
+import { FaBook } from 'react-icons/fa';
 
-import { Card, CardContent, CardFooter, CardHeader, Section, SectionTitle, SeeMoreButton } from '../ui/Components';
+import { Section, SectionTitle, SeeMoreButton } from '../ui/Components';
 
 interface Post {
   id: string | number;
@@ -25,10 +25,10 @@ interface PostSectionProps {
 
 export default function UpdateSection({ posts, sources }: PostSectionProps) {
   return (
-    <section className="py-16">
-      <div className="flex gap-8 justify-between h-full">
+    <section className="py-8 md:py-16">
+      <div className="flex flex-col md:flex-row gap-8 justify-between h-full">
         {/* Posts Section */}
-        <Section>
+        <Section className="w-full md:w-auto">
           <SectionTitle>
             נתונים
           </SectionTitle>
@@ -44,9 +44,8 @@ export default function UpdateSection({ posts, sources }: PostSectionProps) {
           <SeeMoreButton>כל המאמרים</SeeMoreButton>
         </Section>
 
-        {/* End Posts Section */}
         {/* Sources Section */}
-        <Section>
+        <Section className="w-full md:w-auto">
           <SectionTitle>מקורות</SectionTitle>
           <ul className="space-y-4 flex-grow">
             {sources.map((source) => (
@@ -71,4 +70,4 @@ export default function UpdateSection({ posts, sources }: PostSectionProps) {
       </div>
     </section>
   );
-} 
+}

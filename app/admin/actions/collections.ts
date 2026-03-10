@@ -503,6 +503,83 @@ export async function getVolumeWithPagesByPath(
   };
 }
 
+export async function getVolumeWithPagesById(volumeId: string) {
+  const volume = await prisma.volume.findUnique({
+    where: { id: volumeId },
+    include: {
+      thumbnail: true,
+      pages: {
+        orderBy: { sequenceIndex: "asc" },
+        select: {
+          sequenceIndex: true,
+          label: true,
+          images: {
+            include: {
+              storageFile: true,
+            },
+          },
+          texts: {
+            orderBy: { createdAt: "desc" },
+            select: {
+              id: true,
+              content: true,
+              type: true,
+              language: true,
+              textAccuracy: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!volume) return null;
+
+  return {
+    id: volume.id,
+    slug: volume.slug,
+    title: volume.title,
+    indexNumber: volume.indexNumber,
+    titleI18n: volume.titleI18n,
+    descriptionI18n: volume.descriptionI18n,
+    publicationYear: volume.year,
+    languageOfContent: volume.languageOfContent,
+    yearContent: volume.yearContent,
+    thumbnailId: volume.thumbnailId,
+    createdAt: volume.createdAt,
+    thumbnail: volume.thumbnail
+      ? {
+          id: volume.thumbnail.id,
+          filename: volume.thumbnail.filename,
+          url: volume.thumbnail.url,
+          storageFileId: volume.thumbnail.storageFileId,
+        }
+      : null,
+    total_pages: volume.pages.length,
+    pages_count: volume.pages.length,
+    pages: volume.pages.map((p) => {
+      const thumbImage = p.images.find(img => img.useType === 'thumbnail')?.storageFile;
+      const originalImage = p.images.find(img => img.useType === 'original_scan')?.storageFile;
+
+      return {
+        index: p.sequenceIndex,
+        label: p.label,
+        thumbnailUrl: thumbImage?.publicUrl || null,
+        imageUrl: originalImage?.publicUrl || thumbImage?.publicUrl || null,
+        width: originalImage?.width || null,
+        height: originalImage?.height || null,
+        texts: p.texts.map(t => ({
+          id: t.id,
+          content: t.content,
+          type: t.type,
+          language: t.language,
+          textAccuracy: t.textAccuracy,
+        })),
+      };
+    }),
+  };
+}
+
 export async function getVolumePageByPath(
   collectionId: string,
   seriesSlug: string,

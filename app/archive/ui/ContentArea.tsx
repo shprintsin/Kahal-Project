@@ -35,11 +35,21 @@ export function ContentArea({
       return;
     }
 
+    let cancelled = false;
     setLoading(true);
+
     getSeriesWithVolumes(selectedCollectionSlug, selectedSeriesSlug)
-      .then(setSeriesData)
-      .catch(err => console.error('Error fetching series volumes:', err))
-      .finally(() => setLoading(false));
+      .then(data => {
+        if (!cancelled) setSeriesData(data);
+      })
+      .catch(err => {
+        if (!cancelled) console.error('Error fetching series volumes:', err);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => { cancelled = true; };
   }, [selectedCollectionSlug, selectedSeriesSlug]);
 
   // Determine view state and render

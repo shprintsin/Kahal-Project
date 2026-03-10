@@ -78,6 +78,8 @@ export default function DatasetLandingPage({ dataset }: DatasetLandingPageProps)
   const [activeTab, setActiveTab] = useState<string>('description');
 
   useEffect(() => {
+    let cancelled = false;
+
     const processMarkdown = async () => {
       try {
         const file = await unified()
@@ -86,36 +88,45 @@ export default function DatasetLandingPage({ dataset }: DatasetLandingPageProps)
           .use(remarkRehype)
           .use(rehypeStringify)
           .process(dataset.description);
-        
-        setDescriptionHtml(String(file));
+
+        if (!cancelled) setDescriptionHtml(String(file));
       } catch (err) {
-        console.error('Error processing markdown:', err);
-        setDescriptionHtml(dataset.description);
+        if (!cancelled) {
+          console.error('Error processing markdown:', err);
+          setDescriptionHtml(dataset.description);
+        }
       }
     };
 
     processMarkdown();
+    return () => { cancelled = true; };
   }, [dataset.description]);
 
   useEffect(() => {
-    if (dataset.codebook_text) {
-      const processCodebook = async () => {
-        try {
-          const file = await unified()
-            .use(remarkParse)
-            .use(remarkGfm)
-            .use(remarkRehype)
-            .use(rehypeStringify)
-            .process(dataset.codebook_text);
-          
-          setCodebookHtml(String(file));
-        } catch (err) {
+    if (!dataset.codebook_text) return;
+
+    let cancelled = false;
+
+    const processCodebook = async () => {
+      try {
+        const file = await unified()
+          .use(remarkParse)
+          .use(remarkGfm)
+          .use(remarkRehype)
+          .use(rehypeStringify)
+          .process(dataset.codebook_text);
+
+        if (!cancelled) setCodebookHtml(String(file));
+      } catch (err) {
+        if (!cancelled) {
           console.error('Error processing codebook:', err);
           setCodebookHtml(dataset.codebook_text || '');
         }
-      };
-      processCodebook();
-    }
+      }
+    };
+
+    processCodebook();
+    return () => { cancelled = true; };
   }, [dataset.codebook_text]);
 
   const handleCodebookClick = (e: React.MouseEvent) => {

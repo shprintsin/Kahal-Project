@@ -44,7 +44,7 @@ export default function PostPage({ post }: { post: PostData }) {
       </div>
 
       {/* Main Content */}
-      <main className="container w-10/12 mx-auto px-4 py-8">
+      <main className="container w-full px-4 md:w-10/12 md:px-4 mx-auto py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Article */}
           <div className="lg:col-span-2">
@@ -80,8 +80,8 @@ export default function PostPage({ post }: { post: PostData }) {
           </MetaRow>
                 </div>
 
-                <div 
-                  className="prose prose-lg max-w-none p-8 md:p-12 
+                <div
+                  className="prose prose-lg max-w-none p-4 md:p-8 lg:p-12
                     leading-relaxed text-gray-800 
                     [&>h1]:text-4xl [&>h1]:font-bold [&>h1]:text-brand-dark [&>h1]:mb-6 [&>h1]:mt-8 [&>h1]:font-['Secular_One']
                     [&>h2]:text-3xl [&>h2]:font-bold [&>h2]:text-brand-primary [&>h2]:mb-4 [&>h2]:mt-6 [&>h2]:font-['Secular_One']

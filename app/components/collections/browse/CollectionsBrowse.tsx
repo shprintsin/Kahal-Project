@@ -106,42 +106,39 @@ export default function CollectionsBrowse({ collections, allSeries }: Collection
 
   // Fetch volumes when series is selected
   useEffect(() => {
-    // console.log('useEffect triggered - selectedSeriesId:', selectedSeriesId);
-    
-    if (selectedSeriesId) {
-      setLoadingVolumes(true);
-      const API_URL = process.env.NEXT_PUBLIC_ADMIN_API_URL || '';
-
-      fetch(`${API_URL}/api/series/${selectedSeriesId}/volumes`)
-        .then((res) => {
-          // console.log('Volumes response status:', res.status);
-          if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-          }
-          return res.json();
-        })
-        .then((data) => {
-          
-          // Ensure data is an array
-          if (Array.isArray(data)) {
-            setSelectedSeriesVolumes(data);
-          } else {
-            console.error('Volumes data is not an array:', data);
-            setSelectedSeriesVolumes([]);
-          }
-          setLoadingVolumes(false);
-        })
-        .catch((error) => {
-          console.error('Error fetching volumes - Full error:', error);
-          console.error('Error message:', error.message);
-          console.error('Error stack:', error.stack);
-          setSelectedSeriesVolumes([]);
-          setLoadingVolumes(false);
-        });
-    } else {
-      // console.log('No selectedSeriesId, clearing volumes');
+    if (!selectedSeriesId) {
       setSelectedSeriesVolumes([]);
+      return;
     }
+
+    const controller = new AbortController();
+    setLoadingVolumes(true);
+    const API_URL = process.env.NEXT_PUBLIC_ADMIN_API_URL || '';
+
+    fetch(`${API_URL}/api/series/${selectedSeriesId}/volumes`, { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setSelectedSeriesVolumes(data);
+        } else {
+          console.error('Volumes data is not an array:', data);
+          setSelectedSeriesVolumes([]);
+        }
+        setLoadingVolumes(false);
+      })
+      .catch((error) => {
+        if (error.name === 'AbortError') return;
+        console.error('Error fetching volumes:', error.message);
+        setSelectedSeriesVolumes([]);
+        setLoadingVolumes(false);
+      });
+
+    return () => controller.abort();
   }, [selectedSeriesId]);
 
 
@@ -290,9 +287,9 @@ export default function CollectionsBrowse({ collections, allSeries }: Collection
               </div>
 
               {/* View Controls */}
-              <div className="bg-white border border-gray-200 p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+              <div className="bg-white border border-gray-200 p-4 mb-6 flex flex-col sm:flex-row flex-wrap items-start sm:items-center justify-between gap-4">
                 {/* Sort and Items Per Page */}
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600">מיון:</span>
                     <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)} dir='rtl'>
