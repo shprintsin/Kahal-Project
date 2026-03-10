@@ -28,6 +28,8 @@ const rubik = Rubik({
   display: "swap",
 });
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Kahal",
   description: "Digital Archive of Jewish Communities",
