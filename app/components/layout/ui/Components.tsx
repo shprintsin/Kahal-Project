@@ -45,7 +45,7 @@ export const MetaItem = ({ icon: Icon, children, href }: MetaItemProps) => {
 
   if (href) {
     return (
-      <Link href={href} className="hover:underline hover:text-[#0d4d2c] transition-colors">
+      <Link href={href} className="hover:underline hover:text-brand-primary-dark transition-colors">
         {content}
       </Link>
     );
@@ -57,7 +57,7 @@ export const MetaItem = ({ icon: Icon, children, href }: MetaItemProps) => {
 
 export const ButtonIcons = ({children, className}: {children: ReactNode, className?: string}) => {
   return (
-      <Button className={cn("bg-[#0d4d2c] hover:bg-[#083d22]",className)} 
+      <Button className={cn("bg-brand-primary-dark hover:bg-brand-primary-darker",className)}
       >
                  
                     {children}
@@ -105,7 +105,7 @@ export const LinkTitle = ({ children, className, href }: { children: ReactNode; 
 );
 
 export const ReadMore = ({ children, className, href }: ReadMoreProps) => (
-  <a href={href} className={`flex justify-between items-center text-[#5c6d3f] hover:text-[var(--dark-green)] transition-colors duration-200 ${className ?? ""}`} > <span className="secular font-bold">{children}</span> <ArrowLeft className="h-5 w-5" /> </a>
+  <a href={href} className={`flex justify-between items-center text-brand-secondary hover:text-brand-primary transition-colors duration-200 ${className ?? ""}`} > <span className="secular font-bold">{children}</span> <ArrowLeft className="h-5 w-5" /> </a>
 );
 
 

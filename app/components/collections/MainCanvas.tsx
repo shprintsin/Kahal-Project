@@ -46,7 +46,7 @@ export default function MainCanvas({ volume }: MainCanvasProps) {
                 onClick={() => handleModeChange('scan')}
                 className={`p-2 rounded-md transition-all ${
                   state.mode === 'scan'
-                    ? 'bg-[#1a472a] text-white shadow-md'
+                    ? 'bg-brand-primary text-white shadow-md'
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
                 title="תצוגת סריקה"
@@ -57,7 +57,7 @@ export default function MainCanvas({ volume }: MainCanvasProps) {
                 onClick={() => handleModeChange('text')}
                 className={`p-2 rounded-md transition-all ${
                   state.mode === 'text'
-                    ? 'bg-[#1a472a] text-white shadow-md'
+                    ? 'bg-brand-primary text-white shadow-md'
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
                 title="תצוגת טקסט"
@@ -68,7 +68,7 @@ export default function MainCanvas({ volume }: MainCanvasProps) {
                 onClick={() => handleModeChange('comparison')}
                 className={`p-2 rounded-md transition-all ${
                   state.mode === 'comparison'
-                    ? 'bg-[#1a472a] text-white shadow-md'
+                    ? 'bg-brand-primary text-white shadow-md'
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
                 title="תצוגת השוואה"

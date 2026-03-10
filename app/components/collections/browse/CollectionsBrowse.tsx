@@ -266,10 +266,10 @@ export default function CollectionsBrowse({ collections, allSeries }: Collection
           {/* Tabs for Browse Mode */}
           <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-6 rounded-none" dir="rtl">
             <TabsList className="bg-white border border-gray-200">
-              <TabsTrigger value="collections" className="data-[state=active]:bg-[#1a472a] rounded-none data-[state=active]:text-white">
+              <TabsTrigger value="collections" className="data-[state=active]:bg-brand-primary rounded-none data-[state=active]:text-white">
                 אוספים
               </TabsTrigger>
-              <TabsTrigger value="series" className="rounded-none data-[state=active]:bg-[#1a472a] data-[state=active]:text-white">
+              <TabsTrigger value="series" className="rounded-none data-[state=active]:bg-brand-primary data-[state=active]:text-white">
                 סדרות
               </TabsTrigger>
             </TabsList>
@@ -377,7 +377,7 @@ export default function CollectionsBrowse({ collections, allSeries }: Collection
                                         e.stopPropagation();
                                         handleSeriesClick(series.id);
                                       }}
-                                      className="flex items-center justify-between p-3 mb-2 last:mb-0 bg-white border border-gray-200 hover:border-[#1a472a] cursor-pointer transition-colors"
+                                      className="flex items-center justify-between p-3 mb-2 last:mb-0 bg-white border border-gray-200 hover:border-brand-primary cursor-pointer transition-colors"
                                       dir="rtl"
                                     >
                                       <div>
@@ -387,7 +387,7 @@ export default function CollectionsBrowse({ collections, allSeries }: Collection
                                         </p>
                                       </div>
                                       {selectedSeriesId === series.id && (
-                                        <ChevronDown className="w-5 h-5 text-[#1a472a]" />
+                                        <ChevronDown className="w-5 h-5 text-brand-primary" />
                                       )}
                                     </div>
                                   );
@@ -419,7 +419,7 @@ export default function CollectionsBrowse({ collections, allSeries }: Collection
                               </p>
                             </div>
                             {selectedSeriesId === series.id && (
-                              <ChevronDown className="w-5 h-5 text-[#1a472a]" />
+                              <ChevronDown className="w-5 h-5 text-brand-primary" />
                             )}
                           </div>
                         );

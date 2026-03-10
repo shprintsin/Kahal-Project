@@ -34,7 +34,7 @@ export default function ThumbnailsView({ data, browseMode, onCollectionClick }: 
 
               {/* Content */}
               <div className="p-3">
-                <h3 className="text-sm font-bold text-[#1a472a] line-clamp-2 group-hover:text-[#131e1e] mb-1 font-['Secular_One']">
+                <h3 className="text-sm font-bold text-brand-primary line-clamp-2 group-hover:text-brand-dark mb-1 font-['Secular_One']">
                   {volume.metadata.title}
                 </h3>
                 <p className="text-xs text-gray-600 italic">
@@ -60,7 +60,7 @@ export default function ThumbnailsView({ data, browseMode, onCollectionClick }: 
 
               {/* Content */}
               <div className="p-3">
-                <h3 className="text-sm font-bold text-[#1a472a] line-clamp-2 mb-1 font-['Secular_One']">
+                <h3 className="text-sm font-bold text-brand-primary line-clamp-2 mb-1 font-['Secular_One']">
                   {collection.id}
                 </h3>
                 <p className="text-xs text-gray-600 italic">

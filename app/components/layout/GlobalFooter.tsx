@@ -15,7 +15,7 @@ export default function GlobalFooter({ links, copyrightText }: GlobalFooterProps
   return (
 
 
-    <footer className="bg-[#0d4d2c] text-white py-8">
+    <footer className="bg-brand-primary-dark text-white py-8">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
@@ -49,7 +49,7 @@ export default function GlobalFooter({ links, copyrightText }: GlobalFooterProps
               </ul>
             </div>
           </div>
-          <div className="mt-8 pt-6 border-t border-[#0a3d22] text-center text-sm">
+          <div className="mt-8 pt-6 border-t border-border-footer text-center text-sm">
             <p>© 2024 פרויקט הקהל. כל הזכויות שמורות.</p>
           </div>
         </div>

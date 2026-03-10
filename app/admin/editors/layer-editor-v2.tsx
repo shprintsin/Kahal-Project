@@ -748,23 +748,23 @@ export function LayerEditorV2({ layer, mode }: LayerEditorProps) {
           </DialogHeader>
           <div className="space-y-4">
             {layer?.thumbnail && !capturedThumbnail && (
-              <div className="border rounded-lg overflow-hidden bg-gray-50">
-                <img 
-                  src={layer.thumbnail} 
-                  alt="Current layer thumbnail" 
+              <div className="border rounded-lg overflow-hidden bg-muted">
+                <img
+                  src={layer.thumbnail}
+                  alt="Current layer thumbnail"
                   className="w-full h-auto"
                 />
-                <div className="p-2 bg-gray-100 text-sm text-gray-600">
+                <div className="p-2 bg-muted text-sm text-muted-foreground">
                   Current Thumbnail
                 </div>
               </div>
             )}
             
             {capturedThumbnail && (
-              <div className="border rounded-lg overflow-hidden bg-gray-50">
-                <img 
-                  src={capturedThumbnail} 
-                  alt="Captured thumbnail" 
+              <div className="border rounded-lg overflow-hidden bg-muted">
+                <img
+                  src={capturedThumbnail}
+                  alt="Captured thumbnail"
                   className="w-full h-auto"
                 />
                 <div className="p-2 bg-emerald-100 text-sm text-emerald-800">

@@ -69,7 +69,7 @@ export default function ProgressBar({ totalPages }: ProgressBarProps) {
         onMouseDown={handleMouseDown}
       >
         <div
-          className="absolute top-0 left-0 h-full bg-[#1a472a] rounded-full transition-all duration-150"
+          className="absolute top-0 left-0 h-full bg-brand-primary rounded-full transition-all duration-150"
           style={{ width: `${progress}%` }}
         />
       </div>
@@ -78,7 +78,7 @@ export default function ProgressBar({ totalPages }: ProgressBarProps) {
       <button
         onClick={() => setInverted(!inverted)}
         className={`p-2 rounded-md transition-colors ${
-          inverted ? 'bg-[#1a472a] text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+          inverted ? 'bg-brand-primary text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
         }`}
         title="היפוך צבעים"
       >

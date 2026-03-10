@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Maximize2, Minimize2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import type { Map } from '@/types/api-types';
 import type { MapConfig } from '@/types/map-config';
 import 'leaflet/dist/leaflet.css';
@@ -10,10 +12,43 @@ interface MapPreviewProps {
 }
 
 export function MapPreview({ map }: MapPreviewProps) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = useCallback(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    if (!document.fullscreenElement) {
+      el.requestFullscreen().catch((err) => {
+        console.warn('Fullscreen request failed:', err);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  }, []);
+
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      const active = !!document.fullscreenElement;
+      setIsFullscreen(active);
+
+      if (mapInstanceRef.current) {
+        setTimeout(() => {
+          mapInstanceRef.current.invalidateSize();
+        }, 200);
+      }
+    };
+
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', onFullscreenChange);
+    };
+  }, []);
 
   useEffect(() => {
     const initMap = async () => {
@@ -22,7 +57,6 @@ export function MapPreview({ map }: MapPreviewProps) {
       setLoading(true);
       setError(null);
 
-      // Clean up existing map FIRST
       if (mapInstanceRef.current) {
         try {
           mapInstanceRef.current.remove();
@@ -32,16 +66,13 @@ export function MapPreview({ map }: MapPreviewProps) {
         mapInstanceRef.current = null;
       }
 
-      // Small delay to ensure DOM is ready
       await new Promise(resolve => setTimeout(resolve, 100));
 
       if (!mapRef.current) return;
 
       try {
-        // Dynamically import Leaflet and mapLayout to avoid SSR issues
         const { mapLayout } = await import('@/lib/mapUtils');
 
-        // Transform API map data to MapConfig format
         const mapConfig: MapConfig = {
           tile: map.config?.tile || {
             src: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -55,9 +86,9 @@ export function MapPreview({ map }: MapPreviewProps) {
             id: layer.id,
             name: layer.name,
             type: layer.type === 'POINTS' ? 'point' : 'polygon',
-            sourceType: layer.sourceType || 'url', // Add sourceType
+            sourceType: layer.sourceType || 'url',
             url: layer.sourceUrl,
-            data: layer.geoJsonData || null, // Add GeoJSON data from database
+            data: layer.geoJsonData || null,
             visible: layer.isVisibleByDefault,
             style: layer.styleConfig?.style || (layer.type === 'POINTS' ? {
               type: 'simple',
@@ -80,7 +111,6 @@ export function MapPreview({ map }: MapPreviewProps) {
           customCSS: map.config?.customCSS
         };
 
-        // Create new map
         mapInstanceRef.current = await mapLayout(mapRef.current, mapConfig);
         setLoading(false);
       } catch (error) {
@@ -105,7 +135,10 @@ export function MapPreview({ map }: MapPreviewProps) {
   }, [map]);
 
   return (
-    <div className="w-full h-full min-h-[600px] rounded-lg border overflow-hidden relative bg-gray-100">
+    <div
+      ref={containerRef}
+      className="w-full h-full min-h-[600px] rounded-lg border overflow-hidden relative bg-gray-100"
+    >
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
           <div className="text-center">
@@ -122,7 +155,18 @@ export function MapPreview({ map }: MapPreviewProps) {
           </div>
         </div>
       )}
-      <div ref={mapRef} className="w-full h-full min-h-[600px]" />
+
+      <Button
+        variant="outline"
+        size="icon-sm"
+        onClick={toggleFullscreen}
+        className="absolute top-3 left-3 z-[1000] bg-white/90 backdrop-blur-sm shadow-md hover:bg-white"
+        title={isFullscreen ? 'צא ממסך מלא' : 'מסך מלא'}
+      >
+        {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+      </Button>
+
+      <div ref={mapRef} className={`w-full ${isFullscreen ? 'h-screen' : 'h-full min-h-[600px]'}`} />
     </div>
   );
 }

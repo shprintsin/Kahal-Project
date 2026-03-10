@@ -40,7 +40,7 @@ export default function HomePageComponent({
       {/* Fixed Background + Overlay */}
       <div>
         <div className="fixed top-0 left-0 w-full h-screen bg-[url('/images/historical-map.png')] bg-cover bg-center bg-no-repeat pointer-events-none -z-10"></div>
-        <div className="fixed inset-0 bg-[#48680E] opacity-70 pointer-events-none"></div>
+        <div className="fixed inset-0 bg-surface-hero opacity-70 pointer-events-none"></div>
 
         {/* Page Content */}
 

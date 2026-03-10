@@ -1,12 +1,32 @@
 "use client"
 
+import { useState } from 'react'
 import Header from '@/app/components/layout/header/Header'
 import GlobalFooter from '@/app/components/layout/GlobalFooter'
 import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data'
 import { MapPreview } from "@/app/maps/[slug]/components/MapPreview"
-import { Calendar, FileText, Link as LinkIcon, Download, Info } from "lucide-react"
+import { Calendar, Download, FileText, Info, Link as LinkIcon, Loader2 } from "lucide-react"
+import { Button } from '@/components/ui/button'
+import { fetchAndDownloadGeoJson } from '@/lib/downloadGeoJson'
 
 export function LayerDetailClient({ layer }: { layer: any }) {
+  const [downloading, setDownloading] = useState(false)
+
+  const handleGeoJsonDownload = async () => {
+    setDownloading(true)
+    try {
+      await fetchAndDownloadGeoJson(
+        layer.id,
+        layer.name,
+        layer.geoJsonData,
+        layer.sourceUrl,
+      )
+    } catch (err) {
+      console.error(`Failed to download layer "${layer.name}":`, err)
+    } finally {
+      setDownloading(false)
+    }
+  }
   
   /**
    * Load map preview settings from layer configuration
@@ -146,9 +166,9 @@ export function LayerDetailClient({ layer }: { layer: any }) {
                         </li>
                     </ul>
 
-                    {layer.downloadUrl && (
-                        <div className="mt-8">
-                            <a 
+                    <div className="mt-8 space-y-3">
+                        {layer.downloadUrl && (
+                            <a
                                 href={layer.downloadUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -157,8 +177,21 @@ export function LayerDetailClient({ layer }: { layer: any }) {
                                 <Download className="w-4 h-4" />
                                 הורדת נתונים מלאים
                             </a>
-                        </div>
-                    )}
+                        )}
+                        <Button
+                            variant="outline"
+                            className="w-full justify-center gap-2 font-bold"
+                            onClick={handleGeoJsonDownload}
+                            disabled={downloading}
+                        >
+                            {downloading ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                                <Download className="w-4 h-4" />
+                            )}
+                            הורדת GeoJSON
+                        </Button>
+                    </div>
                 </div>
             </div>
 
