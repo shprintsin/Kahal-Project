@@ -7,10 +7,9 @@ import Header from '@/app/components/layout/header/Header'
 import GlobalFooter from '@/app/components/layout/GlobalFooter'
 import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data'
 import { useIsMobile } from '@/lib/hooks/use-mobile'
-import { fetchAndDownloadGeoJson } from '@/lib/downloadGeoJson'
 import { MapPreview } from './components/MapPreview'
 import { LayerDownloadButton } from './components/LayerDownloadButton'
-import type { Map, MapLayer } from '@/types/api-types'
+import type { Map } from '@/types/api-types'
 
 type PanelPosition = 'side' | 'bottom'
 

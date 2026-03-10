@@ -3,7 +3,7 @@ import { ActionButtonsProps } from '@/app/types';
 
 export default function ActionButtons({ items = {} }: ActionButtonsProps) {
   return (
-    <div className="flex mb-16 justify-end gap-6">
+    <div className="flex mb-8 md:mb-16 justify-end gap-3 md:gap-6 flex-wrap">
       
         <a
           href={actionItems.button1.href}

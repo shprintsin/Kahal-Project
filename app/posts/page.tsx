@@ -21,7 +21,7 @@ export default async function PostsPage() {
                     {posts.map((post) => (
                         <Link key={post.id} href={`/posts/${post.slug}`} className="block h-full group">
                             <Card className="h-full hover:shadow-lg transition-shadow bg-white flex flex-col cursor-pointer">
-                                <CardHeader className='flex items-center gap-2 font-bold text-lg text-gray-800 group-hover:text-[#0d4d2c] transition-colors'>
+                                <CardHeader className='flex items-center gap-2 font-bold text-lg text-gray-800 group-hover:text-brand-primary-dark transition-colors'>
                                     {post.title}
                                 </CardHeader>
                                 <CardContent className="text-gray-600 custom-truncate flex-grow">
@@ -29,7 +29,7 @@ export default async function PostsPage() {
                                 </CardContent>
                                 <CardFooter className="mt-auto flex justify-between items-center text-sm text-gray-500 pt-4 border-t border-gray-100">
                                     <span>{new Date(post.createdAt || "").toLocaleDateString("he-IL")}</span>
-                                    <FaDownload className="text-gray-400 group-hover:text-[#0d4d2c] transition-colors" />
+                                    <FaDownload className="text-gray-400 group-hover:text-brand-primary-dark transition-colors" />
                                 </CardFooter>
                             </Card>
                         </Link>

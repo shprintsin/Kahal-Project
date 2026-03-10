@@ -22,7 +22,7 @@ export default function VolumeDetailsSection({
       <div className="max-w-7xl mx-auto px-8 py-8">
         {/* Title Section */}
         <div className="mb-6 text-right">
-          <h1 className="text-3xl font-bold text-[#131e1e] mb-2 font-['Secular_One']">
+          <h1 className="text-3xl font-bold text-brand-dark mb-2 font-['Secular_One']">
             {title}
           </h1>
         </div>
@@ -30,7 +30,7 @@ export default function VolumeDetailsSection({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 text-right" dir="rtl">
           {/* Right Column (was Left) - Download Options */}
           <div className="lg:col-span-1">
-            <h2 className="text-lg font-bold text-[#1a472a] mb-4 flex items-center gap-2 font-['Rubik']">
+            <h2 className="text-lg font-bold text-brand-primary mb-4 flex items-center gap-2 font-['Rubik']">
               <Download className="w-5 h-5" />
               אפשרויות הורדה
             </h2>
@@ -64,7 +64,7 @@ export default function VolumeDetailsSection({
 
           {/* Middle Column - Volume Information */}
           <div className="lg:col-span-1">
-            <h2 className="text-lg font-bold text-[#1a472a] mb-4 flex items-center gap-2 font-['Rubik']">
+            <h2 className="text-lg font-bold text-brand-primary mb-4 flex items-center gap-2 font-['Rubik']">
               <Info className="w-5 h-5" />
               פרטי הכרך
             </h2>
@@ -100,28 +100,28 @@ export default function VolumeDetailsSection({
           <div className="lg:col-span-1 space-y-6">
             {volume.sources && (
               <div>
-                <h3 className="text-sm font-semibold text-[#131e1e] mb-3 font-['Secular_One']">מקורות</h3>
+                <h3 className="text-sm font-semibold text-brand-dark mb-3 font-['Secular_One']">מקורות</h3>
                 <p className="text-sm text-gray-700">{volume.sources}</p>
               </div>
             )}
             
             {volume.author && (
               <div>
-                <h3 className="text-sm font-semibold text-[#131e1e] mb-3 font-['Secular_One']">מחבר</h3>
+                <h3 className="text-sm font-semibold text-brand-dark mb-3 font-['Secular_One']">מחבר</h3>
                 <p className="text-sm text-gray-700">{volume.author}</p>
               </div>
             )}
 
             {volume.editor && (
               <div>
-                <h3 className="text-sm font-semibold text-[#131e1e] mb-3 font-['Secular_One']">עורך</h3>
+                <h3 className="text-sm font-semibold text-brand-dark mb-3 font-['Secular_One']">עורך</h3>
                 <p className="text-sm text-gray-700">{volume.editor}</p>
               </div>
             )}
 
             {volume.license && (
               <div>
-                <h3 className="text-sm font-semibold text-[#131e1e] mb-3 font-['Secular_One']">רישיון</h3>
+                <h3 className="text-sm font-semibold text-brand-dark mb-3 font-['Secular_One']">רישיון</h3>
                 <p className="text-sm text-gray-700">{volume.license}</p>
               </div>
             )}

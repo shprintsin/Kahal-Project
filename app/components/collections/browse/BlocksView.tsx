@@ -34,7 +34,7 @@ export default function BlocksView({ data, browseMode, onCollectionClick }: Bloc
 
               {/* Content */}
               <div className="p-4">
-                <h3 className="text-lg font-bold text-[#1a472a] mb-2 line-clamp-2 group-hover:text-[#131e1e] font-['Secular_One']">
+                <h3 className="text-lg font-bold text-brand-primary mb-2 line-clamp-2 group-hover:text-brand-dark font-['Secular_One']">
                   {volume.metadata.title}
                 </h3>
                 <p className="text-sm text-gray-600 italic mb-3">
@@ -63,7 +63,7 @@ export default function BlocksView({ data, browseMode, onCollectionClick }: Bloc
 
               {/* Content */}
               <div className="p-4">
-                <h3 className="text-lg font-bold text-[#1a472a] mb-2 font-['Secular_One']">
+                <h3 className="text-lg font-bold text-brand-primary mb-2 font-['Secular_One']">
                   {collection.id}
                 </h3>
                 <p className="text-sm text-gray-600 italic">
