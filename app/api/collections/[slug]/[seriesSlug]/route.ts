@@ -12,8 +12,6 @@ export async function GET(
   try {
     const { slug: collectionSlug, seriesSlug } = await params;
 
-    console.log(`[API] Fetching series: collection=${collectionSlug}, series=${seriesSlug}`);
-
     const series = await getSeriesBySlugs(collectionSlug, seriesSlug);
 
     if (!series) {

@@ -12,9 +12,6 @@ export async function GET(
   try {
     const { slug } = await params;
     
-    console.log('[API] Fetching collection by slug:', slug);
-    
-    // Use slug directly (collection uses ID as slug)
     const collection = await getCollectionDetail(slug);
     
     if (!collection) {
