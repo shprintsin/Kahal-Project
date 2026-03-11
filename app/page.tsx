@@ -8,10 +8,11 @@ import {
   footerItems,
   HomeCategories,
   heroText,
+  navigation as fallbackNavigation,
   postsMockData,
   sourcesMockData,
 } from "@/app/Data";
-import type { CategoryButton } from "@/app/types";
+import type { CategoryButton, NavItem } from "@/app/types";
 
 export const revalidate = 60;
 
@@ -55,12 +56,29 @@ export default async function HomePage() {
 
   const posts = dbPosts.length > 0 ? dbPosts : postsMockData;
 
+  const navigation: NavItem[] =
+    headerMenu && headerMenu.items.length > 0
+      ? headerMenu.items.map((item) => ({
+          label: item.label.default,
+          icon: item.icon || null,
+          href: item.url || "#",
+          subItems: item.children?.length
+            ? item.children.map((child) => ({
+                label: child.label.default,
+                icon: child.icon || null,
+                href: child.url || "#",
+              }))
+            : undefined,
+        }))
+      : fallbackNavigation;
+
   return (
     <HomePageComponent
       heroText={heroText}
       actionItems={actionItems}
       categories={categories}
       footerItems={stripItems}
+      navigation={navigation}
       posts={posts}
       sources={sourcesMockData}
       authors={authorsMockData}

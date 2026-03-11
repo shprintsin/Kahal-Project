@@ -2,9 +2,9 @@
 
 import PostSection from "../layout/homepage/PostSection";
 import CreditSection from "../layout/homepage/CreditSection";
-import { ActionButton, CategoryButton, FooterItem, HeroText, Post, Source, Author, CitationInfo } from "@/app/types";
+import { ActionButton, CategoryButton, FooterItem, HeroText, NavItem, Post, Source, Author, CitationInfo } from "@/app/types";
 import GlobalFooter from "../layout/GlobalFooter";
-import { footerLinksMockData, copyrightTextMockData, navigation } from "@/app/Data";
+import { footerLinksMockData, copyrightTextMockData } from "@/app/Data";
 import { getIcon } from "../utils/icons";
 import ActionButtons from "../layout/homepage/ActionButtons";
 import { cn } from "@/lib/utils";
@@ -20,6 +20,7 @@ export default function HomePageComponent({
   actionItems,
   categories,
   footerItems,
+  navigation,
   posts,
   sources,
   authors,
@@ -29,6 +30,7 @@ export default function HomePageComponent({
   actionItems: Record<string, ActionButton>;
   categories: CategoryButton[];
   footerItems: FooterItem[];
+  navigation: NavItem[];
   posts: Post[];
   sources: Source[];
   authors: Author[];
