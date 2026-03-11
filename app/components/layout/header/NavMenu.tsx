@@ -2,7 +2,7 @@ import { NavItem } from '@/app/types'
 import React from 'react'
 import styles from '../css/header.module.css'
 import { FaChevronDown } from "react-icons/fa"
-import { GetIcons } from '@/app/Data'
+import { DynamicIcon as GetIcons } from '@/components/ui/dynamic-icon'
 
 export default function NavMenu({ navigation, isOpen }: { navigation: NavItem[]; isOpen?: boolean }) {
   return (
