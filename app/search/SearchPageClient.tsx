@@ -2,20 +2,20 @@
 
 import PostCard from "@/app/components/views/PostCard";
 import { SearchResult } from "@/app/admin/actions/search";
-import { NavItem } from "@/app/types";
+import type { SiteShellData } from "@/app/lib/get-navigation";
 import { SiteShell, SiteMain } from "@/components/ui/site-shell";
 
 export default function SearchPageClient({
   results,
   query,
-  navigation
+  shellData,
 }: {
   results: SearchResult[];
   query: string;
-  navigation: NavItem[];
+  shellData: SiteShellData;
 }) {
   return (
-    <SiteShell navigation={navigation}>
+    <SiteShell {...shellData}>
       <SiteMain>
         <div className="flex flex-col gap-6 sm:gap-8">
           <div className="w-full lg:w-2/3 mx-auto">

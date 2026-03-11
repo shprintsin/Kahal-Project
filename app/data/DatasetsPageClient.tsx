@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import type { NavItem } from "@/app/types"
+import type { SiteShellData } from "@/app/lib/get-navigation"
 import { SiteShell, SiteMain } from "@/components/ui/site-shell"
 import Pagination from "@/app/components/views/Pagination"
 import Sidebar, {
@@ -77,11 +77,11 @@ function DatasetCard({ dataset }: { dataset: DatasetSummary }) {
 export function DatasetsPageClient({
   initialDatasets,
   categories,
-  navigation,
+  shellData,
 }: {
   initialDatasets: DatasetSummary[];
   categories: SidebarCategory[];
-  navigation: NavItem[];
+  shellData: SiteShellData;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -97,7 +97,7 @@ export function DatasetsPageClient({
   };
 
   return (
-    <SiteShell navigation={navigation}>
+    <SiteShell {...shellData}>
       <SiteMain>
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-2/3">

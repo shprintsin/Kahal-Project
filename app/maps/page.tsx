@@ -1,16 +1,16 @@
 import { listMapsAPI } from '@/app/admin/actions/maps';
 import { listCategoriesAPI } from '@/app/admin/actions/categories';
-import { getNavigation } from '@/app/lib/get-navigation';
+import { getSiteShellData } from '@/app/lib/get-navigation';
 import { MapsPageClient } from './MapsPageClient';
 
 export const revalidate = 60;
 
 export default async function MapsPage() {
 
-  const [mapsData, categoriesData, navigation] = await Promise.all([
+  const [mapsData, categoriesData, shellData] = await Promise.all([
     listMapsAPI({ status: 'published', limit: 100 }),
     listCategoriesAPI({}),
-    getNavigation(),
+    getSiteShellData(),
   ]);
 
   const maps = (mapsData.maps || []).map((m: any) => ({
@@ -35,6 +35,6 @@ export default async function MapsPage() {
   return <MapsPageClient
     initialMaps={maps}
     categories={categories}
-    navigation={navigation}
+    shellData={shellData}
   />;
 }

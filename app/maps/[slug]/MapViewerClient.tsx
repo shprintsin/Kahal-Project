@@ -8,16 +8,16 @@ import { InfoPanel, DownloadLink, ExternalLinkItem, VersionBadge } from '@/compo
 import { PageTitle } from '@/components/ui/typography'
 import { Calendar, Tag as TagIcon, MapPin } from 'lucide-react'
 import type { Map } from '@/types/api-types'
-import type { NavItem } from '@/app/types'
+import type { SiteShellData } from '@/app/lib/get-navigation'
 
 interface MapViewerClientProps {
   map: Map;
-  navigation: NavItem[];
+  shellData: SiteShellData;
 }
 
-export function MapViewerClient({ map, navigation }: MapViewerClientProps) {
+export function MapViewerClient({ map, shellData }: MapViewerClientProps) {
   return (
-    <SiteShell navigation={navigation}>
+    <SiteShell {...shellData}>
       <main className="flex-grow w-full">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="mb-10 text-right">

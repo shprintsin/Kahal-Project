@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { CategoryPageClient } from './CategoryPageClient'
-import { getNavigation } from '@/app/lib/get-navigation'
+import { getSiteShellData } from '@/app/lib/get-navigation'
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -8,11 +8,11 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const { getCategoryBySlug, listCategoriesAPI } = await import('@/app/admin/actions/categories');
   const { listPostsAPI } = await import('@/app/admin/actions/posts');
 
-  const [categoryData, postsData, categoriesData, navigation] = await Promise.all([
+  const [categoryData, postsData, categoriesData, shellData] = await Promise.all([
     getCategoryBySlug(slug, { includeContent: false }),
     listPostsAPI({ categorySlug: slug, limit: 100, status: 'published' }),
     listCategoriesAPI({}),
-    getNavigation(),
+    getSiteShellData(),
   ]);
 
   if (!categoryData) {
@@ -44,6 +44,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     initialPosts={posts}
     categories={categories}
     recentPosts={recentPosts}
-    navigation={navigation}
+    shellData={shellData}
   />;
 }

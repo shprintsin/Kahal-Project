@@ -1,14 +1,14 @@
 "use client"
 
 import { MapPreview } from "@/app/maps/[slug]/components/MapPreview"
-import type { NavItem } from "@/app/types"
+import type { SiteShellData } from "@/app/lib/get-navigation"
 import { Calendar, FileText, Link as LinkIcon, Download, Info } from "lucide-react"
 import { StatusBadgeLarge } from "@/components/ui/status-badge"
 import { ContentCard, SidebarInfoCard } from "@/components/ui/sections"
 import { DownloadButton } from "@/components/ui/action-button"
 import { SiteShell, SiteMain } from "@/components/ui/site-shell"
 
-export function LayerDetailClient({ layer, navigation }: { layer: any; navigation: NavItem[] }) {
+export function LayerDetailClient({ layer, shellData }: { layer: any; shellData: SiteShellData }) {
   const previewSettings = layer?.styleConfig?.previewSettings || {
     tile: {
       src: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -36,7 +36,7 @@ export function LayerDetailClient({ layer, navigation }: { layer: any; navigatio
   };
 
   return (
-    <SiteShell navigation={navigation}>
+    <SiteShell {...shellData}>
       <SiteMain>
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
 

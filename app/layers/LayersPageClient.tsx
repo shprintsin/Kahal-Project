@@ -7,6 +7,7 @@ import { Layers, Calendar, Eye } from "lucide-react"
 import { StatusBadge } from "@/components/ui/status-badge"
 import { ContentCard, HighlightCard } from "@/components/ui/sections"
 import { EmptyState } from "@/components/ui/empty-state"
+import type { SiteShellData } from "@/app/lib/get-navigation"
 import { SiteShell, SiteMain } from "@/components/ui/site-shell"
 
 interface LayerSummary {
@@ -82,11 +83,11 @@ function LayerCard({ layer }: { layer: LayerSummary }) {
 export function LayersPageClient({
   initialLayers,
   categories,
-  navigation,
+  shellData,
 }: {
   initialLayers: LayerSummary[];
   categories: SidebarCategory[];
-  navigation: import("@/app/types").NavItem[];
+  shellData: SiteShellData;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -102,7 +103,7 @@ export function LayersPageClient({
   };
 
   return (
-    <SiteShell navigation={navigation}>
+    <SiteShell {...shellData}>
       <SiteMain>
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           <div className="w-full lg:w-2/3">

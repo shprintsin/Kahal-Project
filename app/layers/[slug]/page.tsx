@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { LayerDetailClient } from "./LayerDetailClient";
-import { getNavigation } from "@/app/lib/get-navigation";
+import { getSiteShellData } from "@/app/lib/get-navigation";
 
 export const revalidate = 60;
 
@@ -10,9 +10,9 @@ export default async function LayerDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [{ getLayerBySlug }, navigation] = await Promise.all([
+  const [{ getLayerBySlug }, shellData] = await Promise.all([
     import("@/app/admin/actions/layers"),
-    getNavigation(),
+    getSiteShellData(),
   ]);
   const layer = await getLayerBySlug(slug);
 
@@ -20,5 +20,5 @@ export default async function LayerDetailPage({
     notFound();
   }
 
-  return <LayerDetailClient layer={layer} navigation={navigation} />;
+  return <LayerDetailClient layer={layer} shellData={shellData} />;
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import PostCard from "@/app/components/views/PostCard"
-import type { NavItem } from "@/app/types"
+import type { SiteShellData } from "@/app/lib/get-navigation"
 import Pagination from "@/app/components/views/Pagination"
 import Sidebar, {
   SidebarCategory,
@@ -31,13 +31,13 @@ export function CategoryPageClient({
   initialPosts,
   categories,
   recentPosts,
-  navigation,
+  shellData,
 }: {
   category: ApiCategory;
   initialPosts: PostSummary[];
   categories: SidebarCategory[];
   recentPosts: SidebarRecentPost[];
-  navigation: NavItem[];
+  shellData: SiteShellData;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 3;
@@ -53,7 +53,7 @@ export function CategoryPageClient({
   };
 
   return (
-    <SiteShell navigation={navigation}>
+    <SiteShell {...shellData}>
       <SiteMain>
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           <div className="w-full lg:w-2/3">

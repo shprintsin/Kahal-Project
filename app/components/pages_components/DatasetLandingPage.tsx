@@ -12,12 +12,12 @@ import remarkGfm from 'remark-gfm';
 import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
 import { SiteShell } from '@/components/ui/site-shell';
-import type { NavItem } from '@/app/types';
+import type { SiteShellData } from '@/app/lib/get-navigation';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 interface DatasetLandingPageProps {
   dataset: ResearchDataset;
-  navigation: NavItem[];
+  shellData: SiteShellData;
 }
 
 const formatFileSize = (bytes?: number): string => {
@@ -44,7 +44,7 @@ const getFileIcon = (format: string) => {
   }
 };
 
-export default function DatasetLandingPage({ dataset, navigation }: DatasetLandingPageProps) {
+export default function DatasetLandingPage({ dataset, shellData }: DatasetLandingPageProps) {
   const [descriptionHtml, setDescriptionHtml] = useState<string>('');
   const [codebookHtml, setCodebookHtml] = useState<string>('');
   const [activeTab, setActiveTab] = useState<string>('description');
@@ -96,7 +96,7 @@ export default function DatasetLandingPage({ dataset, navigation }: DatasetLandi
   };
 
   return (
-    <SiteShell navigation={navigation}>
+    <SiteShell {...shellData}>
       <main className="flex-grow w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
           <div className="mb-6 sm:mb-10 text-right">
