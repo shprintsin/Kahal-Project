@@ -7,14 +7,11 @@ interface ArchiveLayoutProps {
 
 export function ArchiveLayout({ sidebar, content }: ArchiveLayoutProps) {
   return (
-    <div className="flex flex-row min-h-screen" dir="rtl">
-      {/* Content Area - Left (70%) */}
-      <main className="flex-1 bg-white p-8">
+    <div className="flex flex-col md:flex-row min-h-screen" dir="rtl">
+      <main className="flex-1 bg-white p-4 sm:p-6 md:p-8 order-2 md:order-1">
         {content}
       </main>
-      
-      {/* Sidebar - Right (30%) - Adjusted to be flexible or default */}
-      <aside className="w-1/4 bg-gray-50 border-l border-gray-200 sticky top-0 h-screen overflow-y-auto shrink-0 sidebar-container">
+      <aside className="w-full md:w-1/3 lg:w-1/4 bg-gray-50 border-l border-gray-200 md:sticky md:top-0 md:h-screen overflow-y-auto shrink-0 sidebar-container order-1 md:order-2">
         {sidebar}
       </aside>
     </div>

@@ -1,14 +1,12 @@
 "use client"
 
-import Header from '@/app/components/layout/header/Header'
-import GlobalFooter from '@/app/components/layout/GlobalFooter'
-import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data'
+import { navigation } from '@/app/Data'
 import { MapPreview } from "@/app/maps/[slug]/components/MapPreview"
 import { Calendar, FileText, Link as LinkIcon, Download, Info } from "lucide-react"
 import { StatusBadgeLarge } from "@/components/ui/status-badge"
 import { ContentCard, SidebarInfoCard } from "@/components/ui/sections"
 import { DownloadButton } from "@/components/ui/action-button"
-import { PageLayout, PageMain } from "@/components/ui/page-layout"
+import { SiteShell, SiteMain } from "@/components/ui/site-shell"
 
 export function LayerDetailClient({ layer }: { layer: any }) {
   const previewSettings = layer?.styleConfig?.previewSettings || {
@@ -21,8 +19,6 @@ export function LayerDetailClient({ layer }: { layer: any }) {
     zoom: 6,
     center: [52.0, 20.0] as [number, number]
   };
-
-  console.log('[Layer Viewer] Using preview settings:', previewSettings);
 
   const previewMap = {
     id: `preview-${layer.id}`,
@@ -40,15 +36,13 @@ export function LayerDetailClient({ layer }: { layer: any }) {
   };
 
   return (
-    <PageLayout className="bg-gray-50">
-      <Header navigation={navigation} />
+    <SiteShell navigation={navigation}>
+      <SiteMain>
+         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
 
-      <PageMain>
-         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-            <div className="lg:col-span-2 space-y-8">
+            <div className="lg:col-span-2 space-y-6 sm:space-y-8">
                 <div>
-                     <div className="flex items-center gap-3 mb-4">
+                     <div className="flex items-center gap-3 mb-4 flex-wrap">
                         <StatusBadgeLarge variant="blue" className="uppercase">
                             {layer.type}
                         </StatusBadgeLarge>
@@ -58,15 +52,15 @@ export function LayerDetailClient({ layer }: { layer: any }) {
                              </StatusBadgeLarge>
                         )}
                      </div>
-                     <h1 className="secular text-4xl text-[var(--dark-green)] mb-6 leading-tight">{layer.name}</h1>
+                     <h1 className="secular text-2xl sm:text-3xl lg:text-4xl text-[var(--dark-green)] mb-4 sm:mb-6 leading-tight">{layer.name}</h1>
 
-                     <div className="h-[500px] mb-8 shadow-md overflow-hidden border border-gray-200 bg-gray-100">
+                     <div className="h-[300px] sm:h-[400px] lg:h-[500px] mb-6 sm:mb-8 shadow-md overflow-hidden border border-gray-200 bg-gray-100">
                         <MapPreview map={previewMap as any} />
                      </div>
 
                      <ContentCard>
-                        <h2 className="text-2xl font-bold mb-4 secular text-gray-800">תיאור השכבה</h2>
-                         <p className="whitespace-pre-wrap text-gray-700 leading-relaxed text-lg">
+                        <h2 className="text-xl sm:text-2xl font-bold mb-4 secular text-gray-800">תיאור השכבה</h2>
+                         <p className="whitespace-pre-wrap text-gray-700 leading-relaxed text-base sm:text-lg">
                             {layer.description || "אין תיאור זמין."}
                          </p>
                      </ContentCard>
@@ -74,13 +68,13 @@ export function LayerDetailClient({ layer }: { layer: any }) {
 
                 <div className="space-y-6">
                     {(layer.citationText || layer.sources || layer.codebookText) && (
-                        <ContentCard className="space-y-8">
+                        <ContentCard className="space-y-6 sm:space-y-8">
                             {layer.citationText && (
                                 <div>
-                                    <h3 className="text-xl font-bold mb-3 flex items-center gap-2 text-gray-800 secular">
+                                    <h3 className="text-lg sm:text-xl font-bold mb-3 flex items-center gap-2 text-gray-800 secular">
                                         <FileText className="w-5 h-5 text-emerald-600"/> ציטוט מומלץ
                                     </h3>
-                                    <div className="bg-gray-50 p-4 rounded-lg text-sm text-gray-700 border border-gray-200 font-mono" dir="ltr">
+                                    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg text-sm text-gray-700 border border-gray-200 font-mono break-words" dir="ltr">
                                         {layer.citationText}
                                     </div>
                                 </div>
@@ -88,7 +82,7 @@ export function LayerDetailClient({ layer }: { layer: any }) {
 
                             {layer.sources && (
                                 <div>
-                                    <h3 className="text-xl font-bold mb-3 flex items-center gap-2 text-gray-800 secular">
+                                    <h3 className="text-lg sm:text-xl font-bold mb-3 flex items-center gap-2 text-gray-800 secular">
                                         <LinkIcon className="w-5 h-5 text-emerald-600"/> מקורות הנתונים
                                     </h3>
                                     <p className="text-gray-700 whitespace-pre-wrap">{layer.sources}</p>
@@ -97,7 +91,7 @@ export function LayerDetailClient({ layer }: { layer: any }) {
 
                             {layer.codebookText && (
                                 <div>
-                                    <h3 className="text-xl font-bold mb-3 flex items-center gap-2 text-gray-800 secular">
+                                    <h3 className="text-lg sm:text-xl font-bold mb-3 flex items-center gap-2 text-gray-800 secular">
                                         <Info className="w-5 h-5 text-emerald-600"/> מילון נתונים (Codebook)
                                     </h3>
                                     <div className="prose max-w-none text-gray-700">
@@ -132,7 +126,7 @@ export function LayerDetailClient({ layer }: { layer: any }) {
                     </ul>
 
                     {layer.downloadUrl && (
-                        <div className="mt-8">
+                        <div className="mt-6 sm:mt-8">
                             <DownloadButton href={layer.downloadUrl}>
                                 <Download className="w-4 h-4" />
                                 הורדת נתונים מלאים
@@ -143,9 +137,7 @@ export function LayerDetailClient({ layer }: { layer: any }) {
             </div>
 
          </div>
-      </PageMain>
-
-      <GlobalFooter links={footerLinksMockData} copyrightText={copyrightTextMockData} />
-    </PageLayout>
+      </SiteMain>
+    </SiteShell>
   )
 }

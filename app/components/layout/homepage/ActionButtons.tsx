@@ -4,7 +4,7 @@ import { ActionButton } from '@/components/ui/action-button';
 
 export default function ActionButtons({ items = {} }: ActionButtonsProps) {
   return (
-    <div className="flex mb-16 justify-end gap-6">
+    <div className="flex flex-col sm:flex-row mb-8 sm:mb-16 justify-end gap-3 sm:gap-6">
       <ActionButton href={actionItems.button1.href} icon={actionItems.button1.icon} iconPosition="start">
         {actionItems.button1.title}
       </ActionButton>

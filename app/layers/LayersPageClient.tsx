@@ -1,16 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import Header from '@/app/components/layout/header/Header'
-import GlobalFooter from '@/app/components/layout/GlobalFooter'
-import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data'
+import { navigation } from '@/app/Data'
 import Pagination from "@/app/components/views/Pagination"
 import Sidebar, { SidebarCategory } from "@/app/components/views/Sidebar"
 import { Layers, Calendar, Eye } from "lucide-react"
 import { StatusBadge } from "@/components/ui/status-badge"
 import { ContentCard, HighlightCard } from "@/components/ui/sections"
 import { EmptyState } from "@/components/ui/empty-state"
-import { PageLayout, PageMain } from "@/components/ui/page-layout"
+import { SiteShell, SiteMain } from "@/components/ui/site-shell"
 
 interface LayerSummary {
   id: string
@@ -28,19 +26,19 @@ interface LayerSummary {
 
 function LayerCard({ layer }: { layer: LayerSummary }) {
   return (
-    <div className="flex flex-col md:flex-row gap-6 pb-8 border-b border-gray-200">
+    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 pb-6 sm:pb-8 border-b border-gray-200">
       {layer.thumbnail && (
-        <div className="w-full md:w-1/3 flex-shrink-0">
+        <div className="w-full sm:w-1/3 flex-shrink-0">
           <img
             src={layer.thumbnail}
             alt={layer.name}
-            className="w-full h-48 object-cover rounded-lg shadow-sm"
+            className="w-full h-40 sm:h-48 object-cover rounded-lg shadow-sm"
           />
         </div>
       )}
 
       <div className="w-full flex flex-col">
-        <div className="flex items-center gap-4 text-sm text-gray-500 mb-2 rtl-dir flex-wrap">
+        <div className="flex items-center gap-2 sm:gap-4 text-sm text-gray-500 mb-2 rtl-dir flex-wrap">
           <StatusBadge variant="blue" className="uppercase">{layer.type}</StatusBadge>
           {layer.category && (
             <StatusBadge variant="emerald">{layer.category}</StatusBadge>
@@ -58,7 +56,7 @@ function LayerCard({ layer }: { layer: LayerSummary }) {
             </span>
           )}
         </div>
-        <h2 className="secular text-2xl text-[var(--dark-green)] mb-3 group transition-colors">
+        <h2 className="secular text-xl sm:text-2xl text-[var(--dark-green)] mb-3 group transition-colors">
           <a href={`/layers/${layer.slug}`} className="hover:text-emerald-700">
             {layer.name}
           </a>
@@ -103,25 +101,24 @@ export function LayersPageClient({
   };
 
   return (
-    <PageLayout>
-      <Header navigation={navigation} />
-      <PageMain>
-        <div className="flex flex-col lg:flex-row gap-8">
+    <SiteShell navigation={navigation}>
+      <SiteMain>
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           <div className="w-full lg:w-2/3">
-            <h1 className="secular text-3xl md:text-4xl text-[var(--dark-green)] mb-8 flex items-center gap-3">
-              <Layers className="w-8 h-8" />
+            <h1 className="secular text-2xl sm:text-3xl md:text-4xl text-[var(--dark-green)] mb-6 sm:mb-8 flex items-center gap-3">
+              <Layers className="w-6 h-6 sm:w-8 sm:h-8" />
               שכבות מידע גיאוגרפי
             </h1>
 
             {currentItems.length > 0 ? (
               <>
-                <ContentCard className="space-y-10 p-6 md:p-8 rounded-xl">
+                <ContentCard className="space-y-6 sm:space-y-10 p-4 sm:p-6 md:p-8 rounded-xl">
                   {currentItems.map((layer) => (
                     <LayerCard key={layer.id} layer={layer} />
                   ))}
                 </ContentCard>
                 {totalPages > 1 && (
-                  <div className="mt-10 flex justify-center">
+                  <div className="mt-8 sm:mt-10 flex justify-center">
                     <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
                   </div>
                 )}
@@ -141,7 +138,7 @@ export function LayersPageClient({
                 recentPosts={[]}
             />
 
-            <HighlightCard className="mt-8">
+            <HighlightCard className="mt-6 sm:mt-8">
                 <h3 className="text-xl font-bold mb-4 secular">אודות המאגר</h3>
                 <p className="text-emerald-100 text-sm leading-relaxed mb-4">
                     מאגר השכבות הגיאוגרפיות מאפשר גישה לנתונים הגולמיים המשמשים במפות ההיסטוריות.
@@ -150,8 +147,7 @@ export function LayersPageClient({
             </HighlightCard>
           </div>
         </div>
-      </PageMain>
-      <GlobalFooter links={footerLinksMockData} copyrightText={copyrightTextMockData} />
-    </PageLayout>
+      </SiteMain>
+    </SiteShell>
   );
 }

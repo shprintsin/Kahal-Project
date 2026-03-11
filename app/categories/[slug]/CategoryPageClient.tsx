@@ -1,15 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import Header from '@/app/components/layout/header/Header'
-import GlobalFooter from '@/app/components/layout/GlobalFooter'
-import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data'
+import { navigation } from '@/app/Data'
 import PostCard from "@/app/components/views/PostCard"
 import Pagination from "@/app/components/views/Pagination"
 import Sidebar, {
   SidebarCategory,
   SidebarRecentPost,
 } from "@/app/components/views/Sidebar"
+import { SiteShell, SiteMain } from "@/components/ui/site-shell"
 
 interface PostSummary {
   id: string | number
@@ -27,12 +26,12 @@ interface ApiCategory {
   postsCount?: number
 }
 
-export function CategoryPageClient({ 
-  category, 
+export function CategoryPageClient({
+  category,
   initialPosts,
   categories,
-  recentPosts 
-}: { 
+  recentPosts
+}: {
   category: ApiCategory;
   initialPosts: PostSummary[];
   categories: SidebarCategory[];
@@ -52,37 +51,35 @@ export function CategoryPageClient({
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 bg-opacity-50" dir="rtl">
-      <Header navigation={navigation} />
-      <main className="container mx-auto py-8 px-4 md:px-6 lg:px-8 flex-grow">
-        <div className="flex flex-col lg:flex-row gap-8">
+    <SiteShell navigation={navigation}>
+      <SiteMain>
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           <div className="w-full lg:w-2/3">
-            <h1 className="secular text-3xl md:text-4xl text-[var(--dark-green)] mb-8">
+            <h1 className="secular text-2xl sm:text-3xl md:text-4xl text-[var(--dark-green)] mb-6 sm:mb-8">
               קטגוריה: {category.title}
             </h1>
             {currentPosts.length > 0 ? (
               <>
-                <div className="space-y-8">
+                <div className="space-y-6 sm:space-y-8">
                   {currentPosts.map((post) => (
                     <PostCard key={post.id} post={post} />
                   ))}
                 </div>
                 {totalPages > 1 && (
-                  <div className="mt-10 flex justify-center">
+                  <div className="mt-8 sm:mt-10 flex justify-center">
                     <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
                   </div>
                 )}
               </>
             ) : (
-              <p className="text-gray-500 text-lg text-center py-20">לא נמצאו פריטים בקטגוריה זו.</p>
+              <p className="text-gray-500 text-base sm:text-lg text-center py-12 sm:py-20">לא נמצאו פריטים בקטגוריה זו.</p>
             )}
           </div>
           <div className="w-full lg:w-1/3">
             <Sidebar categories={categories} tags={[]} recentPosts={recentPosts} />
           </div>
         </div>
-      </main>
-      <GlobalFooter links={footerLinksMockData} copyrightText={copyrightTextMockData} />
-    </div>
+      </SiteMain>
+    </SiteShell>
   );
 }

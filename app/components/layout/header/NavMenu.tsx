@@ -1,21 +1,16 @@
 import { NavItem } from '@/app/types'
 import React from 'react'
 import styles from '../css/header.module.css'
-import {
-  FaChevronDown,
-} from "react-icons/fa"
+import { FaChevronDown } from "react-icons/fa"
 import { GetIcons } from '@/app/Data'
 
-
-
-export default function NavMenu({navigation}: {navigation: NavItem[]}) {
+export default function NavMenu({ navigation, isOpen }: { navigation: NavItem[]; isOpen?: boolean }) {
   return (
-    <nav className={styles.nav}>
+    <nav className={`${styles.nav} ${isOpen ? styles.navOpen : ''}`}>
       {navigation.map((item, index) => (
         <div key={index} className={item.subItems ? styles.navItem : ""}>
           <a href={item.href} className={styles.navLink}>
             <GetIcons icon={item.icon ?? ""} className="ml-2 text-xl" />
-            {/* {item.icon} */}
             {item.label}
             {item.subItems && <FaChevronDown className={styles.dropdownIcon} />}
           </a>
@@ -24,9 +19,9 @@ export default function NavMenu({navigation}: {navigation: NavItem[]}) {
               <div className={styles.dropdownContent}>
                 <div className={styles.dropdownList}>
                   {item.subItems.map((subItem, subIndex) => (
-                    <a 
-                      key={subIndex} 
-                      href={subItem.href} 
+                    <a
+                      key={subIndex}
+                      href={subItem.href}
                       className={styles.dropdownItem}
                     >
                       {subItem.label}

@@ -4,13 +4,12 @@ import { Button } from "@/components/ui/button"
 import { PostSideBar } from './PostSideBar'
 import Link from 'next/link'
 import { Post as ApiPost } from "@/payload-types"
-import { PageTitle, PageSubtitle, SectionTitle, SectionSubTitle } from '@/components/ui/typography'
-import { MetaRow, MetaItem, ButtonIcons, MetaDataIcons } from '@/components/ui/metadata'
-import { NoteCard, Section, RowSection } from '@/components/ui/sections'
-import { SeeMoreButton } from '@/components/ui/nav-links'
+import { PageTitle, PageSubtitle } from '@/components/ui/typography'
+import { MetaRow, MetaItem } from '@/components/ui/metadata'
+import { NoteCard, Section } from '@/components/ui/sections'
 
 interface PostData extends Omit<ApiPost, 'content' | 'author' | 'tags'> {
-  content: string // HTML string
+  content: string
   subtitle?: string
   author?: string
   category?: string
@@ -23,72 +22,40 @@ interface PostData extends Omit<ApiPost, 'content' | 'author' | 'tags'> {
 export default function PostPage({ post }: { post: PostData }) {
   return (
     <div className="min-h-screen bg-white" dir="rtl">
-      {/* Header */}
-      {/* Breadcrumbs */}
-
       <div className="bg-gray-100 py-2">
         <div className="container mx-auto px-4">
-          <div className="flex items-center text-sm text-gray-600">
-            <Link href="/" className="hover:text-[#0d4d2c]">
-              בית
-            </Link>
-            <span className="mx-2">
-              {/* ChevronRight icon here if needed */}
-            </span>
-            <Link href="/category/demography" className="hover:text-[#0d4d2c]">
-              {post.category}
-            </Link>
-            <span className="mx-2">
-              {/* ChevronRight icon here if needed */}
-            </span>
+          <div className="flex items-center text-sm text-gray-600 flex-wrap gap-1">
+            <Link href="/" className="hover:text-[#0d4d2c]">בית</Link>
+            <span className="mx-1">/</span>
+            <Link href="/category/demography" className="hover:text-[#0d4d2c]">{post.category}</Link>
+            <span className="mx-1">/</span>
             <span className="text-gray-800">{post.title}</span>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <main className="container w-10/12 mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Article */}
+      <main className="container mx-auto px-4 py-6 sm:py-8 w-full lg:w-10/12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           <div className="lg:col-span-2">
             <div className="shadow-md overflow-hidden">
-              {/* <img
-                src={post.imageUrl || "/placeholder.svg"}
-                alt={post.title}
-                width={800}
-                height={400}
-                className="w-full h-64 object-cover"
-              /> */}
-
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <div className="mb-6">
-                  <PageTitle> {post.title} </PageTitle>
-                  <PageSubtitle> {post.subtitle} </PageSubtitle>
+                  <PageTitle>{post.title}</PageTitle>
+                  <PageSubtitle>{post.subtitle}</PageSubtitle>
 
                   <MetaRow>
-      {/* Item 1: Author */}
-            <MetaItem icon={User}>
-              {post.author}
-            </MetaItem>
-
-            {/* Item 2: Date */}
-            <MetaItem icon={Calendar}>
-              {post.date}
-            </MetaItem>
-
-            {/* Item 3: Category (Clickable) */}
-            <MetaItem href={`/category/${post.category}`}>
-              {post.category}
-            </MetaItem>
-          </MetaRow>
+                    <MetaItem icon={User}>{post.author}</MetaItem>
+                    <MetaItem icon={Calendar}>{post.date}</MetaItem>
+                    <MetaItem href={`/category/${post.category}`}>{post.category}</MetaItem>
+                  </MetaRow>
                 </div>
 
-                <div 
-                  className="prose prose-lg max-w-none p-8 md:p-12 
-                    leading-relaxed text-gray-800 
-                    [&>h1]:text-4xl [&>h1]:font-bold [&>h1]:text-[#131e1e] [&>h1]:mb-6 [&>h1]:mt-8 [&>h1]:font-['Secular_One']
-                    [&>h2]:text-3xl [&>h2]:font-bold [&>h2]:text-[#1a472a] [&>h2]:mb-4 [&>h2]:mt-6 [&>h2]:font-['Secular_One']
-                    [&>h3]:text-2xl [&>h3]:font-semibold [&>h3]:text-[#1a472a] [&>h3]:mb-3 [&>h3]:mt-5
+                <div
+                  className="prose prose-lg max-w-none p-4 sm:p-8 md:p-12
+                    leading-relaxed text-gray-800
+                    [&>h1]:text-3xl [&>h1]:sm:text-4xl [&>h1]:font-bold [&>h1]:text-[#131e1e] [&>h1]:mb-6 [&>h1]:mt-8 [&>h1]:font-['Secular_One']
+                    [&>h2]:text-2xl [&>h2]:sm:text-3xl [&>h2]:font-bold [&>h2]:text-[#1a472a] [&>h2]:mb-4 [&>h2]:mt-6 [&>h2]:font-['Secular_One']
+                    [&>h3]:text-xl [&>h3]:sm:text-2xl [&>h3]:font-semibold [&>h3]:text-[#1a472a] [&>h3]:mb-3 [&>h3]:mt-5
                     [&>p]:mb-4 [&>p]:leading-8 [&>p]:text-gray-700
                     [&>ul]:mb-4 [&>ul]:mr-6 [&>ul]:list-disc
                     [&>ol]:mb-4 [&>ol]:mr-6 [&>ol]:list-decimal
@@ -100,10 +67,10 @@ export default function PostPage({ post }: { post: PostData }) {
                     [&>img]:rounded-md [&>img]:shadow-sm [&>img]:my-6
                     text-right"
                   dir="rtl"
-                  dangerouslySetInnerHTML={{ __html: post.content }} 
+                  dangerouslySetInnerHTML={{ __html: post.content }}
                 />
 
-                <div className="mt-8 pt-6 border-t border-gray-200">
+                <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
                   <div className="flex flex-wrap gap-2">
                     {post.tags.map((tag, index) => (
                       <a
@@ -116,48 +83,19 @@ export default function PostPage({ post }: { post: PostData }) {
                     ))}
                   </div>
                 </div>
-
-                
               </div>
             </div>
 
-      {/* <div className="mt-8 flex flex-row gap-8 justify-aorund w-full"> */}
-        
-        
-        <NoteCard>
-          <p>
-            
-          citationInfo  
-            </p>  
-        </NoteCard>
-        {/* <RowSection>
-                <SectionTitle>
-                  מקורות
-                </SectionTitle>
-                <div className="flex flex-col gap-8 w-full flex-grow">
-                  {post.sources.map((source) => (
-                    <article className='border-b border-b-1 border-gray-200 pb-2' key={source.id}>
-                      <h3 className='text-md font-["Secular_One"] text-gray-800'>{source.title}</h3>
-                      <small className='text-gray-500 text-xs'>עדכון אחרון: {source.year} | {source.author}</small>
-                    </article>
-                  ))}
-                </div>
-                
-          < SeeMoreButton>כל המקורות</SeeMoreButton>
-</RowSection> */}
-            </div>
-            {/* Sources */}
-            
-          {/* </div> */}
+            <NoteCard>
+              <p>citationInfo</p>
+            </NoteCard>
+          </div>
 
-          {/* Sidebar */}
           <Section className="bg-gray-400">
-          <PostSideBar post={post} />
+            <PostSideBar post={post} />
           </Section>
         </div>
       </main>
-
-      {/* Footer */}
     </div>
   )
 }

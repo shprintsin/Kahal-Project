@@ -1,19 +1,28 @@
-import React from 'react'
+"use client"
+
+import React, { useState } from 'react'
 import NavMenu from './NavMenu'
 import { NavItem } from '@/app/types'
 import Search from './Search'
-import Logo from './Logo'
 import styles from '../css/header.module.css'
 import Link from 'next/link'
 
+export default function Header({ navigation }: { navigation: NavItem[] }) {
+  const [menuOpen, setMenuOpen] = useState(false)
 
-export default function Header({navigation}: {navigation: NavItem[]}) {
   return (
     <header className={styles.header}>
       <div className={styles.container}>
-        <Link href='/'><div className={styles.logo}></div></Link>
-        <NavMenu navigation={navigation} />
-        <Search/>
+        <Link href="/"><div className={styles.logo}>קהל</div></Link>
+        <button
+          className={styles.menuToggle}
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle menu"
+        >
+          {menuOpen ? "✕" : "☰"}
+        </button>
+        <NavMenu navigation={navigation} isOpen={menuOpen} />
+        <Search />
       </div>
     </header>
   )

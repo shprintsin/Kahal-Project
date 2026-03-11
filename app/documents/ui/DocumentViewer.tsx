@@ -157,7 +157,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
               <div 
                 key={page.id} 
                 id={`page-wrapper-${index}`}
-                className={`transition-all duration-300 ${viewMode === 'side-by-side' ? 'w-full max-w-7xl grid grid-cols-2 gap-8' : 'w-auto'}`}
+                className={`transition-all duration-300 ${viewMode === 'side-by-side' ? 'w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8' : 'w-auto'}`}
               >
                   {/* Primary View */}
                   <DocumentPageRenderer 
