@@ -215,9 +215,9 @@ export async function uploadMedia(file: File) {
     });
 
     return mediaData;
-  } catch (error: any) {
+  } catch (error) {
     console.error("Upload error:", error);
-    throw new Error(`Failed to upload image: ${error.message}`);
+    throw new Error(`Failed to upload image: ${error instanceof Error ? error.message : "Unknown error"}`);
   }
 }
 

@@ -159,9 +159,9 @@ export function MapEditor({ map, mode }: MapEditorProps) {
           console.error("Update result:", result);
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Map save error:", error);
-      toast.error(error.message || "An error occurred while saving", { id: "map-save" });
+      toast.error(error instanceof Error ? error.message : "An error occurred while saving", { id: "map-save" });
     } finally {
       setIsSubmitting(false);
     }

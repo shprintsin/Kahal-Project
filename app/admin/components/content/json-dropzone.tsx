@@ -26,7 +26,7 @@ export function JsonDropzone({
     
     try {
       const text = await file.text();
-      let json: any;
+      let json: unknown;
       try {
         json = JSON.parse(text);
       } catch (e) {
@@ -34,20 +34,21 @@ export function JsonDropzone({
       }
       
       // Basic validation - check if array or object
-      if (!json || (typeof json !== 'object' && !Array.isArray(json))) {
+      if (!json || typeof json !== 'object') {
          throw new Error("Invalid format: Expected JSON object or array");
       }
 
       toast.success("JSON loaded successfully");
-      
+
       if (onFileLoaded) {
         onFileLoaded(json);
       }
       
-    } catch (err: any) {
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to process file";
       console.error("File processing error:", err);
-      setError(err.message || "Failed to process file");
-      toast.error(err.message || "Failed to process file");
+      setError(message);
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }

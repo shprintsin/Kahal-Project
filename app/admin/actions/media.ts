@@ -72,9 +72,9 @@ export async function uploadMediaFile(file: File) {
 
     revalidatePath("/admin/media");
     return mediaData;
-  } catch (error: any) {
+  } catch (error) {
     console.error("Upload error:", error);
-    throw new Error(`Failed to upload file: ${error.message}`);
+    throw new Error(`Failed to upload file: ${error instanceof Error ? error.message : "Unknown error"}`);
   }
 }
 

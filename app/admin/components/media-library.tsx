@@ -37,8 +37,8 @@ export function MediaLibrary({ media }: MediaLibraryProps) {
       }
       toast.success(`${files.length} file(s) uploaded successfully!`);
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to upload files");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to upload files");
       console.error(error);
     } finally {
       setUploading(false);

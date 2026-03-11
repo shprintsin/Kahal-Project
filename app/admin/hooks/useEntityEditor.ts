@@ -130,16 +130,16 @@ export function useEntityEditor<
           router.refresh();
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error(`${config.entityName} save error:`, error);
-      
+
       // Handle Zod validation errors
       if (error instanceof z.ZodError) {
         toast.error("Please check the form for errors");
         return;
       }
-      
-      toast.error(error.message || `Failed to save ${config.entityName.toLowerCase()}`);
+
+      toast.error(error instanceof Error ? error.message : `Failed to save ${config.entityName.toLowerCase()}`);
     } finally {
       setLoading(false);
     }
@@ -174,9 +174,9 @@ export function useEntityEditor<
       } else {
         router.refresh();
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error(`${config.entityName} delete error:`, error);
-      toast.error(error.message || `Failed to delete ${config.entityName.toLowerCase()}`);
+      toast.error(error instanceof Error ? error.message : `Failed to delete ${config.entityName.toLowerCase()}`);
     } finally {
       setDeleting(false);
     }

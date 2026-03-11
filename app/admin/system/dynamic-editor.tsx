@@ -113,8 +113,8 @@ export function DynamicEditor<T extends { id?: string }>({
     try {
       await onSave(data);
       toast.success(`${contentType.name} ${isNew ? "created" : "updated"} successfully`);
-    } catch (error: any) {
-      toast.error(error.message || `Failed to save ${contentType.name.toLowerCase()}`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : `Failed to save ${contentType.name.toLowerCase()}`);
     }
   };
   
@@ -130,8 +130,8 @@ export function DynamicEditor<T extends { id?: string }>({
     try {
       await onDelete();
       toast.success(`${contentType.name} deleted`);
-    } catch (error: any) {
-      toast.error(error.message || `Failed to delete ${contentType.name.toLowerCase()}`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : `Failed to delete ${contentType.name.toLowerCase()}`);
     }
   };
   

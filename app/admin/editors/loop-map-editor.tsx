@@ -158,9 +158,9 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
           toast.error("Failed to update map", { id: "map-save" });
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Map save error:", error);
-      toast.error(error.message || "An error occurred while saving", { id: "map-save" });
+      toast.error(error instanceof Error ? error.message : "An error occurred while saving", { id: "map-save" });
     } finally {
       setIsSubmitting(false);
     }

@@ -182,9 +182,9 @@ export function LayerEditorV2({ layer, mode, allLayers: initialLayers = [] }: La
       await deleteLayer(layer.id);
       toast.success("Layer deleted successfully!", { id: "layer-delete" });
       router.push("/admin/layers");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error deleting layer:", error);
-      toast.error(error.message || "Failed to delete layer", { id: "layer-delete" });
+      toast.error(error instanceof Error ? error.message : "Failed to delete layer", { id: "layer-delete" });
     }
   }
 
