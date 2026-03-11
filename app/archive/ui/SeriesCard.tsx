@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardHeader, CardContent, CardFooter } from '@/app/components/layout/ui/Components';
+import { SiteCard as Card, SiteCardHeader as CardHeader, SiteCardContent as CardContent, SiteCardFooter as CardFooter } from '@/components/ui/site-card';
 import { Series, SeriesWithVolumes } from '@/types/collections';
 import Link from 'next/link';
 

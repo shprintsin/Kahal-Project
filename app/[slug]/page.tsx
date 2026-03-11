@@ -4,7 +4,7 @@ import { serializeLexical } from '@/lib/lexical';
 import Header from '@/app/components/layout/header/Header';
 import GlobalFooter from '@/app/components/layout/GlobalFooter';
 import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data';
-import { Col } from '@/app/components/StyledComponent';
+import { Col } from '@/components/ui/flex';
 
 export async function generateStaticParams() {
     const { pages } = await listPagesAPI({ limit: 1000, status: 'published' });

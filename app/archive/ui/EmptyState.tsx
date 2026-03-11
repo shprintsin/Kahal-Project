@@ -1,6 +1,6 @@
 'use client';
 
-import { PageTitle, PageSubtitle } from '@/app/components/layout/ui/Components';
+import { PageTitle, PageSubtitle } from '@/components/ui/typography';
 
 export function EmptyState() {
   return (

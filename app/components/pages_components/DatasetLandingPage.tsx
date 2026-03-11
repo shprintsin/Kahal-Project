@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { ResearchDataset } from '@/types/dataset';
-import { SectionTitle } from '../layout/ui/Components';
+import { SectionTitle } from '@/components/ui/typography';
 import { FileSpreadsheet, FileJson, BookOpen, AlertCircle, FileText, Download } from 'lucide-react';
-import { Col } from '../StyledComponent';
+import { Col } from '@/components/ui/flex';
+import { MaturityBadge, PublishStatusBadge } from '@/components/ui/status-badge';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
@@ -43,34 +44,6 @@ const getFileIcon = (format: string) => {
   }
 };
 
-const getMaturityBadge = (maturity: string) => {
-  const badges = {
-    verified: { label: 'מאומת', color: 'bg-green-100 text-green-800 border-green-400' },
-    provisional: { label: 'זמני', color: 'bg-yellow-100 text-yellow-800 border-yellow-400' },
-    raw: { label: 'גולמי', color: 'bg-gray-100 text-gray-800 border-gray-400' },
-    experimental: { label: 'ניסיוני', color: 'bg-orange-100 text-orange-800 border-orange-400' }
-  };
-  const badge = badges[maturity as keyof typeof badges] || badges.raw;
-  return (
-    <span className={`px-3 py-1.5 text-sm font-semibold border-2 ${badge.color}`}>
-      {badge.label}
-    </span>
-  );
-};
-
-const getStatusBadge = (status: string) => {
-  const badges = {
-    published: { label: 'פורסם', color: 'bg-green-100 text-green-800 border-green-400' },
-    draft: { label: 'טיוטה', color: 'bg-gray-100 text-gray-800 border-gray-400' },
-    archived: { label: 'מאורכב', color: 'bg-blue-100 text-blue-800 border-blue-400' }
-  };
-  const badge = badges[status as keyof typeof badges] || badges.draft;
-  return (
-    <span className={`px-3 py-1.5 text-sm font-semibold border-2 ${badge.color}`}>
-      {badge.label}
-    </span>
-  );
-};
 
 export default function DatasetLandingPage({ dataset }: DatasetLandingPageProps) {
   const [descriptionHtml, setDescriptionHtml] = useState<string>('');
@@ -148,8 +121,8 @@ export default function DatasetLandingPage({ dataset }: DatasetLandingPageProps)
               <div className="flex flex-col gap-2 pb-4 border-b border-gray-200">
                 <dt className="text-sm font-semibold text-gray-700 secular">סטטוס</dt>
                 <dd className="flex gap-3 flex-wrap">
-                  {getStatusBadge(dataset.status)}
-                  {getMaturityBadge(dataset.maturity)}
+                  <PublishStatusBadge status={dataset.status} />
+                  <MaturityBadge maturity={dataset.maturity} />
                 </dd>
               </div>
 

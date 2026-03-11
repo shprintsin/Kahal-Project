@@ -12,7 +12,7 @@ import VolumeGrid from './VolumeGrid';
 import Pagination from './Pagination';
 import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data';
 import type { CollectionWithSeries, SeriesWithVolumes, VolumeGridItem } from '@/types/collections';
-import { SectionTitle } from '../../layout/ui/Components';
+import { SectionTitle } from '@/components/ui/typography';
 
 interface CollectionsBrowseProps {
   collections: CollectionWithSeries[];

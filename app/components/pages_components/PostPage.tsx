@@ -4,7 +4,10 @@ import { Button } from "@/components/ui/button"
 import { PostSideBar } from './PostSideBar'
 import Link from 'next/link'
 import { Post as ApiPost } from "@/payload-types"
-import ButtonIcons, { MetaItem, MetaRow, NoteCard, PageSubtitle, PageTitle, RowSection, Section, SectionSubTitle, SectionTitle, SeeMoreButton } from "../layout/ui/Components"
+import { PageTitle, PageSubtitle, SectionTitle, SectionSubTitle } from '@/components/ui/typography'
+import { MetaRow, MetaItem, ButtonIcons, MetaDataIcons } from '@/components/ui/metadata'
+import { NoteCard, Section, RowSection } from '@/components/ui/sections'
+import { SeeMoreButton } from '@/components/ui/nav-links'
 
 interface PostData extends Omit<ApiPost, 'content' | 'author' | 'tags'> {
   content: string // HTML string

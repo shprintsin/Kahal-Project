@@ -2,7 +2,7 @@ import { listPostsAPI } from '@/app/admin/actions/posts';
 import Header from '@/app/components/layout/header/Header';
 import GlobalFooter from '@/app/components/layout/GlobalFooter';
 import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data';
-import { Card, CardHeader, CardContent, CardFooter } from '@/app/components/layout/ui/Components';
+import { SiteCard as Card, SiteCardHeader as CardHeader, SiteCardContent as CardContent, SiteCardFooter as CardFooter } from '@/components/ui/site-card';
 import Link from 'next/link';
 import { FaDownload } from 'react-icons/fa';
 

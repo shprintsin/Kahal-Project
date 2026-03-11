@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import { H3 } from "@/components/ui/typography"
 
 export interface SidebarCategory {
   name: string

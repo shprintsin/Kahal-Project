@@ -9,7 +9,7 @@ import RSidebar from '@/app/components/collections/LeftSidebar';
 import LSidebar from '@/app/components/collections/RightSidebar';
 import MainCanvas from '@/app/components/collections/MainCanvas';
 import VolumeDetailsSection from '@/app/components/collections/VolumeDetailsSection';
-import { SidebarProvider } from '@/app/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import Header from '@/app/components/layout/header/Header';
 import GlobalFooter from '@/app/components/layout/GlobalFooter';
 import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data';

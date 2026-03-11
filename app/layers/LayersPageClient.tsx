@@ -6,7 +6,11 @@ import GlobalFooter from '@/app/components/layout/GlobalFooter'
 import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data'
 import Pagination from "@/app/components/views/Pagination"
 import Sidebar, { SidebarCategory } from "@/app/components/views/Sidebar"
-import { Layers, Calendar, Eye, Download } from "lucide-react"
+import { Layers, Calendar, Eye } from "lucide-react"
+import { StatusBadge } from "@/components/ui/status-badge"
+import { ContentCard, HighlightCard } from "@/components/ui/sections"
+import { EmptyState } from "@/components/ui/empty-state"
+import { PageLayout, PageMain } from "@/components/ui/page-layout"
 
 interface LayerSummary {
   id: string
@@ -25,7 +29,6 @@ interface LayerSummary {
 function LayerCard({ layer }: { layer: LayerSummary }) {
   return (
     <div className="flex flex-col md:flex-row gap-6 pb-8 border-b border-gray-200">
-      {/* Thumbnail */}
       {layer.thumbnail && (
         <div className="w-full md:w-1/3 flex-shrink-0">
           <img
@@ -35,16 +38,12 @@ function LayerCard({ layer }: { layer: LayerSummary }) {
           />
         </div>
       )}
-      
+
       <div className="w-full flex flex-col">
         <div className="flex items-center gap-4 text-sm text-gray-500 mb-2 rtl-dir flex-wrap">
-          <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs font-semibold uppercase">
-            {layer.type}
-          </span>
+          <StatusBadge variant="blue" className="uppercase">{layer.type}</StatusBadge>
           {layer.category && (
-            <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-xs font-semibold">
-              {layer.category}
-            </span>
+            <StatusBadge variant="emerald">{layer.category}</StatusBadge>
           )}
           {(layer.minYear || layer.maxYear) && (
             <span className="flex items-center gap-1">
@@ -83,10 +82,10 @@ function LayerCard({ layer }: { layer: LayerSummary }) {
   )
 }
 
-export function LayersPageClient({ 
+export function LayersPageClient({
   initialLayers,
   categories,
-}: { 
+}: {
   initialLayers: LayerSummary[];
   categories: SidebarCategory[];
 }) {
@@ -104,23 +103,23 @@ export function LayersPageClient({
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 bg-opacity-50" dir="rtl">
+    <PageLayout>
       <Header navigation={navigation} />
-      <main className="container mx-auto py-8 px-4 md:px-6 lg:px-8 flex-grow">
+      <PageMain>
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-2/3">
             <h1 className="secular text-3xl md:text-4xl text-[var(--dark-green)] mb-8 flex items-center gap-3">
               <Layers className="w-8 h-8" />
               שכבות מידע גיאוגרפי
             </h1>
-            
+
             {currentItems.length > 0 ? (
               <>
-                <div className="space-y-10 bg-white p-6 md:p-8 rounded-xl shadow-sm border border-gray-100">
+                <ContentCard className="space-y-10 p-6 md:p-8 rounded-xl">
                   {currentItems.map((layer) => (
                     <LayerCard key={layer.id} layer={layer} />
                   ))}
-                </div>
+                </ContentCard>
                 {totalPages > 1 && (
                   <div className="mt-10 flex justify-center">
                     <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
@@ -128,31 +127,31 @@ export function LayersPageClient({
                 )}
               </>
             ) : (
-              <div className="text-center py-20 bg-white rounded-xl shadow-sm border border-gray-100">
-                <Layers className="w-16 h-16 text-gray-200 mx-auto mb-4" />
-                <p className="text-gray-500 text-lg">לא נמצאו שכבות מידע כרגע.</p>
-              </div>
+              <EmptyState
+                icon={<Layers className="w-16 h-16 text-gray-200" />}
+                message="לא נמצאו שכבות מידע כרגע."
+              />
             )}
           </div>
-          
+
           <div className="w-full lg:w-1/3">
-            <Sidebar 
-                categories={categories} 
-                tags={[]} 
-                recentPosts={[]} 
+            <Sidebar
+                categories={categories}
+                tags={[]}
+                recentPosts={[]}
             />
-            
-            <div className="mt-8 bg-emerald-900 text-white p-6 rounded-xl shadow-lg">
+
+            <HighlightCard className="mt-8">
                 <h3 className="text-xl font-bold mb-4 secular">אודות המאגר</h3>
                 <p className="text-emerald-100 text-sm leading-relaxed mb-4">
                     מאגר השכבות הגיאוגרפיות מאפשר גישה לנתונים הגולמיים המשמשים במפות ההיסטוריות.
                     ניתן לצפות בנתונים, להוריד קבצי GeoJSON ולעיין בתיעוד המלא.
                 </p>
-            </div>
+            </HighlightCard>
           </div>
         </div>
-      </main>
+      </PageMain>
       <GlobalFooter links={footerLinksMockData} copyrightText={copyrightTextMockData} />
-    </div>
+    </PageLayout>
   );
 }

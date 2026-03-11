@@ -1,6 +1,7 @@
 'use client';
 
-import { PageTitle, PageSubtitle, Card } from '@/app/components/layout/ui/Components';
+import { PageTitle, PageSubtitle } from '@/components/ui/typography';
+import { SiteCard as Card } from '@/components/ui/site-card';
 import { CollectionWithSeries } from '@/types/collections';
 import { SeriesCard } from './SeriesCard';
 

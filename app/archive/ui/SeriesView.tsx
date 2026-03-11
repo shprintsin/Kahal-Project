@@ -1,6 +1,7 @@
 'use client';
 
-import { PageTitle, MetaRow, MetaItem } from '@/app/components/layout/ui/Components';
+import { PageTitle } from '@/components/ui/typography';
+import { MetaRow, MetaItem } from '@/components/ui/metadata';
 import { SeriesWithVolumes, VolumeGridItem } from '@/types/collections';
 import { VolumeCard } from './VolumeCard';
 import { Calendar, BookOpen } from 'lucide-react';
