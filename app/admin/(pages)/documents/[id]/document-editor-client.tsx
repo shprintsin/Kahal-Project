@@ -57,8 +57,7 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
   const [scanZip, setScanZip] = React.useState(document?.scanZip || "");
   // Use explicit string or Prisma type for document language
   const [docLang, setDocLang] = React.useState<PrismaContentLanguage>((document?.lang as PrismaContentLanguage) || "PL");
-  // @ts-ignore
-  const [status, setStatus] = React.useState<ContentStatus>(document?.status || "draft");
+  const [status, setStatus] = React.useState<ContentStatus>((document?.status as ContentStatus) || "draft");
   const [license, setLicense] = React.useState(document?.license || "");
   const [volume, setVolume] = React.useState(document?.volume || "");
   

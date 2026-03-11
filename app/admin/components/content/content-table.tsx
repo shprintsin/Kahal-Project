@@ -175,9 +175,7 @@ export function ContentTable<T extends { id: string }>({
               {isSelectable && (
                 <TableHead className="w-[40px] pl-2">
                   <Checkbox
-                    checked={allSelected}
-                    // @ts-ignore
-                    indeterminate={someSelected}
+                    checked={allSelected ? true : someSelected ? "indeterminate" : false}
                     onCheckedChange={handleSelectAll}
                     aria-label="Select all"
                   />
