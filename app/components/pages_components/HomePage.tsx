@@ -10,7 +10,7 @@ import ActionButtons from "../layout/homepage/ActionButtons";
 import { cn } from "@/lib/utils";
 import Header from "../layout/header/Header";
 import { GetIcons } from "@/app/Data";
-import UpdateSection from "../layout/homepage/UpdateSection";
+
 import { Col } from "../StyledComponent";
 import Link from "next/link";
 
@@ -100,7 +100,6 @@ export default function HomePageComponent({
 
               <Col className="gap-6 md:gap-10 w-full px-4 md:w-10/12 md:px-0 py-6 md:py-10">
                 <PostSection posts={posts} sources={sources} />
-                <UpdateSection posts={posts} sources={sources} />
                 <CreditSection authors={authors} citationInfo={citationInfo} />
               </Col>
 
