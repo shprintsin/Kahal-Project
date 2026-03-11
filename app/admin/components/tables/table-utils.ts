@@ -13,14 +13,15 @@ export const DEFAULT_LANGUAGES: LanguageOption[] = [
 ];
 
 export function getI18nText(
-  value: any,
+  value: unknown,
   fallbackText = "Untitled",
   order: string[] = ["en", "he", "pl"]
 ): string {
   if (typeof value === "object" && value !== null) {
+    const obj = value as Record<string, unknown>;
     for (const key of order) {
-      const v = (value as any)[key];
-      if (v) return v as string;
+      const v = obj[key];
+      if (v && typeof v === "string") return v;
     }
     const first = Object.values(value)[0];
     if (typeof first === "string" && first.length > 0) return first;
@@ -30,7 +31,7 @@ export function getI18nText(
 }
 
 // Helpers to keep table column definitions concise and reusable.
-export const i18nTextCell = (value: any, fallback?: string) => getI18nText(value, fallback);
+export const i18nTextCell = (value: unknown, fallback?: string) => getI18nText(value, fallback);
 
 export const codeCell = (text: string | number | null | undefined) =>
   React.createElement("code", { className: "text-sm" }, text ?? "-");
@@ -66,21 +67,23 @@ export function buildI18nColumns(langs: LanguageOption[], labelPrefix: string, w
   }));
 }
 
-export function flattenI18n<T extends Record<string, any>>(item: T, field: string, langs: LanguageOption[]) {
+export function flattenI18n<T>(item: T, field: string, langs: LanguageOption[]) {
+  const obj = item as Record<string, unknown>;
   return {
     ...item,
     ...langs.reduce<Record<string, string>>((acc, lang) => {
-      acc[lang.code] = (item as any)?.[field]?.[lang.code] || "";
+      const fieldValue = obj[field] as Record<string, string> | undefined;
+      acc[lang.code] = fieldValue?.[lang.code] || "";
       return acc;
     }, {}),
   };
 }
 
-export function unflattenI18n(values: Record<string, any>, field: string, langs: LanguageOption[]) {
+export function unflattenI18n(values: Record<string, unknown>, field: string, langs: LanguageOption[]) {
   return {
     ...values,
     [field]: langs.reduce<Record<string, string>>((acc, lang) => {
-      acc[lang.code] = values[lang.code] || "";
+      acc[lang.code] = (values[lang.code] as string) || "";
       return acc;
     }, {}),
   };
