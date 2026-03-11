@@ -184,47 +184,6 @@ export async function deletePost(id: string) {
   revalidatePath("/admin/posts");
 }
 
-export async function getUsers() {
-  const users = await prisma.user.findMany({
-    orderBy: {
-      name: 'asc',
-    },
-  });
-
-  return users || [];
-}
-
-export async function getCategories(language?: string) {
-  const categories = await prisma.category.findMany({
-    orderBy: {
-      title: 'asc',
-    },
-  });
-
-  return categories || [];
-}
-
-export async function getTags() {
-  const tags = await prisma.tag.findMany({
-    orderBy: {
-      slug: 'asc',
-    },
-  });
-
-  return tags || [];
-}
-
-export async function getMedia() {
-  const media = await prisma.media.findMany({
-    orderBy: {
-      createdAt: 'desc',
-    },
-    take: 50,
-  });
-
-  return media || [];
-}
-
 export async function uploadMedia(file: File) {
   try {
     // Upload to Cloudflare R2 using the existing utility

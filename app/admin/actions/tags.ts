@@ -24,10 +24,18 @@ export async function getTag(id: string) {
   return tag;
 }
 
-export async function createTag(tagData: any) {
-  const data: any = {
+interface TagInput {
+  slug: string;
+  name?: string;
+  nameI18n?: Record<string, string>;
+  name_i18n?: Record<string, string>;
+}
+
+export async function createTag(tagData: TagInput) {
+  const data = {
     slug: tagData.slug,
-    nameI18n: tagData.name_i18n || tagData.nameI18n,
+    name: tagData.name || tagData.slug,
+    nameI18n: tagData.name_i18n || tagData.nameI18n || {},
   };
 
   const createdTag = await prisma.tag.create({
@@ -38,9 +46,10 @@ export async function createTag(tagData: any) {
   return createdTag;
 }
 
-export async function updateTag(id: string, tagData: any) {
-  const data: any = {
+export async function updateTag(id: string, tagData: TagInput) {
+  const data = {
     slug: tagData.slug,
+    name: tagData.name,
     nameI18n: tagData.name_i18n || tagData.nameI18n,
   };
 

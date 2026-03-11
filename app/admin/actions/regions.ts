@@ -22,8 +22,15 @@ export async function getRegion(id: string) {
   return region;
 }
 
-export async function createRegion(regionData: any) {
-  const data: any = {
+interface RegionInput {
+  slug: string;
+  name?: string;
+  nameI18n?: Record<string, string>;
+  name_i18n?: Record<string, string>;
+}
+
+export async function createRegion(regionData: RegionInput) {
+  const data = {
     slug: regionData.slug,
     name: regionData.name || regionData.slug,
     nameI18n: regionData.nameI18n || regionData.name_i18n || {},
@@ -37,8 +44,8 @@ export async function createRegion(regionData: any) {
   return createdRegion;
 }
 
-export async function updateRegion(id: string, regionData: any) {
-  const data: any = {
+export async function updateRegion(id: string, regionData: RegionInput) {
+  const data = {
     slug: regionData.slug,
     name: regionData.name,
     nameI18n: regionData.nameI18n || regionData.name_i18n,
