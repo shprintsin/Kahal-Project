@@ -14,14 +14,15 @@ import {
 } from "@/app/admin/components/content";
 import type { ContentLanguage, ContentStatus } from "@/app/admin/types/content-system.types";
 import type { FileTreeItem } from "@/app/admin/components/content/file-tree";
+import type { PostForEditor, CategoryOption, TagOption, PostListItem } from "@/app/admin/types/editor-data";
 import { createPost, updatePost, uploadMedia } from "@/app/admin/actions/posts";
 import { generateSlugFromTitle } from "@/app/admin/utils/slug-generator";
 
 interface PostEditorClientProps {
-  post: any;
-  categories: any[];
-  tags: any[];
-  posts: any[];
+  post: PostForEditor | null;
+  categories: CategoryOption[];
+  tags: TagOption[];
+  posts: PostListItem[];
   isNew: boolean;
 }
 
@@ -43,16 +44,16 @@ function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientP
 
   // Metadata
   const [status, setStatus] = React.useState<ContentStatus>(post?.status || "draft");
-  const [categoryOptions] = React.useState(categories.map((c: any) => ({ value: c.id, label: c.title })));
+  const [categoryOptions] = React.useState(categories.map((c) => ({ value: c.id, label: c.title })));
   const [category, setCategory] = React.useState(post?.categories?.[0]?.id || "");
-  const [allTags] = React.useState(tags.map((t: any) => t.name));
-  const [postTags, setPostTags] = React.useState(post?.tags?.map((t: any) => t.tag?.name || t.name) || []);
+  const [allTags] = React.useState(tags.map((t) => t.name));
+  const [postTags, setPostTags] = React.useState(post?.tags?.map((t) => t.tag?.name || t.tag?.slug || "") || []);
   const [author] = React.useState(post?.author?.name || "");
   const [createdAt] = React.useState(post ? new Date(post.createdAt).toLocaleDateString() : "");
   const [updatedAt] = React.useState(post ? new Date(post.updatedAt).toLocaleDateString() : "");
   const [isPublic, setIsPublic] = React.useState(true);
   const [license, setLicense] = React.useState("");
-  const [attachments, setAttachments] = React.useState<any[]>([]);
+  const [attachments, setAttachments] = React.useState<{ id: string; name: string; url?: string }[]>([]);
 
   // Thumbnail
   const [thumbnailId, setThumbnailId] = React.useState<string | undefined>(post?.thumbnail?.id);

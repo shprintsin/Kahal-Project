@@ -14,14 +14,15 @@ import {
 } from "@/app/admin/components/content";
 import type { ContentLanguage, ContentStatus } from "@/app/admin/types/content-system.types";
 import type { FileTreeItem } from "@/app/admin/components/content/file-tree";
+import type { PageForEditor, TagOption, PageListItem } from "@/app/admin/types/editor-data";
 import { createPage, updatePage } from "@/app/admin/actions/pages";
 import { uploadMedia } from "@/app/admin/actions/posts";
 import { generateSlugFromTitle } from "@/app/admin/utils/slug-generator";
 
 interface PageEditorClientProps {
-  page: any;
-  tags: any[];
-  pages: any[];
+  page: PageForEditor | null;
+  tags: TagOption[];
+  pages: PageListItem[];
   isNew: boolean;
 }
 
@@ -44,14 +45,14 @@ function EditorInner({ page, tags, pages, isNew }: PageEditorClientProps) {
   // Metadata
   const [status, setStatus] = React.useState<ContentStatus>(page?.status || "draft");
   const [template, setTemplate] = React.useState(page?.template || "default");
-  const [allTags] = React.useState(tags.map((t: any) => t.name));
-  const [pageTags, setPageTags] = React.useState(page?.tags?.map((t: any) => t.name) || []);
+  const [allTags] = React.useState(tags.map((t) => t.name));
+  const [pageTags, setPageTags] = React.useState(page?.tags?.map((t) => t.name) || []);
   const [author] = React.useState(page?.author?.name || "");
   const [createdAt] = React.useState(page ? new Date(page.createdAt).toLocaleDateString() : "");
   const [updatedAt] = React.useState(page ? new Date(page.updatedAt).toLocaleDateString() : "");
   const [isPublic, setIsPublic] = React.useState(true);
   const [license, setLicense] = React.useState("");
-  const [attachments, setAttachments] = React.useState<any[]>([]);
+  const [attachments, setAttachments] = React.useState<{ id: string; name: string; url?: string }[]>([]);
   
   // Thumbnail
   const [thumbnailId, setThumbnailId] = React.useState<string | undefined>(page?.thumbnail?.id);

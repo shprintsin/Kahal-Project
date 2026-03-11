@@ -27,9 +27,22 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Edit, FileText, Hash, Calendar, Globe, Link as LinkIcon, Download } from "lucide-react";
 
+import type { DocumentWithPages } from "@/types/document";
+import type { DocumentListItem } from "@/app/admin/types/editor-data";
+
+interface DocumentPageState {
+  index: number;
+  content: string;
+  contentHe?: string | null;
+  contentEn?: string | null;
+  filename?: string | null;
+  id?: string;
+  bookmark?: string | null;
+}
+
 interface DocumentEditorClientProps {
-  document: any;
-  documents: any[];
+  document: DocumentWithPages | null;
+  documents: DocumentListItem[];
   isNew: boolean;
 }
 
@@ -62,8 +75,8 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
   const [volume, setVolume] = React.useState(document?.volume || "");
   
   // Pages
-  const [pages, setPages] = React.useState<any[]>(document?.pages || []);
-  const [editingPage, setEditingPage] = React.useState<any>(null);
+  const [pages, setPages] = React.useState<DocumentPageState[]>(document?.pages || []);
+  const [editingPage, setEditingPage] = React.useState<DocumentPageState | null>(null);
 
   // Initialize data
   React.useEffect(() => {
@@ -103,13 +116,13 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
       setIsDirty(true);
   };
 
-  const handleMetadataChange = (setter: Function, value: any) => {
+  const handleMetadataChange = <T,>(setter: React.Dispatch<React.SetStateAction<T>>, value: T) => {
     setter(value);
     setIsDirty(true);
   };
 
-  const handleFileUpload = (data: any) => {
-    let newPages: any[] = [];
+  const handleFileUpload = (data: { pages?: Record<string, string>[] } | Record<string, string>[]) => {
+    let newPages: Record<string, string>[] = [];
     if (Array.isArray(data)) {
       newPages = data;
     } else if (data.pages && Array.isArray(data.pages)) {
@@ -117,7 +130,7 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
     }
 
     if (newPages.length > 0) {
-      const mapped = newPages.map((p: any, i) => ({
+      const mapped = newPages.map((p, i) => ({
         index: i,
         content: p.content || "",
         contentHe: p.contentHe || p.he || "", // Maps 'en', 'he' from JSON
@@ -132,7 +145,7 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
     }
   };
 
-  const handlePageUpdate = (page: any) => {
+  const handlePageUpdate = (page: DocumentPageState) => {
     const currentPages = [...pages];
     const idx = currentPages.findIndex(p => p.index === page.index);
     if (idx >= 0) {
@@ -194,7 +207,7 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
           toast.error(res.error || "Failed to create");
         }
       } else {
-        const res = await updateDocument({ id: documentId, ...data });
+        const res = await updateDocument({ id: documentId!, ...data });
         if (res.success) {
           toast.success("Document updated");
           setIsDirty(false);
@@ -228,7 +241,7 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
                 toast.error(res.error || "Failed to publish");
             }
         } else {
-            const res = await updateDocument({ id: documentId, ...data });
+            const res = await updateDocument({ id: documentId!, ...data });
              if (res.success) {
                 toast.success("Published!");
                 setIsDirty(false);
@@ -246,7 +259,7 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
 
   // File Tree
   const fileTreeItems: FileTreeItem[] = React.useMemo(() => {
-    return documents.slice(0, 50).map((d: any) => ({
+    return documents.slice(0, 50).map((d) => ({
       id: d.id,
       name: d.title || d.slug || "Untitled",
       slug: d.slug,
@@ -326,7 +339,7 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
                         className="bg-transparent border-none outline-none text-sm w-full placeholder:text-muted-foreground/50"
                         placeholder="YYYY"
                         value={year}
-                        onChange={(e) => handleMetadataChange(setYear, e.target.value)}
+                        onChange={(e) => handleMetadataChange(setYear, e.target.value === "" ? "" : Number(e.target.value))}
                     />
                 </div>
             </SidebarField>
@@ -347,7 +360,7 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
                     <select
                         className="bg-transparent border-none outline-none text-sm w-full cursor-pointer"
                         value={docLang}
-                        onChange={(e) => handleMetadataChange(setDocLang, e.target.value)}
+                        onChange={(e) => handleMetadataChange(setDocLang, e.target.value as PrismaContentLanguage)}
                     >
                         <option value="PL">Polish</option>
                         <option value="EN">English</option>
@@ -448,7 +461,7 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
                 {/* Pages List */}
                 {pages.length > 0 && (
                      <div className="grid gap-2 px-1">
-                        {pages.map((page: any, idx: number) => (
+                        {pages.map((page, idx) => (
                             <div 
                                 key={idx} 
                                 className="group flex items-center justify-between p-3 rounded-lg border border-border/40 bg-card/40 hover:bg-card hover:border-border/80 transition-all cursor-pointer"
