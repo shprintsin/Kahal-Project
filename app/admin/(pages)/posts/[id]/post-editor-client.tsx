@@ -53,7 +53,7 @@ function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientP
   const [updatedAt] = React.useState(post ? new Date(post.updatedAt).toLocaleDateString() : "");
   const [isPublic, setIsPublic] = React.useState(true);
   const [license, setLicense] = React.useState("");
-  const [attachments, setAttachments] = React.useState<{ id: string; name: string; url?: string }[]>([]);
+  const [attachments, setAttachments] = React.useState<{ id: string; name: string; size: number; type: string; url?: string }[]>([]);
 
   // Thumbnail
   const [thumbnailId, setThumbnailId] = React.useState<string | undefined>(post?.thumbnail?.id);
@@ -131,7 +131,7 @@ function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientP
         toast.success("Created successfully");
         router.push(`/admin/posts/${newPost.id}`);
       } else {
-        await updatePost(postId, data);
+        await updatePost(postId!, data);
         toast.success("Saved successfully");
       }
       setIsDirty(false);
@@ -159,7 +159,7 @@ function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientP
         toast.success("Published!");
         router.push(`/admin/posts/${newPost.id}`);
       } else {
-        await updatePost(postId, data);
+        await updatePost(postId!, data);
         setStatus("published");
         toast.success("Published!");
       }

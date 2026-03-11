@@ -8,16 +8,32 @@ import { Prisma } from "@prisma/client";
 // Helper Functions
 // ===================================================
 
+interface PageInput {
+  title?: string;
+  slug?: string;
+  content?: string;
+  excerpt?: string;
+  status?: string;
+  language?: string;
+  translation_group_id?: string;
+  template?: string;
+  menuOrder?: number;
+  showInMenu?: boolean;
+  author_id?: string;
+  parent_id?: string | null;
+  thumbnail_id?: string;
+}
+
 function getLocalizedField(
   defaultValue: string | null | undefined,
-  i18nJson: any,
+  i18nJson: unknown,
   lang?: string
 ): string | null {
   if (!defaultValue && !i18nJson) return null;
   if (!lang || !i18nJson) return defaultValue || null;
   
   try {
-    const i18nData = typeof i18nJson === 'string' ? JSON.parse(i18nJson) : i18nJson;
+    const i18nData = (typeof i18nJson === 'string' ? JSON.parse(i18nJson) : i18nJson) as Record<string, string>;
     return i18nData[lang] || defaultValue || null;
   } catch {
     return defaultValue || null;
@@ -76,7 +92,7 @@ export async function getPage(id: string) {
   return page;
 }
 
-export async function createPage(pageData: any, tagIds?: string[], regionIds?: string[]) {
+export async function createPage(pageData: PageInput, tagIds?: string[], regionIds?: string[]) {
   const authorRelation = await resolveAuthorRelation(pageData.author_id);
 
   const data: any = {
@@ -115,7 +131,7 @@ export async function createPage(pageData: any, tagIds?: string[], regionIds?: s
   return createdPage;
 }
 
-export async function updatePage(id: string, pageData: any, tagIds?: string[], regionIds?: string[]) {
+export async function updatePage(id: string, pageData: PageInput, tagIds?: string[], regionIds?: string[]) {
   const authorRelation = await resolveAuthorRelation(pageData.author_id);
 
   const data: any = {

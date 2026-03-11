@@ -9,7 +9,7 @@ import {
   MarkdownFile,
   JsonPageInput,
 } from '@/types/document';
-import { ContentLanguage } from '@prisma/client';
+import { ContentLanguage, Prisma } from '@prisma/client';
 
 import { sortMarkdownFiles } from '@/app/admin/utils/document';
 
@@ -168,7 +168,7 @@ export async function createDocument(
                 contentEn: page.contentEn,
                 filename: page.filename,
                 bookmark: page.bookmark,
-                highlights: page.highlights || [],
+                highlights: (page.highlights || []) as Prisma.InputJsonValue,
               })),
             }
           : undefined,
@@ -217,7 +217,7 @@ export async function updateDocument(
                 contentEn: page.contentEn,
                 filename: page.filename,
                 bookmark: page.bookmark,
-                highlights: page.highlights || [],
+                highlights: (page.highlights || []) as Prisma.InputJsonValue,
               })),
             }
           : undefined,

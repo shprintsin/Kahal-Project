@@ -5,6 +5,19 @@ import { revalidatePath } from "@/utils/safe-revalidate";
 import { Prisma } from "@prisma/client";
 
 
+interface PostInput {
+  title?: string;
+  slug?: string;
+  content?: string;
+  language?: string;
+  status?: string;
+  translation_group_id?: string;
+  translationGroupId?: string;
+  author_id?: string;
+  thumbnail_id?: string;
+  category_id?: string;
+}
+
 async function resolveAuthorRelation(authorId?: string) {
   if (!authorId) return undefined;
 
@@ -94,7 +107,7 @@ export async function getPost(id: string) {
 }
 
 export async function createPost(
-  postData: any,
+  postData: PostInput,
   tagIds?: string[]
 ) {
   const authorRelation = await resolveAuthorRelation(postData.author_id);
@@ -133,7 +146,7 @@ export async function createPost(
 
 export async function updatePost(
   id: string,
-  postData: any,
+  postData: PostInput,
   tagIds?: string[]
 ) {
   const authorRelation = await resolveAuthorRelation(postData.author_id);
@@ -215,14 +228,14 @@ export async function uploadMedia(file: File) {
 // Helper function to get localized field
 function getLocalizedField(
   defaultValue: string | null | undefined,
-  i18nJson: any,
+  i18nJson: unknown,
   lang?: string
 ): string | null {
   if (!defaultValue && !i18nJson) return null;
   if (!lang || !i18nJson) return defaultValue || null;
   
   try {
-    const i18nData = typeof i18nJson === 'string' ? JSON.parse(i18nJson) : i18nJson;
+    const i18nData = (typeof i18nJson === 'string' ? JSON.parse(i18nJson) : i18nJson) as Record<string, string>;
     return i18nData[lang] || defaultValue || null;
   } catch {
     return defaultValue || null;

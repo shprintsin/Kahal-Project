@@ -18,11 +18,11 @@ export interface DocumentPage {
 export interface CreateDocumentPageInput {
   index: number;
   content: string;
-  contentHe?: string;
-  contentEn?: string;
-  filename?: string;
-  bookmark?: string;
-  highlights?: any;
+  contentHe?: string | null;
+  contentEn?: string | null;
+  filename?: string | null;
+  bookmark?: string | null;
+  highlights?: unknown;
 }
 
 export const documentPageSchema = z.object({

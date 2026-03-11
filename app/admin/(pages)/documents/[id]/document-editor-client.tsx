@@ -265,7 +265,7 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
       slug: d.slug,
       type: "file" as const,
       path: `/admin/documents/${d.id}`,
-      status: d.status,
+      status: d.status as ContentStatus,
     }));
   }, [documents]);
 

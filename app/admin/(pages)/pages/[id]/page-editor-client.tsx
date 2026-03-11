@@ -52,7 +52,7 @@ function EditorInner({ page, tags, pages, isNew }: PageEditorClientProps) {
   const [updatedAt] = React.useState(page ? new Date(page.updatedAt).toLocaleDateString() : "");
   const [isPublic, setIsPublic] = React.useState(true);
   const [license, setLicense] = React.useState("");
-  const [attachments, setAttachments] = React.useState<{ id: string; name: string; url?: string }[]>([]);
+  const [attachments, setAttachments] = React.useState<{ id: string; name: string; size: number; type: string; url?: string }[]>([]);
   
   // Thumbnail
   const [thumbnailId, setThumbnailId] = React.useState<string | undefined>(page?.thumbnail?.id);
@@ -132,7 +132,7 @@ function EditorInner({ page, tags, pages, isNew }: PageEditorClientProps) {
         toast.success("Created successfully");
         router.push(`/admin/pages/${newPage.id}`);
       } else {
-        await updatePage(pageId, data);
+        await updatePage(pageId!, data);
         toast.success("Saved successfully");
       }
       setIsDirty(false);
@@ -161,7 +161,7 @@ function EditorInner({ page, tags, pages, isNew }: PageEditorClientProps) {
         toast.success("Published!");
         router.push(`/admin/pages/${newPage.id}`);
       } else {
-        await updatePage(pageId, data);
+        await updatePage(pageId!, data);
         setStatus("published");
         toast.success("Published!");
       }
@@ -200,7 +200,7 @@ function EditorInner({ page, tags, pages, isNew }: PageEditorClientProps) {
           slug: p.slug,
           type: "file" as const,
           path: `/pages/${p.id}`,
-          status: p.status,
+          status: p.status as ContentStatus,
         })),
       }));
   }, [pages]);

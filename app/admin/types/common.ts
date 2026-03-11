@@ -52,7 +52,7 @@ export interface EditorSection {
 // Props for EntityEditor component
 export interface EntityEditorProps {
   title: string;
-  editor: EntityEditor;
+  editor: EntityEditor<any>;
   sections: EditorSection[];
   sidebar?: React.ReactNode;
   maxWidth?: "xl" | "2xl" | "3xl" | "4xl" | "full";
@@ -65,7 +65,7 @@ export interface EntityEditorProps {
 // Props for EntityEditorDialog component
 export interface EntityEditorDialogProps {
   title: string;
-  editor: EntityEditor;
+  editor: EntityEditor<any>;
   sections: EditorSection[];
   maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
   className?: string;

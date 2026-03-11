@@ -19,18 +19,18 @@ import { getI18nText } from "@/app/admin/components/tables/table-utils";
 
 interface Map {
   id: string;
-  titleI18n?: any;
-  title_i18n?: any;
+  titleI18n?: Record<string, string> | null;
+  title_i18n?: Record<string, string> | null;
   slug: string;
-  areaI18n?: any;
-  area_i18n?: any;
-  year?: number;
-  version?: string;
+  areaI18n?: Record<string, string> | null;
+  area_i18n?: Record<string, string> | null;
+  year?: number | null;
+  version?: string | null;
   status?: ContentStatus;
-  createdAt?: Date;
-  created_at?: Date;
-  updatedAt?: Date;
-  updated_at?: Date;
+  createdAt?: Date | string;
+  created_at?: Date | string;
+  updatedAt?: Date | string;
+  updated_at?: Date | string;
 }
 
 interface MapsListClientProps {

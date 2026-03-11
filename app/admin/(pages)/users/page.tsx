@@ -1,4 +1,4 @@
-import { getUsers } from "../../actions/posts";
+import { getUsers } from "../../actions/users";
 import { UsersTable } from "../../tables/users-table";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";

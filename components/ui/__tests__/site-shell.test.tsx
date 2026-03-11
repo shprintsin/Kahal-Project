@@ -46,7 +46,7 @@ describe("SiteShell", () => {
   })
 
   it("passes footer data", () => {
-    const cols = [{ id: "1", title: { default: "Links" }, links: [] }]
+    const cols = [{ id: "1", type: "LINK_LIST" as const, title: { default: "Links", translations: {} }, items: [], order: 0 }]
     render(
       <SiteShell navigation={nav} footerColumns={cols} copyrightText="© Test">
         C

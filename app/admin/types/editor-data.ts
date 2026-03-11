@@ -25,10 +25,15 @@ export type DocumentForEditor = Prisma.DocumentGetPayload<{
   };
 }>;
 
-export type DocumentListItem = Pick<
-  Prisma.DocumentGetPayload<{}>,
-  "id" | "title" | "slug" | "status" | "category" | "year" | "createdAt"
->;
+export type DocumentListItem = {
+  id: string;
+  title: string;
+  slug: string;
+  status: string;
+  category?: string | null;
+  year?: number | null;
+  createdAt: Date;
+};
 
 export type CategoryOption = Pick<
   Prisma.CategoryGetPayload<{}>,
@@ -47,5 +52,5 @@ export type PostListItem = Pick<
 
 export type PageListItem = Pick<
   Prisma.PageGetPayload<{}>,
-  "id" | "title" | "slug" | "status" | "createdAt"
+  "id" | "title" | "slug" | "status" | "template" | "createdAt"
 >;

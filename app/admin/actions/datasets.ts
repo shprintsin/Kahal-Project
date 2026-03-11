@@ -320,14 +320,14 @@ export interface GetMetadataOptions {
 // Helper function to get localized field
 function getLocalizedField(
   defaultValue: string | null | undefined,
-  i18nJson: any,
+  i18nJson: unknown,
   lang?: string
 ): string | null {
   if (!defaultValue && !i18nJson) return null;
   if (!lang || !i18nJson) return defaultValue || null;
   
   try {
-    const i18nData = typeof i18nJson === 'string' ? JSON.parse(i18nJson) : i18nJson;
+    const i18nData = (typeof i18nJson === 'string' ? JSON.parse(i18nJson) : i18nJson) as Record<string, string>;
     return i18nData[lang] || defaultValue || null;
   } catch {
     return defaultValue || null;

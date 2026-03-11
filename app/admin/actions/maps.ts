@@ -4,6 +4,71 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "@/utils/safe-revalidate";
 import { Prisma } from "@prisma/client";
 
+interface MapLayerInput {
+  layerId?: string;
+  id?: string;
+  name?: string;
+  type: string;
+  sourceType?: string;
+  url?: string;
+  data?: Prisma.InputJsonValue;
+  visible?: boolean;
+  style?: Prisma.InputJsonValue;
+  labels?: Prisma.InputJsonValue;
+  popup?: Prisma.InputJsonValue;
+  filter?: Prisma.InputJsonValue;
+  interactionConfig?: Prisma.InputJsonValue;
+}
+
+interface MapConfigInput {
+  tile?: string;
+  zoom?: number;
+  center?: [number, number];
+  customCSS?: string;
+  layers?: MapLayerInput[];
+}
+
+export interface MapInput {
+  slug: string;
+  status?: string;
+  title_i18n?: Prisma.InputJsonValue;
+  titleI18n?: Prisma.InputJsonValue;
+  description_i18n?: Prisma.InputJsonValue;
+  descriptionI18n?: Prisma.InputJsonValue;
+  area_i18n?: Prisma.InputJsonValue;
+  areaI18n?: Prisma.InputJsonValue;
+  year?: string | null;
+  version?: string | null;
+  thumbnail_url?: string | null;
+  thumbnailUrl?: string | null;
+  download_url?: string | null;
+  downloadUrl?: string | null;
+  download_size_bytes?: number | null;
+  downloadSizeBytes?: number | null;
+  config?: MapConfigInput;
+  global_style_config?: Prisma.InputJsonValue;
+  globalStyleConfig?: Prisma.InputJsonValue;
+  reference_links?: Prisma.InputJsonValue;
+  referenceLinks?: Prisma.InputJsonValue;
+}
+
+interface LayerAssociationInput {
+  map_id?: string;
+  mapId?: string;
+  layer_id?: string;
+  layerId?: string;
+  z_index?: number;
+  zIndex?: number;
+  is_visible?: boolean;
+  isVisible?: boolean;
+  is_visible_by_default?: boolean;
+  isVisibleByDefault?: boolean;
+  style_override?: Prisma.InputJsonValue;
+  styleOverride?: Prisma.InputJsonValue;
+  interaction_config?: Prisma.InputJsonValue;
+  interactionConfig?: Prisma.InputJsonValue;
+}
+
 // Maps
 export async function getMaps() {
   const maps = await prisma.map.findMany({
@@ -31,7 +96,7 @@ export async function getMap(id: string) {
   return map;
 }
 
-export async function createMap(mapData: any) {
+export async function createMap(mapData: MapInput) {
   // console.log("=== CREATE MAP START ===");
   // console.log("Received mapData:", JSON.stringify(mapData, null, 2));
 
@@ -95,7 +160,7 @@ export async function createMap(mapData: any) {
       await prisma.mapLayerAssociation.create({
         data: {
           mapId: createdMap.id,
-          layerId: layer.layerId || layer.id, // Associate with existing Layer
+          layerId: (layer.layerId || layer.id)!,
           zIndex: i,
           isVisible: layer.visible !== false,
           isVisibleByDefault: layer.visible !== false,
@@ -104,26 +169,18 @@ export async function createMap(mapData: any) {
             labels: layer.labels,
             popup: layer.popup,
             filter: layer.filter,
-          },
-          interactionConfig: layer.interactionConfig || {},
+          } as Prisma.InputJsonValue,
+          interactionConfig: (layer.interactionConfig || {}) as Prisma.InputJsonValue,
         },
       });
-      
-      if (sourceType === 'database') {
-        // console.log(`Layer "${layer.name}" saved to database with ${hasGeoJsonData ? 'GeoJSON data' : 'no data'}`);
-      } else {
-        // console.log(`Layer "${layer.name}" saved with sourceUrl: "${layer.url || 'none'}"`);
-      }
     }
-    // console.log("All layers created successfully");
   }
 
   revalidatePath("/admin/maps");
-  // console.log("=== CREATE MAP END ===");
   return createdMap;
 }
 
-export async function updateMap(id: string, mapData: any) {
+export async function updateMap(id: string, mapData: MapInput) {
   // console.log("=== UPDATE MAP START ===");
   // console.log("Map ID:", id);
   // console.log("Received mapData:", JSON.stringify(mapData, null, 2));
@@ -193,7 +250,7 @@ export async function updateMap(id: string, mapData: any) {
       await prisma.mapLayerAssociation.create({
         data: {
           mapId: id,
-          layerId: layer.layerId || layer.id, // Associate with existing Layer
+          layerId: (layer.layerId || layer.id)!,
           zIndex: i,
           isVisible: layer.visible !== false,
           isVisibleByDefault: layer.visible !== false,
@@ -202,18 +259,11 @@ export async function updateMap(id: string, mapData: any) {
             labels: layer.labels,
             popup: layer.popup,
             filter: layer.filter,
-          },
-          interactionConfig: layer.interactionConfig || {},
+          } as Prisma.InputJsonValue,
+          interactionConfig: (layer.interactionConfig || {}) as Prisma.InputJsonValue,
         },
       });
-      
-      if (sourceType === 'database') {
-        // console.log(`Layer "${layer.name}\" saved to database with ${hasGeoJsonData ? 'GeoJSON data' : 'no data'}`);
-      } else {
-        // console.log(`Layer "${layer.name}" saved with sourceUrl: "${layer.url || 'none'}"`);
-      }
     }
-    // console.log("All layers created successfully");
   }
 
   revalidatePath("/admin/maps");
@@ -245,7 +295,7 @@ export async function getLayers(mapId: string) {
   return associations;
 }
 
-export async function createLayerAssociation(layerData: any) {
+export async function createLayerAssociation(layerData: LayerAssociationInput) {
   const data: any = {
     mapId: layerData.map_id || layerData.mapId,
     layerId: layerData.layer_id || layerData.layerId,
@@ -269,7 +319,7 @@ export async function createLayerAssociation(layerData: any) {
   return createdAssociation;
 }
 
-export async function updateLayerAssociation(id: string, layerData: any) {
+export async function updateLayerAssociation(id: string, layerData: LayerAssociationInput) {
   const data: any = {
     layerId: layerData.layer_id || layerData.layerId,
     zIndex: layerData.z_index || layerData.zIndex,
@@ -359,14 +409,14 @@ export interface GetMapOptions {
 // Helper function to get localized field
 function getLocalizedField(
   defaultValue: string | null | undefined,
-  i18nJson: any,
+  i18nJson: unknown,
   lang?: string
 ): string | null {
   if (!defaultValue && !i18nJson) return null;
   if (!lang || !i18nJson) return defaultValue || null;
   
   try {
-    const i18nData = typeof i18nJson === 'string' ? JSON.parse(i18nJson) : i18nJson;
+    const i18nData = (typeof i18nJson === 'string' ? JSON.parse(i18nJson) : i18nJson) as Record<string, string>;
     return i18nData[lang] || defaultValue || null;
   } catch {
     return defaultValue || null;
