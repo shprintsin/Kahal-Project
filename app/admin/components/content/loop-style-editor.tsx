@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { LanguageToggle } from "./language-toggle";
 import type { ContentLanguage, LanguageConfig } from "@/app/admin/types/content-system.types";
+import { AdminSidebarCard } from "@/app/admin/components/ui/admin-sidebar-card";
 
 /**
  * LoopStyleEditor - MS Loop / Obsidian inspired editor layout
@@ -261,67 +262,15 @@ export function LoopStyleEditor({
   );
 }
 
-/**
- * SidebarCard - Card container for sidebar metadata
- */
-interface SidebarCardProps {
-  title: string;
-  children: React.ReactNode;
-  className?: string;
-  defaultOpen?: boolean;
-}
+export { AdminSidebarCard as SidebarCard } from "@/app/admin/components/ui/admin-sidebar-card";
 
-export function SidebarCard({
-  title,
-  children,
-  className,
-  defaultOpen = true,
-}: SidebarCardProps) {
-  const [isOpen, setIsOpen] = React.useState(defaultOpen);
-
-  return (
-    <div
-      className={cn(
-        "bg-card/50 rounded-lg overflow-hidden",
-        "border border-border/10",
-        className
-      )}
-    >
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "w-full px-3 py-2.5 text-left",
-          "flex items-center justify-between",
-          "text-xs font-semibold text-foreground/70 uppercase tracking-wide",
-          "hover:bg-accent/10 transition-colors"
-        )}
-      >
-        {title}
-        <span className="text-foreground/40">{isOpen ? "−" : "+"}</span>
-      </button>
-      {isOpen && (
-        <div className="px-3 pb-3 space-y-2">
-          {children}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/**
- * SidebarField - Individual field in sidebar
- */
 interface SidebarFieldProps {
   label: string;
   children: React.ReactNode;
   className?: string;
 }
 
-export function SidebarField({
-  label,
-  children,
-  className,
-}: SidebarFieldProps) {
+export function SidebarField({ label, children, className }: SidebarFieldProps) {
   return (
     <div className={cn("space-y-1", className)}>
       <div className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-wider">

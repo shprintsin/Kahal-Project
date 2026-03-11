@@ -7,6 +7,7 @@ import { Calendar, User, Tag, FileText, Shield, Hash, Paperclip, Image as ImageI
 import type { ContentStatus } from "@/app/admin/types/content-system.types";
 import { SearchableSelect, TagInput } from "./searchable-select";
 import { FileUploadWidget } from "./file-upload-widget";
+import { AdminSidebarCard, AdminFieldLabel, AdminDarkInput } from "@/app/admin/components/ui/admin-sidebar-card";
 
 /**
  * MetadataSidebar - Right sidebar with metadata cards (Loop style)
@@ -134,23 +135,23 @@ export function MetadataSidebar({
     <div className={cn("space-y-4", className)}>
       {/* Status Card */}
       {status && (
-        <SidebarCard title="Status" icon={<FileText className="w-3.5 h-3.5" />}>
+        <AdminSidebarCard title="Status" icon={<FileText className="w-3.5 h-3.5" />}>
           <SearchableSelect
             value={status}
             onValueChange={(v) => onStatusChange?.(v as ContentStatus)}
             options={statusOptions}
             placeholder="Select status"
           />
-        </SidebarCard>
+        </AdminSidebarCard>
       )}
 
       {/* Dataset Details Card */}
       {(maturity || version || (minYear !== undefined)) && (
-        <SidebarCard title="Data Details" icon={<Shield className="w-3.5 h-3.5" />}>
+        <AdminSidebarCard title="Data Details" icon={<Shield className="w-3.5 h-3.5" />}>
            <div className="space-y-3">
               {onMaturityChange && (
                   <div className="space-y-1">
-                    <label className="text-[10px] text-white/40 uppercase">Maturity</label>
+                    <AdminFieldLabel>Maturity</AdminFieldLabel>
                     <SearchableSelect
                         value={maturity || "Raw"}
                         onValueChange={(v) => onMaturityChange(v)}
@@ -161,7 +162,7 @@ export function MetadataSidebar({
               )}
               {onVersionChange && (
                   <div className="space-y-1">
-                    <label className="text-[10px] text-white/40 uppercase">Version</label>
+                    <AdminFieldLabel>Version</AdminFieldLabel>
                     <input 
                         type="text" 
                         value={version || ""} 
@@ -173,7 +174,7 @@ export function MetadataSidebar({
               )}
               {(onMinYearChange || onMaxYearChange) && (
                   <div className="space-y-1">
-                     <label className="text-[10px] text-white/40 uppercase">Year Range</label>
+                     <AdminFieldLabel>Year Range</AdminFieldLabel>
                      <div className="flex items-center gap-2">
                         <input
                            type="number"
@@ -194,11 +195,11 @@ export function MetadataSidebar({
                   </div>
               )}
            </div>
-        </SidebarCard>
+        </AdminSidebarCard>
       )}
 
       {/* Category Card */}
-      <SidebarCard title="Category" icon={<Hash className="w-3.5 h-3.5" />}>
+      <AdminSidebarCard title="Category" icon={<Hash className="w-3.5 h-3.5" />}>
         <SearchableSelect
           value={category}
           onValueChange={(v) => onCategoryChange?.(v)}
@@ -207,11 +208,11 @@ export function MetadataSidebar({
           placeholder="Select category"
           createText="Create category"
         />
-      </SidebarCard>
+      </AdminSidebarCard>
 
       {/* Tags Card */}
       {onTagsChange && (
-        <SidebarCard title="Tags" icon={<Tag className="w-3.5 h-3.5" />}>
+        <AdminSidebarCard title="Tags" icon={<Tag className="w-3.5 h-3.5" />}>
           <TagInput
             value={tags}
             onChange={onTagsChange}
@@ -219,12 +220,12 @@ export function MetadataSidebar({
             onCreateTag={onCreateTag}
             placeholder="Search or create tags..."
           />
-        </SidebarCard>
+        </AdminSidebarCard>
       )}
 
       {/* Attachments/Resources Card */}
       {onAttachmentsChange && (
-        <SidebarCard title="Resources" icon={<Paperclip className="w-3.5 h-3.5" />}>
+        <AdminSidebarCard title="Resources" icon={<Paperclip className="w-3.5 h-3.5" />}>
           <FileUploadWidget
             files={attachments}
             onFilesChange={onAttachmentsChange}
@@ -232,12 +233,12 @@ export function MetadataSidebar({
             maxFiles={10}
             maxSize={10 * 1024 * 1024}
           />
-        </SidebarCard>
+        </AdminSidebarCard>
       )}
 
       {/* Visibility Card */}
       {onVisibilityChange && (
-        <SidebarCard title="Visibility" icon={<Shield className="w-3.5 h-3.5" />}>
+        <AdminSidebarCard title="Visibility" icon={<Shield className="w-3.5 h-3.5" />}>
           <div className="flex items-center justify-between">
             <span className="text-sm text-white/60">
               {isPublic ? "Public" : "Private"}
@@ -248,23 +249,23 @@ export function MetadataSidebar({
               className="data-[state=checked]:bg-emerald-600"
             />
           </div>
-        </SidebarCard>
+        </AdminSidebarCard>
       )}
 
       {/* Author Card */}
       {author && (
-        <SidebarCard title="Author" icon={<User className="w-3.5 h-3.5" />}>
+        <AdminSidebarCard title="Author" icon={<User className="w-3.5 h-3.5" />}>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-medium text-white">
               {author.split(" ").map((n) => n[0]).join("").slice(0, 2)}
             </div>
             <span className="text-sm text-white/80">{author}</span>
           </div>
-        </SidebarCard>
+        </AdminSidebarCard>
       )}
 
       {/* Dates Card */}
-      <SidebarCard title="Dates" icon={<Calendar className="w-3.5 h-3.5" />}>
+      <AdminSidebarCard title="Dates" icon={<Calendar className="w-3.5 h-3.5" />}>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-white/40">Created</span>
@@ -277,52 +278,20 @@ export function MetadataSidebar({
             </div>
           )}
         </div>
-      </SidebarCard>
+      </AdminSidebarCard>
 
       {/* License Card */}
       {onLicenseChange && license && (
-        <SidebarCard title="License" icon={<Shield className="w-3.5 h-3.5" />}>
+        <AdminSidebarCard title="License" icon={<Shield className="w-3.5 h-3.5" />}>
           <SearchableSelect
             value={license}
             onValueChange={(v) => onLicenseChange?.(v)}
             options={licenseOptions}
             placeholder="Select license"
           />
-        </SidebarCard>
+        </AdminSidebarCard>
       )}
     </div>
   );
 }
 
-/**
- * SidebarCard - Card wrapper for sidebar sections
- */
-interface SidebarCardProps {
-  title: string;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-  className?: string;
-}
-
-function SidebarCard({ title, icon, children, className }: SidebarCardProps) {
-  return (
-    <div
-      className={cn(
-        "bg-[#1a1a1a] rounded-lg",
-        "border border-white/5",
-        "overflow-hidden",
-        className
-      )}
-    >
-      <div className="px-3 py-2 border-b border-white/5 flex items-center gap-2">
-        {icon && <span className="text-white/40">{icon}</span>}
-        <span className="text-[10px] font-medium text-white/50 uppercase tracking-wide">
-          {title}
-        </span>
-      </div>
-      <div className="p-3">
-        {children}
-      </div>
-    </div>
-  );
-}
