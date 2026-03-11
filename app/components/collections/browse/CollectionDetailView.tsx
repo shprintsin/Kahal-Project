@@ -6,23 +6,23 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import Header from '@/app/components/layout/header/Header';
-import GlobalFooter from '@/app/components/layout/GlobalFooter';
+import { SiteShell } from '@/components/ui/site-shell';
+import type { SiteShellData } from '@/app/lib/get-navigation';
 import DetailsView from './DetailsView';
 import BlocksView from './BlocksView';
 import ThumbnailsView from './ThumbnailsView';
 import Pagination from './Pagination';
-import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data';
 import type { ICollectionEntry, IVolumeEntry } from '@/types/collections';
 
 interface CollectionDetailViewProps {
   collection: ICollectionEntry;
+  siteShellData: SiteShellData;
 }
 
 type ViewMode = 'details' | 'blocks' | 'thumbs';
 type SortMode = 'name-asc' | 'name-desc';
 
-export default function CollectionDetailView({ collection }: CollectionDetailViewProps) {
+export default function CollectionDetailView({ collection, siteShellData }: CollectionDetailViewProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -90,8 +90,7 @@ export default function CollectionDetailView({ collection }: CollectionDetailVie
   const volumesCount = (collection.volumes || []).length;
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 text-right">
-      <Header navigation={navigation} />
+    <SiteShell {...siteShellData}>
 
       <main className="flex-1">
         <div className="max-w-7xl w-11/12 mx-auto px-4 py-12 space-y-6">
@@ -201,7 +200,6 @@ export default function CollectionDetailView({ collection }: CollectionDetailVie
         </div>
       </main>
     
-      <GlobalFooter links={footerLinksMockData} copyrightText={copyrightTextMockData} />
-    </div>
+    </SiteShell>
   );
 }

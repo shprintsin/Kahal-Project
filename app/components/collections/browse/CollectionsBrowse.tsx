@@ -1,29 +1,30 @@
 "use client";
 
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, useTransition } from 'react';
 import { Search, ChevronDown, ChevronRight } from 'lucide-react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import Header from '@/app/components/layout/header/Header';
-import GlobalFooter from '@/app/components/layout/GlobalFooter';
+import { getVolumesBySeriesId } from '@/app/actions/collections';
+import { SiteShell } from '@/components/ui/site-shell';
+import type { SiteShellData } from '@/app/lib/get-navigation';
 import VolumeGrid from './VolumeGrid';
 import Pagination from './Pagination';
-import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data';
 import type { CollectionWithSeries, SeriesWithVolumes, VolumeGridItem } from '@/types/collections';
 import { SectionTitle } from '@/components/ui/typography';
 
 interface CollectionsBrowseProps {
   collections: CollectionWithSeries[];
   allSeries: SeriesWithVolumes[];
+  siteShellData: SiteShellData;
 }
 
 type ViewMode = 'list' | 'grid';
 type SortMode = 'name-asc' | 'name-desc' | 'date-asc' | 'date-desc';
 type BrowseTab = 'collections' | 'series';
 
-export default function CollectionsBrowse({ collections, allSeries }: CollectionsBrowseProps) {
+export default function CollectionsBrowse({ collections, allSeries, siteShellData }: CollectionsBrowseProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -104,42 +105,19 @@ export default function CollectionsBrowse({ collections, allSeries }: Collection
     }
   }, [activeTab, searchQuery, viewMode, sortMode, itemsPerPage, currentPage, selectedSeriesId, pathname, router, searchParams]);
 
-  // Fetch volumes when series is selected
   useEffect(() => {
-    // console.log('useEffect triggered - selectedSeriesId:', selectedSeriesId);
-    
     if (selectedSeriesId) {
       setLoadingVolumes(true);
-      const API_URL = process.env.NEXT_PUBLIC_ADMIN_API_URL || '';
-
-      fetch(`${API_URL}/api/series/${selectedSeriesId}/volumes`)
-        .then((res) => {
-          // console.log('Volumes response status:', res.status);
-          if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-          }
-          return res.json();
-        })
+      getVolumesBySeriesId(selectedSeriesId)
         .then((data) => {
-          
-          // Ensure data is an array
-          if (Array.isArray(data)) {
-            setSelectedSeriesVolumes(data);
-          } else {
-            console.error('Volumes data is not an array:', data);
-            setSelectedSeriesVolumes([]);
-          }
+          setSelectedSeriesVolumes(Array.isArray(data) ? data : []);
           setLoadingVolumes(false);
         })
-        .catch((error) => {
-          console.error('Error fetching volumes - Full error:', error);
-          console.error('Error message:', error.message);
-          console.error('Error stack:', error.stack);
+        .catch(() => {
           setSelectedSeriesVolumes([]);
           setLoadingVolumes(false);
         });
     } else {
-      // console.log('No selectedSeriesId, clearing volumes');
       setSelectedSeriesVolumes([]);
     }
   }, [selectedSeriesId]);
@@ -255,8 +233,7 @@ export default function CollectionsBrowse({ collections, allSeries }: Collection
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <Header navigation={navigation} />
+    <SiteShell {...siteShellData}>
       
       <main className="flex-1">
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -478,7 +455,6 @@ export default function CollectionsBrowse({ collections, allSeries }: Collection
         </div>
       </main>
 
-      <GlobalFooter links={footerLinksMockData} copyrightText={copyrightTextMockData} />
-    </div>
+    </SiteShell>
   );
 }

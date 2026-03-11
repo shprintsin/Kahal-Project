@@ -35,8 +35,13 @@ export default async function ArchivePage() {
     );
   } catch (error) {
     console.error('Error in ArchivePage:', error);
+    const fallbackShell = await getSiteShellData().catch(() => ({
+      navigation: [],
+      footerColumns: [],
+      copyrightText: "",
+    }));
     return (
-      <SiteShell {...shellData}>
+      <SiteShell {...fallbackShell}>
         <div className="flex-1 p-4 sm:p-8 text-center">
           <h1 className="text-xl sm:text-2xl font-bold text-red-600 mb-4">שגיאה בטעינת הארכיון</h1>
           <p className="text-gray-600 mb-4">

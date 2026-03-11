@@ -1,5 +1,6 @@
 import CollectionDetailView from '@/app/components/collections/browse/CollectionDetailView';
 import type { Collection } from '@/types/collections';
+import { getSiteShellData } from '@/app/lib/get-navigation';
 import { notFound } from 'next/navigation';
 
 function getApiUrl(): string {
@@ -31,11 +32,14 @@ export default async function SelectedCollectionPage({
   params: Promise<{ collectionId: string }>;
 }) {
   const { collectionId } = await params;
-  const collection = await getCollection(collectionId);
+  const [collection, shellData] = await Promise.all([
+    getCollection(collectionId),
+    getSiteShellData(),
+  ]);
 
   if (!collection) {
     notFound();
   }
 
-  return <CollectionDetailView collection={collection} />;
+  return <CollectionDetailView collection={collection} siteShellData={shellData} />;
 }

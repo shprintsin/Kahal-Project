@@ -10,22 +10,23 @@ import LSidebar from '@/app/components/collections/RightSidebar';
 import MainCanvas from '@/app/components/collections/MainCanvas';
 import VolumeDetailsSection from '@/app/components/collections/VolumeDetailsSection';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import Header from '@/app/components/layout/header/Header';
-import GlobalFooter from '@/app/components/layout/GlobalFooter';
-import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data';
+import { SiteShell } from '@/components/ui/site-shell';
+import type { SiteShellData } from '@/app/lib/get-navigation';
 
 interface VolumeViewerProps {
   volume: any;
   collectionSlug: string;
   seriesSlug: string;
   volumeSlug: string;
+  siteShellData: SiteShellData;
 }
 
-export default function VolumeViewer({ 
-  volume, 
+export default function VolumeViewer({
+  volume,
   collectionSlug,
   seriesSlug,
-  volumeSlug
+  volumeSlug,
+  siteShellData
 }: VolumeViewerProps) {
   const { setTotalPages } = useViewer();
   
@@ -46,8 +47,7 @@ export default function VolumeViewer({
   });
 
   return (
-    <>
-      <Header navigation={navigation} />
+    <SiteShell {...siteShellData}>
       <SidebarProvider defaultOpen={false}>
         <div className="flex flex-col min-h-screen w-full bg-gray-50">
           {/* Top Toolbar */}
@@ -77,7 +77,6 @@ export default function VolumeViewer({
           />
         </div>
       </SidebarProvider>
-      <GlobalFooter links={footerLinksMockData} copyrightText={copyrightTextMockData} />
-    </>
+    </SiteShell>
   );
 }

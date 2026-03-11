@@ -100,6 +100,24 @@ export async function getSeriesWithVolumes(collectionId: string, seriesSlug: str
   }
 }
 
+export async function getVolumesBySeriesId(seriesId: string) {
+  try {
+    const volumes = await prisma.volume.findMany({
+      where: { seriesId },
+      orderBy: { indexNumber: 'asc' },
+      include: {
+        series: {
+          select: { collectionId: true },
+        },
+      },
+    });
+    return JSON.parse(JSON.stringify(volumes));
+  } catch (error) {
+    console.error(`Error fetching volumes for series ${seriesId}:`, error);
+    return [];
+  }
+}
+
 export async function getVolumeWithPages(collectionId: string, seriesSlug: string, volumeSlug: string): Promise<VolumeWithPages | null> {
   try {
      const volume = await prisma.volume.findFirst({

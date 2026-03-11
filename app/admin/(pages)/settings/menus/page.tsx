@@ -1,11 +1,5 @@
 "use client";
 
-/**
- * Menus Settings Page - Redesigned for Better UX
- * 
- * Interactive site customizer with inline editing (no dialogs).
- */
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

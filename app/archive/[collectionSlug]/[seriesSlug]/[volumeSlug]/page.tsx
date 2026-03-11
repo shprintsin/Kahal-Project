@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { ViewerProvider } from '@/contexts/ViewerContext';
 import { getVolumeWithPages } from '@/app/actions/collections';
+import { getSiteShellData } from '@/app/lib/get-navigation';
 import VolumeViewer from './VolumeViewer';
 
 interface PageProps {
@@ -21,7 +22,10 @@ export default async function VolumePage({ params, searchParams }: PageProps) {
   const { page, pageRange } = await searchParams;
   
   try {
-    const volume = await getVolumeWithPages(collectionSlug, seriesSlug, volumeSlug);
+    const [volume, shellData] = await Promise.all([
+      getVolumeWithPages(collectionSlug, seriesSlug, volumeSlug),
+      getSiteShellData(),
+    ]);
     
     if (!volume) {
       notFound();
@@ -48,11 +52,12 @@ export default async function VolumePage({ params, searchParams }: PageProps) {
         initialPageRange={initialPageRange}
       >
         <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
-          <VolumeViewer 
+          <VolumeViewer
             volume={volume}
             collectionSlug={collectionSlug}
             seriesSlug={seriesSlug}
             volumeSlug={volumeSlug}
+            siteShellData={shellData}
           />
         </Suspense>
       </ViewerProvider>
