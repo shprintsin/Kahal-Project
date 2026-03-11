@@ -1,14 +1,15 @@
 import { listLayersAPI } from '@/app/admin/actions/layers';
 import { listCategoriesAPI } from '@/app/admin/actions/categories';
+import { getNavigation } from '@/app/lib/get-navigation';
 import { LayersPageClient } from './LayersPageClient';
 
 export const revalidate = 60;
 
 export default async function LayersPage() {
-  
-  const [layersData, categoriesData] = await Promise.all([
+  const [layersData, categoriesData, navigation] = await Promise.all([
     listLayersAPI({ status: 'published', limit: 100 }),
     listCategoriesAPI({}),
+    getNavigation(),
   ]);
 
   const layers = (layersData.layers || []).map((l: any) => ({
@@ -31,8 +32,9 @@ export default async function LayersPage() {
     slug: `/categories/${c.slug}`,
   }));
 
-  return <LayersPageClient 
+  return <LayersPageClient
     initialLayers={layers}
     categories={categories}
+    navigation={navigation}
   />;
 }

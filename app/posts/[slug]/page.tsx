@@ -2,9 +2,8 @@ import { getPostBySlug, listPostsAPI } from '@/app/admin/actions/posts';
 import { notFound } from 'next/navigation';
 import PostPage from '@/app/components/pages_components/PostPage';
 import { serializeLexical } from '@/lib/lexical';
-import Header from '@/app/components/layout/header/Header';
-import GlobalFooter from '@/app/components/layout/GlobalFooter';
-import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data';
+import { getNavigation } from '@/app/lib/get-navigation';
+import { SiteShell } from '@/components/ui/site-shell';
 
 export async function generateStaticParams() {
     const { posts } = await listPostsAPI({ limit: 1000, status: 'published' });
@@ -15,7 +14,10 @@ export async function generateStaticParams() {
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const post = await getPostBySlug(slug);
+    const [post, navigation] = await Promise.all([
+        getPostBySlug(slug),
+        getNavigation(),
+    ]);
 
     if (!post) {
         notFound();
@@ -23,7 +25,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
     const serializedContent = serializeLexical(post.content);
 
-    // Map API Post to PostData (expected by PostPage)
     const viewPost = {
         ...post,
         content: serializedContent,
@@ -40,12 +41,10 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-white" dir="rtl">
-            <Header navigation={navigation} />
+        <SiteShell navigation={navigation} bg="bg-white">
             <div className="flex-grow">
                 <PostPage post={viewPost} />
             </div>
-            <GlobalFooter links={footerLinksMockData} copyrightText={copyrightTextMockData} />
-        </div>
+        </SiteShell>
     );
 }

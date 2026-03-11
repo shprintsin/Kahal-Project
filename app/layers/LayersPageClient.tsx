@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { navigation } from '@/app/Data'
 import Pagination from "@/app/components/views/Pagination"
 import Sidebar, { SidebarCategory } from "@/app/components/views/Sidebar"
 import { Layers, Calendar, Eye } from "lucide-react"
@@ -83,9 +82,11 @@ function LayerCard({ layer }: { layer: LayerSummary }) {
 export function LayersPageClient({
   initialLayers,
   categories,
+  navigation,
 }: {
   initialLayers: LayerSummary[];
   categories: SidebarCategory[];
+  navigation: import("@/app/types").NavItem[];
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;

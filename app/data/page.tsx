@@ -1,14 +1,16 @@
 import { listDatasetsAPI } from '@/app/admin/actions/datasets';
 import { listCategoriesAPI } from '@/app/admin/actions/categories';
+import { getNavigation } from '@/app/lib/get-navigation';
 import { DatasetsPageClient } from './DatasetsPageClient';
 
 export const revalidate = 60;
 
 export default async function DatasetsPage() {
-  
-  const [datasetsData, categoriesData] = await Promise.all([
+
+  const [datasetsData, categoriesData, navigation] = await Promise.all([
     listDatasetsAPI({ status: 'published', limit: 100 }),
     listCategoriesAPI({}),
+    getNavigation(),
   ]);
 
   const datasets = (datasetsData.datasets || []).map((d) => ({
@@ -28,8 +30,9 @@ export default async function DatasetsPage() {
     slug: `/categories/${c.slug}`,
   }));
 
-  return <DatasetsPageClient 
+  return <DatasetsPageClient
     initialDatasets={datasets}
     categories={categories}
+    navigation={navigation}
   />;
 }

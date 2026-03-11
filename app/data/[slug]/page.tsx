@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import DatasetLandingPage from '@/app/components/pages_components/DatasetLandingPage';
 import { getDatasetBySlug } from '@/app/admin/actions/datasets';
+import { getNavigation } from '@/app/lib/get-navigation';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -8,13 +9,15 @@ interface PageProps {
 
 export default async function DatasetPage({ params }: PageProps) {
   const { slug } = await params;
-  const apiDataset = await getDatasetBySlug(slug);
+  const [apiDataset, navigation] = await Promise.all([
+    getDatasetBySlug(slug),
+    getNavigation(),
+  ]);
 
   if (!apiDataset) {
     notFound();
   }
 
-  // Map backend API ResearchDataset to frontend ResearchDataset (from @/types/dataset)
   const viewDataset: any = {
     ...apiDataset,
     category: apiDataset.category?.title || "כללי",
@@ -25,18 +28,18 @@ export default async function DatasetPage({ params }: PageProps) {
     } : undefined,
     geographic_coverage: apiDataset.regions?.map(r => r.name).join(', ') || "",
     codebook_text: apiDataset.codebookText,
-    maturity: (apiDataset.maturity === 'Validated' ? 'verified' : 
-               apiDataset.maturity === 'Preliminary' ? 'provisional' : 
+    maturity: (apiDataset.maturity === 'Validated' ? 'verified' :
+               apiDataset.maturity === 'Preliminary' ? 'provisional' :
                apiDataset.maturity?.toLowerCase()) || 'provisional',
     resources: (apiDataset.resources || []).map((r: any) => ({
       id: r.id,
       name: r.name,
       url: r.url,
       format: r.format,
-      size_bytes: 0, // Not currently in API but component has formatFileSize
+      size_bytes: 0,
       is_main_file: r.isMainFile
     }))
   };
 
-  return <DatasetLandingPage dataset={viewDataset} />;
+  return <DatasetLandingPage dataset={viewDataset} navigation={navigation} />;
 }

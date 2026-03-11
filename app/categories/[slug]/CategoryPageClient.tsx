@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { navigation } from '@/app/Data'
 import PostCard from "@/app/components/views/PostCard"
+import type { NavItem } from "@/app/types"
 import Pagination from "@/app/components/views/Pagination"
 import Sidebar, {
   SidebarCategory,
@@ -30,12 +30,14 @@ export function CategoryPageClient({
   category,
   initialPosts,
   categories,
-  recentPosts
+  recentPosts,
+  navigation,
 }: {
   category: ApiCategory;
   initialPosts: PostSummary[];
   categories: SidebarCategory[];
   recentPosts: SidebarRecentPost[];
+  navigation: NavItem[];
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 3;

@@ -4,9 +4,8 @@ import { NavigationSidebar } from '../../ui/NavigationSidebar';
 import { SeriesView } from '../../ui/SeriesView';
 import { Breadcrumbs } from '../../ui/Breadcrumbs';
 import { notFound } from 'next/navigation';
-import Header from '@/app/components/layout/header/Header';
-import GlobalFooter from '@/app/components/layout/GlobalFooter';
-import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data';
+import { getNavigation } from '@/app/lib/get-navigation';
+import { SiteShell } from '@/components/ui/site-shell';
 
 interface PageProps {
   params: Promise<{
@@ -17,34 +16,31 @@ interface PageProps {
 
 export default async function SeriesPage({ params }: PageProps) {
   const { collectionSlug, seriesSlug } = await params;
-  
+
   try {
-    // Fetch all collections for sidebar
-    const collections = await getAllCollectionsWithSeries();
-    
-    // Find the collection to get its name for breadcrumbs
-    const collection = collections.find(c => c.id === collectionSlug); // Assuming slug is ID as Collection has no slug
-    
+    const [collections, seriesData, navigation] = await Promise.all([
+      getAllCollectionsWithSeries(),
+      getSeriesWithVolumes(collectionSlug, seriesSlug),
+      getNavigation(),
+    ]);
+
+    const collection = collections.find(c => c.id === collectionSlug);
+
     if (!collection) {
       notFound();
     }
-    
-    // Fetch series with volumes
-    const seriesData = await getSeriesWithVolumes(collectionSlug, seriesSlug);
-    
+
     if (!seriesData) {
       notFound();
     }
-    
+
     return (
-      <div className="min-h-screen flex flex-col bg-gray-50">
-        <Header navigation={navigation} />
+      <SiteShell navigation={navigation}>
         <div className="flex-1">
           <ArchiveLayout
             sidebar={
-              <NavigationSidebar 
+              <NavigationSidebar
                 collections={collections}
-                
                 selectedCollectionSlug={collectionSlug}
                 selectedSeriesSlug={seriesSlug}
               />
@@ -56,7 +52,7 @@ export default async function SeriesPage({ params }: PageProps) {
                   { label: collection.nameI18n?.he || collection.name, href: `/archive/${collectionSlug}`, isActive: false },
                   { label: seriesData.nameI18n?.he || seriesData.slug, isActive: true }
                 ]} />
-                <SeriesView 
+                <SeriesView
                   series={seriesData}
                   volumes={seriesData.volumes}
                   collectionSlug={collectionSlug}
@@ -66,12 +62,10 @@ export default async function SeriesPage({ params }: PageProps) {
             }
           />
         </div>
-        <GlobalFooter links={footerLinksMockData} copyrightText={copyrightTextMockData} />
-      </div>
+      </SiteShell>
     );
   } catch (error) {
     console.error('Error loading series:', error);
     notFound();
   }
 }
-

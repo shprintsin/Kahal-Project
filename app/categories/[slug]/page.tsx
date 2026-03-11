@@ -1,17 +1,18 @@
 import { notFound } from 'next/navigation'
 import { CategoryPageClient } from './CategoryPageClient'
+import { getNavigation } from '@/app/lib/get-navigation'
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  
-  // Fetch data server-side
+
   const { getCategoryBySlug, listCategoriesAPI } = await import('@/app/admin/actions/categories');
   const { listPostsAPI } = await import('@/app/admin/actions/posts');
-  
-  const [categoryData, postsData, categoriesData] = await Promise.all([
-    getCategoryBySlug(slug, { includeContent: false }), // We fetch posts separately
+
+  const [categoryData, postsData, categoriesData, navigation] = await Promise.all([
+    getCategoryBySlug(slug, { includeContent: false }),
     listPostsAPI({ categorySlug: slug, limit: 100, status: 'published' }),
     listCategoriesAPI({}),
+    getNavigation(),
   ]);
 
   if (!categoryData) {
@@ -38,10 +39,11 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     slug: `/posts/${p.slug}`,
   }));
 
-  return <CategoryPageClient 
-    category={categoryData} 
+  return <CategoryPageClient
+    category={categoryData}
     initialPosts={posts}
     categories={categories}
     recentPosts={recentPosts}
+    navigation={navigation}
   />;
 }

@@ -1,5 +1,5 @@
 import { listPostsAPI } from '@/app/admin/actions/posts';
-import { navigation } from '@/app/Data';
+import { getNavigation } from '@/app/lib/get-navigation';
 import { SiteCard as Card, SiteCardHeader as CardHeader, SiteCardContent as CardContent, SiteCardFooter as CardFooter } from '@/components/ui/site-card';
 import { SiteShell, SiteMain } from '@/components/ui/site-shell';
 import Link from 'next/link';
@@ -8,7 +8,10 @@ import { FaDownload } from 'react-icons/fa';
 export const revalidate = 60;
 
 export default async function PostsPage() {
-    const { posts } = await listPostsAPI({ status: 'published', limit: 100 });
+    const [{ posts }, navigation] = await Promise.all([
+        listPostsAPI({ status: 'published', limit: 100 }),
+        getNavigation(),
+    ]);
 
     return (
         <SiteShell navigation={navigation}>

@@ -1,7 +1,7 @@
 import { getPageBySlug, listPagesAPI } from '@/app/admin/actions/pages';
 import { notFound } from 'next/navigation';
 import { serializeLexical } from '@/lib/lexical';
-import { navigation } from '@/app/Data';
+import { getNavigation } from '@/app/lib/get-navigation';
 import { SiteShell, SiteMain } from '@/components/ui/site-shell';
 
 export async function generateStaticParams() {
@@ -13,7 +13,10 @@ export async function generateStaticParams() {
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const page = await getPageBySlug(slug);
+    const [page, navigation] = await Promise.all([
+        getPageBySlug(slug),
+        getNavigation(),
+    ]);
 
     if (!page) {
         notFound();

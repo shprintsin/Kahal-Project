@@ -2,12 +2,15 @@ import { getAllCollectionsWithSeries } from '@/app/actions/collections';
 import { ArchiveLayout } from './ui/ArchiveLayout';
 import { NavigationSidebar } from './ui/NavigationSidebar';
 import { EmptyState } from './ui/EmptyState';
-import { navigation } from '@/app/Data';
+import { getNavigation } from '@/app/lib/get-navigation';
 import { SiteShell } from '@/components/ui/site-shell';
 
 export default async function ArchivePage() {
   try {
-    const collections = await getAllCollectionsWithSeries();
+    const [collections, navigation] = await Promise.all([
+      getAllCollectionsWithSeries(),
+      getNavigation(),
+    ]);
 
     if (!collections || collections.length === 0) {
       return (

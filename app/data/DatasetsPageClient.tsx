@@ -1,9 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import Header from '@/app/components/layout/header/Header'
-import GlobalFooter from '@/app/components/layout/GlobalFooter'
-import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data'
+import type { NavItem } from "@/app/types"
+import { SiteShell, SiteMain } from "@/components/ui/site-shell"
 import Pagination from "@/app/components/views/Pagination"
 import Sidebar, {
   SidebarCategory,
@@ -75,12 +74,14 @@ function DatasetCard({ dataset }: { dataset: DatasetSummary }) {
   )
 }
 
-export function DatasetsPageClient({ 
+export function DatasetsPageClient({
   initialDatasets,
   categories,
-}: { 
+  navigation,
+}: {
   initialDatasets: DatasetSummary[];
   categories: SidebarCategory[];
+  navigation: NavItem[];
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -96,9 +97,8 @@ export function DatasetsPageClient({
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 bg-opacity-50" dir="rtl">
-      <Header navigation={navigation} />
-      <main className="container mx-auto py-8 px-4 md:px-6 lg:px-8 flex-grow">
+    <SiteShell navigation={navigation}>
+      <SiteMain>
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-2/3">
             <h1 className="secular text-3xl md:text-4xl text-[var(--dark-green)] mb-8 flex items-center gap-3">
@@ -146,8 +146,7 @@ export function DatasetsPageClient({
             </div>
           </div>
         </div>
-      </main>
-      <GlobalFooter links={footerLinksMockData} copyrightText={copyrightTextMockData} />
-    </div>
+      </SiteMain>
+    </SiteShell>
   );
 }
