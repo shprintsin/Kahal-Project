@@ -6,7 +6,6 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const metadataOnly = searchParams.get('metadataOnly') === 'true';
 
-    // console.log(`[API] Fetching documents ${metadataOnly ? '(metadata only)' : '(full)'}...`);
     
     let documents;
     if (metadataOnly) {
@@ -15,7 +14,6 @@ export async function GET(request: Request) {
         documents = await getAllDocumentsWithPages();
     }
     
-    // console.log('[API] Success! Got', documents.length, 'documents');
     return NextResponse.json(documents);
   } catch (error) {
     console.error('[API] Error in /api/documents:', error);

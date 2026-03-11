@@ -71,8 +71,6 @@ export interface ListLayersOptions {
  */
 export async function createLayer(data: LayerFormData) {
   try {
-    // console.log("=== CREATE LAYER START ===");
-    // console.log("StyleConfig:", JSON.stringify(data.styleConfig, null, 2));
 
     const layer = await prisma.layer.create({
       data: {
@@ -113,8 +111,6 @@ export async function createLayer(data: LayerFormData) {
       },
     });
 
-    // console.log("Layer created successfully:", layer.id);
-    // console.log("=== CREATE LAYER END ===");
 
     revalidatePath("/admin/layers");
     return layer;
@@ -129,7 +125,6 @@ export async function createLayer(data: LayerFormData) {
  */
 export async function updateLayer(id: string, data: Partial<LayerFormData>) {
   try {
-    // console.log("=== UPDATE LAYER START ===");
 
     // Check if layer is used in any maps
     const layerWithMaps = await prisma.layer.findUnique({
@@ -138,7 +133,6 @@ export async function updateLayer(id: string, data: Partial<LayerFormData>) {
     });
 
     if (layerWithMaps && layerWithMaps.maps.length > 0) {
-      // console.log(`Layer is used in ${layerWithMaps.maps.length} map(s)`);
     }
 
     const layer = await prisma.layer.update({
@@ -182,8 +176,6 @@ export async function updateLayer(id: string, data: Partial<LayerFormData>) {
       },
     });
 
-    // console.log("Layer updated successfully");
-    // console.log("=== UPDATE LAYER END ===");
 
     revalidatePath("/admin/layers");
     revalidatePath(`/admin/layers/${id}`);

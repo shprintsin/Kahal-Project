@@ -97,12 +97,9 @@ export async function getMap(id: string) {
 }
 
 export async function createMap(mapData: MapInput) {
-  // console.log("=== CREATE MAP START ===");
-  // console.log("Received mapData:", JSON.stringify(mapData, null, 2));
 
   // Extract layers from config
   const layers = mapData.config?.layers || [];
-  // console.log(`Extracted ${layers.length} layers from config`);
 
   // Create map-level config WITHOUT layers
   const mapConfig = {
@@ -111,7 +108,6 @@ export async function createMap(mapData: MapInput) {
     center: mapData.config?.center,
     customCSS: mapData.config?.customCSS,
   };
-  // console.log("Map-level config:", JSON.stringify(mapConfig, null, 2));
 
   const data: any = {
     slug: mapData.slug,
@@ -129,22 +125,17 @@ export async function createMap(mapData: MapInput) {
     referenceLinks: mapData.reference_links || mapData.referenceLinks,
   };
 
-  // console.log("Creating map with data:", JSON.stringify(data, null, 2));
 
   const createdMap = await prisma.map.create({
     data,
   });
 
-  // console.log("Map created with ID:", createdMap.id);
 
   // Create MapLayer records for each layer
   if (layers.length > 0) {
-    // console.log(`Creating ${layers.length} MapLayer records...`);
     
     for (let i = 0; i < layers.length; i++) {
       const layer = layers[i];
-      // console.log(`Creating layer ${i + 1}/${layers.length}:`, layer.name);
-      // console.log('Full layer object:', JSON.stringify(layer, null, 2));
       
       // Determine source type and data storage
       const sourceType = layer.sourceType || (layer.url ? 'url' : 'database');
@@ -155,7 +146,6 @@ export async function createMap(mapData: MapInput) {
                               layer.type === 'point' ? 'POINTS' : 
                               layer.type.toUpperCase();
       
-      // console.log(`Layer "${layer.name}" - sourceType: ${sourceType}, hasData: ${hasGeoJsonData}, hasUrl: ${!!layer.url}, type: ${prismaLayerType}`);
 
       await prisma.mapLayerAssociation.create({
         data: {
@@ -181,13 +171,9 @@ export async function createMap(mapData: MapInput) {
 }
 
 export async function updateMap(id: string, mapData: MapInput) {
-  // console.log("=== UPDATE MAP START ===");
-  // console.log("Map ID:", id);
-  // console.log("Received mapData:", JSON.stringify(mapData, null, 2));
 
   // Extract layers from config
   const layers = mapData.config?.layers || [];
-  // console.log(`Extracted ${layers.length} layers from config`);
 
   // Create map-level config WITHOUT layers
   const mapConfig = {
@@ -213,28 +199,23 @@ export async function updateMap(id: string, mapData: MapInput) {
     referenceLinks: mapData.reference_links || mapData.referenceLinks,
   };
 
-  // console.log("Updating map with data:", JSON.stringify(data, null, 2));
 
   const updatedMap = await prisma.map.update({
     where: { id },
     data,
   });
 
-  // console.log("Map updated successfully");
 
   // Delete existing layer associations and recreate
-  // console.log("Deleting existing layer associations...");
   await prisma.mapLayerAssociation.deleteMany({
     where: { mapId: id },
   });
 
   // Create new MapLayer records
   if (layers.length > 0) {
-    // console.log(`Creating ${layers.length} MapLayer records...`);
     
     for (let i = 0; i < layers.length; i++) {
       const layer = layers[i];
-      // console.log(`Creating layer ${i + 1}/${layers.length}:`, layer.name);
       
       // Determine source type and data storage
       const sourceType = layer.sourceType || (layer.url ? 'url' : 'database');
@@ -245,7 +226,6 @@ export async function updateMap(id: string, mapData: MapInput) {
                               layer.type === 'point' ? 'POINTS' : 
                               layer.type.toUpperCase();
       
-      // console.log(`Layer "${layer.name}" - sourceType: ${sourceType}, hasData: ${hasGeoJsonData}, hasUrl: ${!!layer.url}, type: ${prismaLayerType}`);
 
       await prisma.mapLayerAssociation.create({
         data: {
@@ -268,7 +248,6 @@ export async function updateMap(id: string, mapData: MapInput) {
 
   revalidatePath("/admin/maps");
   revalidatePath(`/admin/maps/${id}`);
-  // console.log("=== UPDATE MAP END ===");
   return updatedMap;
 }
 

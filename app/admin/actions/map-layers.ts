@@ -131,9 +131,6 @@ export async function createMapWithLayers(
   }>
 ) {
   try {
-    // console.log("=== CREATE MAP WITH LAYERS START ===");
-    // console.log("Map data:", mapData.slug);
-    // console.log("Layer associations:", layerAssociations.length);
 
     // Create map-level config WITHOUT layers
     const mapConfig = {
@@ -163,11 +160,9 @@ export async function createMapWithLayers(
       data,
     });
 
-    // console.log("Map created with ID:", createdMap.id);
 
     // Create layer associations
     if (layerAssociations.length > 0) {
-      // console.log(`Creating ${layerAssociations.length} layer associations...`);
 
       for (const assoc of layerAssociations) {
         await prisma.mapLayerAssociation.create({
@@ -183,10 +178,8 @@ export async function createMapWithLayers(
         });
       }
 
-      // console.log("All layer associations created");
     }
 
-    // console.log("=== CREATE MAP WITH LAYERS END ===");
 
     revalidatePath("/admin/maps");
     return createdMap;
@@ -211,16 +204,12 @@ export async function updateMapLayers(
   }>
 ) {
   try {
-    // console.log("=== UPDATE MAP LAYERS START ===");
-    // console.log("Map ID:", mapId);
-    // console.log("New layer associations:", layerAssociations.length);
 
     // Delete all existing associations
     await prisma.mapLayerAssociation.deleteMany({
       where: { mapId },
     });
 
-    // console.log("Deleted existing associations");
 
     // Create new associations
     for (const assoc of layerAssociations) {
@@ -237,8 +226,6 @@ export async function updateMapLayers(
       });
     }
 
-    // console.log("Created new associations");
-    // console.log("=== UPDATE MAP LAYERS END ===");
 
     revalidatePath(`/admin/maps/${mapId}`);
     return { success: true };
