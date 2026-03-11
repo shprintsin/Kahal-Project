@@ -1,12 +1,13 @@
 "use client"
-import { Download, Calendar, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Calendar, User } from "lucide-react"
 import { PostSideBar } from './PostSideBar'
-import Link from 'next/link'
 import { Post as ApiPost } from "@/payload-types"
 import { PageTitle, PageSubtitle } from '@/components/ui/typography'
 import { MetaRow, MetaItem } from '@/components/ui/metadata'
 import { NoteCard, Section } from '@/components/ui/sections'
+import { Prose } from '@/components/ui/prose'
+import { TagPill, TagPillList } from '@/components/ui/tag-pill'
+import { SiteBreadcrumbs } from '@/components/ui/site-breadcrumbs'
 
 interface PostData extends Omit<ApiPost, 'content' | 'author' | 'tags'> {
   content: string
@@ -22,17 +23,13 @@ interface PostData extends Omit<ApiPost, 'content' | 'author' | 'tags'> {
 export default function PostPage({ post }: { post: PostData }) {
   return (
     <div className="min-h-screen bg-white" dir="rtl">
-      <div className="bg-gray-100 py-2">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center text-sm text-gray-600 flex-wrap gap-1">
-            <Link href="/" className="hover:text-[#0d4d2c]">בית</Link>
-            <span className="mx-1">/</span>
-            <Link href="/category/demography" className="hover:text-[#0d4d2c]">{post.category}</Link>
-            <span className="mx-1">/</span>
-            <span className="text-gray-800">{post.title}</span>
-          </div>
-        </div>
-      </div>
+      <SiteBreadcrumbs
+        items={[
+          { label: "בית", href: "/" },
+          { label: post.category || "", href: `/category/${post.category}` },
+          { label: post.title },
+        ]}
+      />
 
       <main className="container mx-auto px-4 py-6 sm:py-8 w-full lg:w-10/12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -50,38 +47,16 @@ export default function PostPage({ post }: { post: PostData }) {
                   </MetaRow>
                 </div>
 
-                <div
-                  className="prose prose-lg max-w-none p-4 sm:p-8 md:p-12
-                    leading-relaxed text-gray-800
-                    [&>h1]:text-3xl [&>h1]:sm:text-4xl [&>h1]:font-bold [&>h1]:text-[#131e1e] [&>h1]:mb-6 [&>h1]:mt-8 [&>h1]:font-['Secular_One']
-                    [&>h2]:text-2xl [&>h2]:sm:text-3xl [&>h2]:font-bold [&>h2]:text-[#1a472a] [&>h2]:mb-4 [&>h2]:mt-6 [&>h2]:font-['Secular_One']
-                    [&>h3]:text-xl [&>h3]:sm:text-2xl [&>h3]:font-semibold [&>h3]:text-[#1a472a] [&>h3]:mb-3 [&>h3]:mt-5
-                    [&>p]:mb-4 [&>p]:leading-8 [&>p]:text-gray-700
-                    [&>ul]:mb-4 [&>ul]:mr-6 [&>ul]:list-disc
-                    [&>ol]:mb-4 [&>ol]:mr-6 [&>ol]:list-decimal
-                    [&>li]:mb-2 [&>li]:text-gray-700
-                    [&>blockquote]:border-r-4 [&>blockquote]:border-[#1a472a] [&>blockquote]:pr-4 [&>blockquote]:py-2 [&>blockquote]:my-4 [&>blockquote]:bg-gray-50 [&>blockquote]:italic [&>blockquote]:text-gray-600
-                    [&>a]:text-[#5c6d3f] [&>a]:underline [&>a]:hover:text-[#1a472a] [&>a]:transition-colors
-                    [&>code]:bg-gray-100 [&>code]:px-2 [&>code]:py-1 [&>code]:rounded [&>code]:text-sm [&>code]:text-gray-800
-                    [&>pre]:bg-gray-900 [&>pre]:text-gray-100 [&>pre]:p-4 [&>pre]:rounded-md [&>pre]:overflow-x-auto [&>pre]:my-4
-                    [&>img]:rounded-md [&>img]:shadow-sm [&>img]:my-6
-                    text-right"
-                  dir="rtl"
-                  dangerouslySetInnerHTML={{ __html: post.content }}
-                />
+                <Prose html={post.content} />
 
                 <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
-                  <div className="flex flex-wrap gap-2">
+                  <TagPillList>
                     {post.tags.map((tag, index) => (
-                      <a
-                        key={index}
-                        href={`/tag/${tag}`}
-                        className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm hover:bg-gray-200"
-                      >
+                      <TagPill key={index} variant="interactive" href={`/tag/${tag}`}>
                         {tag}
-                      </a>
+                      </TagPill>
                     ))}
-                  </div>
+                  </TagPillList>
                 </div>
               </div>
             </div>
