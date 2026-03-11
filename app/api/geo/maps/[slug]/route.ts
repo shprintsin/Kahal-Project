@@ -27,7 +27,7 @@ export async function GET(
     return NextResponse.json(map, {
       headers: {
         'Cache-Control': 'public, max-age=300',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': process.env.NEXTAUTH_URL || 'http://localhost:3000'
       }
     });
   } catch (error) {

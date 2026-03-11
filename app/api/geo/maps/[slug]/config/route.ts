@@ -31,7 +31,7 @@ export async function GET(
     }, {
       headers: {
         'Cache-Control': 'public, max-age=3600',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': process.env.NEXTAUTH_URL || 'http://localhost:3000'
       }
     });
   } catch (error) {

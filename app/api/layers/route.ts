@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { listLayersAPI, createLayer } from "@/app/admin/actions/layers";
 
-/**
- * GET /api/layers
- * List all layers with filtering
- */
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
+
+    const parseIntSafe = (val: string | null) => {
+      if (!val) return undefined;
+      const n = parseInt(val);
+      return isNaN(n) ? undefined : n;
+    };
 
     const options = {
       status: searchParams.get("status") || undefined,
@@ -18,20 +21,19 @@ export async function GET(request: NextRequest) {
       regionId: searchParams.get("regionId") || undefined,
       regionSlug: searchParams.get("region") || undefined,
       type: searchParams.get("type") || undefined,
-      year: searchParams.get("year") ? parseInt(searchParams.get("year")!) : undefined,
-      yearMin: searchParams.get("yearMin") ? parseInt(searchParams.get("yearMin")!) : undefined,
-      yearMax: searchParams.get("yearMax") ? parseInt(searchParams.get("yearMax")!) : undefined,
+      year: parseIntSafe(searchParams.get("year")),
+      yearMin: parseIntSafe(searchParams.get("yearMin")),
+      yearMax: parseIntSafe(searchParams.get("yearMax")),
       maturity: searchParams.get("maturity") || undefined,
       search: searchParams.get("search") || undefined,
-      page: searchParams.get("page") ? parseInt(searchParams.get("page")!) : undefined,
-      limit: searchParams.get("limit") ? parseInt(searchParams.get("limit")!) : undefined,
+      page: parseIntSafe(searchParams.get("page")),
+      limit: parseIntSafe(searchParams.get("limit")),
       sort: (searchParams.get("sort") as "createdAt" | "updatedAt" | "name" | "minYear") || undefined,
       order: (searchParams.get("order") as "asc" | "desc") || undefined,
       lang: searchParams.get("lang") || undefined,
     };
 
     const result = await listLayersAPI(options);
-    // Return with 'docs' key for consistency with other endpoints
     return NextResponse.json({
       docs: result.layers,
       ...result.pagination,
@@ -42,11 +44,12 @@ export async function GET(request: NextRequest) {
   }
 }
 
-/**
- * POST /api/layers
- * Create a new layer (admin only)
- */
 export async function POST(request: NextRequest) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
     const layer = await createLayer(body);

@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(result.maps, {
       headers: {
         'Cache-Control': 'public, max-age=300',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': process.env.NEXTAUTH_URL || 'http://localhost:3000'
       }
     });
   } catch (error) {

@@ -210,7 +210,9 @@ export async function POST(request: NextRequest) {
   const apiKey = request.headers.get("x-api-key");
   const validKey = process.env.CMS_API_KEY;
 
-  if (validKey && apiKey !== validKey) {
+  const apiKeyValid = validKey && apiKey === validKey;
+
+  if (!apiKeyValid) {
     const session = await auth();
     if (!session?.user) {
       return errorResponse("Unauthorized: provide x-api-key header or valid session", 401);

@@ -1,5 +1,5 @@
 import { listPostsAPI } from '@/app/admin/actions/posts';
-import { getNavigation } from '@/app/lib/get-navigation';
+import { getSiteShellData } from '@/app/lib/get-navigation';
 import { SiteCard as Card, SiteCardHeader as CardHeader, SiteCardContent as CardContent, SiteCardFooter as CardFooter } from '@/components/ui/site-card';
 import { SiteShell, SiteMain } from '@/components/ui/site-shell';
 import Link from 'next/link';
@@ -8,13 +8,13 @@ import { FaDownload } from 'react-icons/fa';
 export const revalidate = 60;
 
 export default async function PostsPage() {
-    const [{ posts }, navigation] = await Promise.all([
+    const [{ posts }, shellData] = await Promise.all([
         listPostsAPI({ status: 'published', limit: 100 }),
-        getNavigation(),
+        getSiteShellData(),
     ]);
 
     return (
-        <SiteShell navigation={navigation}>
+        <SiteShell {...shellData}>
             <SiteMain>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 font-['Secular_One'] text-gray-900 border-b pb-4">מאגר הנתונים</h1>
 

@@ -10,7 +10,7 @@ export async function GET() {
   } catch (error) {
     console.error('[API] Error in /api/collections:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Unknown error', stack: error instanceof Error ? error.stack : undefined },
+      { error: 'Failed to fetch collections' },
       { status: 500 }
     );
   }

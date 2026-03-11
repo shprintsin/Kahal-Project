@@ -1,23 +1,32 @@
 import { cn } from "@/lib/utils"
 import { ReactNode } from "react"
 import Header from "@/app/components/layout/header/Header"
-import GlobalFooter from "@/app/components/layout/GlobalFooter"
-import { footerLinksMockData, copyrightTextMockData } from "@/app/Data"
+import { SiteFooter } from "@/components/ui/site-footer"
 import { NavItem } from "@/app/types"
+import type { FooterColumn } from "@/app/admin/types/menus"
 
 interface SiteShellProps {
   children: ReactNode
   navigation: NavItem[]
+  footerColumns?: FooterColumn[]
+  copyrightText?: string
   className?: string
   bg?: string
 }
 
-export function SiteShell({ children, navigation, className, bg = "bg-gray-50" }: SiteShellProps) {
+export function SiteShell({
+  children,
+  navigation,
+  footerColumns = [],
+  copyrightText = "© 2024 פרויקט הקהל. כל הזכויות שמורות.",
+  className,
+  bg = "bg-gray-50",
+}: SiteShellProps) {
   return (
     <div className={cn("flex flex-col min-h-screen", bg, className)} dir="rtl">
       <Header navigation={navigation} />
       {children}
-      <GlobalFooter links={footerLinksMockData} copyrightText={copyrightTextMockData} />
+      <SiteFooter columns={footerColumns} copyrightText={copyrightText} />
     </div>
   )
 }

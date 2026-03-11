@@ -4,7 +4,7 @@ import { NavigationSidebar } from '../ui/NavigationSidebar';
 import { CollectionView } from '../ui/CollectionView';
 import { Breadcrumbs } from '../ui/Breadcrumbs';
 import { notFound } from 'next/navigation';
-import { getNavigation } from '@/app/lib/get-navigation';
+import { getSiteShellData } from '@/app/lib/get-navigation';
 import { SiteShell } from '@/components/ui/site-shell';
 
 interface PageProps {
@@ -17,10 +17,10 @@ export default async function CollectionPage({ params }: PageProps) {
   const { collectionSlug } = await params;
 
   try {
-    const [collections, collection, navigation] = await Promise.all([
+    const [collections, collection, shellData] = await Promise.all([
       getAllCollectionsWithSeries(),
       getCollectionWithSeries(collectionSlug),
-      getNavigation(),
+      getSiteShellData(),
     ]);
 
     if (!collection) {
@@ -28,7 +28,7 @@ export default async function CollectionPage({ params }: PageProps) {
     }
 
     return (
-      <SiteShell navigation={navigation}>
+      <SiteShell {...shellData}>
         <div className="flex-1">
           <ArchiveLayout
             sidebar={

@@ -2,7 +2,7 @@ import { getPostBySlug, listPostsAPI } from '@/app/admin/actions/posts';
 import { notFound } from 'next/navigation';
 import PostPage from '@/app/components/pages_components/PostPage';
 import { serializeLexical } from '@/lib/lexical';
-import { getNavigation } from '@/app/lib/get-navigation';
+import { getSiteShellData } from '@/app/lib/get-navigation';
 import { SiteShell } from '@/components/ui/site-shell';
 
 export async function generateStaticParams() {
@@ -14,9 +14,9 @@ export async function generateStaticParams() {
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const [post, navigation] = await Promise.all([
+    const [post, shellData] = await Promise.all([
         getPostBySlug(slug),
-        getNavigation(),
+        getSiteShellData(),
     ]);
 
     if (!post) {
@@ -41,7 +41,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     };
 
     return (
-        <SiteShell navigation={navigation} bg="bg-white">
+        <SiteShell {...shellData} bg="bg-white">
             <div className="flex-grow">
                 <PostPage post={viewPost} />
             </div>

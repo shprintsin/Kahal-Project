@@ -1,7 +1,7 @@
 import { getPageBySlug, listPagesAPI } from '@/app/admin/actions/pages';
 import { notFound } from 'next/navigation';
 import { serializeLexical } from '@/lib/lexical';
-import { getNavigation } from '@/app/lib/get-navigation';
+import { getSiteShellData } from '@/app/lib/get-navigation';
 import { SiteShell, SiteMain } from '@/components/ui/site-shell';
 
 export async function generateStaticParams() {
@@ -13,9 +13,9 @@ export async function generateStaticParams() {
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const [page, navigation] = await Promise.all([
+    const [page, shellData] = await Promise.all([
         getPageBySlug(slug),
-        getNavigation(),
+        getSiteShellData(),
     ]);
 
     if (!page) {
@@ -25,7 +25,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     const htmlContent = serializeLexical(page.content);
 
     return (
-        <SiteShell navigation={navigation} bg="bg-white">
+        <SiteShell {...shellData} bg="bg-white">
             <SiteMain>
                 <div className="w-full lg:w-10/12 mx-auto">
                     <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 font-['Secular_One'] text-gray-900 border-b pb-4">{page.title}</h1>

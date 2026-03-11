@@ -1,11 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { auth } from "@/auth";
 
 export async function POST(request: NextRequest) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const { title, content, fromLanguage, toLanguage } = await request.json();
 
-    // Simple translation API using OpenAI or similar
-    // For now, we'll use a placeholder that you can replace with actual translation
+    if (!title || !content || !fromLanguage || !toLanguage) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -34,18 +42,16 @@ export async function POST(request: NextRequest) {
 
     const data = await response.json();
     const translatedText = data.choices[0].message.content;
-    
-    // Parse the JSON response
     const translated = JSON.parse(translatedText);
 
     return NextResponse.json({
       title: translated.title,
       content: translated.content,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Translation error:', error);
     return NextResponse.json(
-      { error: error.message || 'Translation failed' },
+      { error: 'Translation failed' },
       { status: 500 }
     );
   }
