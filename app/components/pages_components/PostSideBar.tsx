@@ -1,8 +1,5 @@
 import { TOCWidget } from './TOCWidget'
-
-import { CategoriesWidget } from './CategoriesWidget'
-import { CiteWidget } from './CiteWidget'
-import { Button } from '../ui/button'
+import { Button } from '@/components/ui/button'
 import { Download } from 'lucide-react'
 
 export function PostSideBar({ post }: { post: any }) {
@@ -16,9 +13,6 @@ export function PostSideBar({ post }: { post: any }) {
           </Button>
         </div>
         <TOCWidget post={post} />
-
-        {/* <CategoriesWidget /> */}
-        {/* <CiteWidget /> */}
       </div>
     </div>
   )
