@@ -121,7 +121,7 @@ export function createLayerFieldConfigs(): Record<string, FieldConfig> {
         { value: "url", label: "External URL" },
         { value: "inline", label: "Inline" },
       ],
-      description: "How the GeoJSON data is stored",
+
     },
     sourceUrl: {
       name: "sourceUrl",

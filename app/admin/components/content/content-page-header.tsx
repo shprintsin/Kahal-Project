@@ -82,7 +82,7 @@ export function ContentPageHeader({
         <div className="flex items-center gap-2 flex-shrink-0">
           {actions}
           {onNewClick && (
-            <Button onClick={onNewClick} size="sm" className="gap-1.5">
+            <Button onClick={onNewClick} size="sm" className="gap-1.5 hover:bg-primary/90 hover:scale-105 transition-all">
               <Plus className="w-4 h-4" />
               {newButtonLabel}
             </Button>

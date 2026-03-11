@@ -9,8 +9,24 @@ import {
   postsMockData,
   sourcesMockData,
 } from "@/app/Data";
+import { getMenuByLocation } from "@/app/admin/actions/menus";
+import { NavItem } from "@/app/types";
+import { MenuItem } from "@/app/admin/types/menus";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const headerMenu = await getMenuByLocation("HEADER");
+  
+  const mapMenuItemToNavItem = (item: MenuItem): NavItem => ({
+     label: item.label.default,
+     icon: item.icon || null, // UI expects string | null
+     href: item.url || "#",
+     subItems: item.children && item.children.length > 0 
+        ? item.children.map(mapMenuItemToNavItem) 
+        : undefined
+  });
+
+  const navigation: NavItem[] = headerMenu?.items.map(mapMenuItemToNavItem) || [];
+
   return (
     <HomePageComponent
       heroText={heroText}
@@ -21,6 +37,7 @@ export default function HomePage() {
       sources={sourcesMockData}
       authors={authorsMockData}
       citationInfo={citationInfoMockData}
+      navigation={navigation}
     />
   );
 }

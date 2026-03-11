@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Secular_One, Rubik } from "next/font/google";
+import { Secular_One } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -19,11 +19,6 @@ const secular = Secular_One({
   variable: "--font-secular",
 });
 
-const rubik = Rubik({
-  subsets: ["hebrew", "latin"],
-  variable: "--font-rubik",
-});
-
 export const metadata: Metadata = {
   title: "Kahal",
   description: "Digital Archive of Jewish Communities",
@@ -36,8 +31,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="he" dir="rtl">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${secular.variable} ${rubik.variable} font-sans antialiased bg-gray-50`}
+        className={`${geistSans.variable} ${geistMono.variable} ${secular.variable} font-sans antialiased bg-gray-50`}
       >
         {children}
       </body>

@@ -73,11 +73,11 @@ export function LayerDetailClient({ layer }: { layer: any }) {
                      </div>
                      <h1 className="secular text-4xl text-[var(--dark-green)] mb-6 leading-tight">{layer.name}</h1>
                      
-                     <div className="h-[500px] mb-8 shadow-md rounded-xl overflow-hidden border border-gray-200 bg-gray-100">
+                     <div className="h-[500px] mb-8 shadow-md overflow-hidden border border-gray-200 bg-gray-100">
                         <MapPreview map={previewMap as any} />
                      </div>
 
-                     <div className="prose max-w-none bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                     <div className="prose max-w-none bg-white p-8 shadow-sm border border-gray-100">
                         <h2 className="text-2xl font-bold mb-4 secular text-gray-800">תיאור השכבה</h2>
                          <p className="whitespace-pre-wrap text-gray-700 leading-relaxed text-lg">
                             {layer.description || "אין תיאור זמין."}
@@ -88,7 +88,7 @@ export function LayerDetailClient({ layer }: { layer: any }) {
                 {/* Metadata Sections */}
                 <div className="space-y-6">
                     {(layer.citationText || layer.sources || layer.codebookText) && (
-                        <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 space-y-8">
+                        <div className="bg-white p-8 shadow-sm border border-gray-100 space-y-8">
                             {layer.citationText && (
                                 <div>
                                     <h3 className="text-xl font-bold mb-3 flex items-center gap-2 text-gray-800 secular">
@@ -126,7 +126,7 @@ export function LayerDetailClient({ layer }: { layer: any }) {
 
             {/* Sidebar info */}
             <div className="space-y-6">
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 sticky top-4">
+                <div className="bg-white p-6 shadow-sm border border-gray-100 sticky top-4">
                     <h3 className="text-lg font-bold mb-4 border-b pb-2 text-gray-800 secular">פרטים נוספים</h3>
                     <ul className="space-y-4 text-sm">
                         <li className="flex justify-between items-center border-b border-gray-50 pb-2">

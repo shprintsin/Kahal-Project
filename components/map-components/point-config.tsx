@@ -182,49 +182,42 @@ export function PointConfig({ layer, onUpdate }: PointConfigProps) {
       {/* Radius & Stroke Weight in one row */}
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <div className="flex justify-between items-center">
-            <Label className="text-xs">Radius</Label>
-            <span className="text-xs text-muted-foreground">{style.radius || 10}px</span>
-          </div>
-          <Slider
+          <Label className="text-xs">Radius (px)</Label>
+          <Input
+            type="number"
             min={1}
-            max={50}
-            step={1}
-            value={[style.radius || 10]}
-            onValueChange={(vals) => handleStyleChange({ radius: vals[0] })}
-            className="py-1"
+            max={100}
+            value={style.radius || 10}
+            onChange={(e) => handleStyleChange({ radius: e.target.valueAsNumber })}
+            className="h-8 font-mono text-xs"
           />
         </div>
 
         <div className="space-y-1.5">
-          <div className="flex justify-between items-center">
-            <Label className="text-xs">Weight</Label>
-            <span className="text-xs text-muted-foreground">{style.weight || 1}px</span>
-          </div>
-          <Slider
+          <Label className="text-xs">Weight (px)</Label>
+          <Input
+            type="number"
             min={0}
-            max={10}
+            max={20}
             step={0.5}
-            value={[style.weight || 1]}
-            onValueChange={(vals) => handleStyleChange({ weight: vals[0] })}
-            className="py-1"
+            value={style.weight || 1}
+            onChange={(e) => handleStyleChange({ weight: e.target.valueAsNumber })}
+            className="h-8 font-mono text-xs"
           />
         </div>
       </div>
 
       {/* Fill Opacity */}
       <div className="space-y-1.5">
-        <div className="flex justify-between items-center">
-          <Label className="text-xs">Fill Opacity</Label>
-          <span className="text-xs text-muted-foreground">{((style.fillOpacity || 0.8) * 100).toFixed(0)}%</span>
-        </div>
-        <Slider
+        <Label className="text-xs">Fill Opacity (0-1)</Label>
+        <Input
+          type="number"
           min={0}
           max={1}
-          step={0.05}
-          value={[style.fillOpacity ?? 0.8]}
-          onValueChange={(vals) => handleStyleChange({ fillOpacity: vals[0] })}
-          className="py-1"
+          step={0.1}
+          value={style.fillOpacity ?? 0.8}
+          onChange={(e) => handleStyleChange({ fillOpacity: e.target.valueAsNumber })}
+          className="h-8 font-mono text-xs"
         />
       </div>
     </div>

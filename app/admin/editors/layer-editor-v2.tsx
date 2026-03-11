@@ -33,6 +33,7 @@ import { FilterControls } from '@/components/map-components/filter-controls';
 import { PopupConfigComponent } from '@/components/map-components/popup-config';
 import { DEFAULT_POLYGON_STYLE, DEFAULT_POINT_STYLE } from "@/components/map-components/default-styles";
 import { cn } from "@/lib/utils";
+import { generateSlugFromTitle } from "@/app/admin/utils/slug-generator";
 
 interface LayerEditorProps {
   layer?: any;
@@ -498,7 +499,18 @@ export function LayerEditorV2({ layer, mode }: LayerEditorProps) {
               <input
                 type="text"
                 value={formName}
-                onChange={(e) => form.setValue("name", e.target.value)}
+                onChange={(e) => {
+                  const newVal = e.target.value;
+                  form.setValue("name", newVal);
+                  // Auto-slug
+                  const autoSlug = generateSlugFromTitle(newVal);
+                  if (autoSlug) {
+                    const currentSlug = form.getValues("slug");
+                    if (actualMode === "create" || !currentSlug) {
+                      form.setValue("slug", autoSlug, { shouldDirty: true });
+                    }
+                  }
+                }}
                 placeholder="Layer Title"
                 className={cn(
                   "w-full bg-transparent border-none outline-none",

@@ -27,6 +27,6 @@ if ($LASTEXITCODE -ne 0) {
 
 # 5. Deploy to Vercel
 Write-Host "5. Deploying to Vercel Production..." -ForegroundColor Yellow
-vercel deploy --prod
+vercel deploy --prod --yes
 
 Write-Host "Deployment complete!" -ForegroundColor Green

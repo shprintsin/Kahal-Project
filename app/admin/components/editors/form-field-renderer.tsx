@@ -37,6 +37,7 @@ export interface FieldConfig<TFieldValues extends FieldValues = FieldValues> {
   type: FieldType;
   placeholder?: string;
   description?: string;
+  className?: string;
   required?: boolean;
   options?: { value: string; label: string }[];
   rows?: number;
@@ -112,6 +113,7 @@ export function FormFieldRenderer<TFieldValues extends FieldValues = FieldValues
                 type={type}
                 placeholder={placeholder}
                 value={field.value || ""}
+                className={config.className}
               />
             ) : type === "number" ? (
               <Input

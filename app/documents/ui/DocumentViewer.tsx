@@ -17,7 +17,40 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
   
   const [currentPage, setCurrentPage] = useState(1);
   const [zoom, setZoom] = useState(100);
-  const [language, setLanguage] = useState<'original' | 'he' | 'en'>('original');
+
+  // Defaults
+  const initialLang = (searchParams.get('lang') as 'original' | 'he' | 'en') || 'he';
+  const initialSecLang = (searchParams.get('secLang') as 'original' | 'he' | 'en') || 'en';
+
+  const [language, setLanguage] = useState<'original' | 'he' | 'en'>(initialLang);
+  const [viewMode, setViewMode] = useState<'single' | 'side-by-side'>('single');
+  const [secondaryLanguage, setSecondaryLanguage] = useState<'original' | 'he' | 'en'>(initialSecLang);
+
+  // Sync from localStorage on mount
+  useEffect(() => {
+    const savedLang = localStorage.getItem('doc_lang') as any;
+    const savedSecLang = localStorage.getItem('doc_sec_lang') as any;
+    
+    if (!searchParams.get('lang') && savedLang) setLanguage(savedLang);
+    if (!searchParams.get('secLang') && savedSecLang) setSecondaryLanguage(savedSecLang);
+  }, []);
+
+  // Sync to URL & LocalStorage
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('lang', language);
+    params.set('secLang', secondaryLanguage);
+    localStorage.setItem('doc_lang', language);
+    localStorage.setItem('doc_sec_lang', secondaryLanguage);
+    router.replace(`?${params.toString()}`, { scroll: false });
+  }, [language, secondaryLanguage]);
+
+  // Helper to get content
+  const getContent = (page: any, lang: string) => {
+    if (lang === 'he') return page.contentHe || page.content;
+    if (lang === 'en') return page.contentEn || page.content;
+    return page.content;
+  };
   
   // Initialize from URL
   useEffect(() => {
@@ -40,7 +73,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
     const observers: IntersectionObserver[] = [];
     
     document.pages.forEach((page, index) => {
-      const el = window.document.getElementById(`page-${index}`);
+      const el = window.document.getElementById(`page-wrapper-${index}`);
       if (el) {
         const observer = new IntersectionObserver(
           (entries) => {
@@ -60,7 +93,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
     return () => {
       observers.forEach((obs) => obs.disconnect());
     };
-  }, [document.pages]);
+  }, [document.pages, viewMode]); // Re-observe when view mode changes
 
   // Update URL when page changes
   useEffect(() => {
@@ -71,7 +104,7 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
-    const el = window.document.getElementById(`page-${page - 1}`);
+    const el = window.document.getElementById(`page-wrapper-${page - 1}`);
     el?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
@@ -89,6 +122,10 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
         onZoomChange={handleZoomChange}
         language={language}
         onLanguageChange={setLanguage}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        secondaryLanguage={secondaryLanguage}
+        onSecondaryLanguageChange={setSecondaryLanguage}
       />
 
       <div 
@@ -97,8 +134,12 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
         style={{ scrollBehavior: 'smooth' }}
       >
         <div 
-          className="flex flex-col items-center"
-          style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'top center' }}
+          className="flex flex-col items-center gap-8 px-4"
+          style={{ 
+            transform: viewMode === 'single' ? `scale(${zoom / 100})` : 'none', 
+            transformOrigin: 'top center',
+            width: viewMode === 'side-by-side' ? '100%' : 'auto'
+          }}
         >
           {document.pages.map((page, index) => {
             // Render Window: 3 pages before and 3 pages after current page
@@ -106,19 +147,41 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
             const pageNum = index + 1;
             const shouldRender = Math.abs(currentPage - pageNum) <= RENDER_WINDOW;
             
-            let contentOverride = null;
-            if (language === 'he' && page.contentHe) contentOverride = page.contentHe;
-            if (language === 'en' && page.contentEn) contentOverride = page.contentEn;
+            const getContent = (lang: string) => {
+                if (lang === 'he') return page.contentHe;
+                if (lang === 'en') return page.contentEn;
+                return page.content;
+            };
 
             return (
-              <DocumentPageRenderer 
+              <div 
                 key={page.id} 
-                page={page} 
-                isFirstPage={index === 0}
-                isLastPage={index === document.pages.length - 1}
-                shouldRenderContent={shouldRender}
-                contentOverride={contentOverride}
-              />
+                id={`page-wrapper-${index}`}
+                className={`transition-all duration-300 ${viewMode === 'side-by-side' ? 'w-full max-w-7xl grid grid-cols-2 gap-8' : 'w-auto'}`}
+              >
+                  {/* Primary View */}
+                  <DocumentPageRenderer 
+                    page={page} 
+                    isFirstPage={index === 0}
+                    isLastPage={index === document.pages.length - 1}
+                    shouldRenderContent={shouldRender}
+                    contentOverride={getContent(language)}
+                    viewMode={viewMode}
+                  />
+
+                  {/* Secondary View */}
+                  {viewMode === 'side-by-side' && (
+                     <DocumentPageRenderer 
+                        page={page} 
+                        isFirstPage={index === 0}
+                        isLastPage={index === document.pages.length - 1}
+                        shouldRenderContent={shouldRender}
+                        contentOverride={getContent(secondaryLanguage)}
+                        viewMode={viewMode}
+                        isSecondary
+                      />
+                  )}
+              </div>
             );
           })}
         </div>

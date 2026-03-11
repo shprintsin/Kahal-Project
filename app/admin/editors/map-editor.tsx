@@ -107,7 +107,7 @@ export function MapEditor({ map, mode }: MapEditorProps) {
       title_i18n: map?.titleI18n || map?.title_i18n || { en: "" },
       description_i18n: map?.descriptionI18n || map?.description_i18n || { en: "" },
       slug: map?.slug || "",
-      status: map?.status || "draft",
+      status: map?.status || "published",
       period_start_date: map?.period_start_date
         ? new Date(map.period_start_date).toISOString().split("T")[0]
         : "",
@@ -242,7 +242,7 @@ export function MapEditor({ map, mode }: MapEditorProps) {
         <h1 className="text-2xl font-bold">
           {actualMode === "create" ? "Create Map" : "Edit Map"}
         </h1>
-        <Button onClick={form.handleSubmit(onSubmit)} disabled={isSubmitting}>
+        <Button onClick={form.handleSubmit(onSubmit)} disabled={isSubmitting} className="rounded-none border border-white hover:bg-white/10" variant="outline">
           {isSubmitting && (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           )}
@@ -255,12 +255,18 @@ export function MapEditor({ map, mode }: MapEditorProps) {
         <div className="w-[400px] border-r bg-background flex flex-col overflow-hidden">
             <Tabs defaultValue="visuals" className="flex-1 flex flex-col overflow-hidden">
               <div className="px-4 pt-4 flex-shrink-0">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="metadata" className="flex items-center gap-2">
-                       <LayoutDashboard className="w-4 h-4"/> Metadata
+                  <TabsList className="flex w-full bg-transparent p-0 border-b rounded-none h-10">
+                    <TabsTrigger 
+                        value="metadata" 
+                        className="flex-1 rounded-none border-b-2 border-transparent px-4 py-2 text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-foreground bg-transparent shadow-none transition-none"
+                    >
+                       <LayoutDashboard className="w-4 h-4 mr-2"/> Metadata
                     </TabsTrigger>
-                    <TabsTrigger value="visuals" className="flex items-center gap-2">
-                       <MapIcon className="w-4 h-4"/> Layers & Style
+                    <TabsTrigger 
+                        value="visuals" 
+                        className="flex-1 rounded-none border-b-2 border-transparent px-4 py-2 text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-foreground bg-transparent shadow-none transition-none"
+                    >
+                       <MapIcon className="w-4 h-4 mr-2"/> Layers & Style
                     </TabsTrigger>
                   </TabsList>
               </div>

@@ -3,7 +3,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
-import { Calendar, User, Tag, FileText, Shield, Hash, Paperclip } from "lucide-react";
+import { Calendar, User, Tag, FileText, Shield, Hash, Paperclip, Image as ImageIcon, Trash2 } from "lucide-react";
 import type { ContentStatus } from "@/app/admin/types/content-system.types";
 import { SearchableSelect, TagInput } from "./searchable-select";
 import { FileUploadWidget } from "./file-upload-widget";
@@ -57,6 +57,12 @@ interface MetadataSidebarProps {
   license?: string;
   onLicenseChange?: (license: string) => void;
   licenseOptions?: { value: string; label: string }[];
+  
+  // Thumbnail
+  thumbnailUrl?: string | null;
+  onThumbnailChange?: (file: File) => Promise<void>;
+  onThumbnailRemove?: () => void; // Actually, onThumbnailChange(null) can handle remove, but explicit is nicer.
+  // Wait, let's keep it simple.
 
   // Dataset specific (optional)
   maturity?: string;

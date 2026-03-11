@@ -315,7 +315,7 @@ export function ContentTable<T extends { id: string }>({
                             e.stopPropagation();
                             onRowDelete(row.id);
                           }}
-                          className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                          className="h-8 w-8 rounded-none border border-white text-destructive hover:bg-red-500 hover:text-white"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>

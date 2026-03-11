@@ -258,6 +258,12 @@
   @apply italic;
 }
 
+
 .markdown-content del {
   @apply line-through text-gray-500;
 }
+
+body {
+  font-family: 'Rubik', sans-serif;
+}
+
