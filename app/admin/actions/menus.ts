@@ -294,13 +294,13 @@ export async function updateFooterColumn(
   const data: any = {
     type: column.type,
     order: column.order,
-    title: column.title.default,
-    titleI18n: column.title.translations,
+    title: column.title?.default ?? "",
+    titleI18n: column.title?.translations ?? {},
   };
 
-  if (column.type === "RICH_TEXT") {
-    data.content = (column as any).content.default;
-    data.contentI18n = (column as any).content.translations;
+  if (column.type === "RICH_TEXT" && (column as any).content) {
+    data.content = (column as any).content.default ?? "";
+    data.contentI18n = (column as any).content.translations ?? {};
   }
 
   const updated = await prisma.footerColumn.update({

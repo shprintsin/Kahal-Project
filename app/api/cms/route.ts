@@ -5,7 +5,7 @@ import type { ListPostsOptions } from "@/app/admin/actions/posts";
 import type { ListCategoriesOptions, GetCategoryOptions } from "@/app/admin/actions/categories";
 import type { ListTagsOptions, GetTagOptions } from "@/app/admin/actions/tags";
 import type { MenuLocation, LocalizedText, MenuItem, FooterColumn } from "@/app/admin/types/menus";
-import type { LayerFormData } from "@/app/admin/actions/layers";
+import type { LayerFormData, ListLayersOptions, GetLayerOptions } from "@/app/admin/actions/layers";
 
 import {
   createPost,
@@ -47,12 +47,15 @@ import {
   updateMap,
   deleteMap,
   listMapsAPI,
+  getMapBySlug,
 } from "@/app/admin/actions/maps";
 
 import {
   createLayer,
   updateLayer,
   deleteLayer,
+  listLayersAPI,
+  getLayerBySlug,
 } from "@/app/admin/actions/layers";
 
 import {
@@ -60,6 +63,7 @@ import {
   updateDataset,
   deleteDataset,
   listDatasetsAPI,
+  getDatasetBySlug,
 } from "@/app/admin/actions/datasets";
 
 import {
@@ -67,82 +71,80 @@ import {
   updatePage,
   deletePage,
   listPagesAPI,
+  getPageBySlug,
 } from "@/app/admin/actions/pages";
 
 import {
   createRegion,
   updateRegion,
   deleteRegion,
+  getRegions,
 } from "@/app/admin/actions/regions";
 
 import {
   createPeriod,
   updatePeriod,
   deletePeriod,
+  getPeriods,
 } from "@/app/admin/actions/periods";
 
-interface ActionMap {
-  "posts.list": { handler: (data: ListPostsOptions) => ReturnType<typeof listPostsAPI> };
-  "posts.get": { handler: (data: { slug: string }) => ReturnType<typeof getPostBySlug> };
-  "posts.create": { handler: (data: Parameters<typeof createPost>[0] & { tagIds?: string[] }) => ReturnType<typeof createPost> };
-  "posts.update": { handler: (data: { id: string; tagIds?: string[] } & Parameters<typeof updatePost>[1]) => ReturnType<typeof updatePost> };
-  "posts.delete": { handler: (data: { id: string }) => ReturnType<typeof deletePost> };
-
-  "categories.list": { handler: (data: ListCategoriesOptions) => ReturnType<typeof listCategoriesAPI> };
-  "categories.get": { handler: (data: { slug: string } & GetCategoryOptions) => ReturnType<typeof getCategoryBySlug> };
-  "categories.create": { handler: (data: Parameters<typeof createCategory>[0]) => ReturnType<typeof createCategory> };
-  "categories.update": { handler: (data: { id: string } & Parameters<typeof updateCategory>[1]) => ReturnType<typeof updateCategory> };
-  "categories.delete": { handler: (data: { id: string }) => ReturnType<typeof deleteCategory> };
-
-  "tags.list": { handler: (data: ListTagsOptions) => ReturnType<typeof listTagsAPI> };
-  "tags.get": { handler: (data: { slug: string } & GetTagOptions) => ReturnType<typeof getTagBySlug> };
-  "tags.create": { handler: (data: Parameters<typeof createTag>[0]) => ReturnType<typeof createTag> };
-  "tags.update": { handler: (data: { id: string } & Parameters<typeof updateTag>[1]) => ReturnType<typeof updateTag> };
-  "tags.delete": { handler: (data: { id: string }) => ReturnType<typeof deleteTag> };
-
-  "menus.get": { handler: (data: { location: MenuLocation }) => ReturnType<typeof getMenuByLocation> };
-  "menus.upsert": { handler: (data: { location: MenuLocation; items: MenuItem[] }) => ReturnType<typeof upsertMenu> };
-  "menus.getAllSettings": { handler: (data: void) => ReturnType<typeof getAllSiteSettings> };
-
-  "settings.update": { handler: (data: { copyrightText: LocalizedText }) => ReturnType<typeof updateSiteSettings> };
-
-  "footer.list": { handler: (data: void) => ReturnType<typeof getFooterColumns> };
-  "footer.create": { handler: (data: Omit<FooterColumn, "id">) => ReturnType<typeof createFooterColumn> };
-  "footer.update": { handler: (data: { id: string } & FooterColumn) => ReturnType<typeof updateFooterColumn> };
-  "footer.delete": { handler: (data: { id: string }) => ReturnType<typeof deleteFooterColumn> };
-
-  "maps.list": { handler: (data: Parameters<typeof listMapsAPI>[0]) => ReturnType<typeof listMapsAPI> };
-  "maps.create": { handler: (data: Parameters<typeof createMap>[0]) => ReturnType<typeof createMap> };
-  "maps.update": { handler: (data: { id: string } & Parameters<typeof updateMap>[1]) => ReturnType<typeof updateMap> };
-  "maps.delete": { handler: (data: { id: string }) => ReturnType<typeof deleteMap> };
-
-  "layers.create": { handler: (data: LayerFormData) => ReturnType<typeof createLayer> };
-  "layers.update": { handler: (data: { id: string } & Partial<LayerFormData>) => ReturnType<typeof updateLayer> };
-  "layers.delete": { handler: (data: { id: string }) => ReturnType<typeof deleteLayer> };
-
-  "datasets.list": { handler: (data: Parameters<typeof listDatasetsAPI>[0]) => ReturnType<typeof listDatasetsAPI> };
-  "datasets.create": { handler: (data: Parameters<typeof createDataset>[0]) => ReturnType<typeof createDataset> };
-  "datasets.update": { handler: (data: { id: string } & Parameters<typeof updateDataset>[1]) => ReturnType<typeof updateDataset> };
-  "datasets.delete": { handler: (data: { id: string }) => ReturnType<typeof deleteDataset> };
-
-  "pages.list": { handler: (data: Parameters<typeof listPagesAPI>[0]) => ReturnType<typeof listPagesAPI> };
-  "pages.create": { handler: (data: Parameters<typeof createPage>[0] & { tagIds?: string[]; regionIds?: string[] }) => ReturnType<typeof createPage> };
-  "pages.update": { handler: (data: { id: string; tagIds?: string[]; regionIds?: string[] } & Parameters<typeof updatePage>[1]) => ReturnType<typeof updatePage> };
-  "pages.delete": { handler: (data: { id: string }) => ReturnType<typeof deletePage> };
-
-  "regions.create": { handler: (data: Parameters<typeof createRegion>[0]) => ReturnType<typeof createRegion> };
-  "regions.update": { handler: (data: { id: string } & Parameters<typeof updateRegion>[1]) => ReturnType<typeof updateRegion> };
-  "regions.delete": { handler: (data: { id: string }) => ReturnType<typeof deleteRegion> };
-
-  "periods.create": { handler: (data: Parameters<typeof createPeriod>[0]) => ReturnType<typeof createPeriod> };
-  "periods.update": { handler: (data: { id: string } & Parameters<typeof updatePeriod>[1]) => ReturnType<typeof updatePeriod> };
-  "periods.delete": { handler: (data: { id: string }) => ReturnType<typeof deletePeriod> };
+function normalizePeriodData(data: Record<string, unknown>) {
+  const normalized = { ...data };
+  if (normalized.startYear !== undefined && normalized.dateStart === undefined) {
+    normalized.dateStart = String(normalized.startYear) + "-01-01";
+    delete normalized.startYear;
+  }
+  if (normalized.endYear !== undefined && normalized.dateEnd === undefined) {
+    normalized.dateEnd = String(normalized.endYear) + "-12-31";
+    delete normalized.endYear;
+  }
+  return normalized;
 }
 
-type ActionName = keyof ActionMap;
+const REQUIRED_FIELDS: Record<string, string[]> = {
+  "posts.create": ["title", "slug"],
+  "posts.get": ["slug"],
+  "posts.update": ["id"],
+  "posts.delete": ["id"],
+  "categories.get": ["slug"],
+  "categories.create": ["title", "slug"],
+  "categories.update": ["id"],
+  "categories.delete": ["id"],
+  "tags.get": ["slug"],
+  "tags.create": ["slug"],
+  "tags.update": ["id"],
+  "tags.delete": ["id"],
+  "menus.get": ["location"],
+  "menus.upsert": ["location", "items"],
+  "settings.update": ["copyrightText"],
+  "footer.update": ["id"],
+  "footer.delete": ["id"],
+  "maps.get": ["slug"],
+  "maps.create": ["title", "slug"],
+  "maps.update": ["id"],
+  "maps.delete": ["id"],
+  "layers.get": ["slug"],
+  "layers.create": ["slug", "name", "type"],
+  "layers.update": ["id"],
+  "layers.delete": ["id"],
+  "datasets.get": ["slug"],
+  "datasets.create": ["slug"],
+  "datasets.update": ["id"],
+  "datasets.delete": ["id"],
+  "pages.get": ["slug"],
+  "pages.create": ["title", "slug"],
+  "pages.update": ["id"],
+  "pages.delete": ["id"],
+  "regions.create": ["name", "slug"],
+  "regions.update": ["id"],
+  "regions.delete": ["id"],
+  "periods.create": ["name", "slug"],
+  "periods.update": ["id"],
+  "periods.delete": ["id"],
+};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const ACTION_REGISTRY: Record<ActionName, (data: any) => Promise<any>> = {
+const ACTION_REGISTRY: Record<string, (data: any) => Promise<any>> = {
   "posts.list": (data) => listPostsAPI(data || {}),
   "posts.get": (data) => getPostBySlug(data.slug),
   "posts.create": (data) => createPost(data, data.tagIds),
@@ -173,37 +175,55 @@ const ACTION_REGISTRY: Record<ActionName, (data: any) => Promise<any>> = {
   "footer.delete": (data) => deleteFooterColumn(data.id),
 
   "maps.list": (data) => listMapsAPI(data || {}),
+  "maps.get": (data) => getMapBySlug(data.slug, data),
   "maps.create": (data) => createMap(data),
   "maps.update": (data) => updateMap(data.id, data),
   "maps.delete": (data) => deleteMap(data.id),
 
+  "layers.list": (data) => listLayersAPI(data || {}),
+  "layers.get": (data) => getLayerBySlug(data.slug, data),
   "layers.create": (data) => createLayer(data),
   "layers.update": (data) => updateLayer(data.id, data),
   "layers.delete": (data) => deleteLayer(data.id),
 
   "datasets.list": (data) => listDatasetsAPI(data || {}),
+  "datasets.get": (data) => getDatasetBySlug(data.slug, data),
   "datasets.create": (data) => createDataset(data),
   "datasets.update": (data) => updateDataset(data.id, data),
   "datasets.delete": (data) => deleteDataset(data.id),
 
   "pages.list": (data) => listPagesAPI(data || {}),
+  "pages.get": (data) => getPageBySlug(data.slug, data),
   "pages.create": (data) => createPage(data, data.tagIds, data.regionIds),
   "pages.update": (data) => updatePage(data.id, data, data.tagIds, data.regionIds),
   "pages.delete": (data) => deletePage(data.id),
 
+  "regions.list": () => getRegions(),
   "regions.create": (data) => createRegion(data),
   "regions.update": (data) => updateRegion(data.id, data),
   "regions.delete": (data) => deleteRegion(data.id),
 
-  "periods.create": (data) => createPeriod(data),
-  "periods.update": (data) => updatePeriod(data.id, data),
+  "periods.list": () => getPeriods(),
+  "periods.create": (data) => createPeriod(normalizePeriodData(data)),
+  "periods.update": (data) => updatePeriod(data.id, normalizePeriodData(data)),
   "periods.delete": (data) => deletePeriod(data.id),
 };
 
-const ALL_ACTIONS = Object.keys(ACTION_REGISTRY) as ActionName[];
+const ALL_ACTIONS = Object.keys(ACTION_REGISTRY);
 
 function errorResponse(message: string, status: number) {
-  return NextResponse.json({ error: message }, { status });
+  return NextResponse.json({ ok: false, error: message }, { status });
+}
+
+function validateRequiredFields(action: string, data: Record<string, unknown>): string | null {
+  const required = REQUIRED_FIELDS[action];
+  if (!required) return null;
+
+  const missing = required.filter((field) => data[field] === undefined || data[field] === null);
+  if (missing.length > 0) {
+    return `Missing required field(s): ${missing.join(", ")}`;
+  }
+  return null;
 }
 
 export async function POST(request: NextRequest) {
@@ -232,20 +252,30 @@ export async function POST(request: NextRequest) {
     return errorResponse("Missing or invalid 'action' field", 400);
   }
 
-  if (!ALL_ACTIONS.includes(action as ActionName)) {
+  if (!ALL_ACTIONS.includes(action)) {
     return errorResponse(
       `Unknown action '${action}'. Available: ${ALL_ACTIONS.join(", ")}`,
       400
     );
   }
 
-  const handler = ACTION_REGISTRY[action as ActionName];
+  const payload = (data || {}) as Record<string, unknown>;
+
+  const validationError = validateRequiredFields(action, payload);
+  if (validationError) {
+    return errorResponse(validationError, 400);
+  }
+
+  const handler = ACTION_REGISTRY[action];
 
   try {
-    const result = await handler(data || {});
+    const result = await handler(payload);
     return NextResponse.json({ ok: true, result });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Internal server error";
+    const raw = error instanceof Error ? error.message : "Internal server error";
+    const message = raw.includes("invocation")
+      ? raw.split("\n").find((line) => line.includes("Argument"))?.trim() || "Invalid input data"
+      : raw;
     console.error(`CMS API error [${action}]:`, error);
     return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }

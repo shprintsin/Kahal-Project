@@ -1,10 +1,6 @@
 import { z } from "zod";
 
 export const datasetSchema = z.object({
-  // Title will now be an object in the form { he: "...", en: "..." }
-  // We validate existence of 'he' (main title) in the resolver or custom check if needed, 
-  // but z.any() allows the object to pass through to the server action.
-  // Content fields - will handle both main (HE) and translations
   title: z.any(),
   slug: z.string().min(1, "Slug is required")
     .regex(/^[a-z0-9-]+$/, "Slug must only contain lowercase letters, numbers, and hyphens"),
@@ -21,9 +17,11 @@ export const datasetSchema = z.object({
   license: z.string().optional(),
   minYear: z.coerce.number().optional().nullable(),
   maxYear: z.coerce.number().optional().nullable(),
-  
+
   thumbnailId: z.string().optional().nullable(),
   regions: z.array(z.string()).default([]),
 });
+
+export const datasetUpdateSchema = datasetSchema.partial();
 
 export type DatasetFormValues = z.infer<typeof datasetSchema>;

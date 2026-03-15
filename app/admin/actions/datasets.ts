@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "@/utils/safe-revalidate";
 import { Prisma } from "@prisma/client";
-import { uploadToR2 } from "@/utils/r2";
+import { uploadFile } from "@/utils/storage";
 
 // Datasets
 export async function getDatasets() {
@@ -34,7 +34,7 @@ export async function getDataset(id: string) {
   return dataset;
 }
 
-import { datasetSchema } from "../schema/dataset";
+import { datasetSchema, datasetUpdateSchema } from "../schema/dataset";
 
 const splitI18nField = (fieldData: any) => {
   if (!fieldData || typeof fieldData !== 'object') {
@@ -92,42 +92,50 @@ export async function createDataset(datasetData: any) {
 }
 
 export async function updateDataset(id: string, datasetData: any) {
-  const validated = datasetSchema.parse(datasetData);
+  const validated = datasetUpdateSchema.parse(datasetData);
 
-  const titleSplit = splitI18nField(validated.title);
-  const descriptionSplit = splitI18nField(validated.description);
-  const sourcesSplit = splitI18nField(validated.sources);
-  const codebookTextSplit = splitI18nField(validated.codebookText);
+  const data: Prisma.ResearchDatasetUpdateInput = {};
 
-  const data: Prisma.ResearchDatasetUpdateInput = {
-    slug: validated.slug,
-    
-    // Split Title
-    title: titleSplit.main,
-    titleI18n: titleSplit.i18n,
-    
-    description: descriptionSplit.main,
-    descriptionI18n: descriptionSplit.i18n,
-    sources: sourcesSplit.main,
-    sourcesI18n: sourcesSplit.i18n,
-    codebookText: codebookTextSplit.main,
-    codebookTextI18n: codebookTextSplit.i18n,
-    
-    citationText: validated.citationText,
-    isVisible: validated.isVisible,
-    license: validated.license,
-    maturity: validated.maturity as any,
-    status: validated.status as any,
-    version: validated.version,
-    minYear: validated.minYear,
-    maxYear: validated.maxYear,
-    
-    category: validated.categoryId ? { connect: { id: validated.categoryId } } : { disconnect: true },
-    thumbnail: validated.thumbnailId ? { connect: { id: validated.thumbnailId } } : { disconnect: true },
-    regions: validated.regions ? {
-      set: validated.regions.map((id: string) => ({ id })),
-    } : undefined,
-  };
+  if (validated.slug !== undefined) data.slug = validated.slug;
+  if (validated.citationText !== undefined) data.citationText = validated.citationText;
+  if (validated.isVisible !== undefined) data.isVisible = validated.isVisible;
+  if (validated.license !== undefined) data.license = validated.license;
+  if (validated.maturity !== undefined) data.maturity = validated.maturity as any;
+  if (validated.status !== undefined) data.status = validated.status as any;
+  if (validated.version !== undefined) data.version = validated.version;
+  if (validated.minYear !== undefined) data.minYear = validated.minYear;
+  if (validated.maxYear !== undefined) data.maxYear = validated.maxYear;
+
+  if (validated.title !== undefined) {
+    const titleSplit = splitI18nField(validated.title);
+    data.title = titleSplit.main;
+    data.titleI18n = titleSplit.i18n;
+  }
+  if (validated.description !== undefined) {
+    const descriptionSplit = splitI18nField(validated.description);
+    data.description = descriptionSplit.main;
+    data.descriptionI18n = descriptionSplit.i18n;
+  }
+  if (validated.sources !== undefined) {
+    const sourcesSplit = splitI18nField(validated.sources);
+    data.sources = sourcesSplit.main;
+    data.sourcesI18n = sourcesSplit.i18n;
+  }
+  if (validated.codebookText !== undefined) {
+    const codebookTextSplit = splitI18nField(validated.codebookText);
+    data.codebookText = codebookTextSplit.main;
+    data.codebookTextI18n = codebookTextSplit.i18n;
+  }
+
+  if (validated.categoryId !== undefined) {
+    data.category = validated.categoryId ? { connect: { id: validated.categoryId } } : { disconnect: true };
+  }
+  if (validated.thumbnailId !== undefined) {
+    data.thumbnail = validated.thumbnailId ? { connect: { id: validated.thumbnailId } } : { disconnect: true };
+  }
+  if (validated.regions !== undefined) {
+    data.regions = { set: validated.regions.map((id: string) => ({ id })) };
+  }
 
   const updatedDataset = await prisma.researchDataset.update({
     where: { id },
@@ -251,7 +259,7 @@ export async function uploadResourceFile(formData: FormData) {
     const folder = datasetId || 'unassigned';
     const key = `datasets/${folder}/${Date.now()}_${cleanFilename}`;
     
-    const url = await uploadToR2(file, key);
+    const url = await uploadFile(file, key);
     
     const name = file.name.split('.')[0];
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-");

@@ -19,7 +19,7 @@ export function SiteFooter({ columns, copyrightText }: SiteFooterProps) {
   return (
     <footer className="bg-[#0d4d2c] text-white py-6 sm:py-8">
       <div className="container mx-auto px-4 sm:px-6">
-        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-${Math.min(columns.length, 4)} gap-6 sm:gap-8`}>
+        <div className={`grid grid-cols-1 sm:grid-cols-2 ${columns.length >= 3 ? "md:grid-cols-3" : ""} ${columns.length >= 4 ? "lg:grid-cols-4" : ""} gap-6 sm:gap-8`}>
           {columns.map((column) => (
             <div key={column.id || column.order}>
               <h3 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">

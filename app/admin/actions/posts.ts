@@ -9,20 +9,22 @@ interface PostInput {
   title?: string;
   slug?: string;
   content?: string;
-  language?: string;
+  excerpt?: string;
   status?: string;
-  translation_group_id?: string;
-  translationGroupId?: string;
+  language?: string;
   author_id?: string;
   thumbnail_id?: string;
   category_id?: string;
+  titleI18n?: Record<string, string>;
+  contentI18n?: Record<string, string>;
+  sourcesI18n?: Record<string, string>;
+  excerptI18n?: Record<string, string>;
 }
 
 async function resolveAuthorRelation(authorId?: string) {
   if (!authorId) return undefined;
 
   const authorExists = await prisma.user.findUnique({ where: { id: authorId } });
-  // If the referenced author no longer exists, skip linking to avoid Prisma connect errors.
   if (!authorExists) return undefined;
 
   return { connect: { id: authorId } };
@@ -60,22 +62,6 @@ export async function getPosts() {
   return posts;
 }
 
-export async function getPostsByTranslationGroup() {
-  const posts = await getPosts();
-  
-  // Group posts by translation_group_id
-  const grouped = posts.reduce((acc, post) => {
-    const groupId = post.translationGroupId;
-    if (!acc[groupId]) {
-      acc[groupId] = [];
-    }
-    acc[groupId].push(post);
-    return acc;
-  }, {} as Record<string, typeof posts>);
-
-  return grouped;
-}
-
 export async function getPost(id: string) {
   const post = await (prisma.post.findUnique as any)({
     where: { id },
@@ -94,11 +80,7 @@ export async function getPost(id: string) {
           altTextI18n: true,
         },
       },
-      tags: {
-        include: {
-          tag: true,
-        },
-      },
+      tags: true,
     },
   });
 
@@ -112,23 +94,22 @@ export async function createPost(
 ) {
   const authorRelation = await resolveAuthorRelation(postData.author_id);
 
-  // Casting to any to bypass potential stale type issues, checked at runtime
   const data: any = {
     title: postData.title,
     slug: postData.slug,
     content: postData.content,
-    language: postData.language,
+    excerpt: postData.excerpt,
     status: postData.status,
-    translationGroupId: postData.translation_group_id || postData.translationGroupId,
+    language: postData.language,
+    titleI18n: postData.titleI18n || {},
+    contentI18n: postData.contentI18n || {},
+    sourcesI18n: postData.sourcesI18n || {},
+    excerptI18n: postData.excerptI18n || {},
     author: authorRelation,
     thumbnail: postData.thumbnail_id ? { connect: { id: postData.thumbnail_id } } : undefined,
     categories: postData.category_id ? { connect: { id: postData.category_id } } : undefined,
     tags: tagIds && tagIds.length > 0
-      ? {
-          create: tagIds.map(tagId => ({
-            tag: { connect: { id: tagId } }
-          })),
-        }
+      ? { connect: tagIds.map(id => ({ id })) }
       : undefined,
   };
 
@@ -151,26 +132,26 @@ export async function updatePost(
 ) {
   const authorRelation = await resolveAuthorRelation(postData.author_id);
 
-  // Casting to any to bypass potential stale type issues, checked at runtime
   const data: any = {
     title: postData.title,
     slug: postData.slug,
     content: postData.content,
-    language: postData.language,
+    excerpt: postData.excerpt,
     status: postData.status,
-    translationGroupId: postData.translation_group_id || postData.translationGroupId,
+    language: postData.language,
+    titleI18n: postData.titleI18n,
+    contentI18n: postData.contentI18n,
+    sourcesI18n: postData.sourcesI18n,
+    excerptI18n: postData.excerptI18n,
     author: authorRelation,
     thumbnail: postData.thumbnail_id ? { connect: { id: postData.thumbnail_id } } : undefined,
     categories: postData.category_id ? { connect: { id: postData.category_id } } : undefined,
     ...(tagIds !== undefined ? {
-      tags: {
-        deleteMany: {},
-        create: tagIds.map(tagId => ({
-          tag: { connect: { id: tagId } }
-        })),
-      }
+      tags: { set: tagIds.map(id => ({ id })) }
     } : {})
   };
+
+  Object.keys(data).forEach(key => data[key] === undefined && delete data[key]);
 
   const updatedPost = await prisma.post.update({
     where: { id },
@@ -189,7 +170,6 @@ export async function updatePost(
 
 
 export async function deletePost(id: string) {
-  // Delete post tags first (cascade should handle this, but being explicit)
   await prisma.post.delete({
     where: { id },
   });
@@ -199,13 +179,11 @@ export async function deletePost(id: string) {
 
 export async function uploadMedia(file: File) {
   try {
-    // Upload to Cloudflare R2 using the existing utility
-    const { uploadToR2 } = await import("@/utils/r2");
-    
-    const fileName = `thumbnail/${Date.now()}-${file.name}`;
-    const publicUrl = await uploadToR2(file, fileName);
+    const { uploadFile } = await import("@/utils/storage");
 
-    // Create media record in database
+    const fileName = `thumbnail/${Date.now()}-${file.name}`;
+    const publicUrl = await uploadFile(file, fileName);
+
     const mediaData = await prisma.media.create({
       data: {
         filename: file.name,
@@ -221,11 +199,6 @@ export async function uploadMedia(file: File) {
   }
 }
 
-// ===================================================
-// API Endpoint Server Actions
-// ===================================================
-
-// Helper function to get localized field
 function getLocalizedField(
   defaultValue: string | null | undefined,
   i18nJson: unknown,
@@ -233,7 +206,7 @@ function getLocalizedField(
 ): string | null {
   if (!defaultValue && !i18nJson) return null;
   if (!lang || !i18nJson) return defaultValue || null;
-  
+
   try {
     const i18nData = (typeof i18nJson === 'string' ? JSON.parse(i18nJson) : i18nJson) as Record<string, string>;
     return i18nData[lang] || defaultValue || null;
@@ -252,7 +225,6 @@ export interface ListPostsOptions {
   regionSlug?: string;
   authorId?: string;
   language?: string;
-  translationGroup?: string;
   search?: string;
   page?: number;
   limit?: number;
@@ -260,7 +232,6 @@ export interface ListPostsOptions {
   order?: "asc" | "desc";
 }
 
-// List posts with filtering and pagination (for API)
 export async function listPostsAPI(options: ListPostsOptions = {}) {
   const {
     status,
@@ -272,7 +243,6 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
     regionSlug,
     authorId,
     language,
-    translationGroup,
     search,
     page = 1,
     limit = 20,
@@ -280,11 +250,8 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
     order = "desc",
   } = options;
 
-  // Build where clause
   const where: Prisma.PostWhereInput = {
     ...(status && { status: status as any }),
-    ...(language && { language: language as any }),
-    ...(translationGroup && { translationGroupId: translationGroup }),
     ...(authorId && { authorId }),
     ...(search && {
       OR: [
@@ -295,32 +262,27 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
     }),
   };
 
-  // Handle category filter
   if (categoryId) {
     where.categories = { some: { id: categoryId } };
   } else if (categorySlug) {
     where.categories = { some: { slug: categorySlug } };
   }
 
-  // Handle tag filter
   if (tagId) {
-    where.tags = { some: { tagId } };
+    where.tags = { some: { id: tagId } };
   } else if (tagSlug) {
-    where.tags = { some: { tag: { slug: tagSlug } } };
+    where.tags = { some: { slug: tagSlug } };
   }
 
-  // Handle region filter
   if (regionId) {
     where.regions = { some: { id: regionId } };
   } else if (regionSlug) {
     where.regions = { some: { slug: regionSlug } };
   }
 
-  // Pagination
   const skip = (page - 1) * Math.min(limit, 100);
   const take = Math.min(limit, 100);
 
-  // Order by
   const orderBy: Prisma.PostOrderByWithRelationInput = {
     [sort]: order,
   };
@@ -355,15 +317,11 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
             },
           },
           tags: {
-            include: {
-              tag: {
-                select: {
-                  id: true,
-                  slug: true,
-                  name: true,
-                  nameI18n: true,
-                },
-              },
+            select: {
+              id: true,
+              slug: true,
+              name: true,
+              nameI18n: true,
             },
           },
           regions: {
@@ -379,15 +337,12 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
       prisma.post.count({ where }),
     ]);
 
-    // Transform data
     const transformedPosts = posts.map((post) => ({
       id: post.id,
       slug: post.slug,
       title: post.title,
       excerpt: post.excerpt,
       status: post.status,
-      language: post.language,
-      translationGroupId: post.translationGroupId,
       thumbnail: post.thumbnail
         ? {
             url: post.thumbnail.url,
@@ -400,10 +355,10 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
         slug: cat.slug,
         title: cat.title,
       })),
-      tags: post.tags.map((pt) => ({
-        id: pt.tag.id,
-        slug: pt.tag.slug,
-        name: pt.tag.name,
+      tags: post.tags.map((tag) => ({
+        id: tag.id,
+        slug: tag.slug,
+        name: tag.name,
       })),
       regions: post.regions.map((region) => ({
         id: region.id,
@@ -429,7 +384,6 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
   }
 }
 
-// Get single post by slug (for API)
 export async function getPostBySlug(slug: string) {
   try {
     const post = await prisma.post.findUnique({
@@ -458,15 +412,11 @@ export async function getPostBySlug(slug: string) {
           },
         },
         tags: {
-          include: {
-            tag: {
-              select: {
-                id: true,
-                slug: true,
-                name: true,
-                nameI18n: true,
-              },
-            },
+          select: {
+            id: true,
+            slug: true,
+            name: true,
+            nameI18n: true,
           },
         },
         regions: {
@@ -484,40 +434,28 @@ export async function getPostBySlug(slug: string) {
       return null;
     }
 
-    // Get translations
-    const translations = await prisma.post.findMany({
-      where: {
-        translationGroupId: post.translationGroupId,
-        id: { not: post.id },
-      },
-      select: {
-        language: true,
-        slug: true,
-        title: true,
-      },
-    });
-
     return {
       id: post.id,
       slug: post.slug,
       title: post.title,
+      titleI18n: post.titleI18n,
       content: post.content,
+      contentI18n: post.contentI18n,
       excerpt: post.excerpt,
+      excerptI18n: post.excerptI18n,
       sources: post.sources,
+      sourcesI18n: post.sourcesI18n,
       status: post.status,
-      language: post.language,
-      translationGroupId: post.translationGroupId,
       thumbnail: post.thumbnail
         ? {
             url: post.thumbnail.url,
-            altText: getLocalizedField(null, post.thumbnail.altTextI18n, post.language),
+            altText: getLocalizedField(null, post.thumbnail.altTextI18n),
           }
         : null,
       author: post.author,
       categories: post.categories,
-      tags: post.tags.map((pt) => pt.tag),
+      tags: post.tags,
       regions: post.regions,
-      translations,
       createdAt: post.createdAt.toISOString(),
       updatedAt: post.updatedAt.toISOString(),
     };
@@ -526,43 +464,3 @@ export async function getPostBySlug(slug: string) {
     throw new Error("Failed to get post");
   }
 }
-
-// Get post translations (for API)
-export async function getPostTranslations(slug: string) {
-  try {
-    const post = await prisma.post.findUnique({
-      where: { slug },
-      select: { translationGroupId: true },
-    });
-
-    if (!post) {
-      return null;
-    }
-
-    const translations = await prisma.post.findMany({
-      where: {
-        translationGroupId: post.translationGroupId,
-      },
-      select: {
-        id: true,
-        slug: true,
-        title: true,
-        language: true,
-        status: true,
-      },
-      orderBy: {
-        language: "asc",
-      },
-    });
-
-    return {
-      translationGroupId: post.translationGroupId,
-      translations,
-    };
-  } catch (error) {
-    console.error("Error getting post translations:", error);
-    throw new Error("Failed to get post translations");
-  }
-}
-
-

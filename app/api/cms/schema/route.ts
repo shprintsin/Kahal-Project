@@ -41,26 +41,34 @@ const SCHEMA = {
         title: "string (required)",
         slug: "string (required)",
         content: "string? - Lexical JSON",
-        excerpt: "string?",
+        excerpt: "string? - short summary",
         language: "string? - 'he' | 'en' | 'yi' | 'ru' | 'pl'",
         status: "string? - 'draft' | 'published'",
         category_id: "string?",
         author_id: "string?",
         thumbnail_id: "string?",
         tagIds: "string[]?",
+        titleI18n: "object? - { en?: string, he?: string, ... }",
+        contentI18n: "object? - { en?: string, he?: string, ... }",
+        excerptI18n: "object? - { en?: string, he?: string, ... }",
       },
       returns: "Created post object",
     },
     "posts.update": {
-      description: "Update an existing post",
+      description: "Update an existing post. Only send fields you want to change.",
       data: {
         id: "string (required)",
         title: "string?",
         slug: "string?",
         content: "string?",
         excerpt: "string?",
+        language: "string?",
         status: "string?",
+        category_id: "string?",
         tagIds: "string[]?",
+        titleI18n: "object?",
+        contentI18n: "object?",
+        excerptI18n: "object?",
       },
       returns: "Updated post object",
     },
@@ -174,7 +182,12 @@ const SCHEMA = {
 
     "maps.list": {
       description: "List maps with filtering",
-      data: { status: "string?", search: "string?", page: "number?", limit: "number?" },
+      data: { status: "string?", search: "string?", page: "number?", limit: "number?", categorySlug: "string?", regionSlug: "string?", tagSlug: "string?" },
+    },
+    "maps.get": {
+      description: "Get a single map by slug with layers",
+      data: { slug: "string (required)", lang: "string?", includeLayers: "boolean? (default true)" },
+      returns: "Map with layers, tags, regions, config",
     },
     "maps.create": {
       description: "Create a map",
@@ -200,6 +213,16 @@ const SCHEMA = {
       data: { id: "string (required)" },
     },
 
+    "layers.list": {
+      description: "List layers with filtering",
+      data: { status: "string?", type: "string?", search: "string?", page: "number?", limit: "number?", categorySlug: "string?", regionSlug: "string?", tagSlug: "string?" },
+      returns: "{ layers: Layer[], pagination: { page, limit, total, totalPages } }",
+    },
+    "layers.get": {
+      description: "Get a single layer by slug",
+      data: { slug: "string (required)", lang: "string?", includeMaps: "boolean?" },
+      returns: "Layer with GeoJSON data, tags, regions",
+    },
     "layers.create": {
       description: "Create a GeoJSON layer",
       data: {
@@ -228,7 +251,12 @@ const SCHEMA = {
 
     "datasets.list": {
       description: "List research datasets",
-      data: { status: "string?", search: "string?", page: "number?", limit: "number?" },
+      data: { status: "string?", search: "string?", page: "number?", limit: "number?", categorySlug: "string?", regionSlug: "string?", maturity: "string?" },
+    },
+    "datasets.get": {
+      description: "Get a single dataset by slug",
+      data: { slug: "string (required)", lang: "string?", includeResources: "boolean?" },
+      returns: "Dataset with category, regions, resources",
     },
     "datasets.create": {
       description: "Create a research dataset",
@@ -243,8 +271,8 @@ const SCHEMA = {
       },
     },
     "datasets.update": {
-      description: "Update a dataset",
-      data: { id: "string (required)", "...": "same as datasets.create" },
+      description: "Update a dataset. Only send fields you want to change.",
+      data: { id: "string (required)", "...": "same as datasets.create, all fields optional" },
     },
     "datasets.delete": {
       description: "Delete a dataset",
@@ -253,7 +281,12 @@ const SCHEMA = {
 
     "pages.list": {
       description: "List CMS pages",
-      data: { status: "string?", template: "string?", search: "string?", page: "number?", limit: "number?" },
+      data: { status: "string?", template: "string?", search: "string?", page: "number?", limit: "number?", tagSlug: "string?", regionSlug: "string?" },
+    },
+    "pages.get": {
+      description: "Get a single page by slug",
+      data: { slug: "string (required)", includeChildren: "boolean?" },
+      returns: "Page with content, author, tags, regions, parent",
     },
     "pages.create": {
       description: "Create a CMS page",
@@ -277,6 +310,11 @@ const SCHEMA = {
       data: { id: "string (required)" },
     },
 
+    "regions.list": {
+      description: "List all regions",
+      data: "none",
+      returns: "Region[]",
+    },
     "regions.create": {
       description: "Create a geographic region",
       data: { name: "string (required)", slug: "string (required)", nameI18n: "object?" },
@@ -290,13 +328,18 @@ const SCHEMA = {
       data: { id: "string (required)" },
     },
 
+    "periods.list": {
+      description: "List all time periods",
+      data: "none",
+      returns: "Period[]",
+    },
     "periods.create": {
       description: "Create a time period",
-      data: { name: "string (required)", slug: "string (required)", startYear: "number?", endYear: "number?" },
+      data: { name: "string (required)", slug: "string (required)", startYear: "number? (or dateStart: ISO date string)", endYear: "number? (or dateEnd: ISO date string)" },
     },
     "periods.update": {
       description: "Update a period",
-      data: { id: "string (required)", name: "string?", slug: "string?" },
+      data: { id: "string (required)", name: "string?", slug: "string?", startYear: "number?", endYear: "number?" },
     },
     "periods.delete": {
       description: "Delete a period",

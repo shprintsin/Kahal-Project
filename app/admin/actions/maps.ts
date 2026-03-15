@@ -21,7 +21,8 @@ interface MapLayerInput {
 }
 
 interface MapConfigInput {
-  tile?: string;
+  tile?: Record<string, unknown> | string;
+  basemap?: string;
   zoom?: number;
   center?: [number, number];
   customCSS?: string;
@@ -31,16 +32,25 @@ interface MapConfigInput {
 export interface MapInput {
   slug: string;
   status?: string;
+  title?: string;
+  description?: string;
   title_i18n?: Prisma.InputJsonValue;
   titleI18n?: Prisma.InputJsonValue;
   description_i18n?: Prisma.InputJsonValue;
   descriptionI18n?: Prisma.InputJsonValue;
   area_i18n?: Prisma.InputJsonValue;
   areaI18n?: Prisma.InputJsonValue;
-  year?: string | null;
+  year?: string | number | null;
+  yearMin?: number | null;
+  yearMax?: number | null;
+  period?: string | null;
   version?: string | null;
   thumbnail_url?: string | null;
   thumbnailUrl?: string | null;
+  thumbnailId?: string | null;
+  categoryId?: string | null;
+  tagIds?: string[];
+  regionIds?: string[];
   download_url?: string | null;
   downloadUrl?: string | null;
   download_size_bytes?: number | null;
@@ -104,6 +114,7 @@ export async function createMap(mapData: MapInput) {
   // Create map-level config WITHOUT layers
   const mapConfig = {
     tile: mapData.config?.tile,
+    basemap: mapData.config?.basemap,
     zoom: mapData.config?.zoom,
     center: mapData.config?.center,
     customCSS: mapData.config?.customCSS,
@@ -112,19 +123,39 @@ export async function createMap(mapData: MapInput) {
   const data: any = {
     slug: mapData.slug,
     status: mapData.status || 'draft',
+    ...(mapData.title && { title: mapData.title }),
     titleI18n: mapData.title_i18n || mapData.titleI18n,
+    ...(mapData.description !== undefined && { description: mapData.description }),
     descriptionI18n: mapData.description_i18n || mapData.descriptionI18n,
     areaI18n: mapData.area_i18n || mapData.areaI18n,
     year: mapData.year,
+    yearMin: mapData.yearMin,
+    yearMax: mapData.yearMax,
+    period: mapData.period,
     version: mapData.version,
     thumbnailUrl: mapData.thumbnail_url || mapData.thumbnailUrl,
+    ...(mapData.thumbnailId !== undefined && {
+      thumbnail: mapData.thumbnailId
+        ? { connect: { id: mapData.thumbnailId } }
+        : { disconnect: true },
+    }),
+    ...(mapData.categoryId !== undefined && {
+      category: mapData.categoryId
+        ? { connect: { id: mapData.categoryId } }
+        : { disconnect: true },
+    }),
+    ...(mapData.tagIds && {
+      tags: { connect: mapData.tagIds.map((id) => ({ id })) },
+    }),
+    ...(mapData.regionIds && {
+      regions: { connect: mapData.regionIds.map((id) => ({ id })) },
+    }),
     downloadUrl: mapData.download_url || mapData.downloadUrl,
     downloadSizeBytes: mapData.download_size_bytes || mapData.downloadSizeBytes,
-    config: mapConfig, // Only map-level config, no layers
+    config: mapConfig,
     globalStyleConfig: mapData.global_style_config || mapData.globalStyleConfig,
     referenceLinks: mapData.reference_links || mapData.referenceLinks,
   };
-
 
   const createdMap = await prisma.map.create({
     data,
@@ -167,6 +198,8 @@ export async function createMap(mapData: MapInput) {
   }
 
   revalidatePath("/admin/maps");
+  revalidatePath("/admin/maps2");
+  revalidatePath("/maps");
   return createdMap;
 }
 
@@ -175,30 +208,62 @@ export async function updateMap(id: string, mapData: MapInput) {
   // Extract layers from config
   const layers = mapData.config?.layers || [];
 
-  // Create map-level config WITHOUT layers
-  const mapConfig = {
-    tile: mapData.config?.tile,
-    zoom: mapData.config?.zoom,
-    center: mapData.config?.center,
-    customCSS: mapData.config?.customCSS,
-  };
+  // Create map-level config WITHOUT layers (only if config was provided)
+  const mapConfig = mapData.config ? {
+    tile: mapData.config.tile,
+    basemap: mapData.config.basemap,
+    zoom: mapData.config.zoom,
+    center: mapData.config.center,
+    customCSS: mapData.config.customCSS,
+  } : undefined;
 
-  const data: any = {
-    slug: mapData.slug,
-    status: mapData.status || 'draft',
-    titleI18n: mapData.title_i18n || mapData.titleI18n,
-    descriptionI18n: mapData.description_i18n || mapData.descriptionI18n,
-    areaI18n: mapData.area_i18n || mapData.areaI18n,
-    year: mapData.year,
-    version: mapData.version,
-    thumbnailUrl: mapData.thumbnail_url || mapData.thumbnailUrl,
-    downloadUrl: mapData.download_url || mapData.downloadUrl,
-    downloadSizeBytes: mapData.download_size_bytes || mapData.downloadSizeBytes,
-    config: mapConfig, // Only map-level config, no layers
-    globalStyleConfig: mapData.global_style_config || mapData.globalStyleConfig,
-    referenceLinks: mapData.reference_links || mapData.referenceLinks,
-  };
+  const data: any = {};
 
+  if (mapData.slug !== undefined) data.slug = mapData.slug;
+  if (mapData.status !== undefined) data.status = mapData.status;
+  if (mapData.title !== undefined) data.title = mapData.title;
+  if (mapData.description !== undefined) data.description = mapData.description;
+  if (mapData.year !== undefined) data.year = mapData.year;
+  if (mapData.yearMin !== undefined) data.yearMin = mapData.yearMin;
+  if (mapData.yearMax !== undefined) data.yearMax = mapData.yearMax;
+  if (mapData.period !== undefined) data.period = mapData.period;
+  if (mapData.version !== undefined) data.version = mapData.version;
+  if (mapConfig !== undefined) data.config = mapConfig;
+
+  const titleI18n = mapData.title_i18n || mapData.titleI18n;
+  if (titleI18n !== undefined) data.titleI18n = titleI18n;
+  const descriptionI18n = mapData.description_i18n || mapData.descriptionI18n;
+  if (descriptionI18n !== undefined) data.descriptionI18n = descriptionI18n;
+  const areaI18n = mapData.area_i18n || mapData.areaI18n;
+  if (areaI18n !== undefined) data.areaI18n = areaI18n;
+
+  const thumbnailUrl = mapData.thumbnail_url || mapData.thumbnailUrl;
+  if (thumbnailUrl !== undefined) data.thumbnailUrl = thumbnailUrl;
+  const downloadUrl = mapData.download_url || mapData.downloadUrl;
+  if (downloadUrl !== undefined) data.downloadUrl = downloadUrl;
+  const downloadSizeBytes = mapData.download_size_bytes || mapData.downloadSizeBytes;
+  if (downloadSizeBytes !== undefined) data.downloadSizeBytes = downloadSizeBytes;
+  const globalStyleConfig = mapData.global_style_config || mapData.globalStyleConfig;
+  if (globalStyleConfig !== undefined) data.globalStyleConfig = globalStyleConfig;
+  const referenceLinks = mapData.reference_links || mapData.referenceLinks;
+  if (referenceLinks !== undefined) data.referenceLinks = referenceLinks;
+
+  if (mapData.thumbnailId !== undefined) {
+    data.thumbnail = mapData.thumbnailId
+      ? { connect: { id: mapData.thumbnailId } }
+      : { disconnect: true };
+  }
+  if (mapData.categoryId !== undefined) {
+    data.category = mapData.categoryId
+      ? { connect: { id: mapData.categoryId } }
+      : { disconnect: true };
+  }
+  if (mapData.tagIds) {
+    data.tags = { set: mapData.tagIds.map((id) => ({ id })) };
+  }
+  if (mapData.regionIds) {
+    data.regions = { set: mapData.regionIds.map((id) => ({ id })) };
+  }
 
   const updatedMap = await prisma.map.update({
     where: { id },
@@ -247,7 +312,10 @@ export async function updateMap(id: string, mapData: MapInput) {
   }
 
   revalidatePath("/admin/maps");
+  revalidatePath("/admin/maps2");
   revalidatePath(`/admin/maps/${id}`);
+  revalidatePath(`/admin/maps2/${id}`);
+  revalidatePath("/maps");
   return updatedMap;
 }
 
@@ -572,6 +640,9 @@ export async function getMapBySlug(
         },
         ...(includeLayers && {
           layers: {
+            include: {
+              layer: true,
+            },
             orderBy: {
               zIndex: "asc",
             },
@@ -639,23 +710,27 @@ export async function getMapBySlug(
           }
         : null,
       ...(includeLayers && {
-        layers: (map as any).layers.map((layer: any) => ({
-          id: layer.id,
-          name: getLocalizedField(layer.name, layer.nameI18n, lang) || layer.name,
-          description: getLocalizedField(layer.description, layer.descriptionI18n, lang) || layer.description,
-          type: layer.type,
-          sourceType: layer.sourceType,
-          sourceUrl: layer.sourceUrl,
-          geoJsonData: layer.geoJsonData,
-          downloadUrl: layer.downloadUrl,
-          filename: layer.filename,
-          styleConfig: layer.styleConfig,
-          interactionConfig: layer.interactionConfig,
-          isVisible: layer.isVisible,
-          isVisibleByDefault: layer.isVisibleByDefault,
-          zIndex: layer.zIndex,
-          createdAt: layer.createdAt.toISOString(),
-          updatedAt: layer.updatedAt.toISOString(),
+        layers: (map as any).layers.map((assoc: any) => ({
+          id: assoc.layer.id,
+          layerId: assoc.layerId,
+          name: getLocalizedField(assoc.layer.name, assoc.layer.nameI18n, lang) || assoc.layer.name,
+          description: getLocalizedField(assoc.layer.description, assoc.layer.descriptionI18n, lang) || assoc.layer.description,
+          type: assoc.layer.type,
+          sourceType: assoc.layer.sourceType,
+          sourceUrl: assoc.layer.sourceUrl,
+          geoJsonData: assoc.layer.geoJsonData,
+          downloadUrl: assoc.layer.downloadUrl,
+          filename: assoc.layer.filename,
+          styleConfig: {
+            ...(assoc.layer.styleConfig || {}),
+            ...(assoc.styleOverride || {}),
+          },
+          interactionConfig: assoc.interactionConfig,
+          isVisible: assoc.isVisible,
+          isVisibleByDefault: assoc.isVisibleByDefault,
+          zIndex: assoc.zIndex,
+          createdAt: assoc.layer.createdAt.toISOString(),
+          updatedAt: assoc.layer.updatedAt.toISOString(),
         })),
       }),
       ...(includeResources && {
