@@ -384,6 +384,30 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
   }
 }
 
+export async function getPostTranslations(slug: string) {
+  try {
+    const post = await prisma.post.findUnique({
+      where: { slug },
+      select: { translationGroupId: true },
+    });
+    if (!post?.translationGroupId) return null;
+
+    const translations = await prisma.post.findMany({
+      where: { translationGroupId: post.translationGroupId },
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        language: true,
+      },
+    });
+    return translations;
+  } catch (error) {
+    console.error("Error getting post translations:", error);
+    throw new Error("Failed to get post translations");
+  }
+}
+
 export async function getPostBySlug(slug: string) {
   try {
     const post = await prisma.post.findUnique({
