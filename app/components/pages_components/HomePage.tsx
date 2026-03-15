@@ -44,19 +44,19 @@ export default function HomePageComponent({
           <Col className="flex-1 justify-around items-center w-full px-4 sm:px-6 md:w-11/12 lg:w-10/12 mx-auto">
             <div className="flex flex-col md:flex-row gap-6 md:gap-8 lg:gap-10 justify-around w-full py-6 sm:py-0">
               <Col className="w-full md:w-6/12">
-                <div className="text-right font-['Secular_One'] mb-6 sm:mb-12 mt-4 sm:mt-8">
-                  <h1 className="text-white text-4xl sm:text-6xl lg:text-8xl font-bold mb-2">1000 שנות היסטוריה</h1>
-                  <h2 className="text-white text-xl sm:text-3xl lg:text-4xl mb-4 sm:mb-6">פרויקט קהילות מזרח אירופה</h2>
+                <div className="text-center md:text-right font-['Secular_One'] mb-6 sm:mb-10 md:mb-12 mt-4 sm:mt-8">
+                  <h1 className="text-white text-5xl sm:text-6xl lg:text-8xl font-bold mb-2">1000 שנות היסטוריה</h1>
+                  <h2 className="text-white text-xl sm:text-2xl lg:text-4xl mb-4 sm:mb-6">פרויקט קהילות מזרח אירופה</h2>
                 </div>
                 {heroActions.length > 0 && (
-                  <div className="flex flex-col sm:flex-row mb-8 sm:mb-16 justify-end gap-3 sm:gap-6">
+                  <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row mb-8 sm:mb-16 justify-center md:justify-end gap-3 sm:gap-4">
                     {heroActions.map((action) => (
                       <ActionButtonUI
                         key={action.id}
                         href={action.href}
                         icon={action.icon ? <GetIcons icon={action.icon} className="text-white" /> : undefined}
                         iconPosition="start"
-                        className="justify-center sm:justify-start"
+                        className="justify-center"
                       >
                         {action.title}
                       </ActionButtonUI>
