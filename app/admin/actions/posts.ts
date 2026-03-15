@@ -269,9 +269,9 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
   }
 
   if (tagId) {
-    where.tags = { some: { id: tagId } };
+    where.tags = { some: { tag: { id: tagId } } };
   } else if (tagSlug) {
-    where.tags = { some: { slug: tagSlug } };
+    where.tags = { some: { tag: { slug: tagSlug } } };
   }
 
   if (regionId) {
@@ -318,10 +318,14 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
           },
           tags: {
             select: {
-              id: true,
-              slug: true,
-              name: true,
-              nameI18n: true,
+              tag: {
+                select: {
+                  id: true,
+                  slug: true,
+                  name: true,
+                  nameI18n: true,
+                },
+              },
             },
           },
           regions: {
@@ -355,10 +359,10 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
         slug: cat.slug,
         title: cat.title,
       })),
-      tags: post.tags.map((tag) => ({
-        id: tag.id,
-        slug: tag.slug,
-        name: tag.name,
+      tags: post.tags.map((pt) => ({
+        id: pt.tag.id,
+        slug: pt.tag.slug,
+        name: pt.tag.name,
       })),
       regions: post.regions.map((region) => ({
         id: region.id,
@@ -437,10 +441,14 @@ export async function getPostBySlug(slug: string) {
         },
         tags: {
           select: {
-            id: true,
-            slug: true,
-            name: true,
-            nameI18n: true,
+            tag: {
+              select: {
+                id: true,
+                slug: true,
+                name: true,
+                nameI18n: true,
+              },
+            },
           },
         },
         regions: {
@@ -478,7 +486,7 @@ export async function getPostBySlug(slug: string) {
         : null,
       author: post.author,
       categories: post.categories,
-      tags: post.tags,
+      tags: post.tags.map((pt) => pt.tag),
       regions: post.regions,
       createdAt: post.createdAt.toISOString(),
       updatedAt: post.updatedAt.toISOString(),
