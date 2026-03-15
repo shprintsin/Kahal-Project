@@ -18,7 +18,7 @@ interface HomePageProps {
   heroGrid: { id: string; title: string; icon: string; href: string; hoverColor: string }[];
   heroActions: { id: string; title: string; icon: string; href: string }[];
   heroStrip: { label: string; icon: string; href: string }[];
-  contentBlocks: ContentBlocksProps;
+  contentBlocks?: ContentBlocksProps;
   copyrightText: string;
   footerColumns: FooterColumn[];
 }
@@ -97,11 +97,13 @@ export default function HomePageComponent({
         </div>
       </section>
 
-      <section className="relative z-10 bg-gray-50">
-        <div className="flex flex-col gap-4 sm:gap-6 w-full px-4 sm:px-6 lg:w-10/12 mx-auto py-6 sm:py-10">
-          <ContentBlocks {...contentBlocks} />
-        </div>
-      </section>
+      {contentBlocks && (
+        <section className="relative z-10 bg-gray-50">
+          <div className="flex flex-col gap-4 sm:gap-6 w-full px-4 sm:px-6 lg:w-10/12 mx-auto py-6 sm:py-10">
+            <ContentBlocks {...contentBlocks} />
+          </div>
+        </section>
+      )}
 
       <SiteFooter columns={footerColumns} copyrightText={copyrightText} />
     </div>
