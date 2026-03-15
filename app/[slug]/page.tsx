@@ -5,10 +5,14 @@ import { getSiteShellData } from '@/app/lib/get-navigation';
 import { SiteShell, SiteMain } from '@/components/ui/site-shell';
 
 export async function generateStaticParams() {
-    const { pages } = await listPagesAPI({ limit: 1000, status: 'published' });
-    return pages.map((page) => ({
-        slug: page.slug,
-    }));
+    try {
+        const { pages } = await listPagesAPI({ limit: 1000, status: 'published' });
+        return pages.map((page) => ({
+            slug: page.slug,
+        }));
+    } catch {
+        return [];
+    }
 }
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
