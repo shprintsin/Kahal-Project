@@ -21,6 +21,7 @@ export { TablePagination } from "./table-pagination";
 export { BulkActionsBar } from "./bulk-actions-bar";
 
 // Page Template Components
+export { ContentListPage } from "./content-list-page";
 export { ContentPageTemplate, ContentPageSection } from "./content-page-template";
 export { ContentPageHeader } from "./content-page-header";
 
