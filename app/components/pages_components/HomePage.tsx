@@ -41,9 +41,9 @@ export default function HomePageComponent({
         <div className="relative z-10 flex flex-col min-h-screen">
           <Header navigation={navigation} />
 
-          <Col className="flex-1 justify-around items-center w-full px-4 sm:px-6 lg:w-10/12 mx-auto">
-            <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 justify-around w-full py-6 sm:py-0">
-              <Col className="w-full lg:w-6/12">
+          <Col className="flex-1 justify-around items-center w-full px-4 sm:px-6 md:w-11/12 lg:w-10/12 mx-auto">
+            <div className="flex flex-col md:flex-row gap-6 md:gap-8 lg:gap-10 justify-around w-full py-6 sm:py-0">
+              <Col className="w-full md:w-6/12">
                 <div className="text-right font-['Secular_One'] mb-6 sm:mb-12 mt-4 sm:mt-8">
                   <h1 className="text-white text-4xl sm:text-6xl lg:text-8xl font-bold mb-2">1000 שנות היסטוריה</h1>
                   <h2 className="text-white text-xl sm:text-3xl lg:text-4xl mb-4 sm:mb-6">פרויקט קהילות מזרח אירופה</h2>
@@ -66,8 +66,8 @@ export default function HomePageComponent({
               </Col>
 
               {heroGrid.length > 0 && (
-                <div className="w-full lg:w-6/12 flex flex-col justify-around">
-                  <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-6 max-w-md sm:max-w-lg lg:max-w-none mx-auto w-full">
+                <div className="w-full md:w-6/12 flex flex-col justify-around">
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-6 max-w-md md:max-w-none mx-auto w-full">
                     {heroGrid.map((category) => (
                       <CategoryTile
                         key={category.id}

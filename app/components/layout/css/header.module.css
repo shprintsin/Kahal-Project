@@ -130,8 +130,8 @@
   color: white;
 }
 
-/* Mobile: < 768px */
-@media (max-width: 767px) {
+/* Mobile + Tablet: < 1024px */
+@media (max-width: 1023px) {
   .menuToggle {
     display: block;
   }
@@ -206,17 +206,9 @@
   }
 }
 
-/* Tablet: 768px - 1023px */
+/* Tablet search: wider expanded input */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .nav {
-    gap: 1rem;
-  }
-
-  .navLink {
-    font-size: 0.875rem;
-  }
-
-  .searchInput {
-    width: 10rem;
+  .search.searchExpanded .searchInput {
+    width: 12rem;
   }
 }
