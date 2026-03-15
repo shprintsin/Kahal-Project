@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { layerSchema, type LayerFormValues } from "@/app/admin/schema/layer";
 import { createLayer, updateLayer, deleteLayer } from "@/app/admin/actions/layers";
-import { createLayerFieldConfigs } from "@/app/admin/layers/field-configs";
+import { createLayerFieldConfigs } from "@/app/admin/(pages)/layers/field-configs";
 import { MapPreview, type MapPreviewHandle } from "@/components/map-components/map-preview";
 import { Trash2, Save, GripVertical, Camera, Plus } from "lucide-react";
 import { UnifiedCanvasSeparator } from "@/app/admin/components/content/unified-canvas";
