@@ -1,6 +1,7 @@
 "use client"
 
-import { type ReactNode, useState } from "react"
+import { type ReactNode, useCallback } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import type { SiteShellData } from "@/app/lib/get-navigation"
 import { SiteShell, SiteMain } from "@/components/ui/site-shell"
 import Pagination from "@/app/components/views/Pagination"
@@ -37,16 +38,25 @@ export function ContentListLayout<T>({
   highlightCard,
   contentCardClassName,
 }: ContentListLayoutProps<T>) {
-  const [currentPage, setCurrentPage] = useState(1)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const currentPage = Math.max(1, Number(searchParams.get("page")) || 1)
 
   const totalPages = Math.ceil(items.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
   const currentItems = items.slice(startIndex, startIndex + itemsPerPage)
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page)
+  const handlePageChange = useCallback((page: number) => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (page === 1) {
+      params.delete("page")
+    } else {
+      params.set("page", String(page))
+    }
+    const qs = params.toString()
+    router.push(qs ? `?${qs}` : window.location.pathname)
     window.scrollTo({ top: 0, behavior: "smooth" })
-  }
+  }, [router, searchParams])
 
   return (
     <SiteShell {...shellData}>
