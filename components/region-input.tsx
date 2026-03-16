@@ -1,11 +1,24 @@
 "use client";
 
 import * as React from "react";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { X, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check, ChevronsUpDown, MapPin, Plus, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Region } from "@prisma/client";
-
 
 interface RegionInputProps {
   regions: Region[];
@@ -15,103 +28,67 @@ interface RegionInputProps {
 }
 
 export function RegionInput({ regions, selectedRegionIds, onRegionsChange, onCreateRegion }: RegionInputProps) {
-  const [inputValue, setInputValue] = React.useState("");
-  const [suggestions, setSuggestions] = React.useState<Region[]>([]);
-  const [showSuggestions, setShowSuggestions] = React.useState(false);
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const [open, setOpen] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [isCreating, setIsCreating] = React.useState(false);
 
   const selectedRegions = regions.filter(region => selectedRegionIds.includes(region.id));
 
-  const handleInputChange = (value: string) => {
-    setInputValue(value);
-    
-    // Show suggestions based on current input (up to last semicolon)
-    const lastPart = value.split(";").pop()?.trim() || "";
-    
-    if (lastPart.length > 0) {
-      const filtered = regions.filter(region => 
-        (region.slug.toLowerCase().includes(lastPart.toLowerCase()) || 
-         region.name.toLowerCase().includes(lastPart.toLowerCase())) &&
-        !selectedRegionIds.includes(region.id)
-      ).slice(0, 5);
-      setSuggestions(filtered);
-      setShowSuggestions(true);
-    } else {
-      setSuggestions([]);
-      setShowSuggestions(false);
+  const getRegionName = (region: Region) => {
+    if (typeof region.nameI18n === "object" && region.nameI18n !== null) {
+      return (region.nameI18n as Record<string, string>).en || (region.nameI18n as Record<string, string>).he || Object.values(region.nameI18n as Record<string, string>)[0] || region.name;
     }
+    return region.name || region.slug;
   };
 
-  const handleInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" || e.key === ";") {
-      e.preventDefault();
-      await processInput();
-    }
-  };
+  const availableRegions = React.useMemo(() => {
+    const unselected = regions.filter(r => !selectedRegionIds.includes(r.id));
+    if (!searchQuery.trim()) return unselected;
+    const query = searchQuery.toLowerCase();
+    return unselected.filter(region =>
+      region.slug.toLowerCase().includes(query) ||
+      region.name.toLowerCase().includes(query) ||
+      getRegionName(region).toLowerCase().includes(query)
+    );
+  }, [regions, selectedRegionIds, searchQuery]);
 
-  const handleInputBlur = async () => {
-    setTimeout(async () => {
-      if (inputValue.trim()) {
-        await processInput();
-      }
-      setShowSuggestions(false);
-    }, 200);
-  };
-
-  const processInput = async () => {
-    const parts = inputValue.split(";").map(p => p.trim()).filter(Boolean);
-    const lastPart = parts[parts.length - 1];
-    
-    if (!lastPart) return;
-
-    // Check if region exists (by slug or name)
-    const existingRegion = regions.find(region => 
-      region.slug.toLowerCase() === lastPart.toLowerCase() ||
-      region.name.toLowerCase() === lastPart.toLowerCase()
+  const showCreateOption =
+    searchQuery.trim() &&
+    !regions.some(region =>
+      region.slug.toLowerCase() === searchQuery.trim().toLowerCase() ||
+      region.name.toLowerCase() === searchQuery.trim().toLowerCase()
     );
 
-    if (existingRegion && !selectedRegionIds.includes(existingRegion.id)) {
-      onRegionsChange([...selectedRegionIds, existingRegion.id]);
-    } else if (!existingRegion) {
-      // Create new
-      try {
-        const newRegion = await onCreateRegion(lastPart);
-        onRegionsChange([...selectedRegionIds, newRegion.id]);
-      } catch (error) {
-        console.error("Failed to create region:", error);
-      }
+  const toggleRegion = (regionId: string) => {
+    if (selectedRegionIds.includes(regionId)) {
+      onRegionsChange(selectedRegionIds.filter(id => id !== regionId));
+    } else {
+      onRegionsChange([...selectedRegionIds, regionId]);
     }
-
-    setInputValue("");
-    setSuggestions([]);
-    setShowSuggestions(false);
   };
 
-  const selectSuggestion = (region: Region) => {
-    onRegionsChange([...selectedRegionIds, region.id]);
-    setInputValue("");
-    setSuggestions([]);
-    setShowSuggestions(false);
-    inputRef.current?.focus();
+  const handleCreate = async () => {
+    if (!searchQuery.trim()) return;
+    setIsCreating(true);
+    try {
+      const newRegion = await onCreateRegion(searchQuery.trim());
+      onRegionsChange([...selectedRegionIds, newRegion.id]);
+      setSearchQuery("");
+    } catch (error) {
+      console.error("Failed to create region:", error);
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const removeRegion = (regionId: string) => {
     onRegionsChange(selectedRegionIds.filter(id => id !== regionId));
   };
 
-  const getRegionName = (region: Region) => {
-    // Prefer English/Hebrew from I18n, fallback to name, then slug
-    if (typeof region.nameI18n === "object" && region.nameI18n !== null) {
-      return (region.nameI18n as any).en || (region.nameI18n as any).he || Object.values(region.nameI18n as any)[0] || region.name;
-    }
-    return region.name || region.slug;
-  };
-
   return (
     <div className="space-y-2">
-      {/* Selected Regions */}
       {selectedRegions.length > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {selectedRegions.map(region => (
             <Badge key={region.id} variant="outline" className="gap-1 pr-1 border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100">
               <MapPin className="w-3 h-3 mr-1" />
@@ -128,39 +105,73 @@ export function RegionInput({ regions, selectedRegionIds, onRegionsChange, onCre
         </div>
       )}
 
-      {/* Input */}
-      <div className="relative">
-        <Input
-          ref={inputRef}
-          value={inputValue}
-          onChange={(e) => handleInputChange(e.target.value)}
-          onKeyDown={handleInputKeyDown}
-          onBlur={handleInputBlur}
-          placeholder="Type regions separated by semicolon (;)"
-          className="w-full"
-        />
-        
-        {/* Suggestions */}
-        {showSuggestions && suggestions.length > 0 && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-md shadow-md z-50 max-h-48 overflow-auto">
-            {suggestions.map(region => (
-              <button
-                key={region.id}
-                type="button"
-                onClick={() => selectSuggestion(region)}
-                className="w-full px-3 py-2 text-left hover:bg-accent transition-colors text-sm flex items-center gap-2"
-              >
-                <MapPin className="w-3 h-3 text-muted-foreground" />
-                {getRegionName(region)}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <p className="text-xs text-muted-foreground">
-        Add regions (e.g. "Poland", "Galicia") to categorize by location.
-      </p>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-full justify-between h-9 text-sm font-normal"
+          >
+            <span className="text-muted-foreground">
+              {selectedRegions.length > 0
+                ? `${selectedRegions.length} region${selectedRegions.length > 1 ? "s" : ""} selected`
+                : "Select regions..."}
+            </span>
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[300px] p-0" align="start">
+          <Command shouldFilter={false}>
+            <CommandInput
+              placeholder="Search or create region..."
+              value={searchQuery}
+              onValueChange={setSearchQuery}
+            />
+            <CommandList>
+              <CommandEmpty className="py-4 text-center text-sm text-muted-foreground">
+                No regions found.
+              </CommandEmpty>
+              {availableRegions.length > 0 && (
+                <CommandGroup>
+                  {availableRegions.slice(0, 10).map(region => (
+                    <CommandItem
+                      key={region.id}
+                      value={region.id}
+                      onSelect={() => toggleRegion(region.id)}
+                      className="cursor-pointer"
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          selectedRegionIds.includes(region.id) ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      <MapPin className="mr-2 h-3 w-3 text-muted-foreground" />
+                      {getRegionName(region)}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              )}
+              {showCreateOption && (
+                <>
+                  <div className="h-px bg-border my-1" />
+                  <CommandGroup>
+                    <CommandItem
+                      onSelect={handleCreate}
+                      disabled={isCreating}
+                      className="text-blue-400 cursor-pointer"
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      {isCreating ? "Creating..." : `Create "${searchQuery.trim()}"`}
+                    </CommandItem>
+                  </CommandGroup>
+                </>
+              )}
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }

@@ -1,12 +1,24 @@
 "use client";
 
 import * as React from "react";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check, ChevronsUpDown, Plus, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Tag } from "@prisma/client";
-
-// type Tag = Database["public"]["Tables"]["tags"]["Row"];
 
 interface TagInputProps {
   tags: Tag[];
@@ -16,102 +28,66 @@ interface TagInputProps {
 }
 
 export function TagInput({ tags, selectedTagIds, onTagsChange, onCreateTag }: TagInputProps) {
-  const [inputValue, setInputValue] = React.useState("");
-  const [suggestions, setSuggestions] = React.useState<Tag[]>([]);
-  const [showSuggestions, setShowSuggestions] = React.useState(false);
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const [open, setOpen] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [isCreating, setIsCreating] = React.useState(false);
 
   const selectedTags = tags.filter(tag => selectedTagIds.includes(tag.id));
 
-  const handleInputChange = (value: string) => {
-    setInputValue(value);
-    
-    // Show suggestions based on current input (up to last semicolon)
-    const lastPart = value.split(";").pop()?.trim() || "";
-    
-    if (lastPart.length > 0) {
-      const filtered = tags.filter(tag => 
-        tag.slug.toLowerCase().includes(lastPart.toLowerCase()) &&
-        !selectedTagIds.includes(tag.id)
-      ).slice(0, 5);
-      setSuggestions(filtered);
-      setShowSuggestions(true);
-    } else {
-      setSuggestions([]);
-      setShowSuggestions(false);
+  const getTagName = (tag: Tag) => {
+    if (typeof tag.nameI18n === "object" && tag.nameI18n !== null) {
+      return (tag.nameI18n as Record<string, string>).en || (tag.nameI18n as Record<string, string>).he || Object.values(tag.nameI18n as Record<string, string>)[0] || tag.slug;
     }
+    return tag.slug;
   };
 
-  const handleInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" || e.key === ";") {
-      e.preventDefault();
-      await processInput();
-    }
-  };
+  const availableTags = React.useMemo(() => {
+    const unselected = tags.filter(tag => !selectedTagIds.includes(tag.id));
+    if (!searchQuery.trim()) return unselected;
+    const query = searchQuery.toLowerCase();
+    return unselected.filter(tag =>
+      tag.slug.toLowerCase().includes(query) ||
+      getTagName(tag).toLowerCase().includes(query)
+    );
+  }, [tags, selectedTagIds, searchQuery]);
 
-  const handleInputBlur = async () => {
-    // Small delay to allow suggestion click
-    setTimeout(async () => {
-      if (inputValue.trim()) {
-        await processInput();
-      }
-      setShowSuggestions(false);
-    }, 200);
-  };
-
-  const processInput = async () => {
-    const parts = inputValue.split(";").map(p => p.trim()).filter(Boolean);
-    const lastPart = parts[parts.length - 1];
-    
-    if (!lastPart) return;
-
-    // Check if tag exists
-    const existingTag = tags.find(tag => 
-      tag.slug.toLowerCase() === lastPart.toLowerCase()
+  const showCreateOption =
+    searchQuery.trim() &&
+    !tags.some(tag =>
+      tag.slug.toLowerCase() === searchQuery.trim().toLowerCase() ||
+      getTagName(tag).toLowerCase() === searchQuery.trim().toLowerCase()
     );
 
-    if (existingTag && !selectedTagIds.includes(existingTag.id)) {
-      // Add existing tag
-      onTagsChange([...selectedTagIds, existingTag.id]);
-    } else if (!existingTag) {
-      // Create new tag
-      try {
-        const newTag = await onCreateTag(lastPart);
-        onTagsChange([...selectedTagIds, newTag.id]);
-      } catch (error) {
-        console.error("Failed to create tag:", error);
-      }
+  const toggleTag = (tagId: string) => {
+    if (selectedTagIds.includes(tagId)) {
+      onTagsChange(selectedTagIds.filter(id => id !== tagId));
+    } else {
+      onTagsChange([...selectedTagIds, tagId]);
     }
-
-    setInputValue("");
-    setSuggestions([]);
-    setShowSuggestions(false);
   };
 
-  const selectSuggestion = (tag: Tag) => {
-    onTagsChange([...selectedTagIds, tag.id]);
-    setInputValue("");
-    setSuggestions([]);
-    setShowSuggestions(false);
-    inputRef.current?.focus();
+  const handleCreate = async () => {
+    if (!searchQuery.trim()) return;
+    setIsCreating(true);
+    try {
+      const newTag = await onCreateTag(searchQuery.trim());
+      onTagsChange([...selectedTagIds, newTag.id]);
+      setSearchQuery("");
+    } catch (error) {
+      console.error("Failed to create tag:", error);
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const removeTag = (tagId: string) => {
     onTagsChange(selectedTagIds.filter(id => id !== tagId));
   };
 
-  const getTagName = (tag: Tag) => {
-    if (typeof tag.nameI18n === "object" && tag.nameI18n !== null) {
-      return (tag.nameI18n as any).en || (tag.nameI18n as any).he || Object.values(tag.nameI18n as any)[0] || tag.slug;
-    }
-    return tag.slug;
-  };
-
   return (
     <div className="space-y-2">
-      {/* Selected Tags as Badges */}
       {selectedTags.length > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {selectedTags.map(tag => (
             <Badge key={tag.id} variant="secondary" className="gap-1 pr-1 bg-white/10 text-white hover:bg-white/20 border-white/10">
               {getTagName(tag)}
@@ -127,38 +103,72 @@ export function TagInput({ tags, selectedTagIds, onTagsChange, onCreateTag }: Ta
         </div>
       )}
 
-      {/* Input with Auto-suggest */}
-      <div className="relative">
-        <Input
-          ref={inputRef}
-          value={inputValue}
-          onChange={(e) => handleInputChange(e.target.value)}
-          onKeyDown={handleInputKeyDown}
-          onBlur={handleInputBlur}
-          placeholder="Type tags separated by semicolon (;)"
-          className="w-full"
-        />
-        
-        {/* Suggestions Dropdown */}
-        {showSuggestions && suggestions.length > 0 && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-md shadow-md z-50 max-h-48 overflow-auto">
-            {suggestions.map(tag => (
-              <button
-                key={tag.id}
-                type="button"
-                onClick={() => selectSuggestion(tag)}
-                className="w-full px-3 py-2 text-left hover:bg-accent transition-colors text-sm"
-              >
-                {getTagName(tag)}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <p className="text-xs text-muted-foreground">
-        Separate tags with semicolon (;). New tags will be created automatically.
-      </p>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-full justify-between h-9 text-sm font-normal"
+          >
+            <span className="text-muted-foreground">
+              {selectedTags.length > 0
+                ? `${selectedTags.length} tag${selectedTags.length > 1 ? "s" : ""} selected`
+                : "Select tags..."}
+            </span>
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[300px] p-0" align="start">
+          <Command shouldFilter={false}>
+            <CommandInput
+              placeholder="Search or create tags..."
+              value={searchQuery}
+              onValueChange={setSearchQuery}
+            />
+            <CommandList>
+              <CommandEmpty className="py-4 text-center text-sm text-muted-foreground">
+                No tags found.
+              </CommandEmpty>
+              {availableTags.length > 0 && (
+                <CommandGroup>
+                  {availableTags.slice(0, 10).map(tag => (
+                    <CommandItem
+                      key={tag.id}
+                      value={tag.id}
+                      onSelect={() => toggleTag(tag.id)}
+                      className="cursor-pointer"
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          selectedTagIds.includes(tag.id) ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      {getTagName(tag)}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              )}
+              {showCreateOption && (
+                <>
+                  <div className="h-px bg-border my-1" />
+                  <CommandGroup>
+                    <CommandItem
+                      onSelect={handleCreate}
+                      disabled={isCreating}
+                      className="text-blue-400 cursor-pointer"
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      {isCreating ? "Creating..." : `Create "${searchQuery.trim()}"`}
+                    </CommandItem>
+                  </CommandGroup>
+                </>
+              )}
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }

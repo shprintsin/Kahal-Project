@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "@/utils/safe-revalidate";
-import { ContentStatus, Prisma } from "@prisma/client";
+import { AppLanguage, ContentStatus, Prisma } from "@prisma/client";
 
 
 interface PostInput {
@@ -10,15 +10,14 @@ interface PostInput {
   slug?: string;
   content?: string;
   excerpt?: string;
+  sources?: string | null;
   status?: string;
   language?: string;
   author_id?: string;
   thumbnail_id?: string;
-  category_id?: string;
-  titleI18n?: Record<string, string>;
-  contentI18n?: Record<string, string>;
-  sourcesI18n?: Record<string, string>;
-  excerptI18n?: Record<string, string>;
+  categoryIds?: string[];
+  regionIds?: string[];
+  tagNames?: string[];
 }
 
 async function resolveAuthorRelation(authorId?: string) {
@@ -28,6 +27,23 @@ async function resolveAuthorRelation(authorId?: string) {
   if (!authorExists) return undefined;
 
   return { connect: { id: authorId } };
+}
+
+async function resolveTagNames(tagNames?: string[]): Promise<string[]> {
+  if (!tagNames || tagNames.length === 0) return [];
+
+  const tagIds: string[] = [];
+  for (const name of tagNames) {
+    const trimmed = name.trim();
+    if (!trimmed) continue;
+    let tag = await prisma.tag.findFirst({ where: { name: { equals: trimmed, mode: "insensitive" } } });
+    if (!tag) {
+      const slug = trimmed.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+      tag = await prisma.tag.create({ data: { name: trimmed, slug, nameI18n: {} } });
+    }
+    tagIds.push(tag.id);
+  }
+  return tagIds;
 }
 
 export async function getPosts() {
@@ -63,8 +79,7 @@ export async function getPosts() {
 }
 
 export async function getPost(id: string) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Prisma typing workaround for complex include
-  const post = await (prisma.post.findUnique as any)({
+  const post = await prisma.post.findUnique({
     where: { id },
     include: {
       author: {
@@ -81,12 +96,14 @@ export async function getPost(id: string) {
           altTextI18n: true,
         },
       },
-      tags: { select: { tag: true } },
+      tags: { include: { tag: true } },
+      categories: true,
+      regions: true,
     },
   });
 
   if (!post) throw new Error("Post not found");
-  return { ...post, tags: post.tags.map((pt: { tag: unknown }) => pt.tag) };
+  return post;
 }
 
 export async function createPost(
@@ -95,22 +112,28 @@ export async function createPost(
 ) {
   const authorRelation = await resolveAuthorRelation(postData.author_id);
 
+  const resolvedTagIds = tagIds && tagIds.length > 0
+    ? tagIds
+    : await resolveTagNames(postData.tagNames);
+
   const data: Prisma.PostCreateInput = {
     title: postData.title ?? "",
     slug: postData.slug ?? "",
     content: postData.content,
     excerpt: postData.excerpt,
+    sources: postData.sources,
     status: (postData.status as ContentStatus) ?? "draft",
-    language: postData.language,
-    titleI18n: postData.titleI18n || {},
-    contentI18n: postData.contentI18n || {},
-    sourcesI18n: postData.sourcesI18n || {},
-    excerptI18n: postData.excerptI18n || {},
+    language: (postData.language as AppLanguage) ?? "HE",
     author: authorRelation,
     thumbnail: postData.thumbnail_id ? { connect: { id: postData.thumbnail_id } } : undefined,
-    categories: postData.category_id ? { connect: { id: postData.category_id } } : undefined,
-    tags: tagIds && tagIds.length > 0
-      ? { create: tagIds.map(tagId => ({ tagId })) }
+    categories: postData.categoryIds && postData.categoryIds.length > 0
+      ? { connect: postData.categoryIds.map(id => ({ id })) }
+      : undefined,
+    regions: postData.regionIds && postData.regionIds.length > 0
+      ? { connect: postData.regionIds.map(id => ({ id })) }
+      : undefined,
+    tags: resolvedTagIds.length > 0
+      ? { create: resolvedTagIds.map(tagId => ({ tagId })) }
       : undefined,
   };
 
@@ -133,23 +156,31 @@ export async function updatePost(
 ) {
   const authorRelation = await resolveAuthorRelation(postData.author_id);
 
+  const resolvedTagIds = tagIds !== undefined
+    ? tagIds
+    : postData.tagNames !== undefined
+      ? await resolveTagNames(postData.tagNames)
+      : undefined;
+
   const data: Prisma.PostUpdateInput = {
     title: postData.title,
     slug: postData.slug,
     content: postData.content,
     excerpt: postData.excerpt,
+    sources: postData.sources,
     status: postData.status ? (postData.status as ContentStatus) : undefined,
-    language: postData.language,
-    titleI18n: postData.titleI18n,
-    contentI18n: postData.contentI18n,
-    sourcesI18n: postData.sourcesI18n,
-    excerptI18n: postData.excerptI18n,
+    language: postData.language ? (postData.language as AppLanguage) : undefined,
     author: authorRelation,
     thumbnail: postData.thumbnail_id ? { connect: { id: postData.thumbnail_id } } : undefined,
-    categories: postData.category_id ? { connect: { id: postData.category_id } } : undefined,
-    ...(tagIds !== undefined ? {
-      tags: { deleteMany: {}, create: tagIds.map(tagId => ({ tagId })) }
-    } : {})
+    ...(postData.categoryIds !== undefined ? {
+      categories: { set: postData.categoryIds.map(id => ({ id })) }
+    } : {}),
+    ...(postData.regionIds !== undefined ? {
+      regions: { set: postData.regionIds.map(id => ({ id })) }
+    } : {}),
+    ...(resolvedTagIds !== undefined ? {
+      tags: { deleteMany: {}, create: resolvedTagIds.map(tagId => ({ tagId })) }
+    } : {}),
   };
 
   const filteredData = Object.fromEntries(
@@ -473,14 +504,11 @@ export async function getPostBySlug(slug: string) {
       id: post.id,
       slug: post.slug,
       title: post.title,
-      titleI18n: post.titleI18n,
       content: post.content,
-      contentI18n: post.contentI18n,
       excerpt: post.excerpt,
-      excerptI18n: post.excerptI18n,
       sources: post.sources,
-      sourcesI18n: post.sourcesI18n,
       status: post.status,
+      language: post.language,
       thumbnail: post.thumbnail
         ? {
             url: post.thumbnail.url,

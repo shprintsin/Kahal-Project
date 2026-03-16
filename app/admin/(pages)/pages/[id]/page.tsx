@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getPage, getPages } from "@/app/admin/actions/pages";
 import { getTags } from "@/app/admin/actions/tags";
+import { getRegions } from "@/app/admin/actions/regions";
 import { PageEditorClient } from "./page-editor-client";
 
 export default async function PageEditorPage({
@@ -20,10 +21,10 @@ export default async function PageEditorPage({
     }
   }
 
-  // Load tags and pages for sidebar
-  const [tags, pages] = await Promise.all([
+  const [tags, pages, regions] = await Promise.all([
     getTags(),
     getPages(),
+    getRegions(),
   ]);
 
   return (
@@ -31,6 +32,7 @@ export default async function PageEditorPage({
       page={page}
       tags={tags}
       pages={pages}
+      regions={regions}
       isNew={isNew}
     />
   );

@@ -503,7 +503,7 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
 
 export function DocumentEditorClient(props: DocumentEditorClientProps) {
     return (
-        <ContentLanguageProvider defaultLanguage="pl">
+        <ContentLanguageProvider defaultLanguage="he">
             <EditorInner {...props} />
         </ContentLanguageProvider>
     )

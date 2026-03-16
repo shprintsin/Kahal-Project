@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getPost, getPosts } from "@/app/admin/actions/posts";
 import { getCategories } from "@/app/admin/actions/categories";
+import { getRegions } from "@/app/admin/actions/regions";
 import { getTags } from "@/app/admin/actions/tags";
 import { PostEditorClient } from "./post-editor-client";
 
@@ -21,11 +22,11 @@ export default async function PostEditorPage({
     }
   }
 
-  // Load categories, tags, and posts for sidebar
-  const [categories, tags, posts] = await Promise.all([
+  const [categories, tags, posts, regions] = await Promise.all([
     getCategories(),
     getTags(),
     getPosts(),
+    getRegions(),
   ]);
 
   return (
@@ -34,6 +35,7 @@ export default async function PostEditorPage({
       categories={categories}
       tags={tags}
       posts={posts}
+      regions={regions}
       isNew={isNew}
     />
   );

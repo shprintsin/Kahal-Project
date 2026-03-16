@@ -1,32 +1,20 @@
 import { z } from "zod";
+import { LayerOptionalDefaultsSchema } from "@/prisma/generated/zod/modelSchema/LayerSchema";
+import { slugField, i18nRecord } from "./shared";
 
-export const layerSchema = z.object({
-  slug: z.string().min(1, "Slug is required"),
-  name: z.string().min(1, "Name is required"),
-  name_i18n: z.record(z.string(), z.string()).optional(),
-  description: z.string().optional(),
-  description_i18n: z.record(z.string(), z.string()).optional(),
-  status: z.enum(["draft", "published", "archived"]),
-  version: z.string().optional(),
-  categoryId: z.string().optional(),
-  type: z.enum(["POINTS", "POLYGONS", "POLYLINES", "MULTI_POLYGONS", "RASTER"]),
-  citationText: z.string().optional(),
-  citation_text_i18n: z.record(z.string(), z.string()).optional(),
-  codebookText: z.string().optional(),
-  codebook_text_i18n: z.record(z.string(), z.string()).optional(),
-  sources: z.string().optional(),
-  sources_i18n: z.record(z.string(), z.string()).optional(),
-  license: z.string().optional(),
-  maturity: z.enum(["Raw", "Preliminary", "Provisional", "Validated"]).optional(),
-  minYear: z.number().optional(),
-  maxYear: z.number().optional(),
-  sourceType: z.enum(["url", "database", "inline"]).optional(),
-  sourceUrl: z.string().optional(),
-  downloadUrl: z.string().optional(),
-  geoJsonData: z.record(z.string(), z.unknown()).optional().nullable(),
-  styleConfig: z.record(z.string(), z.unknown()).optional(),
-  tagIds: z.array(z.string()).optional(),
-  regionIds: z.array(z.string()).optional(),
-});
+export const layerSchema = LayerOptionalDefaultsSchema
+  .omit({ id: true, createdAt: true, updatedAt: true, thumbnail: true })
+  .extend({
+    slug: slugField,
+    name_i18n: i18nRecord,
+    description_i18n: i18nRecord,
+    citation_text_i18n: i18nRecord,
+    codebook_text_i18n: i18nRecord,
+    sources_i18n: i18nRecord,
+    geoJsonData: z.any().optional().nullable(),
+    styleConfig: z.any().optional(),
+    tagIds: z.array(z.string()).optional(),
+    regionIds: z.array(z.string()).optional(),
+  });
 
-export type LayerFormValues = z.infer<typeof layerSchema>;
+export type LayerFormValues = typeof layerSchema._type;

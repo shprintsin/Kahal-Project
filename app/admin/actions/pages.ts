@@ -14,6 +14,8 @@ interface PageInput {
   slug?: string;
   content?: string;
   excerpt?: string;
+  sources?: string | null;
+  citations?: string | null;
   status?: string;
   language?: string;
   translation_group_id?: string;
@@ -23,6 +25,8 @@ interface PageInput {
   author_id?: string;
   parent_id?: string | null;
   thumbnail_id?: string;
+  metaDescription?: string | null;
+  metaKeywords?: string | null;
 }
 
 function getLocalizedField(
@@ -62,6 +66,7 @@ export async function getPages() {
     include: {
       author: {
         select: {
+          id: true,
           name: true,
           email: true,
         },
@@ -101,22 +106,26 @@ export async function createPage(pageData: PageInput, tagIds?: string[], regionI
     slug: pageData.slug,
     content: pageData.content,
     excerpt: pageData.excerpt,
+    sources: pageData.sources || null,
+    citations: pageData.citations || null,
     status: pageData.status || "draft",
     language: pageData.language || "HE",
     translationGroupId: pageData.translation_group_id,
     template: pageData.template,
     menuOrder: pageData.menuOrder || 0,
-    showInMenu: pageData.showInMenu || false,
+    showInMenu: pageData.showInMenu ?? false,
+    metaDescription: pageData.metaDescription || null,
+    metaKeywords: pageData.metaKeywords || null,
     author: authorRelation,
     parentId: pageData.parent_id || null,
     thumbnail: pageData.thumbnail_id ? { connect: { id: pageData.thumbnail_id } } : undefined,
-    
+
     tags: tagIds && tagIds.length > 0
       ? {
           connect: tagIds.map(tagId => ({ id: tagId })),
         }
       : undefined,
-      
+
     regions: regionIds && regionIds.length > 0
       ? {
           connect: regionIds.map(regionId => ({ id: regionId })),
@@ -140,12 +149,16 @@ export async function updatePage(id: string, pageData: PageInput, tagIds?: strin
     slug: pageData.slug,
     content: pageData.content,
     excerpt: pageData.excerpt,
+    sources: pageData.sources,
+    citations: pageData.citations,
     status: pageData.status,
     language: pageData.language,
     translationGroupId: pageData.translation_group_id,
     template: pageData.template,
     menuOrder: pageData.menuOrder,
     showInMenu: pageData.showInMenu,
+    metaDescription: pageData.metaDescription,
+    metaKeywords: pageData.metaKeywords,
     author: authorRelation,
     parentId: pageData.parent_id || null,
     thumbnail: pageData.thumbnail_id ? { connect: { id: pageData.thumbnail_id } } : undefined,

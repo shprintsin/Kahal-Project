@@ -116,6 +116,10 @@ export async function getMap(id: string) {
           zIndex: 'asc',
         },
       },
+      category: { select: { id: true, slug: true, title: true, titleI18n: true } },
+      tags: { select: { id: true, slug: true, name: true, nameI18n: true } },
+      regions: { select: { id: true, slug: true, name: true, nameI18n: true } },
+      thumbnail: { select: { id: true, url: true, altTextI18n: true } },
     },
   });
 

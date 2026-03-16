@@ -33,7 +33,7 @@ interface ContentLanguageProviderProps {
 
 export function ContentLanguageProvider({
   children,
-  defaultLanguage = "en",
+  defaultLanguage = "he",
   initialTranslations = {},
 }: ContentLanguageProviderProps) {
   const [currentLanguage, setCurrentLanguage] = React.useState<ContentLanguage>(defaultLanguage);
@@ -65,7 +65,10 @@ export function ContentLanguageProvider({
       if (langData && key in langData) {
         return langData[key] as T;
       }
-      // Fallback to English
+      // Fallback to Hebrew, then English
+      if (currentLanguage !== "he" && translations.he && key in translations.he) {
+        return translations.he[key] as T;
+      }
       if (currentLanguage !== "en" && translations.en && key in translations.en) {
         return translations.en[key] as T;
       }

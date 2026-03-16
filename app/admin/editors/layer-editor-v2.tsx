@@ -92,6 +92,7 @@ export function LayerEditorV2({ layer, mode }: LayerEditorProps) {
       sourceType: layer?.sourceType || "database",
       sourceUrl: layer?.sourceUrl || "",
       downloadUrl: layer?.downloadUrl || "",
+      filename: layer?.filename || "",
       styleConfig: layer?.styleConfig || {},
       tagIds: layer?.tags?.map((t: any) => t.id) || [],
       regionIds: layer?.regions?.map((r: any) => r.id) || [],
