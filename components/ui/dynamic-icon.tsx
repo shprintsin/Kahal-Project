@@ -1,31 +1,36 @@
 import * as LucideIcons from "lucide-react"
 import {
-  FaSearch,
-  FaHome,
-  FaBook,
-  FaDatabase,
-  FaArchive,
-  FaChevronDown,
-  FaArrowLeft,
-  FaFileExcel,
-} from "react-icons/fa"
-import { FaCoins, FaUsers, FaLandmark, FaMap } from "react-icons/fa"
+  ArrowLeft,
+  Archive,
+  BookOpen,
+  ChevronDown,
+  Code,
+  Coins,
+  Database,
+  FileSpreadsheet,
+  Github,
+  Home,
+  Landmark,
+  Map,
+  Search,
+  Users,
+} from "lucide-react"
 
-const FA_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  FaSearch,
-  FaHome,
-  FaBook,
-  FaDatabase,
-  FaArchive,
-  FaChevronDown,
-  FaArrowLeft,
-  FaFileExcel,
-  FaCoins,
-  FaUsers,
-  FaLandmark,
-  FaMap,
-  FaGithub: FaArrowLeft,
-  FaCode: FaArrowLeft,
+const LEGACY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  FaSearch: Search,
+  FaHome: Home,
+  FaBook: BookOpen,
+  FaDatabase: Database,
+  FaArchive: Archive,
+  FaChevronDown: ChevronDown,
+  FaArrowLeft: ArrowLeft,
+  FaFileExcel: FileSpreadsheet,
+  FaCoins: Coins,
+  FaUsers: Users,
+  FaLandmark: Landmark,
+  FaMap: Map,
+  FaGithub: Github,
+  FaCode: Code,
 }
 
 interface DynamicIconProps {
@@ -39,9 +44,9 @@ export function DynamicIcon({ icon, className = "" }: DynamicIconProps) {
     return <LucideIcon className={className} />
   }
 
-  const FaIcon = FA_ICONS[icon]
-  if (FaIcon) {
-    return <FaIcon className={className} />
+  const LegacyIcon = LEGACY_ICONS[icon]
+  if (LegacyIcon) {
+    return <LegacyIcon className={className} />
   }
 
   return null

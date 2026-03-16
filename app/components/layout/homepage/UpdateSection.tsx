@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaBook } from 'react-icons/fa';
+import { BookOpen } from 'lucide-react';
 import { Section } from '@/components/ui/sections';
 import { SectionTitle } from '@/components/ui/typography';
 import { SeeMoreButton } from '@/components/ui/nav-links';
@@ -53,7 +53,7 @@ export default function UpdateSection({ posts, sources }: PostSectionProps) {
                 <SourceLink
                   href={source.url}
                   title={source.title}
-                  icon={<FaBook className="mt-1 text-sm" />}
+                  icon={<BookOpen className="mt-1 text-sm" />}
                 />
               </li>
             ))}

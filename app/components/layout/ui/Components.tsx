@@ -1,6 +1,6 @@
 import { cx } from 'class-variance-authority'
 import React from 'react'
-import { FaArrowLeft } from 'react-icons/fa'
+import { ArrowLeft as FaArrowLeft } from 'lucide-react'
 import { ReactNode } from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";

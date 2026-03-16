@@ -1,7 +1,7 @@
 import { NavItem } from '@/app/types'
 import React from 'react'
 import styles from '../css/header.module.css'
-import { FaChevronDown } from "react-icons/fa"
+import { ChevronDown } from "lucide-react"
 import { DynamicIcon as GetIcons } from '@/components/ui/dynamic-icon'
 
 export default function NavMenu({ navigation, isOpen }: { navigation: NavItem[]; isOpen?: boolean }) {
@@ -12,7 +12,7 @@ export default function NavMenu({ navigation, isOpen }: { navigation: NavItem[];
           <a href={item.href} className={styles.navLink}>
             <GetIcons icon={item.icon ?? ""} className="ml-2 text-xl" />
             {item.label}
-            {item.subItems && <FaChevronDown className={styles.dropdownIcon} />}
+            {item.subItems && <ChevronDown className={styles.dropdownIcon} />}
           </a>
           {item.subItems && (
             <div className={styles.dropdownMenu}>

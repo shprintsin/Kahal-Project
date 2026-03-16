@@ -1,5 +1,5 @@
 import { cx } from 'class-variance-authority'
-import { FaArrowLeft } from 'react-icons/fa'
+import { ArrowLeft as FaArrowLeft } from 'lucide-react'
 import { ArrowLeft } from "lucide-react"
 import { cn } from '@/lib/utils'
 import { ReactNode } from "react"

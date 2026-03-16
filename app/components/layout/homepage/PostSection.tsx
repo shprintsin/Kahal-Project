@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaBook, FaDownload } from 'react-icons/fa';
+import { BookOpen, Download } from 'lucide-react';
 import { SiteCard, SiteCardContent, SiteCardFooter, SiteCardHeader } from '@/components/ui/site-card';
 import { Section } from '@/components/ui/sections';
 import { SectionTitle } from '@/components/ui/typography';
@@ -39,7 +39,7 @@ export default function PostSection({ posts, sources }: PostSectionProps) {
                 <SiteCardContent>{post.excerpt}</SiteCardContent>
                 <SiteCardFooter>
                   <span>עדכון אחרון: {post.date}</span>
-                  <span className='text-emerald-900 text-base'><FaDownload /></span>
+                  <span className='text-emerald-900 text-base'><Download /></span>
                 </SiteCardFooter>
               </SiteCard>
             ))}
@@ -55,7 +55,7 @@ export default function PostSection({ posts, sources }: PostSectionProps) {
                 <SourceLink
                   href={source.url}
                   title={source.title}
-                  icon={<FaBook className="mt-1 text-sm" />}
+                  icon={<BookOpen className="mt-1 text-sm" />}
                 />
               </li>
             ))}

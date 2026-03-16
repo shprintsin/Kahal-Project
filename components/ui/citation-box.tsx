@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { FaCopy } from 'react-icons/fa'
+import { Copy as FaCopy } from 'lucide-react'
 import { CopyButton } from '@/components/ui/action-button'
 
 interface CitationBoxProps {

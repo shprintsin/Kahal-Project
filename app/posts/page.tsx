@@ -3,7 +3,7 @@ import { getSiteShellData } from '@/app/lib/get-navigation';
 import { SiteCard as Card, SiteCardHeader as CardHeader, SiteCardContent as CardContent, SiteCardFooter as CardFooter } from '@/components/ui/site-card';
 import { SiteShell, SiteMain } from '@/components/ui/site-shell';
 import Link from 'next/link';
-import { FaDownload } from 'react-icons/fa';
+import { Download } from 'lucide-react';
 
 export const revalidate = 60;
 
@@ -30,7 +30,7 @@ export default async function PostsPage() {
                                 </CardContent>
                                 <CardFooter className="mt-auto flex justify-between items-center text-sm text-gray-500 pt-4 border-t border-gray-100">
                                     <span>{new Date(post.createdAt || "").toLocaleDateString("he-IL")}</span>
-                                    <FaDownload className="text-gray-400 group-hover:text-[#0d4d2c] transition-colors" />
+                                    <Download className="text-gray-400 group-hover:text-[#0d4d2c] transition-colors" />
                                 </CardFooter>
                             </Card>
                         </Link>

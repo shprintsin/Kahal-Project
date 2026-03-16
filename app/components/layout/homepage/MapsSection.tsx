@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './css/postSection.module.css';
-import { FaArrowLeft, FaBook } from 'react-icons/fa';
+import { ArrowLeft, BookOpen } from 'lucide-react';
 
 
 interface Post {

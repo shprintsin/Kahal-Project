@@ -1,6 +1,6 @@
 import React from 'react'
 import { Category } from '@/app/types'
-import { FaCoins, FaUsers, FaLandmark, FaMap, FaBook } from 'react-icons/fa'
+import { BookOpen, Coins, Landmark, Map, Users } from 'lucide-react'
 
 export default function CategoryBlocks({categories}: {categories: Category[]}) {
   return (
