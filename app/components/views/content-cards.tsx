@@ -49,11 +49,26 @@ function CardLink({ href, label, icon }: { href: string; label: string; icon: Re
   )
 }
 
+function PlaceholderImage() {
+  return (
+    <div className="w-full h-full bg-gradient-to-br from-emerald-50 via-emerald-100 to-stone-100 flex items-center justify-center">
+      <svg width="64" height="64" viewBox="0 0 64 64" fill="none" className="text-emerald-300 opacity-60">
+        <rect x="8" y="16" width="48" height="32" rx="1" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="22" cy="28" r="4" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M8 40l12-8 8 6 12-10 16 12" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      </svg>
+    </div>
+  )
+}
+
 function CardImage({ src, alt }: { src?: string | null; alt: string }) {
-  if (!src) return null
   return (
     <div className="w-full md:w-1/3 h-48 md:h-auto flex-shrink-0">
-      <img src={src} alt={alt} className="w-full h-full object-cover rounded-none shadow-sm" />
+      {src ? (
+        <img src={src} alt={alt} className="w-full h-full object-cover rounded-none shadow-sm" />
+      ) : (
+        <PlaceholderImage />
+      )}
     </div>
   )
 }
