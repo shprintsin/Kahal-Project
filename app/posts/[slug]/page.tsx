@@ -2,7 +2,8 @@ import { getPostBySlug, listPostsAPI } from '@/app/admin/actions/posts';
 import { notFound } from 'next/navigation';
 import PostPage from '@/app/components/pages_components/PostPage';
 import { serializeLexical } from '@/lib/lexical';
-import SiteLayout from '@/app/components/layout/SiteLayout';
+import { getSiteShellData } from '@/app/lib/get-navigation';
+import { SiteShell } from '@/components/ui/site-shell';
 
 export async function generateStaticParams() {
     try {
@@ -17,7 +18,10 @@ export async function generateStaticParams() {
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const post = await getPostBySlug(slug);
+    const [post, shellData] = await Promise.all([
+        getPostBySlug(slug),
+        getSiteShellData(),
+    ]);
 
     if (!post) {
         notFound();
@@ -25,7 +29,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
     const serializedContent = serializeLexical(post.content);
 
-    // Map API Post to PostData (expected by PostPage)
     const viewPost = {
         ...post,
         content: serializedContent,
@@ -42,8 +45,10 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     };
 
     return (
-        <SiteLayout className="bg-white">
-            <PostPage post={viewPost} />
-        </SiteLayout>
+        <SiteShell {...shellData} bg="bg-white">
+            <div className="flex-grow">
+                <PostPage post={viewPost} />
+            </div>
+        </SiteShell>
     );
 }
