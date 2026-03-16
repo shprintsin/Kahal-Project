@@ -1,5 +1,3 @@
-"use client";
-
 import PostCard from "@/app/components/views/PostCard";
 import { SearchResult } from "@/app/admin/actions/search";
 import type { SiteShellData } from "@/app/lib/get-navigation";

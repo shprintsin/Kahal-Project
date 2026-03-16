@@ -1,5 +1,3 @@
-'use client';
-
 import { NavItem } from "@/app/types";
 import Header from "../layout/header/Header";
 import { Col } from "@/components/ui/flex";

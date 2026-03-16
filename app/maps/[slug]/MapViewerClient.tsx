@@ -1,5 +1,3 @@
-"use client"
-
 import { SiteShell, SiteMain } from '@/components/ui/site-shell'
 import { MapPreview } from './components/MapPreview'
 import { TagPill, TagPillList } from '@/components/ui/tag-pill'

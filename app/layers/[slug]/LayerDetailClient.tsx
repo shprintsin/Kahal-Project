@@ -1,5 +1,3 @@
-"use client"
-
 import { MapPreview } from "@/app/maps/[slug]/components/MapPreview"
 import type { SiteShellData } from "@/app/lib/get-navigation"
 import { Calendar, FileText, Link as LinkIcon, Download, Info } from "lucide-react"
