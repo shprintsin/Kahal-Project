@@ -32,7 +32,7 @@ export function SmartRibbon({
       className={cn(
         // Container styling - subtle visual separation
         "py-4 px-2 -mx-2",
-        "bg-muted/20 dark:bg-muted/10",
+        "bg-muted/60 dark:bg-muted/10",
         className
       )}
     >
@@ -41,7 +41,7 @@ export function SmartRibbon({
         className={cn(
           "grid gap-x-8 gap-y-4",
           // Responsive columns: auto-fit with min 120px
-          "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
+          "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
         )}
       >
         {fields.map((field) => (
@@ -91,7 +91,7 @@ export function SmartRibbonDivided({
     <div
       className={cn(
         "py-3 px-2 -mx-2",
-        "bg-muted/20 dark:bg-muted/10",
+        "bg-muted/60 dark:bg-muted/10",
         "space-y-3",
         className
       )}
@@ -167,7 +167,7 @@ export function SmartRibbonRow({ children, className }: SmartRibbonRowProps) {
       className={cn(
         "flex flex-wrap items-start gap-x-8 gap-y-3",
         "py-3 px-2 -mx-2",
-        "bg-muted/20 dark:bg-muted/10",
+        "bg-muted/60 dark:bg-muted/10",
         className
       )}
     >

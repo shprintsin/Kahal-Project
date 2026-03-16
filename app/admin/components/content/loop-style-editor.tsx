@@ -180,7 +180,7 @@ export function LoopStyleEditor({
                 size="sm"
                 onClick={onPublish}
                 disabled={publishing}
-                className="h-8 bg-blue-600 hover:bg-blue-700 text-white gap-1.5"
+                className="h-8 bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5"
               >
                 {publishing ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -217,7 +217,7 @@ export function LoopStyleEditor({
           <aside
             className={cn(
               "w-64 flex-shrink-0 border-r border-border/40",
-              "transition-all duration-300",
+              "transition-all duration-200",
               fileTreeOpen ? "translate-x-0" : "-translate-x-full w-0 overflow-hidden"
             )}
           >
@@ -248,7 +248,7 @@ export function LoopStyleEditor({
             className={cn(
               "w-80 flex-shrink-0",
               "bg-card border-l border-border/40",
-              "transition-all duration-300 overflow-y-auto",
+              "transition-all duration-200 overflow-y-auto",
               sidebarOpen ? "translate-x-0" : "translate-x-full w-0 overflow-hidden"
             )}
           >

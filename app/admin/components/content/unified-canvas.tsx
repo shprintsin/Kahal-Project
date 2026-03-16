@@ -40,6 +40,9 @@ interface UnifiedCanvasProps {
   // Key navigation callback
   onFieldNavigate?: (from: string, direction: "up" | "down") => void;
 
+  // Validation errors per field
+  errors?: Partial<Record<"title" | "slug" | "description" | "content", string>>;
+
   className?: string;
 }
 
@@ -77,6 +80,7 @@ export function UnifiedCanvas({
   onContentChange,
   contentPlaceholder = "Start writing...\n\nType / for commands",
   onFieldNavigate,
+  errors,
   className,
 }: UnifiedCanvasProps) {
   // Refs for key navigation
@@ -171,7 +175,8 @@ export function UnifiedCanvas({
           "w-full bg-transparent border-none outline-none",
           "text-4xl sm:text-5xl font-bold text-foreground",
           "placeholder:text-muted-foreground/50",
-          "py-2 focus:ring-0"
+          "py-2 focus:ring-0",
+          errors?.title && "ring-2 ring-destructive/50 rounded"
         )}
       />
 
@@ -191,7 +196,8 @@ export function UnifiedCanvas({
             "flex-1 bg-transparent border-none outline-none",
             "text-sm font-mono text-foreground/80",
             "placeholder:text-muted-foreground/40",
-            "focus:ring-0"
+            "focus:ring-0",
+            errors?.slug && "ring-2 ring-destructive/50 rounded"
           )}
         />
       </div>

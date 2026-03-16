@@ -256,7 +256,7 @@ export function MetadataSidebar({
       {author && (
         <AdminSidebarCard title="Author" icon={<User className="w-3.5 h-3.5" />}>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-medium text-white">
+            <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-[10px] font-medium text-primary-foreground">
               {author.split(" ").map((n) => n[0]).join("").slice(0, 2)}
             </div>
             <span className="text-sm text-foreground/80">{author}</span>
