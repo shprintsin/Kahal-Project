@@ -20,25 +20,25 @@ export const RowSection = ({ children, className }: SectionProps) => (
 )
 
 export const NoteCard = ({ children, className }: SectionProps) => (
-  <div className={cx("mt-8 bg-gray-100 w-full shadow-sm p-8 flex flex-col", className)}>
+  <div className={cx("mt-8 bg-muted w-full shadow-sm p-8 flex flex-col", className)}>
     {children}
   </div>
 )
 
 export const ContentCard = ({ children, className }: SectionProps) => (
-  <div className={cn("bg-white p-8 shadow-sm border border-gray-100", className)}>
+  <div className={cn("bg-white p-8 shadow-sm border border-border", className)}>
     {children}
   </div>
 )
 
 export const SidebarInfoCard = ({ children, className }: SectionProps) => (
-  <div className={cn("bg-white p-6 shadow-sm border border-gray-100 sticky top-4", className)}>
+  <div className={cn("bg-white p-6 shadow-sm border border-border sticky top-4", className)}>
     {children}
   </div>
 )
 
 export const HighlightCard = ({ children, className }: SectionProps) => (
-  <div className={cn("bg-emerald-900 text-white p-6 rounded-xl shadow-lg", className)}>
+  <div className={cn("bg-brand-primary-darker text-white p-6 rounded-xl shadow-lg", className)}>
     {children}
   </div>
 )

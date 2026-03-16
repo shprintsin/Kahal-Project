@@ -44,29 +44,29 @@ export const StatValue = ({ children, className }: TypographyProps) => (
 )
 
 export const BodyText = ({ children, className }: TypographyProps) => (
-  <p className={cn("text-base text-gray-700 leading-relaxed", className)}>{children}</p>
+  <p className={cn("text-base text-body leading-relaxed", className)}>{children}</p>
 )
 
 export const Excerpt = ({ children, className }: TypographyProps) => (
-  <p className={cn("text-gray-600 leading-relaxed line-clamp-3", className)}>{children}</p>
+  <p className={cn("text-body-secondary leading-relaxed line-clamp-3", className)}>{children}</p>
 )
 
 export const MetaText = ({ children, className }: TypographyProps) => (
-  <span className={cn("text-sm text-gray-500", className)}>{children}</span>
+  <span className={cn("text-sm text-muted-foreground", className)}>{children}</span>
 )
 
 export const SmallText = ({ children, className }: TypographyProps) => (
-  <span className={cn("text-xs text-gray-500", className)}>{children}</span>
+  <span className={cn("text-xs text-muted-foreground", className)}>{children}</span>
 )
 
 export const Label = ({ children, className }: TypographyProps) => (
-  <span className={cn("text-xs font-semibold uppercase tracking-wide text-gray-500", className)}>{children}</span>
+  <span className={cn("text-xs font-semibold uppercase tracking-wide text-muted-foreground", className)}>{children}</span>
 )
 
 export const H3 = WidgetTitle
 
 export const PageSubtitle = ({ children, className }: TypographyProps) => (
-  <p className={cn("text-xl text-gray-700 leading-relaxed", className)}>{children}</p>
+  <p className={cn("text-xl text-body leading-relaxed", className)}>{children}</p>
 )
 
 export const SectionSubTitle = SectionSubtitle

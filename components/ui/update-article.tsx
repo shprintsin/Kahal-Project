@@ -11,16 +11,16 @@ interface UpdateArticleProps {
 
 export function UpdateArticle({ title, date, author, excerpt, className }: UpdateArticleProps) {
   return (
-    <article className={cn('border-b border-b-1 border-gray-200 pb-2', className)}>
-      <h3 className='text-md font-display text-gray-800'>{title}</h3>
+    <article className={cn('border-b border-b-1 border-border pb-2', className)}>
+      <h3 className='text-md font-display text-foreground'>{title}</h3>
       {(date || author) && (
-        <small className='text-gray-500 text-xs'>
+        <small className='text-muted-foreground text-xs'>
           {date && `עדכון אחרון: ${date}`}
           {date && author && ' | '}
           {author}
         </small>
       )}
-      {excerpt && <p className='text-gray-600 text-sm leading-relaxed mb-1'>{excerpt}</p>}
+      {excerpt && <p className='text-body-secondary text-sm leading-relaxed mb-1'>{excerpt}</p>}
     </article>
   )
 }
@@ -35,13 +35,13 @@ export function SourceLink({ href, title, icon }: SourceLinkProps) {
   return (
     <a
       href={href}
-      className="flex flex-row gap-2 hover:bg-gray-50 p-2"
+      className="flex flex-row gap-2 hover:bg-surface-light p-2"
       target="_blank"
       rel="noopener noreferrer"
     >
       {icon}
       <div className="flex flex-col">
-        <h3 className="text-base font-display text-blue-800">{title}</h3>
+        <h3 className="text-base font-display text-link-external">{title}</h3>
       </div>
     </a>
   )

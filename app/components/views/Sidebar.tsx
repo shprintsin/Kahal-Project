@@ -36,7 +36,7 @@ export default function Sidebar({ categories, tags, recentPosts }: SidebarProps)
                 className="flex justify-between items-center hover:text-brand-secondary transition-colors duration-200"
               >
                 <span>{category.name}</span>
-                <span className="text-sm text-gray-500">({category.count})</span>
+                <span className="text-sm text-muted-foreground">({category.count})</span>
               </a>
             </li>
           ))}

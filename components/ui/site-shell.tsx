@@ -20,7 +20,7 @@ export function SiteShell({
   footerColumns = [],
   copyrightText = "© 2024 פרויקט הקהל. כל הזכויות שמורות.",
   className,
-  bg = "bg-gray-50",
+  bg = "bg-surface-light",
 }: SiteShellProps) {
   return (
     <div className={cn("flex flex-col min-h-screen", bg, className)} dir="rtl">

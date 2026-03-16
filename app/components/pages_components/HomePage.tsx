@@ -36,7 +36,7 @@ export default function HomePageComponent({
     <div className="rtl">
       <section className="relative min-h-screen flex flex-col overflow-hidden">
         <div className="absolute inset-0 bg-[url('/images/historical-map.webp')] bg-cover bg-center" />
-        <div className="absolute inset-0 bg-[#48680E] opacity-70" />
+        <div className="absolute inset-0 bg-surface-hero opacity-70" />
 
         <div className="relative z-10 flex flex-col min-h-screen">
           <Header navigation={navigation} />
@@ -98,7 +98,7 @@ export default function HomePageComponent({
       </section>
 
       {contentBlocks && (
-        <section className="relative z-10 bg-gray-50">
+        <section className="relative z-10 bg-surface-light">
           <div className="flex flex-col gap-4 sm:gap-6 w-full px-4 sm:px-6 lg:w-10/12 mx-auto py-6 sm:py-10">
             <ContentBlocks {...contentBlocks} />
           </div>

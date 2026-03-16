@@ -36,7 +36,7 @@ export default function Sidebar({ categories, tags, recentPosts }: SidebarProps)
                 className="flex justify-between items-center hover:text-brand-secondary transition-colors duration-200"
               >
                 <span>{category.name}</span>
-                <span className="text-sm text-gray-500">({category.count})</span>
+                <span className="text-sm text-muted-foreground">({category.count})</span>
               </a>
             </li>
           ))}
@@ -77,7 +77,7 @@ export default function Sidebar({ categories, tags, recentPosts }: SidebarProps)
           <input
             type="text"
             placeholder="חפש..."
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-r-none rounded-l-md focus:outline-none focus:ring-1 focus:ring-[var(--dark-green)]"
+            className="flex-1 px-4 py-2 border border-border-strong rounded-r-none rounded-l-md focus:outline-none focus:ring-1 focus:ring-brand-primary"
           />
           <Button className="bg-brand-primary text-white rounded-l-none rounded-l-md hover:bg-brand-secondary">
             חפש

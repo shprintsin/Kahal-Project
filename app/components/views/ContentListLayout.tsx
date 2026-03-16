@@ -72,9 +72,9 @@ export function ContentListLayout<T>({
                 )}
               </>
             ) : (
-              <div className="text-center py-20 bg-white rounded-none shadow-sm border border-gray-100">
+              <div className="text-center py-20 bg-white rounded-none shadow-sm border border-border">
                 {emptyIcon && <div className="mx-auto mb-4 flex justify-center">{emptyIcon}</div>}
-                <p className="text-gray-500 text-base sm:text-lg">{emptyText}</p>
+                <p className="text-muted-foreground text-base sm:text-lg">{emptyText}</p>
               </div>
             )}
           </div>

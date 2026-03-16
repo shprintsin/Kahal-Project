@@ -8,7 +8,7 @@ import { LucideIcon } from "lucide-react"
 export const MetaRow = ({ children, className = "" }: { children: ReactNode; className?: string }) => {
   const arrayChildren = Children.toArray(children)
   return (
-    <div className={`flex items-center text-sm text-gray-500 mb-6 ${className}`}>
+    <div className={`flex items-center text-sm text-muted-foreground mb-6 ${className}`}>
       {arrayChildren.map((child, index) => (
         <Fragment key={index}>
           {child}
@@ -37,7 +37,7 @@ export const MetaItem = ({ icon: Icon, children, href }: MetaItemProps) => {
 
   if (href) {
     return (
-      <Link href={href} className="hover:underline hover:text-[#0d4d2c] transition-colors">
+      <Link href={href} className="hover:underline hover:text-brand-primary-dark transition-colors">
         {content}
       </Link>
     )
@@ -47,14 +47,14 @@ export const MetaItem = ({ icon: Icon, children, href }: MetaItemProps) => {
 }
 
 export const MetaDataIcons = ({ children, className, content }: { children: ReactNode; className?: string; content?: string }) => (
-  <div className={cx("flex items-center text-sm text-gray-500 mb-6", className)}>
+  <div className={cx("flex items-center text-sm text-muted-foreground mb-6", className)}>
     {children}
     <span>{content}</span>
   </div>
 )
 
 export const ButtonIcons = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <Button className={cn("bg-[#0d4d2c] hover:bg-[#083d22]", className)}>
+  <Button className={cn("bg-brand-primary-dark hover:bg-brand-primary-darker", className)}>
     {children}
   </Button>
 )

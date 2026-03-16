@@ -7,12 +7,12 @@ const tagPillVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gray-100 text-gray-700",
+        default: "bg-muted text-body",
         region: "bg-blue-100 text-blue-800",
-        tag: "bg-gray-100 text-gray-700",
-        category: "bg-emerald-100 text-emerald-800",
+        tag: "bg-muted text-body",
+        category: "bg-surface-brand-light text-brand-primary-dark",
         type: "bg-indigo-100 text-indigo-800 uppercase",
-        interactive: "bg-gray-100 text-gray-800 hover:bg-gray-200 cursor-pointer",
+        interactive: "bg-muted text-foreground hover:bg-muted cursor-pointer",
       },
     },
     defaultVariants: {

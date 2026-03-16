@@ -105,26 +105,26 @@ export default function CollectionDetailView({ collection, siteShellData }: Coll
                 <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
-            <div className="text-xs text-gray-500">{volumesCount} כרכים</div>
+            <div className="text-xs text-muted-foreground">{volumesCount} כרכים</div>
           </div>
 
           {/* Page Title */}
           <div className="bg-white shadow-sm p-8 space-y-3">
             <h1 className="text-4xl font-bold text-brand-primary font-display">{collection.id}</h1>
-            <p className="text-gray-600">אוסף זה כולל {volumesCount} כרכים מתועדים</p>
+            <p className="text-body-secondary">אוסף זה כולל {volumesCount} כרכים מתועדים</p>
           </div>
 
           {/* Search Bar */}
           <div className="bg-white shadow-sm p-6">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
                 dir="rtl"
                 type="search"
                 placeholder="חיפוש כרכים באוסף זה..."
                 value={searchQuery}
                 onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                className="pl-10 pr-3 bg-white text-right border-gray-300 focus-visible:ring-1 focus-visible:ring-brand-primary"
+                className="pl-10 pr-3 bg-white text-right border-border-strong focus-visible:ring-1 focus-visible:ring-brand-primary"
               />
             </div>
           </div>
@@ -132,7 +132,7 @@ export default function CollectionDetailView({ collection, siteShellData }: Coll
           {/* View Controls */}
           <div className="bg-white shadow-sm p-4 md:p-6 flex flex-col sm:flex-row flex-wrap items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-700">תצוגה</span>
+              <span className="text-sm text-body">תצוגה</span>
               <div className="flex gap-2">
                 {(['details', 'blocks', 'thumbs'] as ViewMode[]).map((mode) => (
                   <button
@@ -141,7 +141,7 @@ export default function CollectionDetailView({ collection, siteShellData }: Coll
                     className={`${
                       viewMode === mode
                         ? 'bg-brand-primary text-white shadow-sm'
-                        : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                        : 'bg-muted text-foreground hover:bg-muted'
                     } px-4 py-2 text-sm rounded-md transition`}
                   >
                     {mode === 'details' ? 'פרטים' : mode === 'blocks' ? 'בלוקים' : 'תמונות'}
@@ -152,9 +152,9 @@ export default function CollectionDetailView({ collection, siteShellData }: Coll
 
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-700">מיון</span>
+                <span className="text-sm text-body">מיון</span>
                 <Select value={sortMode} onValueChange={(v) => { setSortMode(v as SortMode); setCurrentPage(1); }} dir="rtl">
-                  <SelectTrigger className="w-[150px] border-gray-300 bg-white text-right"><SelectValue placeholder="מיון" /></SelectTrigger>
+                  <SelectTrigger className="w-[150px] border-border-strong bg-white text-right"><SelectValue placeholder="מיון" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="name-asc">שם א-ת</SelectItem>
                     <SelectItem value="name-desc">שם ת-א</SelectItem>
@@ -163,23 +163,23 @@ export default function CollectionDetailView({ collection, siteShellData }: Coll
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-700">הצג</span>
+                <span className="text-sm text-body">הצג</span>
                 <Select value={itemsPerPage.toString()} onValueChange={(v) => { setItemsPerPage(parseInt(v)); setCurrentPage(1); }} dir="rtl">
-                  <SelectTrigger className="w-[110px] border-gray-300 bg-white text-right"><SelectValue placeholder="כמות" /></SelectTrigger>
+                  <SelectTrigger className="w-[110px] border-border-strong bg-white text-right"><SelectValue placeholder="כמות" /></SelectTrigger>
                   <SelectContent dir="rtl">
                     <SelectItem value="25">25</SelectItem>
                     <SelectItem value="50">50</SelectItem>
                     <SelectItem value="100">100</SelectItem>
                   </SelectContent>
                 </Select>
-                <span className="text-sm text-gray-700">לעמוד</span>
+                <span className="text-sm text-body">לעמוד</span>
               </div>
             </div>
           </div>
 
           {/* Results */}
           {paginatedData.length === 0 ? (
-            <div className="bg-white shadow-sm p-12 text-center text-gray-600">
+            <div className="bg-white shadow-sm p-12 text-center text-body-secondary">
               לא נמצאו כרכים התואמים את החיפוש
             </div>
           ) : (

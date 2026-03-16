@@ -23,10 +23,10 @@ export function CitationBox({ text, className }: CitationBoxProps) {
   }
 
   return (
-    <div className={`relative bg-gray-50 p-6 border border-gray-200 w-full h-[80px] ${className || ''}`}>
+    <div className={`relative bg-surface-light p-6 border border-border w-full h-[80px] ${className || ''}`}>
       <textarea
         rows={1}
-        className="w-10/12 text-gray-800 border-none overflow-hidden leading-relaxed resize-none bg-transparent"
+        className="w-10/12 text-foreground border-none overflow-hidden leading-relaxed resize-none bg-transparent"
         defaultValue={text}
         readOnly
       />

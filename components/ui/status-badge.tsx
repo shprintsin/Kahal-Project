@@ -9,7 +9,7 @@ interface StatusBadgeProps {
 
 const variantStyles = {
   blue: 'bg-blue-100 text-blue-800',
-  emerald: 'bg-emerald-100 text-emerald-800',
+  emerald: 'bg-surface-brand-light text-brand-primary-dark',
   green: 'bg-green-100 text-green-800 border-green-400',
   yellow: 'bg-yellow-100 text-yellow-800 border-yellow-400',
   gray: 'bg-gray-100 text-gray-800 border-gray-400',

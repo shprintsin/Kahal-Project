@@ -17,9 +17,9 @@ export const SiteCardHeader = ({ children, className }: CardProps) => (
 )
 
 export const SiteCardContent = ({ children, className }: CardProps) => (
-  <p className={cn("text-gray-600 leading-relaxed flex-grow", className)}>{children}</p>
+  <p className={cn("text-body-secondary leading-relaxed flex-grow", className)}>{children}</p>
 )
 
 export const SiteCardFooter = ({ children, className }: CardProps) => (
-  <div className={cn("flex justify-between text-gray-500 text-sm mt-auto", className)}>{children}</div>
+  <div className={cn("flex justify-between text-muted-foreground text-sm mt-auto", className)}>{children}</div>
 )

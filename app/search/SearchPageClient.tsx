@@ -40,7 +40,7 @@ export default function SearchPageClient({
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500 text-base sm:text-lg text-center py-12 sm:py-20">
+              <p className="text-muted-foreground text-base sm:text-lg text-center py-12 sm:py-20">
                 לא נמצאו תוצאות עבור &ldquo;{query}&rdquo;.
               </p>
             )}

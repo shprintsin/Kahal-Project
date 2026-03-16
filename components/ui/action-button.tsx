@@ -20,7 +20,7 @@ export function ActionButton({ children, href, className, icon, iconPosition = '
   )
 
   const classes = cn(
-    "bg-[#131e1e] text-white px-6 py-3 rounded-md flex items-center",
+    "bg-brand-dark text-white px-6 py-3 rounded-md flex items-center",
     "transition-all duration-300 hover:shadow-lg",
     className
   )
@@ -40,7 +40,7 @@ export function DownloadButton({ children, href, className }: { children: ReactN
       rel="noopener noreferrer"
       className={cn(
         "flex items-center justify-center gap-2 w-full",
-        "bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4",
+        "bg-brand-primary hover:bg-brand-primary-dark text-white font-bold py-3 px-4",
         "rounded-lg transition-colors shadow-lg hover:shadow-xl",
         className
       )}
@@ -55,8 +55,8 @@ export function CopyButton({ children, onClick, className }: { children: ReactNo
     <button
       onClick={onClick}
       className={cn(
-        "bg-emerald-900 text-white px-4 py-2 rounded flex items-center gap-2",
-        "hover:bg-emerald-950 transition-colors",
+        "bg-brand-primary-darker text-white px-4 py-2 rounded flex items-center gap-2",
+        "hover:bg-brand-dark transition-colors",
         className
       )}
     >

@@ -8,7 +8,7 @@ interface MetaBadgeProps {
 
 function MetaBadge({ children }: MetaBadgeProps) {
   return (
-    <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-none text-xs font-semibold">
+    <span className="bg-surface-brand-light text-brand-primary-dark px-2 py-0.5 rounded-none text-xs font-semibold">
       {children}
     </span>
   )
@@ -16,7 +16,7 @@ function MetaBadge({ children }: MetaBadgeProps) {
 
 function MetaRow({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-4 text-sm text-gray-500 mb-2 rtl-dir flex-wrap">
+    <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2 rtl-dir flex-wrap">
       {children}
     </div>
   )
@@ -25,14 +25,14 @@ function MetaRow({ children }: { children: React.ReactNode }) {
 function CardTitle({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <h2 className="font-display text-xl sm:text-2xl text-brand-primary mb-3 group transition-colors">
-      <a href={href} className="hover:text-emerald-700">{children}</a>
+      <a href={href} className="hover:text-brand-primary">{children}</a>
     </h2>
   )
 }
 
 function CardExcerpt({ text }: { text?: string | null }) {
   if (!text) return null
-  return <p className="text-gray-600 line-clamp-3 mb-4 leading-relaxed">{text}</p>
+  return <p className="text-body-secondary line-clamp-3 mb-4 leading-relaxed">{text}</p>
 }
 
 function CardLink({ href, label, icon }: { href: string; label: string; icon: React.ReactNode }) {
@@ -40,7 +40,7 @@ function CardLink({ href, label, icon }: { href: string; label: string; icon: Re
     <div className="mt-auto">
       <a
         href={href}
-        className="inline-flex items-center gap-2 text-emerald-700 font-bold font-display hover:translate-x-[-4px] transition-transform duration-200"
+        className="inline-flex items-center gap-2 text-brand-primary font-bold font-display hover:translate-x-[-4px] transition-transform duration-200"
       >
         {label}
         {icon}
@@ -51,8 +51,8 @@ function CardLink({ href, label, icon }: { href: string; label: string; icon: Re
 
 function PlaceholderImage() {
   return (
-    <div className="w-full h-full bg-gradient-to-br from-emerald-50 via-emerald-100 to-stone-100 flex items-center justify-center">
-      <svg width="64" height="64" viewBox="0 0 64 64" fill="none" className="text-emerald-300 opacity-60">
+    <div className="w-full h-full bg-gradient-to-br from-brand-primary-light via-surface-brand-light to-stone-100 flex items-center justify-center">
+      <svg width="64" height="64" viewBox="0 0 64 64" fill="none" className="text-brand-primary opacity-60">
         <rect x="8" y="16" width="48" height="32" rx="1" stroke="currentColor" strokeWidth="1.5" />
         <circle cx="22" cy="28" r="4" stroke="currentColor" strokeWidth="1.5" />
         <path d="M8 40l12-8 8 6 12-10 16 12" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
@@ -75,7 +75,7 @@ function CardImage({ src, alt }: { src?: string | null; alt: string }) {
 
 function CardWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col md:flex-row gap-6 pb-8 border-b border-gray-200">
+    <div className="flex flex-col md:flex-row gap-6 pb-8 border-b border-border">
       {children}
     </div>
   )
@@ -147,7 +147,7 @@ export function DatasetCard({ item }: { item: DatasetItem }) {
             </span>
           )}
           {item.resourceCount !== undefined && (
-            <span className="flex items-center gap-1 font-medium text-emerald-700">
+            <span className="flex items-center gap-1 font-medium text-brand-primary">
               <FileText className="w-3.5 h-3.5" />
               {item.resourceCount} קבצים
             </span>
@@ -174,9 +174,9 @@ export function MapCard({ item }: { item: MapItem }) {
               {item.year}
             </span>
           )}
-          {item.period && <span className="text-gray-600 font-medium">{item.period}</span>}
+          {item.period && <span className="text-body-secondary font-medium">{item.period}</span>}
           {item.layerCount !== undefined && (
-            <span className="flex items-center gap-1 font-medium text-emerald-700">
+            <span className="flex items-center gap-1 font-medium text-brand-primary">
               <Layers className="w-3.5 h-3.5" />
               {item.layerCount} שכבות
             </span>
@@ -205,7 +205,7 @@ export function LayerCard({ item }: { item: LayerItem }) {
             </span>
           )}
           {item.mapCount !== undefined && item.mapCount > 0 && (
-            <span className="flex items-center gap-1 font-medium text-emerald-700">
+            <span className="flex items-center gap-1 font-medium text-brand-primary">
               <Eye className="w-3.5 h-3.5" />
               בשימוש ב-{item.mapCount} מפות
             </span>

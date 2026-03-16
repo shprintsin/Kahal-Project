@@ -9,7 +9,7 @@ interface PageLayoutProps {
 
 export function PageLayout({ children, className, dir = "rtl" }: PageLayoutProps) {
   return (
-    <div className={cn("flex flex-col min-h-screen bg-gray-50", className)} dir={dir}>
+    <div className={cn("flex flex-col min-h-screen bg-surface-light", className)} dir={dir}>
       {children}
     </div>
   )
@@ -25,7 +25,7 @@ export function PageMain({ children, className }: { children: ReactNode; classNa
 
 export function HeroFooter({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <footer className={cn("bg-[var(--dark-green)] text-white w-full py-3 sm:py-4", className)}>
+    <footer className={cn("bg-brand-primary text-white w-full py-3 sm:py-4", className)}>
       <div className="flex justify-center items-center px-4">
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 lg:gap-16">
           {children}
