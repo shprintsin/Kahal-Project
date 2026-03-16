@@ -1,14 +1,12 @@
 import HomePageComponent from "@/app/components/pages_components/HomePage";
 import { getAllSiteSettings } from "@/app/admin/actions/menus";
-import { listPostsAPI } from "@/app/admin/actions/posts";
-import { listDatasetsAPI } from "@/app/admin/actions/datasets";
+import { getContentBlocksData } from "@/lib/get-content-blocks-data";
 import { getNavigation } from "@/app/lib/get-navigation";
 
 export default async function HomePage() {
-  const [siteSettings, postsResult, datasetsResult, navigation] = await Promise.all([
+  const [siteSettings, contentBlocksData, navigation] = await Promise.all([
     getAllSiteSettings(),
-    listPostsAPI({ status: "published", limit: 4 }).catch(() => ({ posts: [], pagination: { page: 1, limit: 4, total: 0, totalPages: 0 } })),
-    listDatasetsAPI({ status: "published", limit: 4 }).catch(() => ({ datasets: [], pagination: { page: 1, limit: 4, total: 0, totalPages: 0 } })),
+    getContentBlocksData().catch(() => undefined),
     getNavigation(),
   ]);
 
@@ -33,24 +31,6 @@ export default async function HomePage() {
     href: item.url || "#",
   })) || [];
 
-  const posts = postsResult.posts.map(p => ({
-    id: p.id,
-    title: p.title,
-    excerpt: p.excerpt || "",
-    date: p.createdAt ? new Date(p.createdAt).toLocaleDateString("he-IL") : "",
-    author: "",
-    imageUrl: p.thumbnail?.url || "",
-    slug: p.slug,
-  }));
-
-  const datasets = datasetsResult.datasets.map((d: any) => ({
-    id: d.id,
-    title: d.title,
-    description: d.description || "",
-    slug: d.slug,
-    url: `/data/${d.slug}`,
-  }));
-
   const copyrightText = siteSettings.copyrightText?.default || "© 2024 פרויקט הקהל. כל הזכויות שמורות.";
   const footerColumns = siteSettings.footerColumns || [];
 
@@ -60,8 +40,7 @@ export default async function HomePage() {
       heroGrid={heroGrid}
       heroActions={heroActions}
       heroStrip={heroStrip}
-      posts={posts}
-      datasets={datasets}
+      contentBlocks={contentBlocksData}
       copyrightText={copyrightText}
       footerColumns={footerColumns}
     />
