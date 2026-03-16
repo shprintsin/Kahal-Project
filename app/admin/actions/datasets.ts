@@ -37,15 +37,15 @@ export async function getDataset(id: string) {
 
 import { datasetSchema, datasetUpdateSchema } from "../schema/dataset";
 
-const splitI18nField = (fieldData: any) => {
+const splitI18nField = (fieldData: string | Record<string, string> | null | undefined) => {
   if (!fieldData || typeof fieldData !== 'object') {
-     return { main: fieldData || "", i18n: {} };
+     return { main: (fieldData as string) || "", i18n: {} };
   }
   const { he, ...rest } = fieldData;
   return { main: he || "", i18n: rest };
 };
 
-export async function createDataset(datasetData: any) {
+export async function createDataset(datasetData: Record<string, unknown>) {
   const validated = datasetSchema.parse(datasetData);
   
   const titleSplit = splitI18nField(validated.title);
@@ -71,8 +71,8 @@ export async function createDataset(datasetData: any) {
     citationText: validated.citationText,
     isVisible: validated.isVisible,
     license: validated.license,
-    maturity: validated.maturity as any, // Cast to enum
-    status: validated.status as any,
+    maturity: validated.maturity,
+    status: validated.status,
     version: validated.version,
     minYear: validated.minYear,
     maxYear: validated.maxYear,
@@ -92,7 +92,7 @@ export async function createDataset(datasetData: any) {
   return createdDataset;
 }
 
-export async function updateDataset(id: string, datasetData: any) {
+export async function updateDataset(id: string, datasetData: Record<string, unknown>) {
   const validated = datasetUpdateSchema.parse(datasetData);
 
   const data: Prisma.ResearchDatasetUpdateInput = {};
