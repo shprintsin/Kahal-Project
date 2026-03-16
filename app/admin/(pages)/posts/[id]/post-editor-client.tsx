@@ -15,6 +15,7 @@ import {
 import type { ContentLanguage, ContentStatus } from "@/app/admin/types/content-system.types";
 import type { FileTreeItem } from "@/app/admin/components/content/file-tree";
 import type { PostForEditor, CategoryOption, TagOption, PostListItem } from "@/app/admin/types/editor-data";
+import { Textarea } from "@/components/ui/textarea";
 import { createPost, updatePost, uploadMedia } from "@/app/admin/actions/posts";
 import { generateSlugFromTitle } from "@/app/admin/utils/slug-generator";
 
@@ -54,6 +55,7 @@ function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientP
   const [isPublic, setIsPublic] = React.useState(true);
   const [license, setLicense] = React.useState("");
   const [attachments, setAttachments] = React.useState<{ id: string; name: string; size: number; type: string; url?: string }[]>([]);
+  const [sources, setSources] = React.useState(post?.sources || "");
 
   // Thumbnail
   const [thumbnailId, setThumbnailId] = React.useState<string | undefined>(post?.thumbnail?.id);
@@ -120,6 +122,7 @@ function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientP
         slug,
         content,
         excerpt,
+        sources: sources || null,
         status,
         thumbnail_id: thumbnailId,
         categoryIds: category ? [category] : [],
@@ -151,6 +154,7 @@ function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientP
         slug,
         content,
         excerpt,
+        sources: sources || null,
         status: "published" as ContentStatus,
       };
 
@@ -273,6 +277,20 @@ function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientP
             onContentChange={(v) => handleFieldChange("content", v)}
             contentPlaceholder="Start writing your post..."
           />
+
+          <div className="mt-8 space-y-6 max-w-3xl mx-auto px-12">
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Sources
+              </label>
+              <Textarea
+                value={sources}
+                onChange={(e) => { setSources(e.target.value); setIsDirty(true); }}
+                placeholder="References and sources..."
+                className="min-h-[80px] bg-transparent border-border resize-none"
+              />
+            </div>
+          </div>
         </div>
       </EditorContextMenu>
     </LoopStyleEditor>

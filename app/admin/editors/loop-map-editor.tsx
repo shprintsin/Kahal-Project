@@ -99,6 +99,9 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
       description_i18n: map?.descriptionI18n || map?.description_i18n || { en: "", he: "" },
       slug: map?.slug || "",
       status: map?.status || "draft",
+      version: map?.version || "1.0.0",
+      yearMin: map?.yearMin?.toString() || "",
+      yearMax: map?.yearMax?.toString() || "",
       period_start_date: map?.period_start_date
         ? new Date(map.period_start_date).toISOString().split("T")[0]
         : "",
@@ -127,7 +130,9 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
     try {
       const submitData = {
         ...data,
-        config: data.config || mapConfig
+        config: data.config || mapConfig,
+        yearMin: data.yearMin ? parseInt(data.yearMin, 10) : null,
+        yearMax: data.yearMax ? parseInt(data.yearMax, 10) : null,
       };
 
       if (actualMode === "create") {
@@ -271,6 +276,35 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
                   value={slugValue}
                   onChange={(e) => form.setValue("slug", e.target.value)}
                   placeholder="map-slug"
+                  className="bg-secondary border-border text-foreground"
+                />
+              </SidebarField>
+
+              <SidebarField label="Version">
+                <Input
+                  value={form.watch("version")}
+                  onChange={(e) => form.setValue("version", e.target.value)}
+                  placeholder="1.0.0"
+                  className="bg-secondary border-border text-foreground"
+                />
+              </SidebarField>
+
+              <SidebarField label="Year Min">
+                <Input
+                  type="number"
+                  value={form.watch("yearMin")}
+                  onChange={(e) => form.setValue("yearMin", e.target.value)}
+                  placeholder="1750"
+                  className="bg-secondary border-border text-foreground"
+                />
+              </SidebarField>
+
+              <SidebarField label="Year Max">
+                <Input
+                  type="number"
+                  value={form.watch("yearMax")}
+                  onChange={(e) => form.setValue("yearMax", e.target.value)}
+                  placeholder="1939"
                   className="bg-secondary border-border text-foreground"
                 />
               </SidebarField>
