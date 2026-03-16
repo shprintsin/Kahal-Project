@@ -33,8 +33,8 @@ export interface LayerFormData {
   sourceType?: "url" | "database" | "inline";
   sourceUrl?: string;
   downloadUrl?: string;
-  geoJsonData?: any;
-  styleConfig?: any;
+  geoJsonData?: Record<string, unknown>;
+  styleConfig?: Record<string, unknown>;
   thumbnail?: string | null;
   tagIds?: string[];
   regionIds?: string[];
@@ -298,7 +298,7 @@ export async function getLayer(id: string, options: GetLayerOptions = {}) {
         name: getLocalizedField(region.name, region.nameI18n, lang) || region.name,
       })),
       ...(includeMaps && {
-        maps: (layer as any).maps.map((assoc: any) => ({
+        maps: (layer as unknown as { maps: Array<{ map: { id: string; slug: string; title: string; titleI18n: unknown } }> }).maps.map((assoc) => ({
           id: assoc.map.id,
           slug: assoc.map.slug,
           title: getLocalizedField(assoc.map.title, assoc.map.titleI18n, lang) || assoc.map.title,
@@ -389,7 +389,7 @@ export async function getLayerBySlug(slug: string, options: GetLayerOptions = {}
         name: getLocalizedField(region.name, region.nameI18n, lang) || region.name,
       })),
       ...(includeMaps && {
-        maps: (layer as any).maps.map((assoc: any) => ({
+        maps: (layer as unknown as { maps: Array<{ map: { id: string; slug: string; title: string; titleI18n: unknown } }> }).maps.map((assoc) => ({
           id: assoc.map.id,
           slug: assoc.map.slug,
           title: getLocalizedField(assoc.map.title, assoc.map.titleI18n, lang) || assoc.map.title,
@@ -428,7 +428,7 @@ export async function listLayersAPI(options: ListLayersOptions = {}) {
   } = options;
 
   try {
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (status) where.status = status;
     if (categoryId) where.categoryId = categoryId;
@@ -527,7 +527,7 @@ export async function listLayersAPI(options: ListLayersOptions = {}) {
           ...region,
           name: getLocalizedField(region.name, region.nameI18n, lang) || region.name,
         })),
-        mapsCount: (layer as any)._count.maps,
+        mapsCount: (layer as unknown as { _count: { maps: number } })._count.maps,
         geoJsonUrl: `/api/geo/layers/${layer.slug}/geojson`,
       };
     });
