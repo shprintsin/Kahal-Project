@@ -87,24 +87,24 @@ export function SearchableSelect({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "w-full justify-between h-8 bg-white/5 border-white/10 text-white/80 hover:bg-white/10 hover:text-white",
-            !value && "text-white/40",
+            "w-full justify-between h-8 bg-muted border-border text-foreground hover:bg-accent hover:text-foreground",
+            !value && "text-muted-foreground",
             className
           )}
         >
           {selectedOption?.label || placeholder}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0 bg-[#252525] border-white/10">
+      <PopoverContent className="w-[200px] p-0 bg-card border-border">
         <Command className="bg-transparent" shouldFilter={false}>
           <CommandInput
             placeholder={searchPlaceholder}
             value={searchQuery}
             onValueChange={setSearchQuery}
-            className="text-white placeholder:text-white/40"
+            className="text-foreground placeholder:text-muted-foreground"
           />
           <CommandList>
-            <CommandEmpty className="py-6 text-center text-sm text-white/40">
+            <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">
               {emptyText}
             </CommandEmpty>
             <CommandGroup>
@@ -117,7 +117,7 @@ export function SearchableSelect({
                     setOpen(false);
                     setSearchQuery("");
                   }}
-                  className="text-white/80 hover:bg-white/10 cursor-pointer"
+                  className="text-foreground hover:bg-accent cursor-pointer"
                 >
                   <Check
                     className={cn(
@@ -133,12 +133,12 @@ export function SearchableSelect({
             {/* Create New Option */}
             {showCreateOption && (
               <>
-                <div className="h-px bg-white/10 my-1" />
+                <div className="h-px bg-accent my-1" />
                 <CommandGroup>
                   <CommandItem
                     onSelect={handleCreate}
                     disabled={isCreating}
-                    className="text-blue-400 hover:bg-white/10 cursor-pointer"
+                    className="text-blue-400 hover:bg-accent cursor-pointer"
                   >
                     <Plus className="mr-2 h-4 w-4" />
                     {isCreating ? "Creating..." : `${createText} "${searchQuery}"`}
@@ -226,13 +226,13 @@ export function TagInput({
             <Badge
               key={tag}
               variant="secondary"
-              className="bg-white/10 text-white/80 hover:bg-white/15 pr-1"
+              className="bg-accent text-foreground hover:bg-accent pr-1"
             >
               {tag}
               <button
                 type="button"
                 onClick={() => handleRemoveTag(tag)}
-                className="ml-1 hover:text-white"
+                className="ml-1 hover:text-foreground"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -245,7 +245,7 @@ export function TagInput({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <div className="relative">
-            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30" />
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
             <input
               ref={inputRef}
               type="text"
@@ -259,33 +259,33 @@ export function TagInput({
               placeholder={placeholder}
               className={cn(
                 "w-full h-8 pl-8 pr-3 text-sm",
-                "bg-white/5 border border-white/10 rounded",
-                "text-white placeholder:text-white/40",
+                "bg-muted border border-border rounded",
+                "text-foreground placeholder:text-muted-foreground",
                 "focus:outline-none focus:ring-1 focus:ring-blue-500"
               )}
             />
           </div>
         </PopoverTrigger>
         <PopoverContent
-          className="w-[200px] p-0 bg-[#252525] border-white/10"
+          className="w-[200px] p-0 bg-card border-border"
           align="start"
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <Command className="bg-transparent" shouldFilter={false}>
             <CommandList>
               {filteredSuggestions.length === 0 && !showCreateOption ? (
-                <CommandEmpty className="py-6 text-center text-sm text-white/40">
+                <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">
                   No suggestions
                 </CommandEmpty>
               ) : (
                 <>
                   {filteredSuggestions.length > 0 && (
-                    <CommandGroup heading="Suggestions" className="text-white/50">
+                    <CommandGroup heading="Suggestions" className="text-muted-foreground">
                       {filteredSuggestions.map((tag) => (
                         <CommandItem
                           key={tag}
                           onSelect={() => handleAddTag(tag)}
-                          className="text-white/80 hover:bg-white/10 cursor-pointer"
+                          className="text-foreground hover:bg-accent cursor-pointer"
                         >
                           {tag}
                         </CommandItem>
@@ -296,12 +296,12 @@ export function TagInput({
                   {showCreateOption && (
                     <>
                       {filteredSuggestions.length > 0 && (
-                        <div className="h-px bg-white/10 my-1" />
+                        <div className="h-px bg-accent my-1" />
                       )}
                       <CommandGroup>
                         <CommandItem
                           onSelect={() => handleAddTag(inputValue.trim())}
-                          className="text-blue-400 hover:bg-white/10 cursor-pointer"
+                          className="text-blue-400 hover:bg-accent cursor-pointer"
                         >
                           <Plus className="mr-2 h-4 w-4" />
                           Create "{inputValue.trim()}"

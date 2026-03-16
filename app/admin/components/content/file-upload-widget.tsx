@@ -151,15 +151,15 @@ export function FileUploadWidget({
             "p-6 flex flex-col items-center justify-center gap-2",
             isDragging
               ? "border-blue-500 bg-blue-500/10"
-              : "border-white/20 bg-white/5 hover:bg-white/10 hover:border-white/30"
+              : "border-border bg-muted hover:bg-accent hover:border-border"
           )}
         >
-          <Upload className={cn("w-8 h-8", isDragging ? "text-blue-400" : "text-white/40")} />
+          <Upload className={cn("w-8 h-8", isDragging ? "text-blue-400" : "text-muted-foreground")} />
           <div className="text-center">
-            <p className="text-sm text-white/80">
+            <p className="text-sm text-foreground">
               <span className="font-medium text-blue-400">Click to upload</span> or drag and drop
             </p>
-            <p className="text-xs text-white/40 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Max {maxFiles} files, {formatFileSize(maxSize)} each
             </p>
           </div>
@@ -179,18 +179,18 @@ export function FileUploadWidget({
             {displayedFiles.map((file) => (
               <div
                 key={file.id}
-                className="flex items-center gap-2 p-2 rounded bg-white/5 border border-white/10"
+                className="flex items-center gap-2 p-2 rounded bg-muted border border-border"
               >
-                <span className="text-white/50">{getFileIcon(file.type)}</span>
+                <span className="text-muted-foreground">{getFileIcon(file.type)}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-white/80 truncate">{file.name}</p>
-                  <p className="text-xs text-white/40">{formatFileSize(file.size)}</p>
+                  <p className="text-sm text-foreground truncate">{file.name}</p>
+                  <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => handleRemove(file.id)}
-                  className="h-7 w-7 text-white/50 hover:text-red-400 hover:bg-white/10"
+                  className="h-7 w-7 text-muted-foreground hover:text-red-400 hover:bg-accent"
                 >
                   <X className="w-4 h-4" />
                 </Button>
@@ -200,7 +200,7 @@ export function FileUploadWidget({
             {/* More files + Edit button */}
             <div className="flex items-center gap-2">
               {remainingCount > 0 && (
-                <Badge variant="secondary" className="bg-white/10 text-white/60">
+                <Badge variant="secondary" className="bg-accent text-muted-foreground">
                   +{remainingCount} more
                 </Badge>
               )}
@@ -208,7 +208,7 @@ export function FileUploadWidget({
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowDialog(true)}
-                className="h-7 gap-1.5 text-white/60 hover:text-white hover:bg-white/10"
+                className="h-7 gap-1.5 text-muted-foreground hover:text-foreground hover:bg-accent"
               >
                 <Edit3 className="w-3.5 h-3.5" />
                 Edit Resources
@@ -288,17 +288,17 @@ function ResourcesDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#1a1a1a] border-white/10 text-white max-w-lg">
+      <DialogContent className="bg-card border-border text-foreground max-w-lg">
         <DialogHeader>
-          <DialogTitle className="text-white">Manage Resources</DialogTitle>
-          <DialogDescription className="text-white/60">
+          <DialogTitle className="text-foreground">Manage Resources</DialogTitle>
+          <DialogDescription className="text-muted-foreground">
             Drag to reorder, click × to remove
           </DialogDescription>
         </DialogHeader>
 
         <div className="max-h-[400px] overflow-y-auto pr-2 space-y-2">
           {files.length === 0 ? (
-            <div className="py-8 text-center text-white/40 text-sm">
+            <div className="py-8 text-center text-muted-foreground text-sm">
               No files uploaded yet
             </div>
           ) : (
@@ -311,27 +311,27 @@ function ResourcesDialog({
                 onDragEnd={handleDragEnd}
                 className={cn(
                   "flex items-center gap-3 p-3 rounded-lg border transition-all cursor-move",
-                  "bg-white/5 border-white/10",
+                  "bg-muted border-border",
                   draggedIndex === index && "opacity-50",
                   dragOverIndex === index && draggedIndex !== index && "border-blue-500"
                 )}
               >
                 {/* Drag Handle */}
-                <GripVertical className="w-4 h-4 text-white/30 flex-shrink-0" />
+                <GripVertical className="w-4 h-4 text-muted-foreground flex-shrink-0" />
 
                 {/* File Icon */}
-                <span className="text-white/50 flex-shrink-0">
+                <span className="text-muted-foreground flex-shrink-0">
                   {getFileIcon(file.type)}
                 </span>
 
                 {/* File Info */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-white/80 truncate font-medium">{file.name}</p>
-                  <p className="text-xs text-white/40">{formatFileSize(file.size)}</p>
+                  <p className="text-sm text-foreground truncate font-medium">{file.name}</p>
+                  <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
                 </div>
 
                 {/* Order Badge */}
-                <Badge variant="secondary" className="bg-white/10 text-white/50 text-xs">
+                <Badge variant="secondary" className="bg-accent text-muted-foreground text-xs">
                   #{index + 1}
                 </Badge>
 
@@ -340,7 +340,7 @@ function ResourcesDialog({
                   variant="ghost"
                   size="icon"
                   onClick={() => handleRemove(file.id)}
-                  className="h-8 w-8 text-white/50 hover:text-red-400 hover:bg-white/10 flex-shrink-0"
+                  className="h-8 w-8 text-muted-foreground hover:text-red-400 hover:bg-accent flex-shrink-0"
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -352,7 +352,7 @@ function ResourcesDialog({
         <DialogFooter>
           <Button
             onClick={() => onOpenChange(false)}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
+            className="bg-blue-600 hover:bg-blue-700 text-foreground"
           >
             Done
           </Button>

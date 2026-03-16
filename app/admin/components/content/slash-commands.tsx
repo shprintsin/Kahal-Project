@@ -168,44 +168,44 @@ export function SlashCommands({
 
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
-      <Command className="bg-[#252525] border-white/10">
+      <Command className="bg-card border-border">
         <CommandInput 
-          placeholder="Type a command or search..." 
-          className="text-white placeholder:text-white/40"
+          placeholder="Type a command or search..."
+          className="text-foreground placeholder:text-muted-foreground"
         />
         <CommandList className="max-h-[300px]">
-          <CommandEmpty className="py-6 text-center text-white/40">
+          <CommandEmpty className="py-6 text-center text-muted-foreground">
             No commands found.
           </CommandEmpty>
-          <CommandGroup heading="Basic Blocks" className="text-white/50">
+          <CommandGroup heading="Basic Blocks" className="text-muted-foreground">
             {allCommands.slice(0, 6).map((cmd) => (
               <CommandItem
                 key={cmd.id}
                 value={cmd.id}
                 onSelect={handleSelect}
-                className="flex items-center gap-3 py-2 text-white/80 hover:bg-white/10 cursor-pointer"
+                className="flex items-center gap-3 py-2 text-foreground hover:bg-accent cursor-pointer"
               >
-                <span className="text-white/50">{cmd.icon}</span>
+                <span className="text-muted-foreground">{cmd.icon}</span>
                 <div className="flex-1">
                   <div className="font-medium">{cmd.label}</div>
-                  <div className="text-xs text-white/40">{cmd.description}</div>
+                  <div className="text-xs text-muted-foreground">{cmd.description}</div>
                 </div>
               </CommandItem>
             ))}
           </CommandGroup>
-          <CommandSeparator className="bg-white/10" />
-          <CommandGroup heading="Media & Extras" className="text-white/50">
+          <CommandSeparator className="bg-accent" />
+          <CommandGroup heading="Media & Extras" className="text-muted-foreground">
             {allCommands.slice(6).map((cmd) => (
               <CommandItem
                 key={cmd.id}
                 value={cmd.id}
                 onSelect={handleSelect}
-                className="flex items-center gap-3 py-2 text-white/80 hover:bg-white/10 cursor-pointer"
+                className="flex items-center gap-3 py-2 text-foreground hover:bg-accent cursor-pointer"
               >
-                <span className="text-white/50">{cmd.icon}</span>
+                <span className="text-muted-foreground">{cmd.icon}</span>
                 <div className="flex-1">
                   <div className="font-medium">{cmd.label}</div>
-                  <div className="text-xs text-white/40">{cmd.description}</div>
+                  <div className="text-xs text-muted-foreground">{cmd.description}</div>
                 </div>
               </CommandItem>
             ))}

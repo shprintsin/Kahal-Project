@@ -167,7 +167,7 @@ export function MetadataSidebar({
                         type="text" 
                         value={version || ""} 
                         onChange={(e) => onVersionChange(e.target.value)}
-                        className="w-full bg-white/5 border border-white/10 rounded px-2 py-1.5 text-sm text-white focus:outline-none focus:border-white/20"
+                        className="w-full bg-muted border border-border rounded px-2 py-1.5 text-sm text-foreground focus:outline-none focus:border-border"
                         placeholder="1.0.0"
                     />
                   </div>
@@ -181,15 +181,15 @@ export function MetadataSidebar({
                            value={minYear || ""}
                            onChange={(e) => onMinYearChange?.(e.target.value ? parseInt(e.target.value) : null)}
                            placeholder="Min"
-                           className="w-full bg-white/5 border border-white/10 rounded px-2 py-1.5 text-sm text-white focus:outline-none focus:border-white/20"
+                           className="w-full bg-muted border border-border rounded px-2 py-1.5 text-sm text-foreground focus:outline-none focus:border-border"
                         />
-                        <span className="text-white/20">-</span>
+                        <span className="text-muted-foreground">-</span>
                         <input
                            type="number"
                            value={maxYear || ""}
                            onChange={(e) => onMaxYearChange?.(e.target.value ? parseInt(e.target.value) : null)}
                            placeholder="Max"
-                           className="w-full bg-white/5 border border-white/10 rounded px-2 py-1.5 text-sm text-white focus:outline-none focus:border-white/20"
+                           className="w-full bg-muted border border-border rounded px-2 py-1.5 text-sm text-foreground focus:outline-none focus:border-border"
                         />
                      </div>
                   </div>
@@ -240,7 +240,7 @@ export function MetadataSidebar({
       {onVisibilityChange && (
         <AdminSidebarCard title="Visibility" icon={<Shield className="w-3.5 h-3.5" />}>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-white/60">
+            <span className="text-sm text-muted-foreground">
               {isPublic ? "Public" : "Private"}
             </span>
             <Switch
@@ -259,7 +259,7 @@ export function MetadataSidebar({
             <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-medium text-white">
               {author.split(" ").map((n) => n[0]).join("").slice(0, 2)}
             </div>
-            <span className="text-sm text-white/80">{author}</span>
+            <span className="text-sm text-foreground/80">{author}</span>
           </div>
         </AdminSidebarCard>
       )}
@@ -268,13 +268,13 @@ export function MetadataSidebar({
       <AdminSidebarCard title="Dates" icon={<Calendar className="w-3.5 h-3.5" />}>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <span className="text-white/40">Created</span>
-            <span className="text-white/70">{createdAt}</span>
+            <span className="text-muted-foreground">Created</span>
+            <span className="text-foreground/70">{createdAt}</span>
           </div>
           {updatedAt && (
             <div className="flex justify-between">
-              <span className="text-white/40">Updated</span>
-              <span className="text-white/70">{updatedAt}</span>
+              <span className="text-muted-foreground">Updated</span>
+              <span className="text-foreground/70">{updatedAt}</span>
             </div>
           )}
         </div>

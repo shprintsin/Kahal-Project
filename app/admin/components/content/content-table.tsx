@@ -269,7 +269,7 @@ export function ContentTable<T extends { id: string }>({
                                 e.stopPropagation();
                                 onRowClick(row);
                               }}
-                              className="text-sm font-semibold text-white hover:text-primary hover:underline text-right w-full"
+                              className="text-sm font-semibold text-foreground hover:text-primary hover:underline text-right w-full"
                             >
                               {stringValue || "Untitled"}
                             </button>
@@ -313,7 +313,7 @@ export function ContentTable<T extends { id: string }>({
                             e.stopPropagation();
                             onRowDelete(row.id);
                           }}
-                          className="h-8 w-8 rounded-none border border-white text-destructive hover:bg-red-500 hover:text-white"
+                          className="h-8 w-8 rounded-none border border-border text-destructive hover:bg-red-500 hover:text-white"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>

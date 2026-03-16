@@ -24,12 +24,12 @@ export function AdminSidebarCard({
 
   const headerContent = (
     <>
-      {icon && <span className="text-white/40">{icon}</span>}
-      <span className="text-[10px] font-medium text-white/50 uppercase tracking-wide">
+      {icon && <span className="text-muted-foreground">{icon}</span>}
+      <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
         {title}
       </span>
       {collapsible && (
-        <span className="ml-auto text-white/40">{isOpen ? "−" : "+"}</span>
+        <span className="ml-auto text-muted-foreground">{isOpen ? "−" : "+"}</span>
       )}
     </>
   );
@@ -37,8 +37,8 @@ export function AdminSidebarCard({
   return (
     <div
       className={cn(
-        "bg-[#1a1a1a] rounded-lg",
-        "border border-white/5",
+        "bg-card rounded-lg",
+        "border border-border",
         "overflow-hidden",
         className
       )}
@@ -46,12 +46,12 @@ export function AdminSidebarCard({
       {collapsible ? (
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full px-3 py-2 border-b border-white/5 flex items-center gap-2 hover:bg-white/5 transition-colors"
+          className="w-full px-3 py-2 border-b border-border flex items-center gap-2 hover:bg-muted transition-colors"
         >
           {headerContent}
         </button>
       ) : (
-        <div className="px-3 py-2 border-b border-white/5 flex items-center gap-2">
+        <div className="px-3 py-2 border-b border-border flex items-center gap-2">
           {headerContent}
         </div>
       )}
@@ -69,7 +69,7 @@ interface AdminFieldLabelProps {
 
 export function AdminFieldLabel({ children, className }: AdminFieldLabelProps) {
   return (
-    <label className={cn("text-[10px] text-white/40 uppercase", className)}>
+    <label className={cn("text-[10px] text-muted-foreground uppercase", className)}>
       {children}
     </label>
   );
@@ -82,8 +82,8 @@ export const AdminDarkInput = React.forwardRef<HTMLInputElement, AdminDarkInputP
     <input
       ref={ref}
       className={cn(
-        "w-full bg-white/5 border border-white/10 rounded px-2 py-1.5 text-sm text-white",
-        "focus:outline-none focus:border-white/20",
+        "w-full bg-muted border border-border rounded px-2 py-1.5 text-sm text-foreground",
+        "focus:outline-none focus:border-border",
         className
       )}
       {...props}

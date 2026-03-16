@@ -220,10 +220,10 @@ export function LayerEditorV2({ layer, mode }: LayerEditorProps) {
 
   const canvasTextareaClass = cn(
     "w-full bg-transparent border-none outline-none resize-none",
-    "text-base text-white/70 leading-[1.6]",
-    "placeholder:text-white/15",
+    "text-base text-foreground/70 leading-[1.6]",
+    "placeholder:text-muted-foreground",
     "focus:ring-0 min-h-[80px] py-4",
-    "border-b border-white/5"
+    "border-b border-border"
   );
 
   return (
@@ -257,10 +257,10 @@ export function LayerEditorV2({ layer, mode }: LayerEditorProps) {
 
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar - File Tree */}
-        <div className="w-[280px] border-r border-white/5 bg-[#1e1e1e] overflow-hidden flex flex-col">
-          <div className="p-2 border-b border-white/5 flex items-center justify-between">
-            <span className="text-xs font-semibold text-white/50 uppercase tracking-wide px-2">Layers</span>
-            <Button variant="ghost" size="icon" onClick={() => router.push("/admin/layers/new")} className="h-7 w-7 text-white/60 hover:text-white hover:bg-white/10">
+        <div className="w-[280px] border-r border-border bg-card overflow-hidden flex flex-col">
+          <div className="p-2 border-b border-border flex items-center justify-between">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide px-2">Layers</span>
+            <Button variant="ghost" size="icon" onClick={() => router.push("/admin/layers/new")} className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-accent">
               <Plus className="h-3.5 w-3.5" />
             </Button>
           </div>
@@ -288,27 +288,27 @@ export function LayerEditorV2({ layer, mode }: LayerEditorProps) {
                 }
               }}
               placeholder="Layer Title"
-              className="w-full bg-transparent border-none outline-none text-4xl font-bold text-white placeholder:text-white/20 py-2 focus:ring-0"
+              className="w-full bg-transparent border-none outline-none text-4xl font-bold text-foreground placeholder:text-muted-foreground py-2 focus:ring-0"
             />
 
-            <div className="flex items-center py-2 border-b border-white/5">
-              <span className="text-white/30 text-sm font-mono select-none">/layers/</span>
+            <div className="flex items-center py-2 border-b border-border">
+              <span className="text-muted-foreground text-sm font-mono select-none">/layers/</span>
               <input
                 type="text"
                 value={formSlug}
                 onChange={(e) => form.setValue("slug", e.target.value.toLowerCase().replace(/\s+/g, "-"))}
                 placeholder="layer-slug"
-                className="flex-1 bg-transparent border-none outline-none text-sm font-mono text-white/60 placeholder:text-white/20 focus:ring-0"
+                className="flex-1 bg-transparent border-none outline-none text-sm font-mono text-muted-foreground placeholder:text-muted-foreground focus:ring-0"
               />
             </div>
 
             <UnifiedCanvasSeparator label="Map Preview" />
-            <div className="rounded-lg overflow-hidden border border-white/10 my-8" style={{ height: '600px' }}>
+            <div className="rounded-lg overflow-hidden border border-border my-8" style={{ height: '600px' }}>
               {previewConfig ? (
                 <MapPreview ref={mapPreviewComponentRef} config={previewConfig} />
               ) : (
-                <div className="h-full flex flex-col items-center justify-center text-white/40">
-                  <div className="p-4 bg-white/5 rounded-full mb-4"><GripVertical className="w-6 h-6 opacity-50" /></div>
+                <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
+                  <div className="p-4 bg-muted rounded-full mb-4"><GripVertical className="w-6 h-6 opacity-50" /></div>
                   <p>Upload GeoJSON data in the sidebar to see a preview</p>
                 </div>
               )}
@@ -320,7 +320,7 @@ export function LayerEditorV2({ layer, mode }: LayerEditorProps) {
               onChange={(e) => { form.setValue("description", e.target.value); autoResizeElement(e.target, 60); }}
               placeholder="Add a brief description of this layer..."
               rows={2}
-              className={cn(canvasTextareaClass, "text-lg text-white/70 leading-relaxed min-h-[60px]")}
+              className={cn(canvasTextareaClass, "text-lg text-foreground/70 leading-relaxed min-h-[60px]")}
             />
 
             <UnifiedCanvasSeparator label="Citation" />

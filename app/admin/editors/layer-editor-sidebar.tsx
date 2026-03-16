@@ -39,7 +39,7 @@ export function LayerEditorSidebar({
   onUpdateCenter,
   onUpdateLayerConfig,
 }: LayerEditorSidebarProps) {
-  const darkOverride = "[&_input]:bg-[#252525] [&_input]:border-white/10 [&_input]:text-white/80 [&_label]:text-white/60 [&_button]:text-white/70";
+  const darkOverride = "[&_input]:bg-secondary [&_input]:border-border [&_input]:text-foreground [&_label]:text-muted-foreground [&_button]:text-foreground/70";
 
   return (
     <Form {...form}>
@@ -52,7 +52,7 @@ export function LayerEditorSidebar({
             compact={true}
           />
           {geoJsonData && (
-            <div className="mt-2 text-xs text-white/40 flex items-center">
+            <div className="mt-2 text-xs text-muted-foreground flex items-center">
               <span className="w-2 h-2 rounded-full bg-green-500 mr-2" />
               {geoJsonData.features?.length || 0} features loaded
             </div>
@@ -89,19 +89,19 @@ export function LayerEditorSidebar({
         </AdminSidebarCard>
 
         <AdminSidebarCard title="Labels">
-          <div className={`${darkOverride} [&_select]:bg-[#252525] [&_select]:text-white/80`}>
+          <div className={`${darkOverride} [&_select]:bg-secondary [&_select]:text-foreground`}>
             <LabelConfigComponent layer={configLayer as any} onUpdate={onUpdateLayerConfig} />
           </div>
         </AdminSidebarCard>
 
         <AdminSidebarCard title="Popup Config">
-          <div className={`${darkOverride} [&_textarea]:bg-[#252525] [&_textarea]:border-white/10 [&_textarea]:text-white/80`}>
+          <div className={`${darkOverride} [&_textarea]:bg-secondary [&_textarea]:border-border [&_textarea]:text-foreground`}>
             <PopupConfigComponent layer={configLayer as any} onUpdate={onUpdateLayerConfig} />
           </div>
         </AdminSidebarCard>
 
         <AdminSidebarCard title="Filters">
-          <div className={`${darkOverride} [&_select]:bg-[#252525] [&_select]:text-white/80`}>
+          <div className={`${darkOverride} [&_select]:bg-secondary [&_select]:text-foreground`}>
             <FilterControls layer={configLayer as any} onUpdate={onUpdateLayerConfig} />
           </div>
         </AdminSidebarCard>
