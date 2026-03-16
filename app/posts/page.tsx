@@ -16,7 +16,7 @@ export default async function PostsPage() {
     id: p.id,
     title: p.title,
     excerpt: p.excerpt || undefined,
-    thumbnail: null as string | null,
+    thumbnail: p.thumbnail?.url || null,
     slug: p.slug,
     date: p.createdAt ? new Date(p.createdAt).toLocaleDateString("he-IL") : null,
     category: p.categories?.[0]?.title,
