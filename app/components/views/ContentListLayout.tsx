@@ -53,7 +53,7 @@ export function ContentListLayout<T>({
       <SiteMain>
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-2/3">
-            <h1 className="secular text-3xl md:text-4xl text-[var(--dark-green)] mb-8 flex items-center gap-3">
+            <h1 className="font-display text-3xl md:text-4xl text-brand-primary mb-8 flex items-center gap-3">
               {icon}
               {title}
             </h1>

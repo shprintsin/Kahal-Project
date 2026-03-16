@@ -29,7 +29,7 @@ export function LayersPageClient({
       emptyText="לא נמצאו שכבות מידע כרגע."
       highlightCard={
         <div className="mt-8 bg-emerald-900 text-white p-6 rounded-none shadow-lg">
-          <h3 className="text-xl font-bold mb-4 secular">אודות המאגר</h3>
+          <h3 className="text-xl font-bold mb-4 font-display">אודות המאגר</h3>
           <p className="text-emerald-100 text-sm leading-relaxed mb-4">
             מאגר השכבות הגיאוגרפיות מאפשר גישה לנתונים הגולמיים המשמשים במפות ההיסטוריות.
             ניתן לצפות בנתונים, להוריד קבצי GeoJSON ולעיין בתיעוד המלא.

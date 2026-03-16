@@ -11,7 +11,7 @@ interface InfoPanelProps {
 export function InfoPanel({ title, children, className }: InfoPanelProps) {
   return (
     <div className={cn("bg-white p-6 shadow-sm border border-gray-200", className)}>
-      <h3 className="text-xl font-bold text-gray-900 mb-5 secular text-right">{title}</h3>
+      <h3 className="text-xl font-bold text-gray-900 mb-5 font-display text-right">{title}</h3>
       <div className="space-y-3">{children}</div>
     </div>
   )

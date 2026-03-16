@@ -19,7 +19,7 @@ export default function SearchPageClient({
       <SiteMain>
         <div className="flex flex-col gap-6 sm:gap-8">
           <div className="w-full lg:w-2/3 mx-auto">
-            <h1 className="secular text-2xl sm:text-3xl md:text-4xl text-[var(--dark-green)] mb-6 sm:mb-8 text-center">
+            <h1 className="font-display text-2xl sm:text-3xl md:text-4xl text-brand-primary mb-6 sm:mb-8 text-center">
               תוצאות חיפוש עבור: &ldquo;{query}&rdquo;
             </h1>
 

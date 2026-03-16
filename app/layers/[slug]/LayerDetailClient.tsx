@@ -52,14 +52,14 @@ export function LayerDetailClient({ layer, shellData }: { layer: any; shellData:
                              </StatusBadgeLarge>
                         )}
                      </div>
-                     <h1 className="secular text-2xl sm:text-3xl lg:text-4xl text-[var(--dark-green)] mb-4 sm:mb-6 leading-tight">{layer.name}</h1>
+                     <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl text-brand-primary mb-4 sm:mb-6 leading-tight">{layer.name}</h1>
 
                      <div className="h-[300px] sm:h-[400px] lg:h-[500px] mb-6 sm:mb-8 shadow-md overflow-hidden border border-gray-200 bg-gray-100">
                         <MapPreview map={previewMap as any} />
                      </div>
 
                      <ContentCard>
-                        <h2 className="text-xl sm:text-2xl font-bold mb-4 secular text-gray-800">תיאור השכבה</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-4 font-display text-gray-800">תיאור השכבה</h2>
                          <p className="whitespace-pre-wrap text-gray-700 leading-relaxed text-base sm:text-lg">
                             {layer.description || "אין תיאור זמין."}
                          </p>
@@ -71,7 +71,7 @@ export function LayerDetailClient({ layer, shellData }: { layer: any; shellData:
                         <ContentCard className="space-y-6 sm:space-y-8">
                             {layer.citationText && (
                                 <div>
-                                    <h3 className="text-lg sm:text-xl font-bold mb-3 flex items-center gap-2 text-gray-800 secular">
+                                    <h3 className="text-lg sm:text-xl font-bold mb-3 flex items-center gap-2 text-gray-800 font-display">
                                         <FileText className="w-5 h-5 text-emerald-600"/> ציטוט מומלץ
                                     </h3>
                                     <div className="bg-gray-50 p-3 sm:p-4 rounded-lg text-sm text-gray-700 border border-gray-200 font-mono break-words" dir="ltr">
@@ -82,7 +82,7 @@ export function LayerDetailClient({ layer, shellData }: { layer: any; shellData:
 
                             {layer.sources && (
                                 <div>
-                                    <h3 className="text-lg sm:text-xl font-bold mb-3 flex items-center gap-2 text-gray-800 secular">
+                                    <h3 className="text-lg sm:text-xl font-bold mb-3 flex items-center gap-2 text-gray-800 font-display">
                                         <LinkIcon className="w-5 h-5 text-emerald-600"/> מקורות הנתונים
                                     </h3>
                                     <p className="text-gray-700 whitespace-pre-wrap">{layer.sources}</p>
@@ -91,7 +91,7 @@ export function LayerDetailClient({ layer, shellData }: { layer: any; shellData:
 
                             {layer.codebookText && (
                                 <div>
-                                    <h3 className="text-lg sm:text-xl font-bold mb-3 flex items-center gap-2 text-gray-800 secular">
+                                    <h3 className="text-lg sm:text-xl font-bold mb-3 flex items-center gap-2 text-gray-800 font-display">
                                         <Info className="w-5 h-5 text-emerald-600"/> מילון נתונים (Codebook)
                                     </h3>
                                     <div className="prose max-w-none text-gray-700">
@@ -106,7 +106,7 @@ export function LayerDetailClient({ layer, shellData }: { layer: any; shellData:
 
             <div className="space-y-6">
                 <SidebarInfoCard>
-                    <h3 className="text-lg font-bold mb-4 border-b pb-2 text-gray-800 secular">פרטים נוספים</h3>
+                    <h3 className="text-lg font-bold mb-4 border-b pb-2 text-gray-800 font-display">פרטים נוספים</h3>
                     <ul className="space-y-4 text-sm">
                         <li className="flex justify-between items-center border-b border-gray-50 pb-2">
                             <span className="text-gray-500 font-medium">סטטוס איכות:</span>

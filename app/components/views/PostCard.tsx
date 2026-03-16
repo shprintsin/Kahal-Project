@@ -23,14 +23,14 @@ export default function PostCard({ post }: PostCardProps) {
       </div>
       <div className="w-full md:w-2/3 flex flex-col">
         {post.date && <div className="text-sm text-gray-500 mb-2 rtl-dir">{post.date}</div>}
-        <h2 className="secular text-2xl text-[var(--dark-green)] mb-3">{post.title}</h2>
+        <h2 className="font-display text-xl sm:text-2xl text-brand-primary mb-3">{post.title}</h2>
         {post.excerpt && <p className="text-base mb-4">{post.excerpt}</p>}
         <div className="mt-auto">
           <a
             href={post.slug}
             className="flex justify-between items-center text-brand-secondary hover:text-brand-primary transition-colors duration-200"
           >
-            <span className="secular font-bold">קרא עוד</span>
+            <span className="font-display font-bold">קרא עוד</span>
             <ArrowLeft className="h-5 w-5" />
           </a>
         </div>

@@ -96,7 +96,7 @@ export default function CollectionDetailView({ collection, siteShellData }: Coll
         <div className="max-w-7xl w-full px-4 md:w-11/12 mx-auto py-8 md:py-12 space-y-6">
           {/* Breadcrumb / meta */}
           <div className="bg-white shadow-sm p-6 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[var(--dark-green)] text-sm font-medium">
+            <div className="flex items-center gap-2 text-brand-primary text-sm font-medium">
               <Link
                 href="/collections"
                 className="inline-flex items-center gap-1 hover:opacity-80 transition"
@@ -110,7 +110,7 @@ export default function CollectionDetailView({ collection, siteShellData }: Coll
 
           {/* Page Title */}
           <div className="bg-white shadow-sm p-8 space-y-3">
-            <h1 className="secular text-4xl font-bold text-[var(--dark-green)] font-display">{collection.id}</h1>
+            <h1 className="text-4xl font-bold text-brand-primary font-display">{collection.id}</h1>
             <p className="text-gray-600">אוסף זה כולל {volumesCount} כרכים מתועדים</p>
           </div>
 
@@ -124,7 +124,7 @@ export default function CollectionDetailView({ collection, siteShellData }: Coll
                 placeholder="חיפוש כרכים באוסף זה..."
                 value={searchQuery}
                 onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                className="pl-10 pr-3 bg-white text-right border-gray-300 focus-visible:ring-1 focus-visible:ring-[var(--dark-green)]"
+                className="pl-10 pr-3 bg-white text-right border-gray-300 focus-visible:ring-1 focus-visible:ring-brand-primary"
               />
             </div>
           </div>
@@ -140,7 +140,7 @@ export default function CollectionDetailView({ collection, siteShellData }: Coll
                     onClick={() => setViewMode(mode)}
                     className={`${
                       viewMode === mode
-                        ? 'bg-[var(--dark-green)] text-white shadow-sm'
+                        ? 'bg-brand-primary text-white shadow-sm'
                         : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                     } px-4 py-2 text-sm rounded-md transition`}
                   >

@@ -15,8 +15,8 @@ export function ReadMoreLink({ href, children = "קרא עוד", className }: Re
       href={href}
       className={cn(
         "inline-flex items-center justify-between gap-2",
-        "text-[#5c6d3f] hover:text-[var(--dark-green)] transition-colors duration-200",
-        "secular font-bold",
+        "text-brand-secondary hover:text-brand-primary transition-colors duration-200",
+        "font-display font-bold",
         className
       )}
     >
@@ -38,7 +38,7 @@ export function ViewLink({ href, children, icon, className }: ViewLinkProps) {
     <Link
       href={href}
       className={cn(
-        "inline-flex items-center gap-2 text-emerald-700 font-bold secular",
+        "inline-flex items-center gap-2 text-emerald-700 font-bold font-display",
         className
       )}
     >

@@ -24,7 +24,7 @@ function MetaRow({ children }: { children: React.ReactNode }) {
 
 function CardTitle({ href, children }: { href: string; children: React.ReactNode }) {
   return (
-    <h2 className="secular text-xl sm:text-2xl text-[var(--dark-green)] mb-3 group transition-colors">
+    <h2 className="font-display text-xl sm:text-2xl text-brand-primary mb-3 group transition-colors">
       <a href={href} className="hover:text-emerald-700">{children}</a>
     </h2>
   )
@@ -40,7 +40,7 @@ function CardLink({ href, label, icon }: { href: string; label: string; icon: Re
     <div className="mt-auto">
       <a
         href={href}
-        className="inline-flex items-center gap-2 text-emerald-700 font-bold secular hover:translate-x-[-4px] transition-transform duration-200"
+        className="inline-flex items-center gap-2 text-emerald-700 font-bold font-display hover:translate-x-[-4px] transition-transform duration-200"
       >
         {label}
         {icon}
