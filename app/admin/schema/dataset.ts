@@ -1,12 +1,17 @@
 import { z } from "zod";
 
+const i18nOrString = z.union([
+  z.string(),
+  z.record(z.string(), z.string()),
+]).optional().nullable();
+
 export const datasetSchema = z.object({
-  title: z.any(),
+  title: i18nOrString,
   slug: z.string().min(1, "Slug is required")
     .regex(/^[a-z0-9-]+$/, "Slug must only contain lowercase letters, numbers, and hyphens"),
-  description: z.any(),
-  sources: z.any(),
-  codebookText: z.any(),
+  description: i18nOrString,
+  sources: i18nOrString,
+  codebookText: i18nOrString,
   citationText: z.string().optional(),
 
   categoryId: z.string().optional().nullable(),

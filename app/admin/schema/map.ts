@@ -12,7 +12,10 @@ export const mapSchema = z.object({
   status: z.enum(["draft", "published", "archived"]).optional(),
   period_start_date: z.string().optional(),
   period_end_date: z.string().optional(),
-  config: z.any().optional(), // Map configuration (layers, tiles, etc.)
+  config: z.record(z.string(), z.unknown()).optional(),
+  version: z.string().optional(),
+  yearMin: z.coerce.number().optional().nullable(),
+  yearMax: z.coerce.number().optional().nullable(),
 });
 
 export type MapFormValues = z.infer<typeof mapSchema>;

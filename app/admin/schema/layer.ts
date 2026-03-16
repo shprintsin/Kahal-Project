@@ -23,8 +23,8 @@ export const layerSchema = z.object({
   sourceType: z.enum(["url", "database", "inline"]).optional(),
   sourceUrl: z.string().optional(),
   downloadUrl: z.string().optional(),
-  geoJsonData: z.any().optional(),
-  styleConfig: z.any().optional(),
+  geoJsonData: z.record(z.string(), z.unknown()).optional().nullable(),
+  styleConfig: z.record(z.string(), z.unknown()).optional(),
   tagIds: z.array(z.string()).optional(),
   regionIds: z.array(z.string()).optional(),
 });
