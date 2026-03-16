@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "@/utils/safe-revalidate";
-import { Prisma } from "@prisma/client";
+import { ContentStatus, Prisma } from "@prisma/client";
 
 
 interface PostInput {
@@ -63,6 +63,7 @@ export async function getPosts() {
 }
 
 export async function getPost(id: string) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Prisma typing workaround for complex include
   const post = await (prisma.post.findUnique as any)({
     where: { id },
     include: {
@@ -85,7 +86,7 @@ export async function getPost(id: string) {
   });
 
   if (!post) throw new Error("Post not found");
-  return { ...post, tags: post.tags.map((pt: any) => pt.tag) };
+  return { ...post, tags: post.tags.map((pt: { tag: unknown }) => pt.tag) };
 }
 
 export async function createPost(
@@ -94,12 +95,12 @@ export async function createPost(
 ) {
   const authorRelation = await resolveAuthorRelation(postData.author_id);
 
-  const data: any = {
-    title: postData.title,
-    slug: postData.slug,
+  const data: Prisma.PostCreateInput = {
+    title: postData.title ?? "",
+    slug: postData.slug ?? "",
     content: postData.content,
     excerpt: postData.excerpt,
-    status: postData.status,
+    status: (postData.status as ContentStatus) ?? "draft",
     language: postData.language,
     titleI18n: postData.titleI18n || {},
     contentI18n: postData.contentI18n || {},
@@ -132,12 +133,12 @@ export async function updatePost(
 ) {
   const authorRelation = await resolveAuthorRelation(postData.author_id);
 
-  const data: any = {
+  const data: Prisma.PostUpdateInput = {
     title: postData.title,
     slug: postData.slug,
     content: postData.content,
     excerpt: postData.excerpt,
-    status: postData.status,
+    status: postData.status ? (postData.status as ContentStatus) : undefined,
     language: postData.language,
     titleI18n: postData.titleI18n,
     contentI18n: postData.contentI18n,
@@ -151,11 +152,13 @@ export async function updatePost(
     } : {})
   };
 
-  Object.keys(data).forEach(key => data[key] === undefined && delete data[key]);
+  const filteredData = Object.fromEntries(
+    Object.entries(data).filter(([, v]) => v !== undefined)
+  ) as Prisma.PostUpdateInput;
 
   const updatedPost = await prisma.post.update({
     where: { id },
-    data,
+    data: filteredData,
     include: {
       author: true,
       thumbnail: true,
@@ -251,7 +254,7 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
   } = options;
 
   const where: Prisma.PostWhereInput = {
-    ...(status && { status: status as any }),
+    ...(status && { status: status as ContentStatus }),
     ...(authorId && { authorId }),
     ...(search && {
       OR: [

@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "@/utils/safe-revalidate";
-import { Prisma } from "@prisma/client";
+import { ContentStatus, Prisma } from "@prisma/client";
 
 interface MapLayerInput {
   layerId?: string;
@@ -79,6 +79,23 @@ interface LayerAssociationInput {
   interactionConfig?: Prisma.InputJsonValue;
 }
 
+type MapLayerAssociationWithLayer = Prisma.MapLayerAssociationGetPayload<{
+  include: { layer: true };
+}>;
+
+interface MapResourceItem {
+  id: string;
+  name: string | null;
+  slug: string | null;
+  url: string | null;
+  filename: string | null;
+  mimeType: string | null;
+  format: string | null;
+  isMainFile: boolean;
+  excerptI18n: unknown;
+  createdAt: Date;
+}
+
 // Maps
 export async function getMaps() {
   const maps = await prisma.map.findMany({
@@ -120,9 +137,9 @@ export async function createMap(mapData: MapInput) {
     customCSS: mapData.config?.customCSS,
   };
 
-  const data: any = {
+  const data: Record<string, unknown> = {
     slug: mapData.slug,
-    status: mapData.status || 'draft',
+    status: (mapData.status || 'draft') as ContentStatus,
     ...(mapData.title && { title: mapData.title }),
     titleI18n: mapData.title_i18n || mapData.titleI18n,
     ...(mapData.description !== undefined && { description: mapData.description }),
@@ -158,7 +175,7 @@ export async function createMap(mapData: MapInput) {
   };
 
   const createdMap = await prisma.map.create({
-    data,
+    data: data as Prisma.MapCreateInput,
   });
 
 
@@ -217,10 +234,10 @@ export async function updateMap(id: string, mapData: MapInput) {
     customCSS: mapData.config.customCSS,
   } : undefined;
 
-  const data: any = {};
+  const data: Record<string, unknown> = {};
 
   if (mapData.slug !== undefined) data.slug = mapData.slug;
-  if (mapData.status !== undefined) data.status = mapData.status;
+  if (mapData.status !== undefined) data.status = mapData.status as ContentStatus;
   if (mapData.title !== undefined) data.title = mapData.title;
   if (mapData.description !== undefined) data.description = mapData.description;
   if (mapData.year !== undefined) data.year = mapData.year;
@@ -267,7 +284,7 @@ export async function updateMap(id: string, mapData: MapInput) {
 
   const updatedMap = await prisma.map.update({
     where: { id },
-    data,
+    data: data as Prisma.MapUpdateInput,
   });
 
 
@@ -343,7 +360,7 @@ export async function getLayers(mapId: string) {
 }
 
 export async function createLayerAssociation(layerData: LayerAssociationInput) {
-  const data: any = {
+  const data: Record<string, unknown> = {
     mapId: layerData.map_id || layerData.mapId,
     layerId: layerData.layer_id || layerData.layerId,
     zIndex: layerData.z_index || layerData.zIndex || 0,
@@ -354,7 +371,7 @@ export async function createLayerAssociation(layerData: LayerAssociationInput) {
   };
 
   const createdAssociation = await prisma.mapLayerAssociation.create({
-    data,
+    data: data as Prisma.MapLayerAssociationUncheckedCreateInput,
     include: {
       layer: true,
     },
@@ -367,7 +384,7 @@ export async function createLayerAssociation(layerData: LayerAssociationInput) {
 }
 
 export async function updateLayerAssociation(id: string, layerData: LayerAssociationInput) {
-  const data: any = {
+  const data: Record<string, unknown> = {
     layerId: layerData.layer_id || layerData.layerId,
     zIndex: layerData.z_index || layerData.zIndex,
     isVisible: layerData.is_visible ?? layerData.isVisible,
@@ -378,7 +395,7 @@ export async function updateLayerAssociation(id: string, layerData: LayerAssocia
 
   const updatedAssociation = await prisma.mapLayerAssociation.update({
     where: { id },
-    data,
+    data: data as Prisma.MapLayerAssociationUncheckedUpdateInput,
     include: {
       layer: true,
     },
@@ -494,7 +511,7 @@ export async function listMapsAPI(options: ListMapsOptions = {}) {
 
   // Build where clause dynamically
   const where: Prisma.MapWhereInput = {
-    ...(status && { status: status as any }),
+    ...(status && { status: status as ContentStatus }),
     ...(year && { year }),
     ...(yearMin && { yearMin: { gte: yearMin } }),
     ...(yearMax && { yearMax: { lte: yearMax } }),
@@ -521,7 +538,7 @@ export async function listMapsAPI(options: ListMapsOptions = {}) {
   try {
     const [maps, total] = await Promise.all([
       prisma.map.findMany({
-        where: where as any,
+        where,
         skip,
         take,
         orderBy,
@@ -548,7 +565,7 @@ export async function listMapsAPI(options: ListMapsOptions = {}) {
           },
         },
       }),
-      prisma.map.count({ where: where as any }),
+      prisma.map.count({ where }),
     ]);
 
     // Transform data with i18n support
@@ -710,7 +727,7 @@ export async function getMapBySlug(
           }
         : null,
       ...(includeLayers && {
-        layers: (map as any).layers.map((assoc: any) => ({
+        layers: ((map as Record<string, unknown>).layers as MapLayerAssociationWithLayer[]).map((assoc) => ({
           id: assoc.layer.id,
           layerId: assoc.layerId,
           name: getLocalizedField(assoc.layer.name, assoc.layer.nameI18n, lang) || assoc.layer.name,
@@ -722,8 +739,8 @@ export async function getMapBySlug(
           downloadUrl: assoc.layer.downloadUrl,
           filename: assoc.layer.filename,
           styleConfig: {
-            ...(assoc.layer.styleConfig || {}),
-            ...(assoc.styleOverride || {}),
+            ...((assoc.layer.styleConfig as Record<string, unknown>) || {}),
+            ...((assoc.styleOverride as Record<string, unknown>) || {}),
           },
           interactionConfig: assoc.interactionConfig,
           isVisible: assoc.isVisible,
@@ -734,7 +751,7 @@ export async function getMapBySlug(
         })),
       }),
       ...(includeResources && {
-        resources: (map as any).resources.map((resource: any) => ({
+        resources: ((map as Record<string, unknown>).resources as MapResourceItem[]).map((resource) => ({
           id: resource.id,
           name: resource.name,
           slug: resource.slug,
