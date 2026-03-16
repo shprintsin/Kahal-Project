@@ -28,7 +28,7 @@ export default function PostCard({ post }: PostCardProps) {
         <div className="mt-auto">
           <a
             href={post.slug}
-            className="flex justify-between items-center text-[#5c6d3f] hover:text-[var(--dark-green)] transition-colors duration-200"
+            className="flex justify-between items-center text-brand-secondary hover:text-brand-primary transition-colors duration-200"
           >
             <span className="secular font-bold">קרא עוד</span>
             <ArrowLeft className="h-5 w-5" />

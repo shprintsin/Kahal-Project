@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import { useViewer } from '@/contexts/ViewerContext';
 import PageImage from './PageImage';
 import MarkdownRenderer from './MarkdownRenderer';
@@ -17,7 +17,7 @@ export default function ComparisonView({ volume }: ComparisonViewProps) {
   const { state } = useViewer();
   const scanContainerRef = useRef<HTMLDivElement>(null);
   const textContainerRef = useRef<HTMLDivElement>(null);
-  const [isSyncing, setIsSyncing] = useState(false);
+  const isSyncingRef = useRef(false);
 
   // Get current page
   const currentPageIndex = state.currentPage - 1;
@@ -57,19 +57,19 @@ export default function ComparisonView({ volume }: ComparisonViewProps) {
     if (!scanContainer || !textContainer) return;
 
     const handleScanScroll = () => {
-      if (isSyncing) return;
-      setIsSyncing(true);
+      if (isSyncingRef.current) return;
+      isSyncingRef.current = true;
       const scrollPercentage = scanContainer.scrollTop / (scanContainer.scrollHeight - scanContainer.clientHeight);
       textContainer.scrollTop = scrollPercentage * (textContainer.scrollHeight - textContainer.clientHeight);
-      setTimeout(() => setIsSyncing(false), 50);
+      setTimeout(() => { isSyncingRef.current = false; }, 50);
     };
 
     const handleTextScroll = () => {
-      if (isSyncing) return;
-      setIsSyncing(true);
+      if (isSyncingRef.current) return;
+      isSyncingRef.current = true;
       const scrollPercentage = textContainer.scrollTop / (textContainer.scrollHeight - textContainer.clientHeight);
       scanContainer.scrollTop = scrollPercentage * (scanContainer.scrollHeight - scanContainer.clientHeight);
-      setTimeout(() => setIsSyncing(false), 50);
+      setTimeout(() => { isSyncingRef.current = false; }, 50);
     };
 
     scanContainer.addEventListener('scroll', handleScanScroll);
@@ -79,7 +79,7 @@ export default function ComparisonView({ volume }: ComparisonViewProps) {
       scanContainer.removeEventListener('scroll', handleScanScroll);
       textContainer.removeEventListener('scroll', handleTextScroll);
     };
-  }, [isSyncing]);
+  }, []);
 
   return (
     <div className="h-full w-full flex">

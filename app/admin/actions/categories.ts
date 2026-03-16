@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { toISOStringSafe } from "@/lib/utils";
 import { revalidatePath } from "@/utils/safe-revalidate";
 import { Prisma } from "@prisma/client";
 
@@ -144,7 +145,7 @@ export async function listCategoriesAPI(options: ListCategoriesOptions = {}) {
         datasets: category._count.datasets,
         maps: category._count.maps,
       },
-      createdAt: category.createdAt.toISOString(),
+      createdAt: toISOStringSafe(category.createdAt),
     }));
 
     // Sort by usage count if requested
@@ -240,7 +241,7 @@ export async function getCategoryBySlug(slug: string, options: GetCategoryOption
           ...((category as any).posts && { posts: (category as any).posts }),
         },
       }),
-      createdAt: category.createdAt.toISOString(),
+      createdAt: toISOStringSafe(category.createdAt),
     };
   } catch (error) {
     console.error("Error getting category:", error);

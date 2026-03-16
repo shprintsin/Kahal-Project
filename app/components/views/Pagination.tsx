@@ -16,7 +16,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
       {currentPage > 1 && (
         <Button
           variant="outline"
-          className="border-[#5c6d3f] text-[#5c6d3f] hover:bg-[#5c6d3f] hover:text-white"
+          className="border-brand-secondary text-brand-secondary hover:bg-brand-secondary hover:text-white"
           onClick={() => onPageChange(currentPage - 1)}
         >
           הקודם
@@ -28,8 +28,8 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
           variant={currentPage === number ? "default" : "outline"}
           className={
             currentPage === number
-              ? "bg-[#5c6d3f] text-white hover:bg-[var(--dark-green)]"
-              : "border-[#5c6d3f] text-[#5c6d3f] hover:bg-[#5c6d3f] hover:text-white"
+              ? "bg-brand-secondary text-white hover:bg-brand-primary"
+              : "border-brand-secondary text-brand-secondary hover:bg-brand-secondary hover:text-white"
           }
           onClick={() => onPageChange(number)}
         >
@@ -39,7 +39,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
       {currentPage < totalPages && (
         <Button
           variant="outline"
-          className="border-[#5c6d3f] text-[#5c6d3f] hover:bg-[#5c6d3f] hover:text-white"
+          className="border-brand-secondary text-brand-secondary hover:bg-brand-secondary hover:text-white"
           onClick={() => onPageChange(currentPage + 1)}
         >
           הבא

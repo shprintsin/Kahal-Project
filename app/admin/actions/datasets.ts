@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { toISOStringSafe } from "@/lib/utils";
 import { revalidatePath } from "@/utils/safe-revalidate";
 import { Prisma } from "@prisma/client";
 import { uploadFile } from "@/utils/storage";
@@ -455,8 +456,8 @@ export async function listDatasetsAPI(options: ListDatasetsOptions = {}) {
           }
         : null,
       resourceCount: dataset._count.resources,
-      createdAt: dataset.createdAt.toISOString(),
-      updatedAt: dataset.updatedAt.toISOString(),
+      createdAt: toISOStringSafe(dataset.createdAt),
+      updatedAt: toISOStringSafe(dataset.updatedAt),
     }));
 
     return {
@@ -578,11 +579,11 @@ export async function getDatasetBySlug(
           format: resource.format,
           isMainFile: resource.isMainFile,
           excerpt: getLocalizedField(null, resource.excerptI18n, lang),
-          createdAt: resource.createdAt.toISOString(),
+          createdAt: toISOStringSafe(resource.createdAt),
         })),
       }),
-      createdAt: dataset.createdAt.toISOString(),
-      updatedAt: dataset.updatedAt.toISOString(),
+      createdAt: toISOStringSafe(dataset.createdAt),
+      updatedAt: toISOStringSafe(dataset.updatedAt),
     };
   } catch (error) {
     console.error("Error getting dataset:", error);
@@ -632,7 +633,7 @@ export async function getDatasetResourcesBySlug(
         format: resource.format,
         isMainFile: resource.isMainFile,
         excerpt: getLocalizedField(null, resource.excerptI18n, lang),
-        createdAt: resource.createdAt.toISOString(),
+        createdAt: toISOStringSafe(resource.createdAt),
       })),
       total: resources.length,
     };
@@ -716,8 +717,8 @@ export async function getDatasetMetadataBySlug(
         slug: region.slug,
         name: getLocalizedField(region.name, region.nameI18n, lang) || region.name,
       })),
-      createdAt: dataset.createdAt.toISOString(),
-      updatedAt: dataset.updatedAt.toISOString(),
+      createdAt: toISOStringSafe(dataset.createdAt),
+      updatedAt: toISOStringSafe(dataset.updatedAt),
     };
   } catch (error) {
     console.error("Error getting dataset metadata:", error);

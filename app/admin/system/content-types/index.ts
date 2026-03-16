@@ -11,6 +11,7 @@ import "./page-model";
 import "./period";
 import "./place";
 import "./artifact-category";
+import "./site-link";
 
 // Re-export for direct access
 export { ArticleType } from "./article";
@@ -21,3 +22,4 @@ export { TagType } from "./tag";
 export { PeriodType } from "./period";
 export { PlaceType } from "./place";
 export { ArtifactCategoryType } from "./artifact-category";
+export { SiteLinkType } from "./site-link";

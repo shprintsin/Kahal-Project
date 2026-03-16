@@ -15,14 +15,14 @@
   font-weight: bold;
   text-align: right;
   margin-bottom: 3rem;
-  font-family: 'Secular One', sans-serif;
+  font-family: var(--font-display);
 }
 
 .postsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-  font-family: 'Secular One', sans-serif;
+  font-family: var(--font-display);
 
 }
 
@@ -30,7 +30,7 @@
   background: white;
   border-radius: 0.5rem;
   overflow: hidden;
-  font-family: 'Secular One', sans-serif;
+  font-family: var(--font-display);
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   transition: transform 0.3s ease;
 }
@@ -59,7 +59,7 @@
   color: var(--dark-green);
   font-size: 1.25rem;
   font-weight: bold;
-  font-family: 'Secular One', sans-serif;
+  font-family: var(--font-display);
   margin-bottom: 0.75rem;
   line-height: 1.4;
 }

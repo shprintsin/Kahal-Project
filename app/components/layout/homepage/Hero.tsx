@@ -9,7 +9,7 @@ export default function Hero({heroText, actionItems, categories}: {heroText: Her
       {/* Right col */}
       <div className="flex flex-col justify-around w-1/2">
         {/* hero */}
-        <div className="text-right font-['Secular_One'] mb-12 mt-8">
+        <div className="text-right font-display mb-12 mt-8">
           <h1 className="text-white text-7xl font-bold mb-2">{heroText.title}</h1>
           <h2 className="text-white text-4xl mb-6">{heroText.subtitle}</h2>
         </div>

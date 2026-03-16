@@ -61,7 +61,7 @@ export default function LSidebar({ volume }: LSidebarProps) {
                     onClick={() => setCurrentPage(index + 1)}
                     className={`w-full text-right px-3 py-2 rounded text-sm transition-colors ${
                       state.currentPage === index + 1
-                        ? 'bg-[#e8f5e9] text-[#1a472a] font-medium'
+                        ? 'bg-surface-brand-light text-brand-primary font-medium'
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >
@@ -117,7 +117,7 @@ export default function LSidebar({ volume }: LSidebarProps) {
                   max={totalPages}
                   value={state.currentPage}
                   onChange={handlePageInput}
-                  className="w-16 px-2 py-1 border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-[#1a472a]"
+                  className="w-16 px-2 py-1 border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-brand-primary"
                 />
                 <span className="text-gray-600">מתוך {totalPages}</span>
               </div>
@@ -125,7 +125,7 @@ export default function LSidebar({ volume }: LSidebarProps) {
 
             {/* Download Button */}
             <div className="pt-4 border-t border-gray-200">
-              <button className="flex items-center gap-2 px-3 py-2 bg-[#131e1e] text-white rounded-md hover:shadow-md transition-all text-sm font-medium w-full justify-center">
+              <button className="flex items-center gap-2 px-3 py-2 bg-brand-dark text-white rounded-md hover:shadow-md transition-all text-sm font-medium w-full justify-center">
                 <Download className="w-4 h-4" />
                 הורדה
               </button>

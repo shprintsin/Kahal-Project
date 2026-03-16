@@ -8,13 +8,7 @@ const envPath = path.resolve(process.cwd(), ".env");
 dotenv.config({ path: envPathLocal });
 dotenv.config({ path: envPath });
 
-// Override DATABASE_URL to use Supabase if available
-if (process.env.SUPABASE_DB_URL) {
-  process.env.DATABASE_URL = process.env.SUPABASE_DB_URL;
-  console.log("Using SUPABASE_DB_URL for verification.");
-} else {
-    console.log("Using default DATABASE_URL from env.");
-}
+console.log("Using DATABASE_URL from env.");
 
 const prisma = new PrismaClient({
   log: ['error', 'warn'],

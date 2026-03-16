@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 import { MapViewerClient } from './MapViewerClient';
 import { getMapBySlug } from '@/app/admin/actions/maps';
-import { getSiteShellData } from '@/app/lib/get-navigation';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -9,14 +8,11 @@ interface PageProps {
 
 export default async function MapPage({ params }: PageProps) {
   const { slug } = await params;
-  const [apiMap, shellData] = await Promise.all([
-    getMapBySlug(slug),
-    getSiteShellData(),
-  ]);
+  const apiMap = await getMapBySlug(slug);
 
   if (!apiMap) {
     notFound();
   }
 
-  return <MapViewerClient map={apiMap as any} shellData={shellData} />;
+  return <MapViewerClient map={apiMap as any} />;
 }

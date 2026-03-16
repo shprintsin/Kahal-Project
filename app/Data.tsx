@@ -1,18 +1,18 @@
 import { ActionButton, Author, Category, CategoryButton, CitationInfo, FooterItem, NavItem } from "@/app/types";
 
 import {
-    Archive,
-    ArrowLeft,
-    BookOpen,
-    ChevronDown,
-    Coins,
-    Database,
-    FileSpreadsheet,
+    Search,
     Home,
+    BookOpen,
+    Database,
+    Archive,
+    ChevronDown,
+    ArrowLeft,
+    FileSpreadsheet,
+    Coins,
+    Users,
     Landmark,
     Map,
-    Search,
-    Users,
 } from "lucide-react"
 
 
@@ -172,47 +172,35 @@ export const HomeCategories: CategoryButton[] = [
 
 import * as LucideIcons from "lucide-react";
 
+const FA_TO_LUCIDE: Record<string, React.ComponentType<{ className?: string }>> = {
+  FaSearch: Search,
+  FaHome: Home,
+  FaBook: BookOpen,
+  FaDatabase: Database,
+  FaArchive: Archive,
+  FaChevronDown: ChevronDown,
+  FaCoins: Coins,
+  FaUsers: Users,
+  FaLandmark: Landmark,
+  FaMap: Map,
+  FaFileExcel: FileSpreadsheet,
+  FaArrowLeft: ArrowLeft,
+  FaGithub: ArrowLeft,
+  FaCode: ArrowLeft,
+};
+
 export const GetIcons = ({icon, className}: {icon: string, className: string}) => {
-  // 1. Try Lucide Icons (from Admin Panel)
-  // The admin panel saves icon names like "Home", "User", "Settings"
   const LucideIcon = (LucideIcons as any)[icon];
   if (LucideIcon) {
     return <LucideIcon className={className} />;
   }
 
-  // 2. Fallback to Legacy FontAwesome (from hardcoded Data.tsx)
-  switch (icon) {
-    case "FaSearch":
-      return <Search className={className} />;
-    case "FaHome":
-      return <Home className={className} />;
-    case "FaBook":
-      return <BookOpen className={className} />;
-    case "FaDatabase":
-      return <Database className={className} />;
-    case "FaArchive":
-      return <Archive className={className} />;
-    case "FaChevronDown":
-      return <ChevronDown className={className} />;
-    case "FaCoins":
-      return <Coins className={className} />;
-    case "FaUsers":
-      return <Users className={className} />;
-    case "FaLandmark":
-      return <Landmark className={className} />;
-    case "FaMap":
-      return <Map className={className} />;
-    case "FaFileExcel":
-      return <FileSpreadsheet className={className} />;
-    case "FaArrowLeft":
-      return <ArrowLeft className={className} />;
-    case "FaGithub":
-      return <ArrowLeft className={className} />;
-    case "FaCode":
-      return <ArrowLeft className={className} />;
-    default:
-      return null;
+  const FallbackIcon = FA_TO_LUCIDE[icon];
+  if (FallbackIcon) {
+    return <FallbackIcon className={className} />;
   }
+
+  return null;
 }
 
 

@@ -778,6 +778,23 @@ model SiteSettings {
   @@map("site_settings")
 }
 
+model SiteLink {
+  id              String        @id @default(uuid()) @db.Uuid
+  title           String        @default("")
+  titleI18n       Json          @default("{}") @map("title_i18n")
+  description     String?
+  descriptionI18n Json?         @default("{}") @map("description_i18n")
+  icon            String?
+  url             String
+  order           Int           @default(0)
+  status          ContentStatus @default(draft)
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([status, order])
+  @@map("site_links")
+}
+
 model Document {
   id            String          @id @default(uuid()) @db.Uuid
   slug          String          @unique

@@ -4,8 +4,7 @@ import { NavigationSidebar } from '../ui/NavigationSidebar';
 import { CollectionView } from '../ui/CollectionView';
 import { Breadcrumbs } from '../ui/Breadcrumbs';
 import { notFound } from 'next/navigation';
-import { getSiteShellData } from '@/app/lib/get-navigation';
-import { SiteShell } from '@/components/ui/site-shell';
+import SiteLayout from '@/app/components/layout/SiteLayout';
 
 interface PageProps {
   params: Promise<{
@@ -15,44 +14,42 @@ interface PageProps {
 
 export default async function CollectionPage({ params }: PageProps) {
   const { collectionSlug } = await params;
-
+  
   try {
-    const [collections, collection, shellData] = await Promise.all([
-      getAllCollectionsWithSeries(),
-      getCollectionWithSeries(collectionSlug),
-      getSiteShellData(),
-    ]);
-
+    // Fetch all collections for sidebar
+    const collections = await getAllCollectionsWithSeries();
+    
+    // Fetch specific collection details
+    const collection = await getCollectionWithSeries(collectionSlug);
+    
     if (!collection) {
       notFound();
     }
-
+    
     return (
-      <SiteShell {...shellData}>
-        <div className="flex-1">
-          <ArchiveLayout
-            sidebar={
-              <NavigationSidebar
-                collections={collections}
-                selectedCollectionSlug={collectionSlug}
-                selectedSeriesSlug={null}
+      <SiteLayout>
+        <ArchiveLayout
+          sidebar={
+            <NavigationSidebar
+              collections={collections}
+              selectedCollectionSlug={collectionSlug}
+              selectedSeriesSlug={null}
+            />
+          }
+          content={
+            <>
+              <Breadcrumbs items={[
+                { label: 'ארכיון', href: '/archive', isActive: false },
+                { label: collection.nameI18n?.he || collection.name, isActive: true }
+              ]} />
+              <CollectionView
+                collection={collection}
+                collectionSlug={collectionSlug}
               />
-            }
-            content={
-              <>
-                <Breadcrumbs items={[
-                  { label: 'ארכיון', href: '/archive', isActive: false },
-                  { label: collection.nameI18n?.he || collection.name, isActive: true }
-                ]} />
-                <CollectionView
-                  collection={collection}
-                  collectionSlug={collectionSlug}
-                />
-              </>
-            }
-          />
-        </div>
-      </SiteShell>
+            </>
+          }
+        />
+      </SiteLayout>
     );
   } catch (error) {
     console.error('Error loading collection:', error);
