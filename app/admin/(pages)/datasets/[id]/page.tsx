@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import { getDataset, getDatasets } from "@/app/admin/actions/datasets";
 import { getTags } from "@/app/admin/actions/tags";
+import { getCategories } from "@/app/admin/actions/categories";
+import { getRegions } from "@/app/admin/actions/regions";
 import { DatasetEditorClient } from "./dataset-editor-client";
 
 export default async function DatasetEditorPage({
@@ -20,9 +22,11 @@ export default async function DatasetEditorPage({
     }
   }
 
-  const [tags, datasets] = await Promise.all([
+  const [tags, datasets, categories, regions] = await Promise.all([
     getTags(),
     getDatasets(),
+    getCategories(),
+    getRegions(),
   ]);
 
   return (
@@ -30,6 +34,8 @@ export default async function DatasetEditorPage({
       dataset={dataset}
       tags={tags}
       datasets={datasets}
+      categories={categories}
+      regions={regions}
       isNew={isNew}
     />
   );
