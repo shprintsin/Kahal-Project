@@ -122,11 +122,11 @@ export function ContentBlocks({
               <IconListItem
                 key={l.title}
                 href={l.url}
-                icon={<DynamicIcon icon={l.icon} className="w-4 h-4 text-emerald-700" />}
+                icon={<DynamicIcon icon={l.icon} className="w-4 h-4 text-brand-primary" />}
                 title={l.title}
                 subtitle={l.description}
                 className="[&_h4]:font-semibold"
-                trailing={<ExternalLink className="w-3 h-3 text-gray-300 group-hover:text-emerald-600 transition-colors" />}
+                trailing={<ExternalLink className="w-3 h-3 text-border-strong group-hover:text-brand-primary transition-colors" />}
               />
             ))}
           </ul>
@@ -142,7 +142,7 @@ export function ContentBlocks({
               <IconListItem
                 key={p.slug}
                 href={`/posts/${p.slug}`}
-                icon={<FileText className="w-4 h-4 text-emerald-700" />}
+                icon={<FileText className="w-4 h-4 text-brand-primary" />}
                 title={p.title}
                 subtitle={p.date}
               />

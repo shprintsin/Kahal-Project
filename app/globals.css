@@ -58,13 +58,19 @@
   --color-surface-brand-light: var(--surface-brand-light);
   --color-text-on-brand: var(--text-on-brand);
   --color-border-footer: var(--border-footer);
+  --color-body: var(--body);
+  --color-body-secondary: var(--body-secondary);
+  --color-on-brand-muted: var(--on-brand-muted);
+  --color-code-bg: var(--code-bg);
+  --color-code-fg: var(--code-fg);
+  --color-border-strong: var(--border-strong);
+  --color-brand-primary-light: var(--brand-primary-light);
+  --color-interactive-accent: var(--interactive-accent);
+  --color-link-external: var(--link-external);
+  --font-hebrew: var(--font-hebrew);
 }
 
 :root {
-  --dark-green: #1a472a;
-  --dark-green-darker: #131e1e;
-  --olive-green: #5c6d3f;
-
   --brand-primary: #1a472a;
   --brand-primary-dark: #0d4d2c;
   --brand-primary-darker: #083d22;
@@ -77,6 +83,16 @@
   --surface-brand-light: #e8f5e9;
   --text-on-brand: #ffffff;
   --border-footer: #0a3d22;
+  --body: #374151;
+  --body-secondary: #4b5563;
+  --on-brand-muted: #d1fae5;
+  --code-bg: #111827;
+  --code-fg: #f3f4f6;
+  --border-strong: #d1d5db;
+  --brand-primary-light: #ecfdf5;
+  --interactive-accent: #2563eb;
+  --link-external: #1e40af;
+  --font-hebrew: "Assistant", "Heebo", sans-serif;
 
   --radius: 0.5rem;
   --background: oklch(1 0 0);

@@ -17,8 +17,8 @@ export function IconListItem({ href, icon, title, subtitle, trailing, className 
       <Link href={href} className="flex items-start gap-3 group">
         <span className="mt-1 shrink-0">{icon}</span>
         <div className="flex-1 min-w-0">
-          <h4 className="text-gray-800 text-sm group-hover:text-emerald-800 transition-colors">{title}</h4>
-          {subtitle && <span className="text-xs text-gray-400">{subtitle}</span>}
+          <h4 className="text-foreground text-sm group-hover:text-brand-primary-dark transition-colors">{title}</h4>
+          {subtitle && <span className="text-xs text-muted-foreground">{subtitle}</span>}
         </div>
         {trailing && <span className="mt-1 shrink-0">{trailing}</span>}
       </Link>

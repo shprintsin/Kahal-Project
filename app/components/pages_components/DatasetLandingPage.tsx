@@ -100,15 +100,15 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
       <main className="flex-grow w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
           <div className="mb-6 sm:mb-10 text-right">
-            <p className="text-emerald-700 text-sm sm:text-base mb-2 sm:mb-3 font-semibold uppercase tracking-wide">{dataset.category}</p>
+            <p className="text-brand-primary text-sm sm:text-base mb-2 sm:mb-3 font-semibold uppercase tracking-wide">{dataset.category}</p>
             <SectionTitle className="mb-0 text-3xl sm:text-4xl lg:text-5xl leading-tight">{dataset.title}</SectionTitle>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
-            <div className="lg:col-span-2 bg-white p-4 sm:p-6 lg:p-8 shadow-sm border border-gray-200">
+            <div className="lg:col-span-2 bg-white p-4 sm:p-6 lg:p-8 shadow-sm border border-border">
               <dl className="space-y-4 text-right">
-                <div className="flex flex-col gap-2 pb-4 border-b border-gray-200">
-                  <dt className="text-sm font-semibold text-gray-700 font-display">סטטוס</dt>
+                <div className="flex flex-col gap-2 pb-4 border-b border-border">
+                  <dt className="text-sm font-semibold text-body font-display">סטטוס</dt>
                   <dd className="flex gap-3 flex-wrap">
                     <PublishStatusBadge status={dataset.status} />
                     <MaturityBadge maturity={dataset.maturity} />
@@ -116,59 +116,59 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
                 </div>
 
                 {dataset.temporal_coverage && (
-                  <div className="flex flex-col gap-2 pb-4 border-b border-gray-200">
-                    <dt className="text-sm font-semibold text-gray-700 font-display">תקופה</dt>
-                    <dd className="text-gray-900 text-base font-medium">
+                  <div className="flex flex-col gap-2 pb-4 border-b border-border">
+                    <dt className="text-sm font-semibold text-body font-display">תקופה</dt>
+                    <dd className="text-foreground text-base font-medium">
                       {dataset.temporal_coverage.start_year} - {dataset.temporal_coverage.end_year}
                     </dd>
                   </div>
                 )}
 
                 {dataset.geographic_coverage && (
-                  <div className="flex flex-col gap-2 pb-4 border-b border-gray-200">
-                    <dt className="text-sm font-semibold text-gray-700 font-display">אזור גיאוגרפי</dt>
-                    <dd className="text-gray-900 text-base">{dataset.geographic_coverage}</dd>
+                  <div className="flex flex-col gap-2 pb-4 border-b border-border">
+                    <dt className="text-sm font-semibold text-body font-display">אזור גיאוגרפי</dt>
+                    <dd className="text-foreground text-base">{dataset.geographic_coverage}</dd>
                   </div>
                 )}
 
-                <div className="flex flex-col gap-2 pb-4 border-b border-gray-200">
-                  <dt className="text-sm font-semibold text-gray-700 font-display">עדכון אחרון</dt>
-                  <dd className="text-gray-900 text-base">
+                <div className="flex flex-col gap-2 pb-4 border-b border-border">
+                  <dt className="text-sm font-semibold text-body font-display">עדכון אחרון</dt>
+                  <dd className="text-foreground text-base">
                     {new Date(dataset.last_updated).toLocaleDateString('he-IL')}
                   </dd>
                 </div>
 
-                <div className="flex flex-col gap-2 pb-4 border-b border-gray-200">
-                  <dt className="text-sm font-semibold text-gray-700 font-display">גרסה</dt>
-                  <dd className="text-gray-900 text-base font-mono">{dataset.version}</dd>
+                <div className="flex flex-col gap-2 pb-4 border-b border-border">
+                  <dt className="text-sm font-semibold text-body font-display">גרסה</dt>
+                  <dd className="text-foreground text-base font-mono">{dataset.version}</dd>
                 </div>
 
                 {dataset.license && (
                   <div className="flex flex-col gap-2">
-                    <dt className="text-sm font-semibold text-gray-700 font-display">רישיון</dt>
-                    <dd className="text-gray-900 text-base font-mono">{dataset.license}</dd>
+                    <dt className="text-sm font-semibold text-body font-display">רישיון</dt>
+                    <dd className="text-foreground text-base font-mono">{dataset.license}</dd>
                   </div>
                 )}
               </dl>
             </div>
 
             <Col className="gap-4 sm:gap-6">
-              <div className="bg-white p-4 sm:p-6 shadow-sm border border-gray-200">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-5 font-display text-right">קבצי נתונים</h3>
+              <div className="bg-white p-4 sm:p-6 shadow-sm border border-border">
+                <h3 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-5 font-display text-right">קבצי נתונים</h3>
                 <div className="space-y-3">
                   {dataset.resources.map((resource) => (
                     <a
                       key={resource.id}
                       href={resource.url}
-                      className="flex items-center gap-3 p-3 sm:p-4 bg-white border border-gray-300 shadow-sm hover:border-emerald-600 hover:bg-emerald-50 transition-all group"
+                      className="flex items-center gap-3 p-3 sm:p-4 bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all group"
                       download
                     >
-                      <div className="text-emerald-700 group-hover:text-emerald-800">
+                      <div className="text-brand-primary group-hover:text-brand-primary-dark">
                         {getFileIcon(resource.format)}
                       </div>
                       <div className="flex-1 text-right">
-                        <div className="text-sm sm:text-base font-semibold text-gray-900 mb-1">{resource.name}</div>
-                        <div className="text-xs sm:text-sm text-gray-500">
+                        <div className="text-sm sm:text-base font-semibold text-foreground mb-1">{resource.name}</div>
+                        <div className="text-xs sm:text-sm text-muted-foreground">
                           {resource.format} {resource.size_bytes && `• ${formatFileSize(resource.size_bytes)}`}
                         </div>
                       </div>
@@ -178,23 +178,23 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
               </div>
 
               {(dataset.codebook_url || dataset.codebook_text) && (
-                <div className="bg-white p-4 sm:p-6 shadow-sm border border-gray-200">
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-5 font-display text-right">תיעוד</h3>
+                <div className="bg-white p-4 sm:p-6 shadow-sm border border-border">
+                  <h3 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-5 font-display text-right">תיעוד</h3>
                   <a
                     href="#codebook"
                     onClick={handleCodebookClick}
-                    className="flex items-center gap-3 p-3 sm:p-4 bg-white border border-gray-300 shadow-sm hover:border-emerald-600 hover:bg-emerald-50 transition-all"
+                    className="flex items-center gap-3 p-3 sm:p-4 bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all"
                   >
-                    <BookOpen className="w-5 h-5 text-emerald-700" />
-                    <span className="text-sm sm:text-base font-semibold text-gray-900">צפה בקודבוק / משתנים</span>
+                    <BookOpen className="w-5 h-5 text-brand-primary" />
+                    <span className="text-sm sm:text-base font-semibold text-foreground">צפה בקודבוק / משתנים</span>
                   </a>
                 </div>
               )}
 
-              <div className="bg-white p-4 shadow-sm border border-gray-200 mt-auto">
+              <div className="bg-white p-4 shadow-sm border border-border mt-auto">
                 <a
                   href="#"
-                  className="flex items-center gap-2 text-sm text-gray-600 hover:text-emerald-700 transition-colors justify-center"
+                  className="flex items-center gap-2 text-sm text-body-secondary hover:text-brand-primary transition-colors justify-center"
                 >
                   <AlertCircle className="w-4 h-4" />
                   <span>מצאת טעות? דווח לנו</span>
@@ -203,9 +203,9 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
             </Col>
           </div>
 
-          <div id="content-tabs" className="bg-white p-4 sm:p-6 lg:p-10 shadow-sm border border-gray-200">
+          <div id="content-tabs" className="bg-white p-4 sm:p-6 lg:p-10 shadow-sm border border-border">
             <Tabs value={activeTab} onValueChange={setActiveTab} dir="rtl">
-              <TabsList className="bg-gray-100 mb-4 sm:mb-6">
+              <TabsList className="bg-muted mb-4 sm:mb-6">
                 <TabsTrigger value="description" className="text-sm sm:text-base px-4 sm:px-6 data-[state=active]:bg-white">
                   תיאור המאגר
                 </TabsTrigger>
@@ -218,12 +218,11 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
 
               <TabsContent value="description">
                 <div
-                  className="prose prose-lg max-w-none text-right leading-relaxed"
+                  className="prose prose-lg max-w-none text-right leading-relaxed font-hebrew"
                   dir="rtl"
                   style={{
                     fontSize: '16px',
                     lineHeight: '1.8',
-                    fontFamily: '"Assistant", "Heebo", sans-serif'
                   }}
                 >
                   <div dangerouslySetInnerHTML={{ __html: descriptionHtml }} />
@@ -233,7 +232,7 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
               {dataset.codebook_text && (
                 <TabsContent value="codebook">
                   <div
-                    className="prose prose-lg max-w-none text-right leading-relaxed"
+                    className="prose prose-lg max-w-none text-right leading-relaxed font-hebrew"
                     dir="rtl"
                     style={{
                       fontSize: '16px',

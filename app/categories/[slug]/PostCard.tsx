@@ -13,7 +13,7 @@ export interface PostCardProps {
 
 export default function PostCard({ post }: PostCardProps) {
   return (
-    <div className="flex flex-col md:flex-row gap-6 pb-8 border-b border-gray-200">
+    <div className="flex flex-col md:flex-row gap-6 pb-8 border-b border-border">
       <div className="w-full md:w-1/3 h-48 md:h-auto">
         <img
           src={post.thumbnail || "/placeholder.svg"}
@@ -22,7 +22,7 @@ export default function PostCard({ post }: PostCardProps) {
         />
       </div>
       <div className="w-full md:w-2/3 flex flex-col">
-        {post.date && <div className="text-sm text-gray-500 mb-2 rtl-dir">{post.date}</div>}
+        {post.date && <div className="text-sm text-muted-foreground mb-2 rtl-dir">{post.date}</div>}
         <h2 className="font-display text-xl sm:text-2xl text-brand-primary mb-3">{post.title}</h2>
         {post.excerpt && <p className="text-base mb-4">{post.excerpt}</p>}
         <div className="mt-auto">

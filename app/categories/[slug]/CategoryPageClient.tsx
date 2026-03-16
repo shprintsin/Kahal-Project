@@ -74,7 +74,7 @@ export function CategoryPageClient({
                 )}
               </>
             ) : (
-              <p className="text-gray-500 text-base sm:text-lg text-center py-12 sm:py-20">לא נמצאו פריטים בקטגוריה זו.</p>
+              <p className="text-muted-foreground text-base sm:text-lg text-center py-12 sm:py-20">לא נמצאו פריטים בקטגוריה זו.</p>
             )}
           </div>
           <div className="w-full lg:w-1/3">

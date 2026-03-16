@@ -10,8 +10,8 @@ interface InfoPanelProps {
 
 export function InfoPanel({ title, children, className }: InfoPanelProps) {
   return (
-    <div className={cn("bg-white p-6 shadow-sm border border-gray-200", className)}>
-      <h3 className="text-xl font-bold text-gray-900 mb-5 font-display text-right">{title}</h3>
+    <div className={cn("bg-white p-6 shadow-sm border border-border", className)}>
+      <h3 className="text-xl font-bold text-foreground mb-5 font-display text-right">{title}</h3>
       <div className="space-y-3">{children}</div>
     </div>
   )
@@ -29,16 +29,16 @@ export function DownloadLink({ href, name, format, className }: DownloadLinkProp
     <a
       href={href}
       className={cn(
-        "flex items-center gap-3 p-4 bg-white border border-gray-300 shadow-sm",
-        "hover:border-emerald-600 hover:bg-emerald-50 transition-all group",
+        "flex items-center gap-3 p-4 bg-white border border-border-strong shadow-sm",
+        "hover:border-brand-primary hover:bg-brand-primary-light transition-all group",
         className
       )}
       download
     >
-      <Download className="w-5 h-5 text-emerald-700 group-hover:text-emerald-800" />
+      <Download className="w-5 h-5 text-brand-primary group-hover:text-brand-primary-dark" />
       <div className="flex-1 text-right">
-        <div className="text-base font-semibold text-gray-900 mb-1">{name}</div>
-        {format && <div className="text-sm text-gray-500">{format}</div>}
+        <div className="text-base font-semibold text-foreground mb-1">{name}</div>
+        {format && <div className="text-sm text-muted-foreground">{format}</div>}
       </div>
     </a>
   )
@@ -57,13 +57,13 @@ export function ExternalLinkItem({ href, title, className }: ExternalLinkItemPro
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        "flex items-center gap-3 p-4 bg-white border border-gray-300 shadow-sm",
-        "hover:border-emerald-600 hover:bg-emerald-50 transition-all",
+        "flex items-center gap-3 p-4 bg-white border border-border-strong shadow-sm",
+        "hover:border-brand-primary hover:bg-brand-primary-light transition-all",
         className
       )}
     >
-      <ExternalLink className="w-5 h-5 text-emerald-700" />
-      <span className="text-base font-semibold text-gray-900">{title}</span>
+      <ExternalLink className="w-5 h-5 text-brand-primary" />
+      <span className="text-base font-semibold text-foreground">{title}</span>
     </a>
   )
 }
@@ -75,8 +75,8 @@ interface VersionBadgeProps {
 
 export function VersionBadge({ version, className }: VersionBadgeProps) {
   return (
-    <div className={cn("bg-gray-100 p-4 rounded border border-gray-200", className)}>
-      <div className="text-sm text-gray-600 text-right">
+    <div className={cn("bg-muted p-4 rounded border border-border", className)}>
+      <div className="text-sm text-body-secondary text-right">
         <div className="font-semibold mb-1">גרסה</div>
         <div className="font-mono">{version}</div>
       </div>

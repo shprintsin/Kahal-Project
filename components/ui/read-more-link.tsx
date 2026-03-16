@@ -38,7 +38,7 @@ export function ViewLink({ href, children, icon, className }: ViewLinkProps) {
     <Link
       href={href}
       className={cn(
-        "inline-flex items-center gap-2 text-emerald-700 font-bold font-display",
+        "inline-flex items-center gap-2 text-brand-primary font-bold font-display",
         className
       )}
     >

@@ -10,9 +10,9 @@ interface DlFieldProps {
 
 export function DlField({ label, children, border = true, className }: DlFieldProps) {
   return (
-    <div className={cn("flex flex-col gap-2", border && "pb-4 border-b border-gray-200", className)}>
-      <dt className="text-sm font-semibold text-gray-700 font-display">{label}</dt>
-      <dd className="text-gray-900 text-base">{children}</dd>
+    <div className={cn("flex flex-col gap-2", border && "pb-4 border-b border-border", className)}>
+      <dt className="text-sm font-semibold text-body font-display">{label}</dt>
+      <dd className="text-foreground text-base">{children}</dd>
     </div>
   )
 }

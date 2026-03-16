@@ -32,7 +32,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         <SiteShell {...shellData} bg="bg-white">
             <SiteMain>
                 <div className="w-full lg:w-10/12 mx-auto">
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 font-display text-gray-900 border-b pb-4">{page.title}</h1>
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 font-display text-foreground border-b pb-4">{page.title}</h1>
                     <div
                         className="prose prose-lg max-w-none text-right"
                         dir="rtl"

@@ -17,7 +17,7 @@ export function ToolbarButton({ children, onClick, disabled, className, title, .
       disabled={disabled}
       title={title}
       className={cn(
-        "p-1.5 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed",
+        "p-1.5 rounded hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed",
         className
       )}
       {...props}
@@ -36,7 +36,7 @@ interface ViewModeToggleProps {
 
 export function ViewModeToggle({ options, activeValue, onChange, className }: ViewModeToggleProps) {
   return (
-    <div className={cn("flex items-center bg-gray-100 rounded-lg p-0.5", className)}>
+    <div className={cn("flex items-center bg-muted rounded-lg p-0.5", className)}>
       {options.map((option) => (
         <button
           key={option.value}
@@ -44,8 +44,8 @@ export function ViewModeToggle({ options, activeValue, onChange, className }: Vi
           className={cn(
             "p-1.5 rounded-md transition-all",
             activeValue === option.value
-              ? 'bg-white shadow-sm text-blue-600'
-              : 'text-gray-500 hover:text-gray-700'
+              ? 'bg-white shadow-sm text-interactive-accent'
+              : 'text-muted-foreground hover:text-body'
           )}
           title={option.title}
         >

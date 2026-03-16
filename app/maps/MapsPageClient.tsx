@@ -24,16 +24,16 @@ export function MapsPageClient({
       renderCard={(item) => <MapCard item={item} />}
       getItemKey={(item) => item.id}
       categories={categories}
-      emptyIcon={<MapIcon className="w-16 h-16 text-gray-200" />}
+      emptyIcon={<MapIcon className="w-16 h-16 text-border" />}
       emptyText="לא נמצאו מפות כרגע."
       highlightCard={
-        <div className="mt-8 bg-emerald-900 text-white p-6 rounded-none shadow-lg">
+        <div className="mt-8 bg-brand-primary-darker text-white p-6 rounded-none shadow-lg">
           <h3 className="text-xl font-bold mb-4 font-display">אודות המפות</h3>
-          <p className="text-emerald-100 text-sm leading-relaxed mb-4">
+          <p className="text-on-brand-muted text-sm leading-relaxed mb-4">
             המפות האינטראקטיביות מציגות נתונים גיאוגרפיים היסטוריים על קהילות יהודיות במזרח אירופה.
             ניתן להוריד את קבצי הנתונים המלאים לשימוש מחקרי.
           </p>
-          <a href="/about/maps" className="text-white font-bold text-sm underline hover:text-emerald-200">
+          <a href="/about/maps" className="text-white font-bold text-sm underline hover:text-on-brand-muted">
             למד עוד על המפות
           </a>
         </div>

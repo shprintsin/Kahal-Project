@@ -242,7 +242,7 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
 
           {/* Tabs for Browse Mode */}
           <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-6 rounded-none" dir="rtl">
-            <TabsList className="bg-white border border-gray-200">
+            <TabsList className="bg-white border border-border">
               <TabsTrigger value="collections" className="data-[state=active]:bg-brand-primary rounded-none data-[state=active]:text-white">
                 אוספים
               </TabsTrigger>
@@ -253,27 +253,27 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
 
             <TabsContent value={activeTab} className="mt-6 rounded-none">
               {/* Search Bar */}
-              <div className="bg-white border border-gray-200 p-4 mb-4 rounded-none">
+              <div className="bg-white border border-border p-4 mb-4 rounded-none">
                 <div className="relative">
-                  <Search className="absolute rounded-none left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Search className="absolute rounded-none left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <Input dir='rtl'
                     type="search"
                     placeholder="חיפוש..."
                     value={searchQuery}
                     onChange={(e) => handleSearchChange(e.target.value)}
-                    className="pl-10 border-gray-300 text-right rounded-none"
+                    className="pl-10 border-border-strong text-right rounded-none"
                   />
                 </div>
               </div>
 
               {/* View Controls */}
-              <div className="bg-white border border-gray-200 p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+              <div className="bg-white border border-border p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
                 {/* Sort and Items Per Page */}
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600">מיון:</span>
+                    <span className="text-sm text-body-secondary">מיון:</span>
                     <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)} dir='rtl'>
-                      <SelectTrigger className="w-[140px] border-gray-300">
+                      <SelectTrigger className="w-[140px] border-border-strong">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -286,12 +286,12 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600">הצג:</span>
+                    <span className="text-sm text-body-secondary">הצג:</span>
                     <Select value={itemsPerPage.toString()} onValueChange={(v) => {
                       setItemsPerPage(parseInt(v));
                       setCurrentPage(1);
                     }} dir='rtl'>
-                      <SelectTrigger className="w-[100px] border-gray-300" dir='rtl'>
+                      <SelectTrigger className="w-[100px] border-border-strong" dir='rtl'>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent dir='rtl'>
@@ -300,41 +300,41 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                         <SelectItem value="100">100</SelectItem>
                       </SelectContent>
                     </Select>
-                    <span className="text-sm text-gray-600">לעמוד</span>
+                    <span className="text-sm text-body-secondary">לעמוד</span>
                   </div>
                 </div>
               </div>
 
               {/* Results */}
               {paginatedData.length === 0 ? (
-                <div className="bg-white border border-gray-200 p-12 text-center">
-                  <p className="text-gray-600">לא נמצאו תוצאות</p>
+                <div className="bg-white border border-border p-12 text-center">
+                  <p className="text-body-secondary">לא נמצאו תוצאות</p>
                 </div>
               ) : (
                 <>
                   {activeTab === 'collections' ? (
-                    <div className="bg-white border border-gray-200">
+                    <div className="bg-white border border-border">
                       {(paginatedData as CollectionWithSeries[]).map((collection) => {
                         const isExpanded = expandedCollections.has(collection.id);
                         const collectionName = (collection.nameI18n?.he || collection.nameI18n?.en || collection.name || 'ללא שם');
 
                         return (
-                          <div key={collection.id} className="border-b border-gray-200 last:border-b-0">
+                          <div key={collection.id} className="border-b border-border last:border-b-0">
                             {/* Collection Row */}
                             <div
                               onClick={() => toggleCollection(collection.id)}
-                              className="flex items-center justify-between p-4 hover:bg-gray-50 cursor-pointer"
+                              className="flex items-center justify-between p-4 hover:bg-surface-light cursor-pointer"
                               dir="rtl"
                             >
                               <div className="flex items-center gap-3">
                                 {isExpanded ? (
-                                  <ChevronDown className="w-5 h-5 text-gray-400" />
+                                  <ChevronDown className="w-5 h-5 text-muted-foreground" />
                                 ) : (
-                                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                                  <ChevronRight className="w-5 h-5 text-muted-foreground" />
                                 )}
                                 <div>
                                   <h3 className="font-bold text-lg font-display">{collectionName}</h3>
-                                  <p className="text-sm text-gray-500">
+                                  <p className="text-sm text-muted-foreground">
                                     {collection.seriesCount || collection.series?.length || 0} סדרות
                                   </p>
                                 </div>
@@ -343,7 +343,7 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
 
                             {/* Expanded Series */}
                             {isExpanded && collection.series && collection.series.length > 0 && (
-                              <div className="bg-gray-50 px-8 py-4">
+                              <div className="bg-surface-light px-8 py-4">
                                 {collection.series.map((series) => {
                                   const seriesName = (series.nameI18n?.he || series.nameI18n?.en || series.name || 'ללא שם');
                                   
@@ -354,12 +354,12 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                                         e.stopPropagation();
                                         handleSeriesClick(series.id);
                                       }}
-                                      className="flex items-center justify-between p-3 mb-2 last:mb-0 bg-white border border-gray-200 hover:border-brand-primary cursor-pointer transition-colors"
+                                      className="flex items-center justify-between p-3 mb-2 last:mb-0 bg-white border border-border hover:border-brand-primary cursor-pointer transition-colors"
                                       dir="rtl"
                                     >
                                       <div>
                                         <h4 className="font-bold font-display">{seriesName}</h4>
-                                        <p className="text-sm text-gray-500">
+                                        <p className="text-sm text-muted-foreground">
                                           {series.volumeCount || 0} כרכים
                                         </p>
                                       </div>
@@ -376,7 +376,7 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                       })}
                     </div>
                   ) : (
-                    <div className="bg-white border border-gray-200">
+                    <div className="bg-white border border-border">
                       {(paginatedData as SeriesWithVolumes[]).map((series) => {
                         const seriesName = (series.nameI18n?.he || series.nameI18n?.en || series.name || 'ללא שם');
                         const collectionName = series.collection ? (series.collection.nameI18n?.he || series.collection.nameI18n?.en || series.collection.name) : '';
@@ -385,13 +385,13 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                           <div
                             key={series.id}
                             onClick={() => handleSeriesClick(series.id)}
-                            className="flex items-center justify-between p-4 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 cursor-pointer"
+                            className="flex items-center justify-between p-4 border-b border-border last:border-b-0 hover:bg-surface-light cursor-pointer"
                             dir="rtl"
                           >
                             <div>
                               <h3 className="font-bold text-lg font-display">{seriesName}</h3>
-                              <p className="text-sm text-gray-500">{collectionName}</p>
-                              <p className="text-sm text-gray-500">
+                              <p className="text-sm text-muted-foreground">{collectionName}</p>
+                              <p className="text-sm text-muted-foreground">
                                 {series.volumeCount || 0} כרכים
                               </p>
                             </div>
@@ -409,8 +409,8 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                     <div className="mt-6">
                       <h2 className="text-xl font-bold mb-4 text-right font-display" dir="rtl">כרכים</h2>
                       {loadingVolumes ? (
-                        <div className="bg-white border border-gray-200 p-12 text-center">
-                          <p className="text-gray-600">טוען...</p>
+                        <div className="bg-white border border-border p-12 text-center">
+                          <p className="text-body-secondary">טוען...</p>
                         </div>
                       ) : (
                         <>
