@@ -108,7 +108,7 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
             <div className="lg:col-span-2 bg-white p-4 sm:p-6 lg:p-8 shadow-sm border border-gray-200">
               <dl className="space-y-4 text-right">
                 <div className="flex flex-col gap-2 pb-4 border-b border-gray-200">
-                  <dt className="text-sm font-semibold text-gray-700 secular">סטטוס</dt>
+                  <dt className="text-sm font-semibold text-gray-700 font-display">סטטוס</dt>
                   <dd className="flex gap-3 flex-wrap">
                     <PublishStatusBadge status={dataset.status} />
                     <MaturityBadge maturity={dataset.maturity} />
@@ -117,7 +117,7 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
 
                 {dataset.temporal_coverage && (
                   <div className="flex flex-col gap-2 pb-4 border-b border-gray-200">
-                    <dt className="text-sm font-semibold text-gray-700 secular">תקופה</dt>
+                    <dt className="text-sm font-semibold text-gray-700 font-display">תקופה</dt>
                     <dd className="text-gray-900 text-base font-medium">
                       {dataset.temporal_coverage.start_year} - {dataset.temporal_coverage.end_year}
                     </dd>
@@ -126,26 +126,26 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
 
                 {dataset.geographic_coverage && (
                   <div className="flex flex-col gap-2 pb-4 border-b border-gray-200">
-                    <dt className="text-sm font-semibold text-gray-700 secular">אזור גיאוגרפי</dt>
+                    <dt className="text-sm font-semibold text-gray-700 font-display">אזור גיאוגרפי</dt>
                     <dd className="text-gray-900 text-base">{dataset.geographic_coverage}</dd>
                   </div>
                 )}
 
                 <div className="flex flex-col gap-2 pb-4 border-b border-gray-200">
-                  <dt className="text-sm font-semibold text-gray-700 secular">עדכון אחרון</dt>
+                  <dt className="text-sm font-semibold text-gray-700 font-display">עדכון אחרון</dt>
                   <dd className="text-gray-900 text-base">
                     {new Date(dataset.last_updated).toLocaleDateString('he-IL')}
                   </dd>
                 </div>
 
                 <div className="flex flex-col gap-2 pb-4 border-b border-gray-200">
-                  <dt className="text-sm font-semibold text-gray-700 secular">גרסה</dt>
+                  <dt className="text-sm font-semibold text-gray-700 font-display">גרסה</dt>
                   <dd className="text-gray-900 text-base font-mono">{dataset.version}</dd>
                 </div>
 
                 {dataset.license && (
                   <div className="flex flex-col gap-2">
-                    <dt className="text-sm font-semibold text-gray-700 secular">רישיון</dt>
+                    <dt className="text-sm font-semibold text-gray-700 font-display">רישיון</dt>
                     <dd className="text-gray-900 text-base font-mono">{dataset.license}</dd>
                   </div>
                 )}
@@ -154,7 +154,7 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
 
             <Col className="gap-4 sm:gap-6">
               <div className="bg-white p-4 sm:p-6 shadow-sm border border-gray-200">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-5 secular text-right">קבצי נתונים</h3>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-5 font-display text-right">קבצי נתונים</h3>
                 <div className="space-y-3">
                   {dataset.resources.map((resource) => (
                     <a
@@ -179,7 +179,7 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
 
               {(dataset.codebook_url || dataset.codebook_text) && (
                 <div className="bg-white p-4 sm:p-6 shadow-sm border border-gray-200">
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-5 secular text-right">תיעוד</h3>
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-5 font-display text-right">תיעוד</h3>
                   <a
                     href="#codebook"
                     onClick={handleCodebookClick}

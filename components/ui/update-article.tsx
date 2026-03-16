@@ -12,7 +12,7 @@ interface UpdateArticleProps {
 export function UpdateArticle({ title, date, author, excerpt, className }: UpdateArticleProps) {
   return (
     <article className={cn('border-b border-b-1 border-gray-200 pb-2', className)}>
-      <h3 className='text-md font-["Secular_One"] text-gray-800'>{title}</h3>
+      <h3 className='text-md font-display text-gray-800'>{title}</h3>
       {(date || author) && (
         <small className='text-gray-500 text-xs'>
           {date && `עדכון אחרון: ${date}`}
@@ -41,7 +41,7 @@ export function SourceLink({ href, title, icon }: SourceLinkProps) {
     >
       {icon}
       <div className="flex flex-col">
-        <h3 className="text-base secular text-blue-800">{title}</h3>
+        <h3 className="text-base font-display text-blue-800">{title}</h3>
       </div>
     </a>
   )

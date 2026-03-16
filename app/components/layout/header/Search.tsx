@@ -52,7 +52,7 @@ export default function Search() {
           onBlur={handleBlur}
         />
         <SearchIcon
-          className={`${styles.searchIcon} cursor-pointer hover:text-[var(--dark-green)] transition-colors duration-200`}
+          className={`${styles.searchIcon} cursor-pointer hover:text-brand-primary transition-colors duration-200`}
           onClick={handleIconClick}
         />
       </div>

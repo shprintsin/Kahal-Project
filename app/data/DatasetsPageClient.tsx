@@ -28,7 +28,7 @@ export function DatasetsPageClient({
       emptyText="לא נמצאו מאגרי מידע כרגע."
       highlightCard={
         <div className="mt-8 bg-emerald-900 text-white p-6 rounded-none shadow-lg">
-          <h3 className="text-xl font-bold mb-4 secular">שימוש בנתונים</h3>
+          <h3 className="text-xl font-bold mb-4 font-display">שימוש בנתונים</h3>
           <p className="text-emerald-100 text-sm leading-relaxed mb-4">
             כל מאגרי המידע בפרויקט זמינים לשימוש מחקרי תחת רישיונות שימוש חופשיים.
             אנא הקפידו על ציטוט נאות של המאגרים בעבודתכם.

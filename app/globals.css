@@ -147,25 +147,6 @@
   --sidebar-ring: rgba(59, 130, 246, 0.5);
 }
 
-.secular {
-  font-family: var(--font-display);
-}
-
-.bg-dark-green {
-  background-color: var(--dark-green);
-}
-
-.bg-green-darker {
-  background-color: var(--dark-green-darker);
-}
-
-.text-dark-green {
-  color: var(--dark-green);
-}
-
-.bg-olive-600 {
-  background-color: var(--olive-green);
-}
 
 .hover-grow {
   transition: transform 0.3s ease;

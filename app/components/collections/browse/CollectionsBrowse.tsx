@@ -243,10 +243,10 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
           {/* Tabs for Browse Mode */}
           <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-6 rounded-none" dir="rtl">
             <TabsList className="bg-white border border-gray-200">
-              <TabsTrigger value="collections" className="data-[state=active]:bg-[#1a472a] rounded-none data-[state=active]:text-white">
+              <TabsTrigger value="collections" className="data-[state=active]:bg-brand-primary rounded-none data-[state=active]:text-white">
                 אוספים
               </TabsTrigger>
-              <TabsTrigger value="series" className="rounded-none data-[state=active]:bg-[#1a472a] data-[state=active]:text-white">
+              <TabsTrigger value="series" className="rounded-none data-[state=active]:bg-brand-primary data-[state=active]:text-white">
                 סדרות
               </TabsTrigger>
             </TabsList>
@@ -333,7 +333,7 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                                   <ChevronRight className="w-5 h-5 text-gray-400" />
                                 )}
                                 <div>
-                                  <h3 className="font-bold text-lg font-['Secular_One']">{collectionName}</h3>
+                                  <h3 className="font-bold text-lg font-display">{collectionName}</h3>
                                   <p className="text-sm text-gray-500">
                                     {collection.seriesCount || collection.series?.length || 0} סדרות
                                   </p>
@@ -354,17 +354,17 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                                         e.stopPropagation();
                                         handleSeriesClick(series.id);
                                       }}
-                                      className="flex items-center justify-between p-3 mb-2 last:mb-0 bg-white border border-gray-200 hover:border-[#1a472a] cursor-pointer transition-colors"
+                                      className="flex items-center justify-between p-3 mb-2 last:mb-0 bg-white border border-gray-200 hover:border-brand-primary cursor-pointer transition-colors"
                                       dir="rtl"
                                     >
                                       <div>
-                                        <h4 className="font-bold font-['Secular_One']">{seriesName}</h4>
+                                        <h4 className="font-bold font-display">{seriesName}</h4>
                                         <p className="text-sm text-gray-500">
                                           {series.volumeCount || 0} כרכים
                                         </p>
                                       </div>
                                       {selectedSeriesId === series.id && (
-                                        <ChevronDown className="w-5 h-5 text-[#1a472a]" />
+                                        <ChevronDown className="w-5 h-5 text-brand-primary" />
                                       )}
                                     </div>
                                   );
@@ -389,14 +389,14 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                             dir="rtl"
                           >
                             <div>
-                              <h3 className="font-bold text-lg font-['Secular_One']">{seriesName}</h3>
+                              <h3 className="font-bold text-lg font-display">{seriesName}</h3>
                               <p className="text-sm text-gray-500">{collectionName}</p>
                               <p className="text-sm text-gray-500">
                                 {series.volumeCount || 0} כרכים
                               </p>
                             </div>
                             {selectedSeriesId === series.id && (
-                              <ChevronDown className="w-5 h-5 text-[#1a472a]" />
+                              <ChevronDown className="w-5 h-5 text-brand-primary" />
                             )}
                           </div>
                         );
@@ -407,7 +407,7 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                   {/* Volumes Grid (shown when series selected) */}
                   {selectedSeriesId && (
                     <div className="mt-6">
-                      <h2 className="text-xl font-bold mb-4 text-right font-['Secular_One']" dir="rtl">כרכים</h2>
+                      <h2 className="text-xl font-bold mb-4 text-right font-display" dir="rtl">כרכים</h2>
                       {loadingVolumes ? (
                         <div className="bg-white border border-gray-200 p-12 text-center">
                           <p className="text-gray-600">טוען...</p>

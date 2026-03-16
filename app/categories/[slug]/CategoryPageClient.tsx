@@ -57,7 +57,7 @@ export function CategoryPageClient({
       <SiteMain>
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           <div className="w-full lg:w-2/3">
-            <h1 className="secular text-2xl sm:text-3xl md:text-4xl text-[var(--dark-green)] mb-6 sm:mb-8">
+            <h1 className="font-display text-2xl sm:text-3xl md:text-4xl text-brand-primary mb-6 sm:mb-8">
               קטגוריה: {category.title}
             </h1>
             {currentPosts.length > 0 ? (

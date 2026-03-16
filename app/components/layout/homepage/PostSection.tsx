@@ -39,7 +39,7 @@ export default function PostSection({ posts, sources }: PostSectionProps) {
                 <SiteCardContent>{post.excerpt}</SiteCardContent>
                 <SiteCardFooter>
                   <span>עדכון אחרון: {post.date}</span>
-                  <span className='text-emerald-900 text-base'><Download /></span>
+                  <span className='text-brand-primary text-base'><Download /></span>
                 </SiteCardFooter>
               </SiteCard>
             ))}

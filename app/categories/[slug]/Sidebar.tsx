@@ -27,7 +27,7 @@ export default function Sidebar({ categories, tags, recentPosts }: SidebarProps)
   return (
     <div className="space-y-8 bg-surface-subtle p-6 rounded-md">
       <div className="widget">
-        <h3 className="secular text-xl text-[var(--dark-green)] mb-4">קטגוריות</h3>
+        <h3 className="font-display text-xl text-brand-primary mb-4">קטגוריות</h3>
         <ul className="space-y-3">
           {categories.map((category) => (
             <li key={category.slug}>
@@ -44,7 +44,7 @@ export default function Sidebar({ categories, tags, recentPosts }: SidebarProps)
       </div>
       
       {/* <div className="widget">
-        <h3 className="secular text-xl text-[var(--dark-green)] mb-4">תגיות</h3>
+        <h3 className="font-display text-xl text-brand-primary mb-4">תגיות</h3>
         <div className="flex flex-wrap gap-2">
           {tags.map((tag) => (
             <a
@@ -60,7 +60,7 @@ export default function Sidebar({ categories, tags, recentPosts }: SidebarProps)
 
 
       {/* <div className="widget">
-        <h3 className="secular text-xl text-[var(--dark-green)] mb-4">פוסטים אחרונים</h3>
+        <h3 className="font-display text-xl text-brand-primary mb-4">פוסטים אחרונים</h3>
         <ul className="space-y-3">
           {recentPosts.map((post) => (
             <li key={post.slug}>
@@ -72,7 +72,7 @@ export default function Sidebar({ categories, tags, recentPosts }: SidebarProps)
         </ul>
       </div> */}
       <div className="widget">
-        <h3 className="secular text-xl text-[var(--dark-green)] mb-4">חיפוש</h3>
+        <h3 className="font-display text-xl text-brand-primary mb-4">חיפוש</h3>
         <div className="flex">
           <input
             type="text"
