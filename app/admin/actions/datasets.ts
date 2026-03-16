@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { toISOStringSafe } from "@/lib/utils";
 import { revalidatePath } from "@/utils/safe-revalidate";
-import { Prisma } from "@prisma/client";
+import { Prisma, ContentStatus, DataMaturity } from "@prisma/client";
 import { uploadFile } from "@/utils/storage";
 
 // Datasets
@@ -101,8 +101,8 @@ export async function updateDataset(id: string, datasetData: Record<string, unkn
   if (validated.citationText !== undefined) data.citationText = validated.citationText;
   if (validated.isVisible !== undefined) data.isVisible = validated.isVisible;
   if (validated.license !== undefined) data.license = validated.license;
-  if (validated.maturity !== undefined) data.maturity = validated.maturity as any;
-  if (validated.status !== undefined) data.status = validated.status as any;
+  if (validated.maturity !== undefined) data.maturity = validated.maturity as DataMaturity;
+  if (validated.status !== undefined) data.status = validated.status as ContentStatus;
   if (validated.version !== undefined) data.version = validated.version;
   if (validated.minYear !== undefined) data.minYear = validated.minYear;
   if (validated.maxYear !== undefined) data.maxYear = validated.maxYear;
@@ -157,7 +157,19 @@ export async function deleteDataset(id: string) {
 }
 
 // Resources
-export async function createDatasetResource(datasetId: string | null, resourceData: any) {
+interface ResourceInput {
+  name: string;
+  slug: string;
+  excerptI18n?: Record<string, string>;
+  excerpt?: string;
+  url: string;
+  filename?: string;
+  mimeType?: string;
+  format?: string;
+  isMainFile?: boolean;
+}
+
+export async function createDatasetResource(datasetId: string | null, resourceData: ResourceInput) {
     const resource = await prisma.datasetResource.create({
         data: {
             datasetId: datasetId || undefined,
@@ -178,7 +190,7 @@ export async function createDatasetResource(datasetId: string | null, resourceDa
     return resource;
 }
 
-export async function updateDatasetResource(id: string, resourceData: any) {
+export async function updateDatasetResource(id: string, resourceData: Partial<ResourceInput>) {
     const resource = await prisma.datasetResource.update({
         where: { id },
         data: {
@@ -364,8 +376,8 @@ export async function listDatasetsAPI(options: ListDatasetsOptions = {}) {
 
   // Build where clause
   const where: Prisma.ResearchDatasetWhereInput = {
-    ...(status && { status: status as any }),
-    ...(maturity && { maturity: maturity as any }),
+    ...(status && { status: status as ContentStatus }),
+    ...(maturity && { maturity: maturity as DataMaturity }),
     ...(yearMin && { minYear: { gte: yearMin } }),
     ...(yearMax && { maxYear: { lte: yearMax } }),
     ...(search && {
