@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { toISOStringSafe } from "@/lib/utils";
 import { revalidatePath } from "@/utils/safe-revalidate";
 
 // --- Types ---
@@ -243,6 +244,7 @@ export async function getCollectionDetail(slug: string) {
   return {
     id: collection.id,
     slug: collection.id,
+    name: collection.name,
     nameI18n: collection.nameI18n,
     descriptionI18n: collection.descriptionI18n,
     createdAt: collection.createdAt,
@@ -404,7 +406,7 @@ export async function getSeriesBySlugs(collectionSlug: string, seriesSlug: strin
       languageOfContent: v.languageOfContent,
       yearContent: v.yearContent,
       thumbnailId: v.thumbnailId,
-      createdAt: v.createdAt.toISOString(),
+      createdAt: toISOStringSafe(v.createdAt),
       thumbnail: v.thumbnail
         ? {
             id: v.thumbnail.id,
@@ -484,6 +486,83 @@ export async function getVolumeWithPagesByPath(
       const thumbImage = p.images.find(img => img.useType === 'thumbnail')?.storageFile;
       const originalImage = p.images.find(img => img.useType === 'original_scan')?.storageFile;
       
+      return {
+        index: p.sequenceIndex,
+        label: p.label,
+        thumbnailUrl: thumbImage?.publicUrl || null,
+        imageUrl: originalImage?.publicUrl || thumbImage?.publicUrl || null,
+        width: originalImage?.width || null,
+        height: originalImage?.height || null,
+        texts: p.texts.map(t => ({
+          id: t.id,
+          content: t.content,
+          type: t.type,
+          language: t.language,
+          textAccuracy: t.textAccuracy,
+        })),
+      };
+    }),
+  };
+}
+
+export async function getVolumeWithPagesById(volumeId: string) {
+  const volume = await prisma.volume.findUnique({
+    where: { id: volumeId },
+    include: {
+      thumbnail: true,
+      pages: {
+        orderBy: { sequenceIndex: "asc" },
+        select: {
+          sequenceIndex: true,
+          label: true,
+          images: {
+            include: {
+              storageFile: true,
+            },
+          },
+          texts: {
+            orderBy: { createdAt: "desc" },
+            select: {
+              id: true,
+              content: true,
+              type: true,
+              language: true,
+              textAccuracy: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!volume) return null;
+
+  return {
+    id: volume.id,
+    slug: volume.slug,
+    title: volume.title,
+    indexNumber: volume.indexNumber,
+    titleI18n: volume.titleI18n,
+    descriptionI18n: volume.descriptionI18n,
+    publicationYear: volume.year,
+    languageOfContent: volume.languageOfContent,
+    yearContent: volume.yearContent,
+    thumbnailId: volume.thumbnailId,
+    createdAt: volume.createdAt,
+    thumbnail: volume.thumbnail
+      ? {
+          id: volume.thumbnail.id,
+          filename: volume.thumbnail.filename,
+          url: volume.thumbnail.url,
+          storageFileId: volume.thumbnail.storageFileId,
+        }
+      : null,
+    total_pages: volume.pages.length,
+    pages_count: volume.pages.length,
+    pages: volume.pages.map((p) => {
+      const thumbImage = p.images.find(img => img.useType === 'thumbnail')?.storageFile;
+      const originalImage = p.images.find(img => img.useType === 'original_scan')?.storageFile;
+
       return {
         index: p.sequenceIndex,
         label: p.label,
@@ -724,7 +803,7 @@ export async function getSeriesDetailBySlug(slug: string) {
       collectionId: series.collectionId,
       indexNumber: v.indexNumber,
       year: v.year,
-      createdAt: v.createdAt.toISOString(),
+      createdAt: toISOStringSafe(v.createdAt),
       thumbnail: v.thumbnail
         ? {
             id: v.thumbnail.id,
@@ -768,7 +847,7 @@ export async function getVolumesBySeriesId(seriesId: string) {
     descriptionI18n: v.descriptionI18n,
     indexNumber: v.indexNumber,
     year: v.year,
-    createdAt: v.createdAt.toISOString(),
+    createdAt: toISOStringSafe(v.createdAt),
     seriesId: v.seriesId,
     collectionId: v.series?.collectionId || '',
     series: v.series,
@@ -816,7 +895,7 @@ export async function getVolumesBySeriesSlug(seriesSlug: string) {
     descriptionI18n: v.descriptionI18n,
     indexNumber: v.indexNumber,
     year: v.year,
-    createdAt: v.createdAt.toISOString(),
+    createdAt: toISOStringSafe(v.createdAt),
     seriesId: v.seriesId,
     collectionId: v.series?.collectionId || '',
     series: v.series,
@@ -860,7 +939,7 @@ export async function listCollectionsWithSeries() {
     name: c.name,
     nameI18n: c.nameI18n,
     descriptionI18n: c.descriptionI18n,
-    createdAt: c.createdAt.toISOString(),
+    createdAt: toISOStringSafe(c.createdAt),
     thumbnail: c.thumbnail
       ? {
           id: c.thumbnail.id,
@@ -879,7 +958,7 @@ export async function listCollectionsWithSeries() {
       descriptionI18n: s.descriptionI18n,
       collectionId: c.id,
       indexNumber: s.indexNumber,
-      createdAt: s.createdAt.toISOString(),
+      createdAt: toISOStringSafe(s.createdAt),
       thumbnail: s.thumbnail
         ? {
             id: s.thumbnail.id,

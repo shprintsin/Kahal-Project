@@ -86,7 +86,7 @@ export default function Pagination({
                 onClick={() => onPageChange(page as number)}
                 className={`px-4 py-2 border transition-colors ${
                   currentPage === page
-                    ? 'bg-[#1a472a] text-white border-[#1a472a]'
+                    ? 'bg-brand-primary text-white border-brand-primary'
                     : 'border-gray-300 hover:bg-gray-50'
                 }`}
               >

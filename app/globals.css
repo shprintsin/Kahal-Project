@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100..900;1,100..900&family=Secular+One&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -7,8 +6,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-rubik), "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-secular), "Secular One", sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -45,12 +45,39 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-primary-dark: var(--brand-primary-dark);
+  --color-brand-primary-darker: var(--brand-primary-darker);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-dark: var(--brand-dark);
+  --color-surface-hero: var(--surface-hero);
+  --color-surface-light: var(--surface-light);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-surface-brand-light: var(--surface-brand-light);
+  --color-text-on-brand: var(--text-on-brand);
+  --color-border-footer: var(--border-footer);
 }
 
 :root {
   --dark-green: #1a472a;
   --dark-green-darker: #131e1e;
   --olive-green: #5c6d3f;
+
+  --brand-primary: #1a472a;
+  --brand-primary-dark: #0d4d2c;
+  --brand-primary-darker: #083d22;
+  --brand-secondary: #5c6d3f;
+  --brand-accent: #48680E;
+  --brand-dark: #131e1e;
+  --surface-hero: #48680E;
+  --surface-light: #f4f4f4;
+  --surface-subtle: #f8f9fa;
+  --surface-brand-light: #e8f5e9;
+  --text-on-brand: #ffffff;
+  --border-footer: #0a3d22;
+
   --radius: 0.5rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -121,7 +148,7 @@
 }
 
 .secular {
-  font-family: "Secular One", sans-serif;
+  font-family: var(--font-display);
 }
 
 .bg-dark-green {
@@ -160,17 +187,16 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Rubik", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   }
 }
 
 .markdown-content {
-  @apply text-gray-900;
+  @apply text-foreground;
   font-variant-numeric: oldstyle-nums;
 }
 
 .markdown-content h1 {
-  @apply text-2xl font-bold mb-3 mt-5 border-b border-gray-300 pb-2;
+  @apply text-2xl font-bold mb-3 mt-5 border-b border-border pb-2;
 }
 
 .markdown-content h2 {
@@ -195,8 +221,7 @@
 }
 
 .markdown-content table {
-  @apply w-full border-collapse mb-4 text-sm;
-  border: 1px solid #333;
+  @apply w-full border-collapse mb-4 text-sm border border-border;
   direction: ltr;
   text-align: left;
   font-size: clamp(9px, 1.2vw, 13px);
@@ -205,18 +230,17 @@
 }
 
 .markdown-content thead {
-  @apply bg-gray-50;
+  @apply bg-muted;
 }
 
 .markdown-content th {
-  @apply border border-gray-400 px-3 py-2 font-semibold text-left;
-  background-color: #f8f8f8;
+  @apply border border-border px-3 py-2 font-semibold text-left bg-muted;
   font-weight: 600;
   direction: ltr;
 }
 
 .markdown-content td {
-  @apply border border-gray-400 px-3 py-2;
+  @apply border border-border px-3 py-2;
   vertical-align: top;
   direction: ltr;
   min-width: 50px;
@@ -227,27 +251,27 @@
 }
 
 .markdown-content tbody tr:nth-child(even) {
-  background-color: #fafafa;
+  @apply bg-muted/30;
 }
 
 .markdown-content tbody tr:hover {
-  background-color: #f0f0f0;
+  @apply bg-muted/50;
 }
 
 .markdown-content code {
-  @apply bg-gray-100 px-1 py-0.5 rounded text-sm;
+  @apply bg-muted px-1 py-0.5 rounded text-sm;
 }
 
 .markdown-content pre {
-  @apply bg-gray-100 p-3 rounded mb-3 overflow-x-auto;
+  @apply bg-muted p-3 rounded mb-3 overflow-x-auto;
 }
 
 .markdown-content blockquote {
-  @apply border-l-4 border-gray-300 pl-4 italic my-3;
+  @apply border-l-4 border-border pl-4 italic my-3;
 }
 
 .markdown-content hr {
-  @apply my-4 border-gray-300;
+  @apply my-4 border-border;
 }
 
 .markdown-content strong {
@@ -260,7 +284,7 @@
 
 
 .markdown-content del {
-  @apply line-through text-gray-500;
+  @apply line-through text-muted-foreground;
 }
 
 body {

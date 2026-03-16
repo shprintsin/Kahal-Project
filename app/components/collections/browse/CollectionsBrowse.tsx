@@ -1,30 +1,29 @@
 "use client";
 
-import { useState, useMemo, useEffect, useCallback, useTransition } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Search, ChevronDown, ChevronRight } from 'lucide-react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { getVolumesBySeriesId } from '@/app/actions/collections';
-import { SiteShell } from '@/components/ui/site-shell';
-import type { SiteShellData } from '@/app/lib/get-navigation';
+import Header from '@/app/components/layout/header/Header';
+import GlobalFooter from '@/app/components/layout/GlobalFooter';
 import VolumeGrid from './VolumeGrid';
 import Pagination from './Pagination';
+import { navigation, footerLinksMockData, copyrightTextMockData } from '@/app/Data';
 import type { CollectionWithSeries, SeriesWithVolumes, VolumeGridItem } from '@/types/collections';
-import { SectionTitle } from '@/components/ui/typography';
+import { SectionTitle } from '../../layout/ui/Components';
 
 interface CollectionsBrowseProps {
   collections: CollectionWithSeries[];
   allSeries: SeriesWithVolumes[];
-  siteShellData: SiteShellData;
 }
 
 type ViewMode = 'list' | 'grid';
 type SortMode = 'name-asc' | 'name-desc' | 'date-asc' | 'date-desc';
 type BrowseTab = 'collections' | 'series';
 
-export default function CollectionsBrowse({ collections, allSeries, siteShellData }: CollectionsBrowseProps) {
+export default function CollectionsBrowse({ collections, allSeries }: CollectionsBrowseProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -105,21 +104,41 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
     }
   }, [activeTab, searchQuery, viewMode, sortMode, itemsPerPage, currentPage, selectedSeriesId, pathname, router, searchParams]);
 
+  // Fetch volumes when series is selected
   useEffect(() => {
-    if (selectedSeriesId) {
-      setLoadingVolumes(true);
-      getVolumesBySeriesId(selectedSeriesId)
-        .then((data) => {
-          setSelectedSeriesVolumes(Array.isArray(data) ? data : []);
-          setLoadingVolumes(false);
-        })
-        .catch(() => {
-          setSelectedSeriesVolumes([]);
-          setLoadingVolumes(false);
-        });
-    } else {
+    if (!selectedSeriesId) {
       setSelectedSeriesVolumes([]);
+      return;
     }
+
+    const controller = new AbortController();
+    setLoadingVolumes(true);
+    const API_URL = process.env.NEXT_PUBLIC_ADMIN_API_URL || '';
+
+    fetch(`${API_URL}/api/series/${selectedSeriesId}/volumes`, { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setSelectedSeriesVolumes(data);
+        } else {
+          console.error('Volumes data is not an array:', data);
+          setSelectedSeriesVolumes([]);
+        }
+        setLoadingVolumes(false);
+      })
+      .catch((error) => {
+        if (error.name === 'AbortError') return;
+        console.error('Error fetching volumes:', error.message);
+        setSelectedSeriesVolumes([]);
+        setLoadingVolumes(false);
+      });
+
+    return () => controller.abort();
   }, [selectedSeriesId]);
 
 
@@ -233,7 +252,8 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
   };
 
   return (
-    <SiteShell {...siteShellData}>
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <Header navigation={navigation} />
       
       <main className="flex-1">
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -243,10 +263,10 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
           {/* Tabs for Browse Mode */}
           <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-6 rounded-none" dir="rtl">
             <TabsList className="bg-white border border-gray-200">
-              <TabsTrigger value="collections" className="data-[state=active]:bg-[#1a472a] rounded-none data-[state=active]:text-white">
+              <TabsTrigger value="collections" className="data-[state=active]:bg-brand-primary rounded-none data-[state=active]:text-white">
                 אוספים
               </TabsTrigger>
-              <TabsTrigger value="series" className="rounded-none data-[state=active]:bg-[#1a472a] data-[state=active]:text-white">
+              <TabsTrigger value="series" className="rounded-none data-[state=active]:bg-brand-primary data-[state=active]:text-white">
                 סדרות
               </TabsTrigger>
             </TabsList>
@@ -267,9 +287,9 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
               </div>
 
               {/* View Controls */}
-              <div className="bg-white border border-gray-200 p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+              <div className="bg-white border border-gray-200 p-4 mb-6 flex flex-col sm:flex-row flex-wrap items-start sm:items-center justify-between gap-4">
                 {/* Sort and Items Per Page */}
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600">מיון:</span>
                     <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)} dir='rtl'>
@@ -333,7 +353,7 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                                   <ChevronRight className="w-5 h-5 text-gray-400" />
                                 )}
                                 <div>
-                                  <h3 className="font-bold text-lg font-['Secular_One']">{collectionName}</h3>
+                                  <h3 className="font-bold text-lg font-display">{collectionName}</h3>
                                   <p className="text-sm text-gray-500">
                                     {collection.seriesCount || collection.series?.length || 0} סדרות
                                   </p>
@@ -354,17 +374,17 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                                         e.stopPropagation();
                                         handleSeriesClick(series.id);
                                       }}
-                                      className="flex items-center justify-between p-3 mb-2 last:mb-0 bg-white border border-gray-200 hover:border-[#1a472a] cursor-pointer transition-colors"
+                                      className="flex items-center justify-between p-3 mb-2 last:mb-0 bg-white border border-gray-200 hover:border-brand-primary cursor-pointer transition-colors"
                                       dir="rtl"
                                     >
                                       <div>
-                                        <h4 className="font-bold font-['Secular_One']">{seriesName}</h4>
+                                        <h4 className="font-bold font-display">{seriesName}</h4>
                                         <p className="text-sm text-gray-500">
                                           {series.volumeCount || 0} כרכים
                                         </p>
                                       </div>
                                       {selectedSeriesId === series.id && (
-                                        <ChevronDown className="w-5 h-5 text-[#1a472a]" />
+                                        <ChevronDown className="w-5 h-5 text-brand-primary" />
                                       )}
                                     </div>
                                   );
@@ -389,14 +409,14 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                             dir="rtl"
                           >
                             <div>
-                              <h3 className="font-bold text-lg font-['Secular_One']">{seriesName}</h3>
+                              <h3 className="font-bold text-lg font-display">{seriesName}</h3>
                               <p className="text-sm text-gray-500">{collectionName}</p>
                               <p className="text-sm text-gray-500">
                                 {series.volumeCount || 0} כרכים
                               </p>
                             </div>
                             {selectedSeriesId === series.id && (
-                              <ChevronDown className="w-5 h-5 text-[#1a472a]" />
+                              <ChevronDown className="w-5 h-5 text-brand-primary" />
                             )}
                           </div>
                         );
@@ -407,7 +427,7 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                   {/* Volumes Grid (shown when series selected) */}
                   {selectedSeriesId && (
                     <div className="mt-6">
-                      <h2 className="text-xl font-bold mb-4 text-right font-['Secular_One']" dir="rtl">כרכים</h2>
+                      <h2 className="text-xl font-bold mb-4 text-right font-display" dir="rtl">כרכים</h2>
                       {loadingVolumes ? (
                         <div className="bg-white border border-gray-200 p-12 text-center">
                           <p className="text-gray-600">טוען...</p>
@@ -455,6 +475,7 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
         </div>
       </main>
 
-    </SiteShell>
+      <GlobalFooter links={footerLinksMockData} copyrightText={copyrightTextMockData} />
+    </div>
   );
 }

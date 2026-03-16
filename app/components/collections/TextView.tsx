@@ -51,7 +51,7 @@ export default function TextView({ volume }: TextViewProps) {
             onClick={() => setLanguage(lang)}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${
               state.language === lang
-                ? 'bg-[#1a472a] text-white shadow-md'
+                ? 'bg-brand-primary text-white shadow-md'
                 : 'text-gray-600 hover:bg-gray-100'
             }`}
           >

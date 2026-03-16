@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 import DatasetLandingPage from '@/app/components/pages_components/DatasetLandingPage';
 import { getDatasetBySlug } from '@/app/admin/actions/datasets';
-import { getSiteShellData } from '@/app/lib/get-navigation';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -9,10 +8,7 @@ interface PageProps {
 
 export default async function DatasetPage({ params }: PageProps) {
   const { slug } = await params;
-  const [apiDataset, shellData] = await Promise.all([
-    getDatasetBySlug(slug),
-    getSiteShellData(),
-  ]);
+  const apiDataset = await getDatasetBySlug(slug);
 
   if (!apiDataset) {
     notFound();
@@ -41,5 +37,5 @@ export default async function DatasetPage({ params }: PageProps) {
     }))
   };
 
-  return <DatasetLandingPage dataset={viewDataset} shellData={shellData} />;
+  return <DatasetLandingPage dataset={viewDataset} />;
 }

@@ -39,7 +39,7 @@ export default function VolumeViewer({
 
   return (
     <SidebarProvider defaultOpen={false}>
-      <div className="flex flex-col min-h-screen w-full bg-[#f4f4f4]">
+      <div className="flex flex-col min-h-screen w-full bg-surface-light">
         {/* Top Toolbar */}
         <TopToolbar 
           collectionId={collectionId}

@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { toISOStringSafe } from "@/lib/utils";
 import { revalidatePath } from "@/utils/safe-revalidate";
 import { Prisma } from "@prisma/client";
 
@@ -146,7 +147,7 @@ export async function listTagsAPI(options: ListTagsOptions = {}) {
         maps: tag._count.maps,
         artifacts: tag._count.artifacts,
       },
-      createdAt: tag.createdAt.toISOString(),
+      createdAt: toISOStringSafe(tag.createdAt),
     }));
 
     // Sort by usage count if requested
@@ -250,7 +251,7 @@ export async function getTagBySlug(slug: string, options: GetTagOptions = {}) {
           collections: (tag as any).collections || [],
         },
       }),
-      createdAt: tag.createdAt.toISOString(),
+      createdAt: toISOStringSafe(tag.createdAt),
     };
   } catch (error) {
     console.error("Error getting tag:", error);

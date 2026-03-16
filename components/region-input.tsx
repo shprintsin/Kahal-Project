@@ -6,13 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import { X, MapPin } from "lucide-react";
 import { Region } from "@prisma/client";
 
-// Use partial type or infer from Prisma logic since Supabase types might lag
-// type Region = {
-//   id: string;
-//   slug: string;
-//   name: string;
-//   nameI18n: any;
-// };
 
 interface RegionInputProps {
   regions: Region[];

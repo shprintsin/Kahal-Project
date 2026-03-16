@@ -28,7 +28,7 @@ export default function DetailsView({ data, browseMode, onCollectionClick }: Det
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-[#1a472a] mb-2 font-['Secular_One']">
+                  <h3 className="text-xl font-bold text-brand-primary mb-2 font-display">
                     {volume.metadata.title}
                   </h3>
                   {volume.metadata.title_en && (
@@ -54,7 +54,7 @@ export default function DetailsView({ data, browseMode, onCollectionClick }: Det
               href={`/collections/${collection.id}`}
               className="p-6 block hover:bg-gray-50 transition-colors"
             >
-              <h3 className="text-xl font-bold text-[#1a472a] mb-2 font-['Secular_One']">
+              <h3 className="text-xl font-bold text-brand-primary mb-2 font-display">
                 {collection.id}
               </h3>
               <p className="text-sm text-gray-600 italic mb-3">
@@ -65,7 +65,7 @@ export default function DetailsView({ data, browseMode, onCollectionClick }: Det
                   <Link
                     key={volume.id}
                     href={`/collections/${collection.id}/volumes/${volume.id}`}
-                    className="block text-sm text-[#5c6d3f] hover:text-[#1a472a] hover:underline"
+                    className="block text-sm text-brand-secondary hover:text-brand-primary hover:underline"
                   >
                     • {volume.metadata.title}
                   </Link>

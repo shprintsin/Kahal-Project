@@ -1,8 +1,8 @@
 import { getPageBySlug, listPagesAPI } from '@/app/admin/actions/pages';
 import { notFound } from 'next/navigation';
 import { serializeLexical } from '@/lib/lexical';
-import { getSiteShellData } from '@/app/lib/get-navigation';
-import { SiteShell, SiteMain } from '@/components/ui/site-shell';
+import { Col } from '@/app/components/StyledComponent';
+import SiteLayout from '@/app/components/layout/SiteLayout';
 
 export async function generateStaticParams() {
     try {
@@ -17,10 +17,7 @@ export async function generateStaticParams() {
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const [page, shellData] = await Promise.all([
-        getPageBySlug(slug),
-        getSiteShellData(),
-    ]);
+    const page = await getPageBySlug(slug);
 
     if (!page) {
         notFound();
@@ -29,17 +26,17 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     const htmlContent = serializeLexical(page.content);
 
     return (
-        <SiteShell {...shellData} bg="bg-white">
-            <SiteMain>
-                <div className="w-full lg:w-10/12 mx-auto">
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 font-['Secular_One'] text-gray-900 border-b pb-4">{page.title}</h1>
+        <SiteLayout className="bg-white">
+            <div className="container mx-auto px-4 py-8">
+                <Col className="w-10/12 mx-auto">
+                    <h1 className="text-4xl font-bold mb-8 font-display text-gray-900 border-b pb-4">{page.title}</h1>
                     <div
                         className="prose prose-lg max-w-none text-right"
                         dir="rtl"
                         dangerouslySetInnerHTML={{ __html: htmlContent }}
                     />
-                </div>
-            </SiteMain>
-        </SiteShell>
+                </Col>
+            </div>
+        </SiteLayout>
     );
 }

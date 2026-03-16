@@ -11,7 +11,7 @@ export function TOCWidget({ post }: { post: any }) {
             <li key={heading.id}>
               <Link
                 href={`#${heading.id}`}
-                className="block p-2 hover:bg-gray-50 text-[#0d4d2c] hover:text-[#083d22]"
+                className="block p-2 hover:bg-gray-50 text-brand-primary-dark hover:text-brand-primary-darker"
                 onClick={e => {
                   e.preventDefault()
                   const element = document.getElementById(heading.id)

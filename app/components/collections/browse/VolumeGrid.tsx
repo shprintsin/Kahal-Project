@@ -46,7 +46,7 @@ export default function VolumeGrid({ volumes, collectionId }: VolumeGridProps) {
           <div
             key={volume.id}
             onClick={() => handleVolumeClick(volume)}
-            className="group cursor-pointer bg-white border border-gray-200 hover:border-[#1a472a] hover:shadow-md transition-all duration-200"
+            className="group cursor-pointer bg-white border border-gray-200 hover:border-brand-primary hover:shadow-md transition-all duration-200"
           >
             {/* Thumbnail */}
             <div className="aspect-[3/4] relative bg-gray-100 overflow-hidden">
@@ -69,7 +69,7 @@ export default function VolumeGrid({ volumes, collectionId }: VolumeGridProps) {
 
             {/* Info */}
             <div className="p-3 text-right">
-              <h3 className="font-bold text-sm line-clamp-2 mb-1 group-hover:text-[#1a472a] font-['Secular_One']" dir="rtl">
+              <h3 className="font-bold text-sm line-clamp-2 mb-1 group-hover:text-brand-primary font-display" dir="rtl">
                 {title}
               </h3>
               {volume.indexNumber !== undefined && (

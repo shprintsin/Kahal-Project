@@ -7,7 +7,7 @@ export function PostSideBar({ post }: { post: any }) {
     <div>
       <div className="space-y-8">
         <div className="mt-8 pt-6 border-t border-gray-200">
-          <Button className="bg-[#0d4d2c] hover:bg-[#083d22]">
+          <Button className="bg-brand-primary-dark hover:bg-brand-primary-darker">
             <Download className="ml-2 h-4 w-4" />
             הורד כ-PDF
           </Button>

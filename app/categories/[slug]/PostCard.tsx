@@ -1,4 +1,4 @@
-import { ReadMoreLink } from "@/components/ui/read-more-link"
+import { ArrowLeft } from "lucide-react"
 
 export interface PostCardProps {
   post: {
@@ -26,9 +26,16 @@ export default function PostCard({ post }: PostCardProps) {
         <h2 className="secular text-2xl text-[var(--dark-green)] mb-3">{post.title}</h2>
         {post.excerpt && <p className="text-base mb-4">{post.excerpt}</p>}
         <div className="mt-auto">
-          <ReadMoreLink href={post.slug} />
+          <a
+            href={post.slug}
+            className="flex justify-between items-center text-brand-secondary hover:text-brand-primary transition-colors duration-200"
+          >
+            <span className="secular font-bold">קרא עוד</span>
+            <ArrowLeft className="h-5 w-5" />
+          </a>
         </div>
       </div>
     </div>
   )
 }
+

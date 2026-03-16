@@ -1,30 +1,7 @@
 import CollectionDetailView from '@/app/components/collections/browse/CollectionDetailView';
-import type { Collection } from '@/types/collections';
+import { getCollectionDetail } from '@/app/admin/actions/collections';
 import { getSiteShellData } from '@/app/lib/get-navigation';
 import { notFound } from 'next/navigation';
-
-function getApiUrl(): string {
-  if (process.env.NEXT_PUBLIC_ADMIN_API_URL) return process.env.NEXT_PUBLIC_ADMIN_API_URL;
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  return 'http://localhost:3000';
-}
-
-async function getCollection(id: string): Promise<Collection | null> {
-  try {
-    const res = await fetch(`${getApiUrl()}/api/collections/${id}`, {
-      cache: 'no-store',
-    });
-
-    if (!res.ok) {
-      return null;
-    }
-
-    return res.json();
-  } catch (error) {
-    console.error(`Error fetching collection ${id}:`, error);
-    return null;
-  }
-}
 
 export default async function SelectedCollectionPage({
   params,
@@ -32,8 +9,8 @@ export default async function SelectedCollectionPage({
   params: Promise<{ collectionId: string }>;
 }) {
   const { collectionId } = await params;
-  const [collection, shellData] = await Promise.all([
-    getCollection(collectionId),
+  const [collection, siteShellData] = await Promise.all([
+    getCollectionDetail(collectionId),
     getSiteShellData(),
   ]);
 
@@ -41,5 +18,5 @@ export default async function SelectedCollectionPage({
     notFound();
   }
 
-  return <CollectionDetailView collection={collection} siteShellData={shellData} />;
+  return <CollectionDetailView collection={collection as any} siteShellData={siteShellData} />;
 }
