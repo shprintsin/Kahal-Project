@@ -7,6 +7,7 @@ import { StatusBadgeLarge } from "@/components/ui/status-badge"
 import { ContentCard, SidebarInfoCard } from "@/components/ui/sections"
 import { DownloadButton } from "@/components/ui/action-button"
 import { SiteShell, SiteMain } from "@/components/ui/site-shell"
+import { SetEditUrl } from "@/components/ui/admin-toolbar"
 
 export function LayerDetailClient({ layer, shellData }: { layer: any; shellData: SiteShellData }) {
   const previewSettings = layer?.styleConfig?.previewSettings || {
@@ -37,6 +38,7 @@ export function LayerDetailClient({ layer, shellData }: { layer: any; shellData:
 
   return (
     <SiteShell {...shellData}>
+      <SetEditUrl url={`/admin/layers/${layer.id}`} />
       <SiteMain>
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
 

@@ -4,6 +4,7 @@ import PostPage from '@/app/components/pages_components/PostPage';
 import { serializeLexical } from '@/lib/lexical';
 import { getSiteShellData } from '@/app/lib/get-navigation';
 import { SiteShell } from '@/components/ui/site-shell';
+import { SetEditUrl } from '@/components/ui/admin-toolbar';
 
 export async function generateStaticParams() {
     try {
@@ -46,6 +47,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
     return (
         <SiteShell {...shellData} bg="bg-white">
+            <SetEditUrl url={`/admin/posts/${post.id}`} />
             <div className="flex-grow">
                 <PostPage post={viewPost} />
             </div>

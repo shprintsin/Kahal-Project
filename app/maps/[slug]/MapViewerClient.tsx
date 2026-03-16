@@ -9,6 +9,7 @@ import { PageTitle } from '@/components/ui/typography'
 import { Calendar, Tag as TagIcon, MapPin } from 'lucide-react'
 import type { Map } from '@/types/api-types'
 import type { SiteShellData } from '@/app/lib/get-navigation'
+import { SetEditUrl } from '@/components/ui/admin-toolbar'
 
 interface MapViewerClientProps {
   map: Map;
@@ -18,6 +19,7 @@ interface MapViewerClientProps {
 export function MapViewerClient({ map, shellData }: MapViewerClientProps) {
   return (
     <SiteShell {...shellData}>
+      <SetEditUrl url={`/admin/maps/${map.id}`} />
       <main className="flex-grow w-full">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="mb-10 text-right">

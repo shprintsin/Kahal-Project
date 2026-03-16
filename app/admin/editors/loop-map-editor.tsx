@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { updateMap, createMap, type MapInput } from "../actions/maps";
+import { updateMap, createMap } from "../actions/maps";
 import { v4 as uuidv4 } from 'uuid';
 
 // Loop-style components
@@ -127,8 +127,8 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
     try {
       const submitData = {
         ...data,
-        config: data.config || mapConfig,
-      } as MapInput;
+        config: data.config || mapConfig
+      };
 
       if (actualMode === "create") {
         toast.loading("Creating map...", { id: "map-save" });
