@@ -14,7 +14,9 @@ export default async function LayersPage() {
 
   const layers = (layersData.layers || []).map((l: any) => ({
     id: l.id,
+    title: l.name,
     name: l.name,
+    excerpt: l.description,
     description: l.description,
     slug: l.slug,
     type: l.type,
