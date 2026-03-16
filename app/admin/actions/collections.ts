@@ -65,18 +65,18 @@ export async function getHierarchy(): Promise<HierarchyNode[]> {
       return {
         id: col.id,
         type: "COLLECTION",
-        name: `${(col.nameI18n as any)?.en || "Untitled Collection"} (${col._count.series})`,
+        name: `${(col.nameI18n as Record<string, string>)?.en || "Untitled Collection"} (${col._count.series})`,
         slug: col.id,
         children: col.series.map((ser) => ({
           id: ser.id,
           type: "SERIES",
-          name: `${(ser.nameI18n as any)?.en || "Untitled Series"} (${ser._count.volumes})`,
+          name: `${(ser.nameI18n as Record<string, string>)?.en || "Untitled Series"} (${ser._count.volumes})`,
           slug: ser.slug,
           collectionId: col.id,
           children: ser.volumes.map((vol) => ({
             id: vol.id,
             type: "VOLUME",
-            name: `${(vol.titleI18n as any)?.en || "Untitled Volume"} (${vol._count.pages})`,
+            name: `${(vol.titleI18n as Record<string, string>)?.en || "Untitled Volume"} (${vol._count.pages})`,
             slug: vol.slug,
           })),
         })),
@@ -1054,7 +1054,7 @@ export async function createVolume(seriesId: string, formData: FormData) {
   return volume;
 }
 
-export async function createVolumePage(volumeId: string, pageData: any) {
+export async function createVolumePage(volumeId: string, pageData: { sequenceIndex?: number; label?: string }) {
   const maxIndex = await prisma.volumePage.findFirst({
     where: { volumeId },
     orderBy: { sequenceIndex: 'desc' },
@@ -1089,10 +1089,31 @@ export async function deleteEntity(type: "COLLECTION" | "SERIES" | "VOLUME", id:
   }
 }
 
+export interface EntityUpdateData {
+  nameI18n?: Record<string, string>;
+  titleI18n?: Record<string, string>;
+  descriptionI18n?: Record<string, string>;
+  slug?: string;
+  referenceCode?: string;
+  license?: string;
+  editor?: string;
+  author?: string;
+  sources?: string;
+  sourceLink?: string;
+  period?: string;
+  yearMin?: number;
+  yearMax?: number;
+  year?: number;
+  indexNumber?: number;
+  volumeLabelFormat?: string;
+  languages?: string[];
+  languageOfContent?: string;
+}
+
 export async function updateEntity(
   type: "COLLECTION" | "SERIES" | "VOLUME",
   id: string,
-  data: Record<string, any>
+  data: EntityUpdateData
 ) {
   try {
     if (type === "COLLECTION") {
@@ -1131,7 +1152,7 @@ export async function updateEntity(
       await prisma.volume.update({
         where: { id },
         data: {
-          titleI18n: data.titleI18n || data.nameI18n, // Supporting both for compatibility
+          titleI18n: data.titleI18n || data.nameI18n,
           slug: data.slug,
           descriptionI18n: data.descriptionI18n,
           indexNumber: data.indexNumber,
