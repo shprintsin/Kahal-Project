@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { SearchableSelect, TagInput } from "@/app/admin/components/content/searchable-select";
 
 const DEFAULT_MAP_CONFIG: MapConfig = {
   center: [51.505, -0.09],
@@ -45,9 +46,12 @@ const DEFAULT_MAP_CONFIG: MapConfig = {
 
 interface LoopMapEditorProps {
   map?: any;
+  categories?: any[];
+  tags?: any[];
+  regions?: any[];
 }
 
-export function LoopMapEditor({ map }: LoopMapEditorProps) {
+export function LoopMapEditor({ map, categories = [], tags = [], regions = [] }: LoopMapEditorProps) {
   const router = useRouter();
   const actualMode = map ? "edit" : "create";
 
@@ -92,6 +96,20 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
 
   const [mapConfig, setMapConfig] = useState<MapConfig>(buildInitialConfig());
 
+  const categoryOptions = categories.map((c: any) => ({
+    value: c.id,
+    label: c.title || c.name || "Untitled",
+  }));
+
+  const allTagNames = tags.map((t: any) => t.name);
+  const [mapTagNames, setMapTagNames] = useState<string[]>(
+    map?.tags?.map((t: any) => t.name) || []
+  );
+
+  const [regionIds, setRegionIds] = useState<string[]>(
+    map?.regions?.map((r: any) => r.id) || []
+  );
+
   const form = useForm<MapFormValues>({
     resolver: zodResolver(mapSchema),
     defaultValues: {
@@ -102,6 +120,14 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
       version: map?.version || "1.0.0",
       yearMin: map?.yearMin?.toString() || "",
       yearMax: map?.yearMax?.toString() || "",
+      year: map?.year?.toString() || "",
+      period: map?.period || "",
+      categoryId: map?.categoryId || map?.category?.id || "",
+      tagIds: map?.tags?.map((t: any) => t.id) || [],
+      regionIds: map?.regions?.map((r: any) => r.id) || [],
+      thumbnailId: map?.thumbnailId || map?.thumbnail?.id || null,
+      globalStyleConfig: map?.globalStyleConfig || null,
+      referenceLinks: (map?.referenceLinks as unknown[]) || [],
       period_start_date: map?.period_start_date
         ? new Date(map.period_start_date).toISOString().split("T")[0]
         : "",
@@ -114,7 +140,7 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
 
   // Sync mapConfig to form
   useEffect(() => {
-    form.setValue("config", mapConfig);
+    form.setValue("config", mapConfig as any);
     setIsDirty(true);
   }, [mapConfig, form]);
 
@@ -128,11 +154,24 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
     setIsSubmitting(true);
     
     try {
-      const submitData = {
+      const resolvedTagIds = mapTagNames.map((name) => {
+        const found = tags.find((t: any) => t.name === name);
+        return found?.id;
+      }).filter(Boolean) as string[];
+
+      const submitData: any = {
         ...data,
         config: data.config || mapConfig,
         yearMin: data.yearMin ? parseInt(data.yearMin, 10) : null,
         yearMax: data.yearMax ? parseInt(data.yearMax, 10) : null,
+        year: data.year ? parseInt(data.year, 10) : null,
+        period: data.period || null,
+        categoryId: data.categoryId || null,
+        tagIds: resolvedTagIds,
+        regionIds,
+        thumbnailId: data.thumbnailId || null,
+        globalStyleConfig: data.globalStyleConfig || null,
+        referenceLinks: data.referenceLinks || null,
       };
 
       if (actualMode === "create") {
@@ -239,7 +278,7 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
   return (
     <LoopStyleEditor
       backHref="/admin/maps"
-      onSave={form.handleSubmit(onSubmit)}
+      onSave={form.handleSubmit(onSubmit as any)}
       saving={isSubmitting}
       isDirty={isDirty}
       languages={[
@@ -289,6 +328,16 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
                 />
               </SidebarField>
 
+              <SidebarField label="Year">
+                <Input
+                  type="number"
+                  value={form.watch("year") || ""}
+                  onChange={(e) => form.setValue("year", e.target.value)}
+                  placeholder="1850"
+                  className="bg-secondary border-border text-foreground"
+                />
+              </SidebarField>
+
               <SidebarField label="Year Min">
                 <Input
                   type="number"
@@ -308,10 +357,73 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
                   className="bg-secondary border-border text-foreground"
                 />
               </SidebarField>
+
+              <SidebarField label="Period">
+                <Input
+                  value={form.watch("period") || ""}
+                  onChange={(e) => form.setValue("period", e.target.value)}
+                  placeholder="e.g. Interwar"
+                  className="bg-secondary border-border text-foreground"
+                />
+              </SidebarField>
             </div>
           </SidebarCard>
 
-          {/* Period Card */}
+          {/* Classification Card */}
+          <SidebarCard title="Classification">
+            <div className="space-y-4">
+              <SidebarField label="Category">
+                <SearchableSelect
+                  value={form.watch("categoryId") || ""}
+                  onValueChange={(value) => form.setValue("categoryId", value || "")}
+                  options={categoryOptions}
+                  placeholder="Select category..."
+                  searchPlaceholder="Search categories..."
+                />
+              </SidebarField>
+
+              <SidebarField label="Tags">
+                <TagInput
+                  value={mapTagNames}
+                  onChange={(newTags) => {
+                    setMapTagNames(newTags);
+                    setIsDirty(true);
+                  }}
+                  suggestions={allTagNames}
+                  placeholder="Add tags..."
+                />
+              </SidebarField>
+            </div>
+          </SidebarCard>
+
+          {/* Regions Card */}
+          <SidebarCard title="Regions">
+            <div className="space-y-2">
+              {regions.map((r: any) => (
+                <label key={r.id} className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={regionIds.includes(r.id)}
+                    onChange={(e) => {
+                      const newIds = e.target.checked
+                        ? [...regionIds, r.id]
+                        : regionIds.filter((id) => id !== r.id);
+                      setRegionIds(newIds);
+                      form.setValue("regionIds", newIds);
+                      setIsDirty(true);
+                    }}
+                    className="rounded border-border"
+                  />
+                  {r.name}
+                </label>
+              ))}
+              {regions.length === 0 && (
+                <p className="text-xs text-muted-foreground">No regions available</p>
+              )}
+            </div>
+          </SidebarCard>
+
+          {/* Time Period Card */}
           <SidebarCard title="Time Period">
             <div className="space-y-4">
               <SidebarField label="Start Date">
@@ -322,7 +434,7 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
                   className="bg-secondary border-border text-foreground"
                 />
               </SidebarField>
-              
+
               <SidebarField label="End Date">
                 <Input
                   type="date"

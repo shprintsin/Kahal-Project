@@ -33,6 +33,7 @@ export interface LayerFormData {
   sourceType?: "url" | "database" | "inline";
   sourceUrl?: string;
   downloadUrl?: string;
+  filename?: string;
   geoJsonData?: Record<string, unknown>;
   styleConfig?: Record<string, unknown>;
   thumbnail?: string | null;
@@ -96,8 +97,9 @@ export async function createLayer(data: LayerFormData) {
         sourceType: data.sourceType || "database",
         sourceUrl: data.sourceUrl,
         downloadUrl: data.downloadUrl,
-        geoJsonData: data.geoJsonData,
-        styleConfig: data.styleConfig || {},
+        filename: data.filename,
+        geoJsonData: data.geoJsonData as any,
+        styleConfig: (data.styleConfig || {}) as any,
         ...(data.tagIds && {
           tags: {
             connect: data.tagIds.map((id) => ({ id })),
@@ -135,9 +137,7 @@ export async function updateLayer(id: string, data: Partial<LayerFormData>) {
     if (layerWithMaps && layerWithMaps.maps.length > 0) {
     }
 
-    const layer = await prisma.layer.update({
-      where: { id },
-      data: {
+    const updateData: any = {
         ...(data.slug && { slug: data.slug }),
         ...(data.name && { name: data.name }),
         ...(data.name_i18n && { nameI18n: data.name_i18n }),
@@ -160,6 +160,7 @@ export async function updateLayer(id: string, data: Partial<LayerFormData>) {
         ...(data.sourceType && { sourceType: data.sourceType }),
         ...(data.sourceUrl !== undefined && { sourceUrl: data.sourceUrl }),
         ...(data.downloadUrl !== undefined && { downloadUrl: data.downloadUrl }),
+        ...(data.filename !== undefined && { filename: data.filename }),
         ...(data.geoJsonData !== undefined && { geoJsonData: data.geoJsonData }),
         ...(data.styleConfig !== undefined && { styleConfig: data.styleConfig }),
         ...(data.thumbnail !== undefined && { thumbnail: data.thumbnail }),
@@ -173,7 +174,11 @@ export async function updateLayer(id: string, data: Partial<LayerFormData>) {
             set: data.regionIds.map((id) => ({ id })),
           },
         }),
-      },
+    };
+
+    const layer = await prisma.layer.update({
+      where: { id },
+      data: updateData,
     });
 
 

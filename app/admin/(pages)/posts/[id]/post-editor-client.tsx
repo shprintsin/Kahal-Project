@@ -16,18 +16,29 @@ import type { ContentLanguage, ContentStatus } from "@/app/admin/types/content-s
 import type { FileTreeItem } from "@/app/admin/components/content/file-tree";
 import type { PostForEditor, CategoryOption, TagOption, PostListItem } from "@/app/admin/types/editor-data";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RegionInput } from "@/components/region-input";
 import { createPost, updatePost, uploadMedia } from "@/app/admin/actions/posts";
+import { createRegion } from "@/app/admin/actions/regions";
 import { generateSlugFromTitle } from "@/app/admin/utils/slug-generator";
+import type { AppLanguage, Region } from "@prisma/client";
+
+const APP_LANGUAGES: { value: AppLanguage; label: string }[] = [
+  { value: "HE", label: "Hebrew" },
+  { value: "PL", label: "Polish" },
+  { value: "EN", label: "English" },
+];
 
 interface PostEditorClientProps {
   post: PostForEditor | null;
   categories: CategoryOption[];
   tags: TagOption[];
   posts: PostListItem[];
+  regions: Region[];
   isNew: boolean;
 }
 
-function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientProps) {
+function EditorInner({ post, categories, tags, posts, regions, isNew }: PostEditorClientProps) {
   const router = useRouter();
   const postId = post?.id;
 
@@ -56,6 +67,8 @@ function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientP
   const [license, setLicense] = React.useState("");
   const [attachments, setAttachments] = React.useState<{ id: string; name: string; size: number; type: string; url?: string }[]>([]);
   const [sources, setSources] = React.useState(post?.sources || "");
+  const [language, setPostLanguage] = React.useState<AppLanguage>(post?.language || "HE");
+  const [regionIds, setRegionIds] = React.useState<string[]>(post?.regions?.map(r => r.id) || []);
 
   // Thumbnail
   const [thumbnailId, setThumbnailId] = React.useState<string | undefined>(post?.thumbnail?.id);
@@ -124,9 +137,11 @@ function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientP
         excerpt,
         sources: sources || null,
         status,
+        language,
         thumbnail_id: thumbnailId,
         categoryIds: category ? [category] : [],
         tagNames: postTags,
+        regionIds,
       };
 
       if (isNew) {
@@ -156,6 +171,11 @@ function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientP
         excerpt,
         sources: sources || null,
         status: "published" as ContentStatus,
+        language,
+        thumbnail_id: thumbnailId,
+        categoryIds: category ? [category] : [],
+        tagNames: postTags,
+        regionIds,
       };
 
       if (isNew) {
@@ -222,29 +242,64 @@ function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientP
     />
   );
 
+  const handleCreateRegion = async (slug: string) => {
+    const region = await createRegion({ slug, name: slug, nameI18n: {} });
+    return region;
+  };
+
   const sidebar = (
-    <MetadataSidebar
-      status={status}
-      onStatusChange={setStatus}
-      category={category}
-      onCategoryChange={setCategory}
-      categoryOptions={categoryOptions}
-      author={author}
-      createdAt={createdAt}
-      updatedAt={updatedAt}
-      isPublic={isPublic}
-      onVisibilityChange={setIsPublic}
-      license={license}
-      onLicenseChange={setLicense}
-      tags={postTags}
-      onTagsChange={setPostTags}
-      tagSuggestions={allTags}
-      attachments={attachments}
-      onAttachmentsChange={setAttachments}
-      thumbnailUrl={thumbnailUrl}
-      onThumbnailChange={handleThumbnailChange}
-      onThumbnailRemove={handleThumbnailRemove}
-    />
+    <>
+      <MetadataSidebar
+        status={status}
+        onStatusChange={setStatus}
+        category={category}
+        onCategoryChange={setCategory}
+        categoryOptions={categoryOptions}
+        author={author}
+        createdAt={createdAt}
+        updatedAt={updatedAt}
+        isPublic={isPublic}
+        onVisibilityChange={setIsPublic}
+        license={license}
+        onLicenseChange={setLicense}
+        tags={postTags}
+        onTagsChange={setPostTags}
+        tagSuggestions={allTags}
+        attachments={attachments}
+        onAttachmentsChange={setAttachments}
+        thumbnailUrl={thumbnailUrl}
+        onThumbnailChange={handleThumbnailChange}
+        onThumbnailRemove={handleThumbnailRemove}
+      />
+      <div className="space-y-4 px-4 pb-4">
+        <div className="space-y-2">
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            Language
+          </label>
+          <Select value={language} onValueChange={(v) => { setPostLanguage(v as AppLanguage); setIsDirty(true); }}>
+            <SelectTrigger className="h-9">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {APP_LANGUAGES.map(lang => (
+                <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            Regions
+          </label>
+          <RegionInput
+            regions={regions}
+            selectedRegionIds={regionIds}
+            onRegionsChange={(ids) => { setRegionIds(ids); setIsDirty(true); }}
+            onCreateRegion={handleCreateRegion}
+          />
+        </div>
+      </div>
+    </>
   );
 
   return (
@@ -299,7 +354,7 @@ function EditorInner({ post, categories, tags, posts, isNew }: PostEditorClientP
 
 export function PostEditorClient(props: PostEditorClientProps) {
   return (
-    <ContentLanguageProvider defaultLanguage="en">
+    <ContentLanguageProvider defaultLanguage="he">
       <EditorInner {...props} />
     </ContentLanguageProvider>
   );

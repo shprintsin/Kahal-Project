@@ -16,10 +16,11 @@ import { SidebarCard, SidebarField } from "@/app/admin/components/content/loop-s
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import type { ContentLanguage, ContentStatus } from "@/app/admin/types/content-system.types";
 import type { FileTreeItem } from "@/app/admin/components/content/file-tree";
 import { createDataset, updateDataset } from "@/app/admin/actions/datasets";
+import { uploadMedia } from "@/app/admin/actions/posts";
+import { ExternalLink, FileDown, Image as ImageIcon, Trash2 } from "lucide-react";
 
 interface DatasetEditorClientProps {
   dataset: any;
@@ -28,6 +29,20 @@ interface DatasetEditorClientProps {
   categories: any[];
   regions: any[];
   isNew: boolean;
+}
+
+function buildI18nObject(
+  translations: Record<ContentLanguage, Record<string, unknown>>,
+  field: string
+): Record<string, string> {
+  const result: Record<string, string> = {};
+  for (const [lang, data] of Object.entries(translations)) {
+    const val = data[field];
+    if (typeof val === "string" && val.trim()) {
+      result[lang] = val;
+    }
+  }
+  return result;
 }
 
 function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: DatasetEditorClientProps) {
@@ -39,6 +54,8 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
     setLanguage,
     getTranslation,
     updateField,
+    translations,
+    setTranslations,
   } = useContentLanguage();
 
   const [isDirty, setIsDirty] = React.useState(false);
@@ -58,25 +75,48 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
   const [maxYear, setMaxYear] = React.useState(dataset?.maxYear?.toString() || "");
   const [license, setLicense] = React.useState(dataset?.license || "");
   const [citationText, setCitationText] = React.useState(dataset?.citationText || "");
-  const [codebookText, setCodebookText] = React.useState(dataset?.codebookText || "");
-  const [sources, setSources] = React.useState(dataset?.sources || "");
   const [isVisible, setIsVisible] = React.useState(dataset?.isVisible ?? true);
   const [regionIds, setRegionIds] = React.useState<string[]>(dataset?.regions?.map((r: any) => r.id) || []);
   const [attachments, setAttachments] = React.useState<any[]>([]);
 
+  const [thumbnailId, setThumbnailId] = React.useState<string | undefined>(dataset?.thumbnail?.id);
+  const [thumbnailUrl, setThumbnailUrl] = React.useState<string | null>(dataset?.thumbnail?.url || null);
+
   React.useEffect(() => {
-    if (dataset) {
-      updateField("title", dataset.title || "");
-      updateField("slug", dataset.slug || "");
-      updateField("content", dataset.description || "");
-      updateField("excerpt", dataset.excerpt || "");
+    if (!dataset) return;
+
+    const titleI18n = (dataset.titleI18n as Record<string, string>) || {};
+    const descI18n = (dataset.descriptionI18n as Record<string, string>) || {};
+    const codebookI18n = (dataset.codebookTextI18n as Record<string, string>) || {};
+    const srcI18n = (dataset.sourcesI18n as Record<string, string>) || {};
+
+    const heData: Record<string, unknown> = {
+      title: dataset.title || titleI18n.he || "",
+      slug: dataset.slug || "",
+      content: dataset.description || descI18n.he || "",
+      codebookText: dataset.codebookText || codebookI18n.he || "",
+      sources: dataset.sources || srcI18n.he || "",
+    };
+    setTranslations("he", heData);
+
+    for (const lang of ["en", "pl"] as ContentLanguage[]) {
+      const langData: Record<string, unknown> = {};
+      if (titleI18n[lang]) langData.title = titleI18n[lang];
+      if (descI18n[lang]) langData.content = descI18n[lang];
+      if (codebookI18n[lang]) langData.codebookText = codebookI18n[lang];
+      if (srcI18n[lang]) langData.sources = srcI18n[lang];
+      if (Object.keys(langData).length > 0) {
+        langData.slug = dataset.slug || "";
+        setTranslations(lang, langData);
+      }
     }
   }, [datasetId]);
 
   const title = getTranslation<string>("title", "") ?? "";
   const slug = getTranslation<string>("slug", "") ?? "";
   const content = getTranslation<string>("content", "") ?? "";
-  const excerpt = getTranslation<string>("excerpt", "") ?? "";
+  const codebookText = (getTranslation<string>("codebookText", "") ?? "");
+  const sources = (getTranslation<string>("sources", "") ?? "");
 
   const handleFieldChange = (field: string, value: string) => {
     updateField(field, value);
@@ -85,25 +125,51 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
 
   const markDirty = () => setIsDirty(true);
 
-  const buildSaveData = (overrideStatus?: ContentStatus) => ({
-    title,
-    slug,
-    description: content,
-    excerpt,
-    status: overrideStatus || status,
-    tagNames: datasetTags,
-    categoryId: categoryId || null,
-    maturity,
-    version,
-    minYear: minYear ? parseInt(minYear, 10) : null,
-    maxYear: maxYear ? parseInt(maxYear, 10) : null,
-    license: license || null,
-    citationText: citationText || null,
-    codebookText: codebookText || null,
-    sources: sources || null,
-    isVisible,
-    regionIds,
-  });
+  const handleThumbnailChange = async (file: File) => {
+    try {
+      const media = await uploadMedia(file);
+      setThumbnailId(media.id);
+      setThumbnailUrl(media.url);
+      toast.success("Thumbnail uploaded");
+      setIsDirty(true);
+    } catch (err) {
+      console.error(err);
+      toast.error("Upload failed");
+    }
+  };
+
+  const handleThumbnailRemove = () => {
+    setThumbnailId(undefined);
+    setThumbnailUrl(null);
+    setIsDirty(true);
+  };
+
+  const buildSaveData = (overrideStatus?: ContentStatus) => {
+    const titleI18n = buildI18nObject(translations, "title");
+    const descriptionI18n = buildI18nObject(translations, "content");
+    const codebookTextI18n = buildI18nObject(translations, "codebookText");
+    const sourcesI18n = buildI18nObject(translations, "sources");
+
+    return {
+      title: titleI18n,
+      slug,
+      description: descriptionI18n,
+      status: overrideStatus || status,
+      tagNames: datasetTags,
+      categoryId: categoryId || null,
+      maturity,
+      version,
+      minYear: minYear ? parseInt(minYear, 10) : null,
+      maxYear: maxYear ? parseInt(maxYear, 10) : null,
+      license: license || null,
+      citationText: citationText || null,
+      codebookText: codebookTextI18n,
+      sources: sourcesI18n,
+      isVisible,
+      regions: regionIds,
+      thumbnailId: thumbnailId || null,
+    };
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -178,6 +244,8 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
     />
   );
 
+  const resources = dataset?.resources || [];
+
   const sidebar = (
     <div className="space-y-0">
       <MetadataSidebar
@@ -195,7 +263,41 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
         tagSuggestions={allTags}
         attachments={attachments}
         onAttachmentsChange={setAttachments}
+        thumbnailUrl={thumbnailUrl}
+        onThumbnailChange={handleThumbnailChange}
+        onThumbnailRemove={handleThumbnailRemove}
       />
+
+      <SidebarCard title="Thumbnail">
+        <div className="space-y-2">
+          {thumbnailUrl ? (
+            <div className="relative group">
+              <img src={thumbnailUrl} alt="Thumbnail" className="w-full rounded border border-border object-cover max-h-32" />
+              <button
+                type="button"
+                onClick={handleThumbnailRemove}
+                className="absolute top-1 right-1 p-1 bg-destructive/80 rounded text-white opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <Trash2 className="w-3 h-3" />
+              </button>
+            </div>
+          ) : (
+            <label className="flex flex-col items-center gap-1 p-4 border border-dashed border-border rounded cursor-pointer hover:bg-muted/50 transition-colors">
+              <ImageIcon className="w-5 h-5 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">Upload thumbnail</span>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleThumbnailChange(file);
+                }}
+              />
+            </label>
+          )}
+        </div>
+      </SidebarCard>
 
       <SidebarCard title="Data Quality">
         <div className="space-y-3">
@@ -251,6 +353,32 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
           {regions.length === 0 && <p className="text-xs text-muted-foreground">No regions available</p>}
         </div>
       </SidebarCard>
+
+      {!isNew && (
+        <SidebarCard title={`Resources (${resources.length})`}>
+          <div className="space-y-2">
+            {resources.length === 0 ? (
+              <p className="text-xs text-muted-foreground">No resources attached</p>
+            ) : (
+              resources.map((r: any) => (
+                <div key={r.id} className="flex items-center gap-2 text-xs p-1.5 rounded bg-muted/50">
+                  <FileDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate font-medium">{r.name}</div>
+                    <div className="text-muted-foreground">{r.format}{r.isMainFile ? " (main)" : ""}</div>
+                  </div>
+                  {r.url && (
+                    <a href={r.url} target="_blank" rel="noopener noreferrer" className="shrink-0 text-muted-foreground hover:text-foreground">
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+              ))
+            )}
+            <p className="text-[10px] text-muted-foreground italic">Manage resources via the Resources admin page</p>
+          </div>
+        </SidebarCard>
+      )}
     </div>
   );
 
@@ -278,8 +406,9 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
             slug={slug}
             onSlugChange={(v) => handleFieldChange("slug", v)}
             slugPrefix="/datasets/"
-            description={excerpt}
-            onDescriptionChange={(v) => handleFieldChange("excerpt", v)}
+            description=""
+            onDescriptionChange={() => {}}
+            descriptionPlaceholder=""
             content={content}
             onContentChange={(v) => handleFieldChange("content", v)}
             contentPlaceholder="Describe this dataset..."
@@ -304,7 +433,7 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
               </label>
               <Textarea
                 value={codebookText}
-                onChange={(e) => { setCodebookText(e.target.value); markDirty(); }}
+                onChange={(e) => { handleFieldChange("codebookText", e.target.value); }}
                 placeholder="Describe the data structure, columns, and coding..."
                 className="min-h-[80px] bg-transparent border-border resize-none"
               />
@@ -316,7 +445,7 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
               </label>
               <Textarea
                 value={sources}
-                onChange={(e) => { setSources(e.target.value); markDirty(); }}
+                onChange={(e) => { handleFieldChange("sources", e.target.value); }}
                 placeholder="Original data sources and references..."
                 className="min-h-[80px] bg-transparent border-border resize-none"
               />
@@ -330,7 +459,7 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
 
 export function DatasetEditorClient(props: DatasetEditorClientProps) {
   return (
-    <ContentLanguageProvider defaultLanguage="en">
+    <ContentLanguageProvider defaultLanguage="he">
       <EditorInner {...props} />
     </ContentLanguageProvider>
   );

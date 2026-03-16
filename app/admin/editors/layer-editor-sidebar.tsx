@@ -124,6 +124,7 @@ export function LayerEditorSidebar({
               <FormFieldRenderer config={fieldConfigs.sourceUrl} control={form.control as any} />
             )}
             <FormFieldRenderer config={fieldConfigs.downloadUrl} control={form.control as any} />
+            <FormFieldRenderer config={fieldConfigs.filename} control={form.control as any} />
           </div>
         </AdminSidebarCard>
       </div>

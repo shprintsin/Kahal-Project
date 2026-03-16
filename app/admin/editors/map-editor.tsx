@@ -108,13 +108,13 @@ export function MapEditor({ map, mode }: MapEditorProps) {
       period_end_date: map?.period_end_date
         ? new Date(map.period_end_date).toISOString().split("T")[0]
         : "",
-      config: mapConfig,
+      config: mapConfig as any,
     },
   });
 
   // Sync mapConfig to form whenever it changes
   useEffect(() => {
-    form.setValue("config", mapConfig);
+    form.setValue("config", mapConfig as any);
   }, [mapConfig, form]);
 
   async function onSubmit(data: MapFormValues) {
@@ -123,7 +123,7 @@ export function MapEditor({ map, mode }: MapEditorProps) {
     try {
 
       // Ensure config is properly serialized
-      const submitData = {
+      const submitData: any = {
         ...data,
         config: data.config || mapConfig
       };
@@ -236,7 +236,7 @@ export function MapEditor({ map, mode }: MapEditorProps) {
         <h1 className="text-2xl font-bold">
           {actualMode === "create" ? "Create Map" : "Edit Map"}
         </h1>
-        <Button onClick={form.handleSubmit(onSubmit)} disabled={isSubmitting} className="rounded-none border border-border hover:bg-accent" variant="outline">
+        <Button onClick={form.handleSubmit(onSubmit as any)} disabled={isSubmitting} className="rounded-none border border-border hover:bg-accent" variant="outline">
           {isSubmitting && (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           )}

@@ -137,5 +137,12 @@ export function createLayerFieldConfigs(): Record<string, FieldConfig> {
       placeholder: "https://example.com/download.zip",
       description: "Optional download link for raw data",
     },
+    filename: {
+      name: "filename",
+      label: "Filename",
+      type: "text",
+      placeholder: "original-file.geojson",
+      description: "Original filename of the source data",
+    },
   };
 }

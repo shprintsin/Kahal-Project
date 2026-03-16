@@ -5,7 +5,9 @@ import {
   FileText,
   FolderTree,
   Database,
+  LayoutDashboard,
   Map,
+  Route,
   Users,
   Settings,
   Tags,
@@ -49,6 +51,11 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
   const navData = {
     navMain: [
       {
+        title: "Dashboard",
+        url: "/admin",
+        icon: LayoutDashboard,
+      },
+      {
         title: t('nav.content'),
         url: "#",
         icon: FileText,
@@ -87,6 +94,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
           { title: t('nav.menus'), url: "/admin/settings/menus" },
           { title: t('nav.users'), url: "/admin/users" },
           { title: t('nav.settings'), url: "/admin/settings" },
+          { title: "Routes", url: "/admin/routes" },
         ],
       },
     ],

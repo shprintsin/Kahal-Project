@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { getArtifact, getArtifacts } from "@/app/admin/actions/artifacts";
 import { getArtifactCategories } from "@/app/admin/actions/artifact-categories";
 import { getPeriods } from "@/app/admin/actions/periods";
+import { getPlaces } from "@/app/admin/actions/places";
+import { getRegions } from "@/app/admin/actions/regions";
 import { getTags } from "@/app/admin/actions/tags";
 import { ArtifactEditorClient } from "./artifact-editor-client";
 
@@ -22,9 +24,11 @@ export default async function ArtifactEditorPage({
     }
   }
 
-  const [categories, periods, tags, artifacts] = await Promise.all([
+  const [categories, periods, places, regions, tags, artifacts] = await Promise.all([
     getArtifactCategories(),
     getPeriods(),
+    getPlaces(),
+    getRegions(),
     getTags(),
     getArtifacts(),
   ]);
@@ -34,6 +38,8 @@ export default async function ArtifactEditorPage({
       artifact={artifact}
       categories={categories}
       periods={periods}
+      places={places}
+      regions={regions}
       tags={tags}
       artifacts={artifacts}
       isNew={isNew}
