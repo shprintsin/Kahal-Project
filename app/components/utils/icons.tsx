@@ -1,29 +1,29 @@
-import { IconType } from 'react-icons';
-import { 
-  FaCode, 
-  FaGithub, 
-  FaBook, 
-  FaCoins, 
-  FaUsers, 
-  FaLandmark, 
-  FaMap,
-  FaSearch
-} from 'react-icons/fa';
+import {
+  BookOpen,
+  Code,
+  Coins,
+  Github,
+  Landmark,
+  Map,
+  Search,
+  Users,
+  type LucideIcon
+} from 'lucide-react';
 
 interface IconProps {
   name: string;
   className?: string;
 }
 
-const iconMap: Record<string, IconType> = {
-  FaCode,
-  FaGithub,
-  FaBook,
-  FaCoins,
-  FaUsers,
-  FaLandmark,
-  FaMap,
-  FaSearch
+const iconMap: Record<string, LucideIcon> = {
+  FaCode: Code,
+  FaGithub: Github,
+  FaBook: BookOpen,
+  FaCoins: Coins,
+  FaUsers: Users,
+  FaLandmark: Landmark,
+  FaMap: Map,
+  FaSearch: Search
 };
 
 export const getIcon = ({ name, className = 'text-2xl' }: IconProps) => {

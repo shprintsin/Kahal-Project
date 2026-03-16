@@ -80,12 +80,12 @@ export async function getPost(id: string) {
           altTextI18n: true,
         },
       },
-      tags: true,
+      tags: { select: { tag: true } },
     },
   });
 
   if (!post) throw new Error("Post not found");
-  return post;
+  return { ...post, tags: post.tags.map((pt: any) => pt.tag) };
 }
 
 export async function createPost(
@@ -109,7 +109,7 @@ export async function createPost(
     thumbnail: postData.thumbnail_id ? { connect: { id: postData.thumbnail_id } } : undefined,
     categories: postData.category_id ? { connect: { id: postData.category_id } } : undefined,
     tags: tagIds && tagIds.length > 0
-      ? { connect: tagIds.map(id => ({ id })) }
+      ? { create: tagIds.map(tagId => ({ tagId })) }
       : undefined,
   };
 
@@ -147,7 +147,7 @@ export async function updatePost(
     thumbnail: postData.thumbnail_id ? { connect: { id: postData.thumbnail_id } } : undefined,
     categories: postData.category_id ? { connect: { id: postData.category_id } } : undefined,
     ...(tagIds !== undefined ? {
-      tags: { set: tagIds.map(id => ({ id })) }
+      tags: { deleteMany: {}, create: tagIds.map(tagId => ({ tagId })) }
     } : {})
   };
 

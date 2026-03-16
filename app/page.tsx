@@ -7,8 +7,8 @@ import { getNavigation } from "@/app/lib/get-navigation";
 export default async function HomePage() {
   const [siteSettings, postsResult, datasetsResult, navigation] = await Promise.all([
     getAllSiteSettings(),
-    listPostsAPI({ status: "published", limit: 4 }),
-    listDatasetsAPI({ status: "published", limit: 4 }),
+    listPostsAPI({ status: "published", limit: 4 }).catch(() => ({ posts: [], pagination: { page: 1, limit: 4, total: 0, totalPages: 0 } })),
+    listDatasetsAPI({ status: "published", limit: 4 }).catch(() => ({ datasets: [], pagination: { page: 1, limit: 4, total: 0, totalPages: 0 } })),
     getNavigation(),
   ]);
 

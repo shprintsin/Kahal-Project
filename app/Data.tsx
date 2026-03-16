@@ -1,16 +1,19 @@
 import { ActionButton, Author, Category, CategoryButton, CitationInfo, FooterItem, NavItem } from "@/app/types";
 
 import {
-    FaSearch,
-    FaHome,
-    FaBook,
-    FaDatabase,
-    FaArchive,
-    FaChevronDown,
-    FaArrowLeft,
-    FaFileExcel,
-} from "react-icons/fa"
-import { FaCoins, FaUsers, FaLandmark, FaMap } from 'react-icons/fa'
+    Archive,
+    ArrowLeft,
+    BookOpen,
+    ChevronDown,
+    Coins,
+    Database,
+    FileSpreadsheet,
+    Home,
+    Landmark,
+    Map,
+    Search,
+    Users,
+} from "lucide-react"
 
 
 export const postsMockData = [
@@ -96,12 +99,12 @@ export const heroText = {
 
 export const actionItems: Record<string, ActionButton> = {
   button1: {
-    icon: <FaFileExcel />,
+    icon: <FileSpreadsheet />,
     title: "Excel / Stata",
     href: "#"
   },
   button2: {
-    icon: <FaArrowLeft />,
+    icon: <ArrowLeft />,
     title: "מה חדש",
     href: "#"
   }
@@ -180,33 +183,33 @@ export const GetIcons = ({icon, className}: {icon: string, className: string}) =
   // 2. Fallback to Legacy FontAwesome (from hardcoded Data.tsx)
   switch (icon) {
     case "FaSearch":
-      return <FaSearch className={className} />;
+      return <Search className={className} />;
     case "FaHome":
-      return <FaHome className={className} />;
+      return <Home className={className} />;
     case "FaBook":
-      return <FaBook className={className} />;
+      return <BookOpen className={className} />;
     case "FaDatabase":
-      return <FaDatabase className={className} />;
+      return <Database className={className} />;
     case "FaArchive":
-      return <FaArchive className={className} />;
+      return <Archive className={className} />;
     case "FaChevronDown":
-      return <FaChevronDown className={className} />;
+      return <ChevronDown className={className} />;
     case "FaCoins":
-      return <FaCoins className={className} />;
+      return <Coins className={className} />;
     case "FaUsers":
-      return <FaUsers className={className} />;
+      return <Users className={className} />;
     case "FaLandmark":
-      return <FaLandmark className={className} />;
+      return <Landmark className={className} />;
     case "FaMap":
-      return <FaMap className={className} />;
+      return <Map className={className} />;
     case "FaFileExcel":
-      return <FaFileExcel className={className} />;
+      return <FileSpreadsheet className={className} />;
     case "FaArrowLeft":
-      return <FaArrowLeft className={className} />;
+      return <ArrowLeft className={className} />;
     case "FaGithub":
-      return <FaArrowLeft className={className} />;
+      return <ArrowLeft className={className} />;
     case "FaCode":
-      return <FaArrowLeft className={className} />;
+      return <ArrowLeft className={className} />;
     default:
       return null;
   }
