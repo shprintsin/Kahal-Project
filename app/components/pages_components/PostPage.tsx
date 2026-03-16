@@ -1,4 +1,3 @@
-"use client"
 import { Calendar, User } from "lucide-react"
 import { PostSideBar } from './PostSideBar'
 import { Post as ApiPost } from "@/payload-types"
