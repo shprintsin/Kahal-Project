@@ -255,7 +255,7 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
                   value={form.watch("status")}
                   onValueChange={(value) => form.setValue("status", value as any)}
                 >
-                  <SelectTrigger className="bg-[#252525] border-white/10 text-white/80">
+                  <SelectTrigger className="bg-secondary border-border text-foreground">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -271,7 +271,7 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
                   value={slugValue}
                   onChange={(e) => form.setValue("slug", e.target.value)}
                   placeholder="map-slug"
-                  className="bg-[#252525] border-white/10 text-white/80"
+                  className="bg-secondary border-border text-foreground"
                 />
               </SidebarField>
             </div>
@@ -285,7 +285,7 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
                   type="date"
                   value={form.watch("period_start_date")}
                   onChange={(e) => form.setValue("period_start_date", e.target.value)}
-                  className="bg-[#252525] border-white/10 text-white/80"
+                  className="bg-secondary border-border text-foreground"
                 />
               </SidebarField>
               
@@ -294,7 +294,7 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
                   type="date"
                   value={form.watch("period_end_date")}
                   onChange={(e) => form.setValue("period_end_date", e.target.value)}
-                  className="bg-[#252525] border-white/10 text-white/80"
+                  className="bg-secondary border-border text-foreground"
                 />
               </SidebarField>
             </div>
@@ -330,19 +330,19 @@ export function LoopMapEditor({ map }: LoopMapEditorProps) {
 
         {/* Description */}
         <div className="space-y-2">
-          <label className="text-xs font-medium text-white/40 uppercase tracking-wider">
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Description
           </label>
           <Textarea
             value={descriptionValue}
             onChange={(e) => form.setValue(`description_i18n.${currentLanguage}`, e.target.value)}
             placeholder="Add a description for this map..."
-            className="min-h-[100px] bg-transparent border-white/10 text-white/80 resize-none"
+            className="min-h-[100px] bg-transparent border-border text-foreground resize-none"
           />
         </div>
 
         {/* Map Preview */}
-        <div className="rounded-lg overflow-hidden border border-white/10">
+        <div className="rounded-lg overflow-hidden border border-border">
           <MapPreview config={mapConfig} />
         </div>
       </div>

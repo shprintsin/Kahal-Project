@@ -236,7 +236,7 @@ export function MapEditor({ map, mode }: MapEditorProps) {
         <h1 className="text-2xl font-bold">
           {actualMode === "create" ? "Create Map" : "Edit Map"}
         </h1>
-        <Button onClick={form.handleSubmit(onSubmit)} disabled={isSubmitting} className="rounded-none border border-white hover:bg-white/10" variant="outline">
+        <Button onClick={form.handleSubmit(onSubmit)} disabled={isSubmitting} className="rounded-none border border-border hover:bg-accent" variant="outline">
           {isSubmitting && (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           )}

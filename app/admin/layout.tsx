@@ -30,15 +30,13 @@ export default async function AdminLayout({
   const initialTranslations = loadTranslations(language);
 
   return (
-    <div className="dark">
-      <LanguageProvider initialLanguage={language} initialTranslations={initialTranslations}>
-        <SidebarProvider defaultOpen={defaultOpen}>
-          <AppSidebar user={profile || { id: user.id || '', email: user.email || '', name: user.name || user.email || null }} />
-          <SidebarInset className="bg-background">
-            {children}
-          </SidebarInset>
-        </SidebarProvider>
-      </LanguageProvider>
-    </div>
+    <LanguageProvider initialLanguage={language} initialTranslations={initialTranslations}>
+      <SidebarProvider defaultOpen={defaultOpen}>
+        <AppSidebar user={profile || { id: user.id || '', email: user.email || '', name: user.name || user.email || null }} />
+        <SidebarInset>
+          {children}
+        </SidebarInset>
+      </SidebarProvider>
+    </LanguageProvider>
   );
 }

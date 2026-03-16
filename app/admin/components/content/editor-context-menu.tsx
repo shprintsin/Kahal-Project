@@ -52,79 +52,79 @@ export function EditorContextMenu({
       <ContextMenuTrigger asChild>
         {children}
       </ContextMenuTrigger>
-      <ContextMenuContent className="w-56 bg-[#252525] border-white/10 text-white/80">
+      <ContextMenuContent className="w-56 bg-card border-border text-foreground">
         {/* Clipboard Actions */}
         <ContextMenuItem
           onClick={() => onAction?.("cut")}
           disabled={!hasSelection}
-          className="hover:bg-white/10 cursor-pointer"
+          className="hover:bg-accent cursor-pointer"
         >
-          <Scissors className="w-4 h-4 mr-2 text-white/50" />
+          <Scissors className="w-4 h-4 mr-2 text-muted-foreground" />
           Cut
           <ContextMenuShortcut>⌘X</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem
           onClick={() => onAction?.("copy")}
           disabled={!hasSelection}
-          className="hover:bg-white/10 cursor-pointer"
+          className="hover:bg-accent cursor-pointer"
         >
-          <Copy className="w-4 h-4 mr-2 text-white/50" />
+          <Copy className="w-4 h-4 mr-2 text-muted-foreground" />
           Copy
           <ContextMenuShortcut>⌘C</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem
           onClick={() => onAction?.("paste")}
-          className="hover:bg-white/10 cursor-pointer"
+          className="hover:bg-accent cursor-pointer"
         >
-          <Clipboard className="w-4 h-4 mr-2 text-white/50" />
+          <Clipboard className="w-4 h-4 mr-2 text-muted-foreground" />
           Paste
           <ContextMenuShortcut>⌘V</ContextMenuShortcut>
         </ContextMenuItem>
 
-        <ContextMenuSeparator className="bg-white/10" />
+        <ContextMenuSeparator className="bg-accent" />
 
         {/* Text Formatting */}
         <ContextMenuSub>
-          <ContextMenuSubTrigger className="hover:bg-white/10 cursor-pointer">
+          <ContextMenuSubTrigger className="hover:bg-accent cursor-pointer">
             Format
           </ContextMenuSubTrigger>
-          <ContextMenuSubContent className="bg-[#252525] border-white/10 text-white/80">
+          <ContextMenuSubContent className="bg-card border-border text-foreground">
             <ContextMenuItem
               onClick={() => onAction?.("bold")}
-              className="hover:bg-white/10 cursor-pointer"
+              className="hover:bg-accent cursor-pointer"
             >
-              <Bold className="w-4 h-4 mr-2 text-white/50" />
+              <Bold className="w-4 h-4 mr-2 text-muted-foreground" />
               Bold
               <ContextMenuShortcut>⌘B</ContextMenuShortcut>
             </ContextMenuItem>
             <ContextMenuItem
               onClick={() => onAction?.("italic")}
-              className="hover:bg-white/10 cursor-pointer"
+              className="hover:bg-accent cursor-pointer"
             >
-              <Italic className="w-4 h-4 mr-2 text-white/50" />
+              <Italic className="w-4 h-4 mr-2 text-muted-foreground" />
               Italic
               <ContextMenuShortcut>⌘I</ContextMenuShortcut>
             </ContextMenuItem>
             <ContextMenuItem
               onClick={() => onAction?.("underline")}
-              className="hover:bg-white/10 cursor-pointer"
+              className="hover:bg-accent cursor-pointer"
             >
-              <Underline className="w-4 h-4 mr-2 text-white/50" />
+              <Underline className="w-4 h-4 mr-2 text-muted-foreground" />
               Underline
               <ContextMenuShortcut>⌘U</ContextMenuShortcut>
             </ContextMenuItem>
             <ContextMenuItem
               onClick={() => onAction?.("strikethrough")}
-              className="hover:bg-white/10 cursor-pointer"
+              className="hover:bg-accent cursor-pointer"
             >
-              <Strikethrough className="w-4 h-4 mr-2 text-white/50" />
+              <Strikethrough className="w-4 h-4 mr-2 text-muted-foreground" />
               Strikethrough
             </ContextMenuItem>
             <ContextMenuItem
               onClick={() => onAction?.("code")}
-              className="hover:bg-white/10 cursor-pointer"
+              className="hover:bg-accent cursor-pointer"
             >
-              <Code className="w-4 h-4 mr-2 text-white/50" />
+              <Code className="w-4 h-4 mr-2 text-muted-foreground" />
               Inline Code
               <ContextMenuShortcut>⌘`</ContextMenuShortcut>
             </ContextMenuItem>
@@ -133,64 +133,64 @@ export function EditorContextMenu({
 
         {/* Transform to Block */}
         <ContextMenuSub>
-          <ContextMenuSubTrigger className="hover:bg-white/10 cursor-pointer">
+          <ContextMenuSubTrigger className="hover:bg-accent cursor-pointer">
             Turn into
           </ContextMenuSubTrigger>
-          <ContextMenuSubContent className="bg-[#252525] border-white/10 text-white/80">
+          <ContextMenuSubContent className="bg-card border-border text-foreground">
             <ContextMenuItem
               onClick={() => onAction?.("h1")}
-              className="hover:bg-white/10 cursor-pointer"
+              className="hover:bg-accent cursor-pointer"
             >
-              <Heading1 className="w-4 h-4 mr-2 text-white/50" />
+              <Heading1 className="w-4 h-4 mr-2 text-muted-foreground" />
               Heading 1
             </ContextMenuItem>
             <ContextMenuItem
               onClick={() => onAction?.("h2")}
-              className="hover:bg-white/10 cursor-pointer"
+              className="hover:bg-accent cursor-pointer"
             >
-              <Heading2 className="w-4 h-4 mr-2 text-white/50" />
+              <Heading2 className="w-4 h-4 mr-2 text-muted-foreground" />
               Heading 2
             </ContextMenuItem>
             <ContextMenuItem
               onClick={() => onAction?.("h3")}
-              className="hover:bg-white/10 cursor-pointer"
+              className="hover:bg-accent cursor-pointer"
             >
-              <Heading3 className="w-4 h-4 mr-2 text-white/50" />
+              <Heading3 className="w-4 h-4 mr-2 text-muted-foreground" />
               Heading 3
             </ContextMenuItem>
             <ContextMenuItem
               onClick={() => onAction?.("bullet")}
-              className="hover:bg-white/10 cursor-pointer"
+              className="hover:bg-accent cursor-pointer"
             >
-              <List className="w-4 h-4 mr-2 text-white/50" />
+              <List className="w-4 h-4 mr-2 text-muted-foreground" />
               Bulleted List
             </ContextMenuItem>
             <ContextMenuItem
               onClick={() => onAction?.("quote")}
-              className="hover:bg-white/10 cursor-pointer"
+              className="hover:bg-accent cursor-pointer"
             >
-              <Quote className="w-4 h-4 mr-2 text-white/50" />
+              <Quote className="w-4 h-4 mr-2 text-muted-foreground" />
               Quote
             </ContextMenuItem>
           </ContextMenuSubContent>
         </ContextMenuSub>
 
-        <ContextMenuSeparator className="bg-white/10" />
+        <ContextMenuSeparator className="bg-accent" />
 
         {/* Insert */}
         <ContextMenuItem
           onClick={() => onAction?.("link")}
-          className="hover:bg-white/10 cursor-pointer"
+          className="hover:bg-accent cursor-pointer"
         >
-          <Link className="w-4 h-4 mr-2 text-white/50" />
+          <Link className="w-4 h-4 mr-2 text-muted-foreground" />
           Insert Link
           <ContextMenuShortcut>⌘K</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem
           onClick={() => onAction?.("image")}
-          className="hover:bg-white/10 cursor-pointer"
+          className="hover:bg-accent cursor-pointer"
         >
-          <Image className="w-4 h-4 mr-2 text-white/50" />
+          <Image className="w-4 h-4 mr-2 text-muted-foreground" />
           Insert Image
         </ContextMenuItem>
       </ContextMenuContent>

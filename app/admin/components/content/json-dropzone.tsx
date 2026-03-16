@@ -91,7 +91,7 @@ export function JsonDropzone({
   return (
     <div
       className={`w-full border-2 border-dashed rounded-lg transition-colors ${
-        isDragging ? 'border-primary bg-primary/10' : 'border-white/20 hover:border-primary/50'
+        isDragging ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50'
       } ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
@@ -101,16 +101,16 @@ export function JsonDropzone({
         {isLoading ? (
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-sm text-white/60">Processing...</p>
+            <p className="text-sm text-muted-foreground">Processing...</p>
           </div>
         ) : (
           <>
-            <UploadCloud className={`${compact ? 'h-8 w-8' : 'h-10 w-10'} text-white/40 mb-3`} />
-            <div className="text-sm font-medium mb-1 text-white/70">
+            <UploadCloud className={`${compact ? 'h-8 w-8' : 'h-10 w-10'} text-muted-foreground mb-3`} />
+            <div className="text-sm font-medium mb-1 text-foreground/70">
               {label || (compact ? 'Drag JSON pages here' : 'Drag & drop JSON file here')}
             </div>
             {!compact && (
-                <p className="text-xs text-white/50 mb-4">
+                <p className="text-xs text-muted-foreground mb-4">
                 or click to browse
                 </p>
             )}

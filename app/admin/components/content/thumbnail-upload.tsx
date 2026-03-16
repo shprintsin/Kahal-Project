@@ -117,7 +117,7 @@ export function ThumbnailUpload({
     <div className={cn("space-y-2", className)}>
       {/* Label */}
       {label && (
-        <label className="text-xs font-medium text-white/50 uppercase tracking-wider">
+        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
           {label}
         </label>
       )}
@@ -128,7 +128,7 @@ export function ThumbnailUpload({
           "relative rounded-lg border-2 border-dashed transition-all",
           isDragging
             ? "border-primary bg-primary/5"
-            : "border-white/10 hover:border-white/20",
+            : "border-border hover:border-border",
           disabled && "opacity-50 cursor-not-allowed",
           preview ? "aspect-video" : "aspect-video"
         )}
@@ -179,7 +179,7 @@ export function ThumbnailUpload({
             disabled={disabled}
             className={cn(
               "w-full h-full flex flex-col items-center justify-center gap-3 p-6",
-              "text-white/40 hover:text-white/60 transition-colors",
+              "text-muted-foreground hover:text-muted-foreground transition-colors",
               !disabled && "cursor-pointer"
             )}
           >
@@ -188,7 +188,7 @@ export function ThumbnailUpload({
               <p className="text-sm font-medium">
                 Drop an image here or click to browse
               </p>
-              <p className="text-xs text-white/30 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 PNG, JPG, GIF up to {Math.round(maxSize / 1024 / 1024)}MB
               </p>
             </div>
