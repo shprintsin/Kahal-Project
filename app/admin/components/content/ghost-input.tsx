@@ -41,7 +41,7 @@ export const GhostInput = React.forwardRef<HTMLInputElement, GhostInputProps>(
           "hover:bg-slate-100/80 dark:hover:bg-slate-800/40",
           // Focus state - bottom border accent, no ring
           "focus:bg-slate-50/50 dark:focus:bg-slate-800/20",
-          "focus:shadow-[inset_0_-2px_0_0_var(--primary)]",
+          "focus:shadow-[inset_0_-2px_0_0_var(--ring)]",
           // Placeholder styling - low contrast
           "placeholder:text-muted-foreground/40 placeholder:font-normal",
           // Size variants
@@ -81,7 +81,7 @@ export const GhostTextarea = React.forwardRef<HTMLTextAreaElement, GhostTextarea
           "appearance-none rounded-none",
           "hover:bg-slate-100/80 dark:hover:bg-slate-800/40",
           "focus:bg-slate-50/50 dark:focus:bg-slate-800/20",
-          "focus:shadow-[inset_0_-2px_0_0_var(--primary)]",
+          "focus:shadow-[inset_0_-2px_0_0_var(--ring)]",
           "placeholder:text-muted-foreground/40",
           textareaSizes[inputSize],
           className

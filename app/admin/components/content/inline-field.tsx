@@ -112,7 +112,7 @@ export function InlineField({
           dir={dir === "ltr" ? "ltr" : dir === "rtl" ? "rtl" : undefined}
           className={cn(
             "bg-transparent border-none outline-none p-0",
-            "shadow-[inset_0_-1px_0_0_var(--primary)]",
+            "shadow-[inset_0_-1px_0_0_var(--ring)]",
             valueStyles[variant],
             "min-w-[60px]"
           )}
