@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { layerSchema, type LayerFormValues } from "@/app/admin/schema/layer";
-import { createLayer, updateLayer, deleteLayer } from "@/app/admin/actions/layers";
+import { createLayer, updateLayer, deleteLayer, listLayersAPI } from "@/app/admin/actions/layers";
 import { createLayerFieldConfigs } from "@/app/admin/(pages)/layers/field-configs";
 import { MapPreview, type MapPreviewHandle } from "@/components/map-components/map-preview";
 import { Trash2, Save, GripVertical, Camera, Plus } from "lucide-react";
@@ -23,19 +23,22 @@ import { ThumbnailDialog } from "./layer-editor-thumbnail";
 interface LayerEditorProps {
   layer?: any;
   mode: "create" | "edit";
-  allLayers?: any[];
 }
 
-export function LayerEditorV2({ layer, mode, allLayers: initialLayers = [] }: LayerEditorProps) {
+export function LayerEditorV2({ layer, mode }: LayerEditorProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [geoJsonData, setGeoJsonData] = useState<any>(layer?.geoJsonData || null);
-  const [allLayers] = useState<any[]>(initialLayers);
+  const [allLayers, setAllLayers] = useState<any[]>([]);
   const [capturedThumbnail, setCapturedThumbnail] = useState<string | null>(null);
   const [showThumbnailDialog, setShowThumbnailDialog] = useState(false);
   const mapPreviewComponentRef = useRef<MapPreviewHandle>(null);
 
   const actualMode = mode || (layer ? "edit" : "create");
+
+  useEffect(() => {
+    listLayersAPI().then(result => setAllLayers(result.layers || []));
+  }, []);
 
   const fileTreeItems: FileTreeItem[] = useMemo(() => {
     const byStatus: Record<string, any[]> = { published: [], draft: [], archived: [] };

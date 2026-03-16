@@ -49,53 +49,56 @@ export function AdminToolbarProvider({
 
   return (
     <AdminToolbarContext.Provider value={{ editUrl, setEditUrl }}>
-      <AdminToolbar user={user} />
-      <div className="mt-8">{children}</div>
+      <AdminToolbarInner user={user}>{children}</AdminToolbarInner>
     </AdminToolbarContext.Provider>
   );
 }
 
-function AdminToolbar({ user }: { user: AdminToolbarUser }) {
+function AdminToolbarInner({ user, children }: { user: AdminToolbarUser; children: ReactNode }) {
   const pathname = usePathname();
   const { editUrl } = useContext(AdminToolbarContext);
+  const isHidden = pathname.startsWith("/admin") || pathname.startsWith("/login");
 
-  if (pathname.startsWith("/admin") || pathname.startsWith("/login")) {
-    return null;
+  if (isHidden) {
+    return <>{children}</>;
   }
 
   return (
-    <div
-      className="fixed top-0 left-0 right-0 z-50 h-8 bg-zinc-900 text-zinc-200 text-xs flex items-center justify-between px-4 shadow-md"
-      dir="ltr"
-    >
-      <div className="flex items-center gap-4">
-        <Link
-          href="/admin"
-          className="flex items-center gap-1.5 hover:text-white transition-colors"
-        >
-          <LayoutDashboard className="w-3.5 h-3.5" />
-          <span>Dashboard</span>
-        </Link>
-        {editUrl && (
+    <>
+      <div
+        className="fixed top-0 left-0 right-0 z-50 h-8 bg-zinc-900 text-zinc-200 text-xs flex items-center justify-between px-4 shadow-md"
+        dir="ltr"
+      >
+        <div className="flex items-center gap-4">
           <Link
-            href={editUrl}
-            className="flex items-center gap-1.5 text-sky-400 hover:text-sky-300 transition-colors"
+            href="/admin"
+            className="flex items-center gap-1.5 hover:text-white transition-colors"
           >
-            <Pencil className="w-3.5 h-3.5" />
-            <span>Edit</span>
+            <LayoutDashboard className="w-3.5 h-3.5" />
+            <span>Dashboard</span>
           </Link>
-        )}
+          {editUrl && (
+            <Link
+              href={editUrl}
+              className="flex items-center gap-1.5 text-sky-400 hover:text-sky-300 transition-colors"
+            >
+              <Pencil className="w-3.5 h-3.5" />
+              <span>Edit</span>
+            </Link>
+          )}
+        </div>
+        <div className="flex items-center gap-4">
+          <span className="text-zinc-400">{user.name || user.email}</span>
+          <Link
+            href="/api/auth/signout"
+            className="flex items-center gap-1.5 hover:text-white transition-colors"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+          </Link>
+        </div>
       </div>
-      <div className="flex items-center gap-4">
-        <span className="text-zinc-400">{user.name || user.email}</span>
-        <Link
-          href="/api/auth/signout"
-          className="flex items-center gap-1.5 hover:text-white transition-colors"
-        >
-          <LogOut className="w-3.5 h-3.5" />
-        </Link>
-      </div>
-    </div>
+      <div className="mt-8">{children}</div>
+    </>
   );
 }
 

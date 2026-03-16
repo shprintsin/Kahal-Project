@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Secular_One } from "next/font/google";
+import { auth } from "@/auth";
+import { AdminToolbarProvider } from "@/components/ui/admin-toolbar";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -26,11 +28,13 @@ export const metadata: Metadata = {
   description: "Digital Archive of Jewish Communities",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="he" dir="rtl">
       <head>
@@ -41,7 +45,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${secular.variable} font-sans antialiased bg-gray-50`}
       >
-        {children}
+        <AdminToolbarProvider user={session?.user ?? null}>
+          {children}
+        </AdminToolbarProvider>
       </body>
     </html>
   );

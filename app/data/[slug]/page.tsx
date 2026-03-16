@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import DatasetLandingPage from '@/app/components/pages_components/DatasetLandingPage';
 import { getDatasetBySlug } from '@/app/admin/actions/datasets';
 import { getSiteShellData } from '@/app/lib/get-navigation';
+import { SetEditUrl } from '@/components/ui/admin-toolbar';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -41,5 +42,10 @@ export default async function DatasetPage({ params }: PageProps) {
     }))
   };
 
-  return <DatasetLandingPage dataset={viewDataset} shellData={shellData} />;
+  return (
+    <>
+      <SetEditUrl url={`/admin/datasets/${apiDataset.id}`} />
+      <DatasetLandingPage dataset={viewDataset} shellData={shellData} />
+    </>
+  );
 }
