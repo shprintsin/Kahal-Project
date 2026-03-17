@@ -204,6 +204,7 @@ function EditorInner({
       backHref={config.backHref}
       backLabel={config.backLabel}
       onBack={() => router.push(config.backHref)}
+      previewHref={!isNew && slug ? `${config.slugPrefix}${slug}` : undefined}
       onSave={handleSave}
       onPublish={config.showPublish !== false ? handlePublish : undefined}
       saving={saving}

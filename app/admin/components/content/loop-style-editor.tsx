@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft,
+  Eye,
   Save,
   Send,
   Loader2,
@@ -39,6 +40,7 @@ interface LoopStyleEditorProps {
   saving?: boolean;
   publishing?: boolean;
   isDirty?: boolean;
+  previewHref?: string;
 
   // i18n
   languages?: LanguageConfig[];
@@ -73,6 +75,7 @@ export function LoopStyleEditor({
   saving = false,
   publishing = false,
   isDirty = false,
+  previewHref,
   languages,
   currentLanguage = "en",
   onLanguageChange,
@@ -172,6 +175,20 @@ export function LoopStyleEditor({
                   <Save className="w-4 h-4" />
                 )}
                 <span className="hidden sm:inline">Save</span>
+              </Button>
+            )}
+
+            {previewHref && (
+              <Button
+                variant="ghost"
+                size="sm"
+                asChild
+                className="h-8 text-muted-foreground hover:text-foreground hover:bg-accent/10 gap-1.5"
+              >
+                <a href={previewHref} target="_blank" rel="noopener noreferrer">
+                  <Eye className="w-4 h-4" />
+                  <span className="hidden sm:inline">Preview</span>
+                </a>
               </Button>
             )}
 

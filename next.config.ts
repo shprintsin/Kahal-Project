@@ -17,6 +17,10 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '10mb',
     },
   },
+  outputFileTracingIncludes: {
+    '/docs': ['./content/docs/**/*'],
+    '/docs/[...slug]': ['./content/docs/**/*'],
+  },
   typescript: {
     ignoreBuildErrors: true,
   },

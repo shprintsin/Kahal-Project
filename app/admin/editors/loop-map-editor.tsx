@@ -278,6 +278,7 @@ export function LoopMapEditor({ map, categories = [], tags = [], regions = [] }:
   return (
     <LoopStyleEditor
       backHref="/admin/maps"
+      previewHref={map?.slug ? `/maps/${map.slug}` : undefined}
       onSave={form.handleSubmit(onSubmit as any)}
       saving={isSubmitting}
       isDirty={isDirty}

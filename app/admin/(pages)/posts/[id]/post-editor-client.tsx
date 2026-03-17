@@ -307,6 +307,7 @@ function EditorInner({ post, categories, tags, posts, regions, isNew }: PostEdit
       backHref="/admin/posts"
       backLabel="Posts"
       onBack={() => router.push("/admin/posts")}
+      previewHref={!isNew && slug ? `/posts/${slug}` : undefined}
       onSave={handleSave}
       onPublish={handlePublish}
       saving={saving}

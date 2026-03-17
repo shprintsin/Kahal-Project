@@ -20,7 +20,8 @@ import type { ContentLanguage, ContentStatus } from "@/app/admin/types/content-s
 import type { FileTreeItem } from "@/app/admin/components/content/file-tree";
 import { createDataset, updateDataset } from "@/app/admin/actions/datasets";
 import { uploadMedia } from "@/app/admin/actions/posts";
-import { ExternalLink, FileDown, Image as ImageIcon, Trash2 } from "lucide-react";
+import { Image as ImageIcon, Trash2 } from "lucide-react";
+import { uploadResourceFile, createDatasetResource, deleteDatasetResource } from "@/app/admin/actions/datasets";
 
 interface DatasetEditorClientProps {
   dataset: any;
@@ -77,7 +78,18 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
   const [citationText, setCitationText] = React.useState(dataset?.citationText || "");
   const [isVisible, setIsVisible] = React.useState(dataset?.isVisible ?? true);
   const [regionIds, setRegionIds] = React.useState<string[]>(dataset?.regions?.map((r: any) => r.id) || []);
-  const [attachments, setAttachments] = React.useState<any[]>([]);
+  const initialResourceIds = React.useRef<Set<string>>(
+    new Set((dataset?.resources || []).map((r: any) => r.id))
+  );
+  const [attachments, setAttachments] = React.useState<any[]>(
+    (dataset?.resources || []).map((r: any) => ({
+      id: r.id,
+      name: r.name || r.filename || "file",
+      size: 0,
+      type: r.mimeType || "",
+      url: r.url,
+    }))
+  );
 
   const [thumbnailId, setThumbnailId] = React.useState<string | undefined>(dataset?.thumbnail?.id);
   const [thumbnailUrl, setThumbnailUrl] = React.useState<string | null>(dataset?.thumbnail?.url || null);
@@ -171,17 +183,58 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
     };
   };
 
+  const syncResources = async (targetDatasetId: string) => {
+    const currentIds = new Set(attachments.filter(a => !a.file).map(a => a.id));
+    const removedIds = [...initialResourceIds.current].filter(id => !currentIds.has(id));
+
+    for (const id of removedIds) {
+      try {
+        await deleteDatasetResource(id);
+      } catch (err) {
+        console.error(`Delete resource failed:`, err);
+        toast.error("Failed to remove a resource");
+      }
+    }
+
+    const newFiles = attachments.filter(a => a.file);
+    for (const attachment of newFiles) {
+      try {
+        const fd = new FormData();
+        fd.append("file", attachment.file!);
+        fd.append("datasetId", targetDatasetId);
+        const result = await uploadResourceFile(fd);
+
+        await createDatasetResource(targetDatasetId, {
+          name: result.name,
+          slug: result.slug,
+          url: result.url,
+          filename: result.filename,
+          mimeType: result.mimeType,
+          sizeBytes: result.sizeBytes,
+          format: result.format,
+          isMainFile: false,
+        });
+      } catch (err) {
+        console.error(`Upload failed for ${attachment.name}:`, err);
+        toast.error(`Failed to upload ${attachment.name}`);
+      }
+    }
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
       const data = buildSaveData();
       if (isNew) {
         const newDataset = await createDataset(data);
+        await syncResources(newDataset.id);
         toast.success("Created successfully");
         router.push(`/admin/datasets/${newDataset.id}`);
       } else {
         await updateDataset(datasetId, data);
+        await syncResources(datasetId);
         toast.success("Saved successfully");
+        router.refresh();
       }
       setIsDirty(false);
     } catch (error) {
@@ -198,12 +251,15 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
       const data = buildSaveData("published");
       if (isNew) {
         const newDataset = await createDataset(data);
+        await syncResources(newDataset.id);
         toast.success("Published!");
         router.push(`/admin/datasets/${newDataset.id}`);
       } else {
         await updateDataset(datasetId, data);
+        await syncResources(datasetId);
         setStatus("published");
         toast.success("Published!");
+        router.refresh();
       }
       setIsDirty(false);
     } catch (error) {
@@ -262,7 +318,8 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
         onTagsChange={(t) => { setDatasetTags(t); markDirty(); }}
         tagSuggestions={allTags}
         attachments={attachments}
-        onAttachmentsChange={setAttachments}
+        onAttachmentsChange={(files) => { setAttachments(files); markDirty(); }}
+        attachmentsAccept="*/*"
         thumbnailUrl={thumbnailUrl}
         onThumbnailChange={handleThumbnailChange}
         onThumbnailRemove={handleThumbnailRemove}
@@ -354,31 +411,6 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
         </div>
       </SidebarCard>
 
-      {!isNew && (
-        <SidebarCard title={`Resources (${resources.length})`}>
-          <div className="space-y-2">
-            {resources.length === 0 ? (
-              <p className="text-xs text-muted-foreground">No resources attached</p>
-            ) : (
-              resources.map((r: any) => (
-                <div key={r.id} className="flex items-center gap-2 text-xs p-1.5 rounded bg-muted/50">
-                  <FileDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate font-medium">{r.name}</div>
-                    <div className="text-muted-foreground">{r.format}{r.isMainFile ? " (main)" : ""}</div>
-                  </div>
-                  {r.url && (
-                    <a href={r.url} target="_blank" rel="noopener noreferrer" className="shrink-0 text-muted-foreground hover:text-foreground">
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  )}
-                </div>
-              ))
-            )}
-            <p className="text-[10px] text-muted-foreground italic">Manage resources via the Resources admin page</p>
-          </div>
-        </SidebarCard>
-      )}
     </div>
   );
 
@@ -387,6 +419,7 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
       backHref="/admin/datasets"
       backLabel="Datasets"
       onBack={() => router.push("/admin/datasets")}
+      previewHref={!isNew && slug ? `/data/${slug}` : undefined}
       onSave={handleSave}
       onPublish={handlePublish}
       saving={saving}
@@ -450,6 +483,7 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
                 className="min-h-[80px] bg-transparent border-border resize-none"
               />
             </div>
+
           </div>
         </div>
       </EditorContextMenu>

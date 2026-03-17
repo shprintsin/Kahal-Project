@@ -129,6 +129,14 @@ export async function getMap(id: string) {
 
 export async function createMap(mapData: MapInput) {
 
+  // Deduplicate slug
+  if (mapData.slug) {
+    const existing = await prisma.map.findUnique({ where: { slug: mapData.slug }, select: { id: true } });
+    if (existing) {
+      mapData.slug = `${mapData.slug}-${Date.now()}`;
+    }
+  }
+
   // Extract layers from config
   const layers = mapData.config?.layers || [];
 
@@ -155,15 +163,11 @@ export async function createMap(mapData: MapInput) {
     period: mapData.period,
     version: mapData.version,
     thumbnailUrl: mapData.thumbnail_url || mapData.thumbnailUrl,
-    ...(mapData.thumbnailId !== undefined && {
-      thumbnail: mapData.thumbnailId
-        ? { connect: { id: mapData.thumbnailId } }
-        : { disconnect: true },
+    ...(mapData.thumbnailId && {
+      thumbnail: { connect: { id: mapData.thumbnailId } },
     }),
-    ...(mapData.categoryId !== undefined && {
-      category: mapData.categoryId
-        ? { connect: { id: mapData.categoryId } }
-        : { disconnect: true },
+    ...(mapData.categoryId && {
+      category: { connect: { id: mapData.categoryId } },
     }),
     ...(mapData.tagIds && {
       tags: { connect: mapData.tagIds.map((id) => ({ id })) },
@@ -786,3 +790,12 @@ export async function getMapBySlug(
  */
 
 // (Functions will be added via separate file)
+
+export async function getMapDeployments(slug: string) {
+  return prisma.mapDeployment.findMany({
+    where: { map: { slug } },
+    orderBy: { deployedAt: 'desc' },
+    take: 20,
+    select: { id: true, version: true, changeLog: true, gitSha: true, deployedAt: true },
+  });
+}

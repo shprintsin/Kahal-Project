@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { ResearchDataset } from '@/types/dataset';
 import { SectionTitle } from '@/components/ui/typography';
-import { FileSpreadsheet, FileJson, BookOpen, AlertCircle, FileText, Download } from 'lucide-react';
+import { FileSpreadsheet, FileJson, BookOpen, AlertCircle, FileText, Download, Eye } from 'lucide-react';
+import { CsvViewerDialog } from '@/app/admin/components/content/csv-viewer-dialog';
 import { Col } from '@/components/ui/flex';
 import { MaturityBadge, PublishStatusBadge } from '@/components/ui/status-badge';
 import { unified } from 'unified';
@@ -48,6 +49,7 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
   const [descriptionHtml, setDescriptionHtml] = useState<string>('');
   const [codebookHtml, setCodebookHtml] = useState<string>('');
   const [activeTab, setActiveTab] = useState<string>('description');
+  const [csvPreview, setCsvPreview] = useState<{ url: string; name: string } | null>(null);
 
   useEffect(() => {
     const processMarkdown = async () => {
@@ -157,22 +159,39 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
                 <h3 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-5 font-display text-right">קבצי נתונים</h3>
                 <div className="space-y-3">
                   {dataset.resources.map((resource) => (
-                    <a
+                    <div
                       key={resource.id}
-                      href={resource.url}
-                      className="flex items-center gap-3 p-3 sm:p-4 bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all group"
-                      download
+                      className="flex items-center gap-3 p-3 sm:p-4 bg-white border border-border-strong shadow-sm group"
                     >
-                      <div className="text-brand-primary group-hover:text-brand-primary-dark">
+                      <div className="text-brand-primary">
                         {getFileIcon(resource.format)}
                       </div>
                       <div className="flex-1 text-right">
                         <div className="text-sm sm:text-base font-semibold text-foreground mb-1">{resource.name}</div>
                         <div className="text-xs sm:text-sm text-muted-foreground">
-                          {resource.format} {resource.size_bytes && `• ${formatFileSize(resource.size_bytes)}`}
+                          {resource.format}{resource.size_bytes > 0 ? ` • ${formatFileSize(resource.size_bytes)}` : ""}
                         </div>
                       </div>
-                    </a>
+                      <div className="flex items-center gap-1">
+                        {resource.format?.toUpperCase() === 'CSV' && (
+                          <button
+                            onClick={() => setCsvPreview({ url: resource.url, name: resource.name })}
+                            className="p-2 text-muted-foreground hover:text-brand-primary transition-colors"
+                            title="צפה בנתונים"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        )}
+                        <a
+                          href={resource.url}
+                          download
+                          className="p-2 text-muted-foreground hover:text-brand-primary transition-colors"
+                          title="הורד"
+                        >
+                          <Download className="w-4 h-4" />
+                        </a>
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -248,6 +267,15 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
           </div>
         </div>
       </main>
+
+      {csvPreview && (
+        <CsvViewerDialog
+          open={!!csvPreview}
+          onOpenChange={(open) => { if (!open) setCsvPreview(null); }}
+          url={csvPreview.url}
+          name={csvPreview.name}
+        />
+      )}
     </SiteShell>
   );
 }
