@@ -15,10 +15,14 @@ import rehypeStringify from 'rehype-stringify';
 import { SiteShell } from '@/components/ui/site-shell';
 import type { SiteShellData } from '@/app/lib/get-navigation';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { useLanguage } from '@/lib/i18n/language-provider';
+import { getDateLocale, getDir } from '@/lib/i18n/config';
+import type { Locale } from '@/lib/i18n/config';
 
 interface DatasetLandingPageProps {
   dataset: ResearchDataset;
   shellData: SiteShellData;
+  locale?: string;
 }
 
 const formatFileSize = (bytes?: number): string => {
@@ -45,7 +49,10 @@ const getFileIcon = (format: string) => {
   }
 };
 
-export default function DatasetLandingPage({ dataset, shellData }: DatasetLandingPageProps) {
+export default function DatasetLandingPage({ dataset, shellData, locale: localeProp }: DatasetLandingPageProps) {
+  const { locale, t } = useLanguage();
+  const dir = getDir(locale as Locale);
+  const dateLocale = getDateLocale(locale as Locale);
   const [descriptionHtml, setDescriptionHtml] = useState<string>('');
   const [codebookHtml, setCodebookHtml] = useState<string>('');
   const [activeTab, setActiveTab] = useState<string>('description');
@@ -98,7 +105,7 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
   };
 
   return (
-    <SiteShell {...shellData}>
+    <SiteShell {...shellData} locale={localeProp}>
       <main className="flex-grow w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
           <div className="mb-6 sm:mb-10 text-right">
@@ -110,7 +117,7 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
             <div className="lg:col-span-2 bg-white p-4 sm:p-6 lg:p-8 shadow-sm border border-border">
               <dl className="space-y-4 text-right">
                 <div className="flex flex-col gap-2 pb-4 border-b border-border">
-                  <dt className="text-sm font-semibold text-body font-display">סטטוס</dt>
+                  <dt className="text-sm font-semibold text-body font-display">{t('public.datasets.status', 'סטטוס')}</dt>
                   <dd className="flex gap-3 flex-wrap">
                     <PublishStatusBadge status={dataset.status} />
                     <MaturityBadge maturity={dataset.maturity} />
@@ -119,7 +126,7 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
 
                 {dataset.temporal_coverage && (
                   <div className="flex flex-col gap-2 pb-4 border-b border-border">
-                    <dt className="text-sm font-semibold text-body font-display">תקופה</dt>
+                    <dt className="text-sm font-semibold text-body font-display">{t('public.datasets.period', 'תקופה')}</dt>
                     <dd className="text-foreground text-base font-medium">
                       {dataset.temporal_coverage.start_year} - {dataset.temporal_coverage.end_year}
                     </dd>
@@ -128,15 +135,15 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
 
                 {dataset.geographic_coverage && (
                   <div className="flex flex-col gap-2 pb-4 border-b border-border">
-                    <dt className="text-sm font-semibold text-body font-display">אזור גיאוגרפי</dt>
+                    <dt className="text-sm font-semibold text-body font-display">{t('public.datasets.geographicArea', 'אזור גיאוגרפי')}</dt>
                     <dd className="text-foreground text-base">{dataset.geographic_coverage}</dd>
                   </div>
                 )}
 
                 <div className="flex flex-col gap-2 pb-4 border-b border-border">
-                  <dt className="text-sm font-semibold text-body font-display">עדכון אחרון</dt>
+                  <dt className="text-sm font-semibold text-body font-display">{t('public.datasets.lastUpdated', 'עדכון אחרון')}</dt>
                   <dd className="text-foreground text-base">
-                    {new Date(dataset.last_updated).toLocaleDateString('he-IL')}
+                    {new Date(dataset.last_updated).toLocaleDateString(dateLocale)}
                   </dd>
                 </div>
 
@@ -156,7 +163,7 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
 
             <Col className="gap-4 sm:gap-6">
               <div className="bg-white p-4 sm:p-6 shadow-sm border border-border">
-                <h3 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-5 font-display text-right">קבצי נתונים</h3>
+                <h3 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-5 font-display">{t('public.datasets.resources', 'קבצי נתונים')}</h3>
                 <div className="space-y-3">
                   {dataset.resources.map((resource) => (
                     <div
@@ -198,7 +205,7 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
 
               {(dataset.codebook_url || dataset.codebook_text) && (
                 <div className="bg-white p-4 sm:p-6 shadow-sm border border-border">
-                  <h3 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-5 font-display text-right">תיעוד</h3>
+                  <h3 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-5 font-display">{t('public.datasets.codebook', 'תיעוד')}</h3>
                   <a
                     href="#codebook"
                     onClick={handleCodebookClick}
@@ -223,14 +230,14 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
           </div>
 
           <div id="content-tabs" className="bg-white p-4 sm:p-6 lg:p-10 shadow-sm border border-border">
-            <Tabs value={activeTab} onValueChange={setActiveTab} dir="rtl">
+            <Tabs value={activeTab} onValueChange={setActiveTab} dir={dir}>
               <TabsList className="bg-muted mb-4 sm:mb-6">
                 <TabsTrigger value="description" className="text-sm sm:text-base px-4 sm:px-6 data-[state=active]:bg-white">
-                  תיאור המאגר
+                  {t('public.datasets.description', 'תיאור המאגר')}
                 </TabsTrigger>
                 {dataset.codebook_text && (
                   <TabsTrigger value="codebook" className="text-sm sm:text-base px-4 sm:px-6 data-[state=active]:bg-white">
-                    קודבוק ומשתנים
+                    {t('public.datasets.codebook', 'קודבוק ומשתנים')}
                   </TabsTrigger>
                 )}
               </TabsList>
@@ -238,7 +245,7 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
               <TabsContent value="description">
                 <div
                   className="prose prose-lg max-w-none text-right leading-relaxed font-hebrew"
-                  dir="rtl"
+                  dir="auto"
                   style={{
                     fontSize: '16px',
                     lineHeight: '1.8',
@@ -252,7 +259,7 @@ export default function DatasetLandingPage({ dataset, shellData }: DatasetLandin
                 <TabsContent value="codebook">
                   <div
                     className="prose prose-lg max-w-none text-right leading-relaxed font-hebrew"
-                    dir="rtl"
+                    dir="auto"
                     style={{
                       fontSize: '16px',
                       lineHeight: '1.8',

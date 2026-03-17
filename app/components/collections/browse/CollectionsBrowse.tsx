@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getVolumesBySeriesId } from '@/app/actions/collections';
+import { useLanguage } from '@/lib/i18n/language-provider';
 import { SiteShell } from '@/components/ui/site-shell';
 import type { SiteShellData } from '@/app/lib/get-navigation';
 import VolumeGrid from './VolumeGrid';
@@ -25,6 +26,7 @@ type SortMode = 'name-asc' | 'name-desc' | 'date-asc' | 'date-desc';
 type BrowseTab = 'collections' | 'series';
 
 export default function CollectionsBrowse({ collections, allSeries, siteShellData }: CollectionsBrowseProps) {
+  const { t } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -238,16 +240,16 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
       <main className="flex-1">
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Page Title */}
-          <SectionTitle>אוספים</SectionTitle>
+          <SectionTitle>{t('public.collections.title')}</SectionTitle>
 
           {/* Tabs for Browse Mode */}
-          <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-6 rounded-none" dir="rtl">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-6 rounded-none">
             <TabsList className="bg-white border border-border">
               <TabsTrigger value="collections" className="data-[state=active]:bg-brand-primary rounded-none data-[state=active]:text-white">
-                אוספים
+                {t('public.collections.title')}
               </TabsTrigger>
               <TabsTrigger value="series" className="rounded-none data-[state=active]:bg-brand-primary data-[state=active]:text-white">
-                סדרות
+                {t('public.collections.series')}
               </TabsTrigger>
             </TabsList>
 
@@ -256,9 +258,9 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
               <div className="bg-white border border-border p-4 mb-4 rounded-none">
                 <div className="relative">
                   <Search className="absolute rounded-none left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <Input dir='rtl'
+                  <Input
                     type="search"
-                    placeholder="חיפוש..."
+                    placeholder={t('public.collections.searchPlaceholder')}
                     value={searchQuery}
                     onChange={(e) => handleSearchChange(e.target.value)}
                     className="pl-10 border-border-strong text-right rounded-none"
@@ -271,36 +273,36 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                 {/* Sort and Items Per Page */}
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-body-secondary">מיון:</span>
-                    <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)} dir='rtl'>
+                    <span className="text-sm text-body-secondary">{t('public.collections.sort')}:</span>
+                    <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)}>
                       <SelectTrigger className="w-[140px] border-border-strong">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="name-asc">שם א-ת</SelectItem>
-                        <SelectItem value="name-desc">שם ת-א</SelectItem>
-                        <SelectItem value="date-asc">תאריך ישן-חדש</SelectItem>
-                        <SelectItem value="date-desc">תאריך חדש-ישן</SelectItem>
+                        <SelectItem value="name-asc">{t('public.collections.sortNameAsc')}</SelectItem>
+                        <SelectItem value="name-desc">{t('public.collections.sortNameDesc')}</SelectItem>
+                        <SelectItem value="date-asc">{t('public.collections.sortDateAsc')}</SelectItem>
+                        <SelectItem value="date-desc">{t('public.collections.sortDateDesc')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-body-secondary">הצג:</span>
+                    <span className="text-sm text-body-secondary">{t('public.collections.show')}:</span>
                     <Select value={itemsPerPage.toString()} onValueChange={(v) => {
                       setItemsPerPage(parseInt(v));
                       setCurrentPage(1);
-                    }} dir='rtl'>
-                      <SelectTrigger className="w-[100px] border-border-strong" dir='rtl'>
+                    }}>
+                      <SelectTrigger className="w-[100px] border-border-strong">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent dir='rtl'>
+                      <SelectContent>
                         <SelectItem value="25">25</SelectItem>
                         <SelectItem value="50">50</SelectItem>
                         <SelectItem value="100">100</SelectItem>
                       </SelectContent>
                     </Select>
-                    <span className="text-sm text-body-secondary">לעמוד</span>
+                    <span className="text-sm text-body-secondary">{t('public.collections.perPage')}</span>
                   </div>
                 </div>
               </div>
@@ -308,7 +310,7 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
               {/* Results */}
               {paginatedData.length === 0 ? (
                 <div className="bg-white border border-border p-12 text-center">
-                  <p className="text-body-secondary">לא נמצאו תוצאות</p>
+                  <p className="text-body-secondary">{t('public.collections.noResults')}</p>
                 </div>
               ) : (
                 <>
@@ -316,7 +318,7 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                     <div className="bg-white border border-border">
                       {(paginatedData as CollectionWithSeries[]).map((collection) => {
                         const isExpanded = expandedCollections.has(collection.id);
-                        const collectionName = (collection.nameI18n?.he || collection.nameI18n?.en || collection.name || 'ללא שם');
+                        const collectionName = (collection.nameI18n?.he || collection.nameI18n?.en || collection.name || t('public.collections.noName'));
 
                         return (
                           <div key={collection.id} className="border-b border-border last:border-b-0">
@@ -324,8 +326,7 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                             <div
                               onClick={() => toggleCollection(collection.id)}
                               className="flex items-center justify-between p-4 hover:bg-surface-light cursor-pointer"
-                              dir="rtl"
-                            >
+                                                          >
                               <div className="flex items-center gap-3">
                                 {isExpanded ? (
                                   <ChevronDown className="w-5 h-5 text-muted-foreground" />
@@ -335,7 +336,7 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                                 <div>
                                   <h3 className="font-bold text-lg font-display">{collectionName}</h3>
                                   <p className="text-sm text-muted-foreground">
-                                    {collection.seriesCount || collection.series?.length || 0} סדרות
+                                    {collection.seriesCount || collection.series?.length || 0} {t('public.collections.series')}
                                   </p>
                                 </div>
                               </div>
@@ -345,7 +346,7 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                             {isExpanded && collection.series && collection.series.length > 0 && (
                               <div className="bg-surface-light px-8 py-4">
                                 {collection.series.map((series) => {
-                                  const seriesName = (series.nameI18n?.he || series.nameI18n?.en || series.name || 'ללא שם');
+                                  const seriesName = (series.nameI18n?.he || series.nameI18n?.en || series.name || t('public.collections.noName'));
                                   
                                   return (
                                     <div
@@ -355,12 +356,11 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                                         handleSeriesClick(series.id);
                                       }}
                                       className="flex items-center justify-between p-3 mb-2 last:mb-0 bg-white border border-border hover:border-brand-primary cursor-pointer transition-colors"
-                                      dir="rtl"
-                                    >
+                                                                          >
                                       <div>
                                         <h4 className="font-bold font-display">{seriesName}</h4>
                                         <p className="text-sm text-muted-foreground">
-                                          {series.volumeCount || 0} כרכים
+                                          {series.volumeCount || 0} {t('public.collections.volumes')}
                                         </p>
                                       </div>
                                       {selectedSeriesId === series.id && (
@@ -378,7 +378,7 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                   ) : (
                     <div className="bg-white border border-border">
                       {(paginatedData as SeriesWithVolumes[]).map((series) => {
-                        const seriesName = (series.nameI18n?.he || series.nameI18n?.en || series.name || 'ללא שם');
+                        const seriesName = (series.nameI18n?.he || series.nameI18n?.en || series.name || t('public.collections.noName'));
                         const collectionName = series.collection ? (series.collection.nameI18n?.he || series.collection.nameI18n?.en || series.collection.name) : '';
 
                         return (
@@ -386,13 +386,12 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                             key={series.id}
                             onClick={() => handleSeriesClick(series.id)}
                             className="flex items-center justify-between p-4 border-b border-border last:border-b-0 hover:bg-surface-light cursor-pointer"
-                            dir="rtl"
-                          >
+                                                      >
                             <div>
                               <h3 className="font-bold text-lg font-display">{seriesName}</h3>
                               <p className="text-sm text-muted-foreground">{collectionName}</p>
                               <p className="text-sm text-muted-foreground">
-                                {series.volumeCount || 0} כרכים
+                                {series.volumeCount || 0} {t('public.collections.volumes')}
                               </p>
                             </div>
                             {selectedSeriesId === series.id && (
@@ -407,10 +406,10 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
                   {/* Volumes Grid (shown when series selected) */}
                   {selectedSeriesId && (
                     <div className="mt-6">
-                      <h2 className="text-xl font-bold mb-4 text-right font-display" dir="rtl">כרכים</h2>
+                      <h2 className="text-xl font-bold mb-4 text-right font-display">{t('public.collections.volumes')}</h2>
                       {loadingVolumes ? (
                         <div className="bg-white border border-border p-12 text-center">
-                          <p className="text-body-secondary">טוען...</p>
+                          <p className="text-body-secondary">{t('public.collections.loading')}</p>
                         </div>
                       ) : (
                         <>

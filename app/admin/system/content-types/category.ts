@@ -16,7 +16,9 @@ export const CategoryType: ContentTypeDefinition = {
   
   fields: [
     createField.text("title", "Title", { required: true, order: 1 }),
+    createField.translatable("titleI18n", "Title (i18n)"),
     createField.slug("slug", "title", "/category/"),
+    createField.translatable("descriptionI18n", "Description (i18n)"),
     createField.text("description", "Description", {
       rows: 3,
       showInList: true,

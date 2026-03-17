@@ -1,4 +1,7 @@
-import { ArrowLeft } from "lucide-react"
+"use client"
+
+import { ArrowLeft, ArrowRight } from "lucide-react"
+import { useLanguage } from "@/lib/i18n/language-provider"
 
 export interface PostCardProps {
   post: {
@@ -12,6 +15,10 @@ export interface PostCardProps {
 }
 
 export default function PostCard({ post }: PostCardProps) {
+  const { locale, t, isRtl } = useLanguage()
+  const Arrow = isRtl ? ArrowLeft : ArrowRight
+  const href = post.slug.startsWith('/') ? `/${locale}${post.slug}` : post.slug
+
   return (
     <div className="flex flex-col md:flex-row gap-6 pb-8 border-b border-border">
       <div className="w-full md:w-1/3 h-48 md:h-auto">
@@ -22,20 +29,19 @@ export default function PostCard({ post }: PostCardProps) {
         />
       </div>
       <div className="w-full md:w-2/3 flex flex-col">
-        {post.date && <div className="text-sm text-muted-foreground mb-2 rtl-dir">{post.date}</div>}
+        {post.date && <div className="text-sm text-muted-foreground mb-2">{post.date}</div>}
         <h2 className="font-display text-xl sm:text-2xl text-brand-primary mb-3">{post.title}</h2>
         {post.excerpt && <p className="text-base mb-4">{post.excerpt}</p>}
         <div className="mt-auto">
           <a
-            href={post.slug}
+            href={href}
             className="flex justify-between items-center text-brand-secondary hover:text-brand-primary transition-colors duration-200"
           >
-            <span className="font-display font-bold">קרא עוד</span>
-            <ArrowLeft className="h-5 w-5" />
+            <span className="font-display font-bold">{t('public.content.readMore', 'קרא עוד')}</span>
+            <Arrow className="h-5 w-5" />
           </a>
         </div>
       </div>
     </div>
   )
 }
-

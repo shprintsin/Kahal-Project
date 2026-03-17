@@ -1,11 +1,21 @@
 import type { FooterColumn } from "@/app/admin/types/menus";
+import { getContentTranslation } from "@/lib/i18n/content-translation";
 
 interface SiteFooterProps {
   columns: FooterColumn[];
   copyrightText: string;
+  locale?: string;
 }
 
-export function SiteFooter({ columns, copyrightText }: SiteFooterProps) {
+function resolveText(
+  localized: { default: string; translations: Record<string, string> },
+  locale?: string
+): string {
+  if (!locale) return localized.default;
+  return getContentTranslation(localized.translations, locale, localized.default);
+}
+
+export function SiteFooter({ columns, copyrightText, locale }: SiteFooterProps) {
   if (columns.length === 0) {
     return (
       <footer className="bg-brand-primary-dark text-white py-6 sm:py-8">
@@ -23,19 +33,19 @@ export function SiteFooter({ columns, copyrightText }: SiteFooterProps) {
           {columns.map((column) => (
             <div key={column.id || column.order}>
               <h3 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">
-                {column.title.default}
+                {resolveText(column.title, locale)}
               </h3>
               {column.type === "RICH_TEXT" ? (
                 <div
                   className="text-xs sm:text-sm"
-                  dangerouslySetInnerHTML={{ __html: column.content.default }}
+                  dangerouslySetInnerHTML={{ __html: resolveText(column.content, locale) }}
                 />
               ) : (
                 <ul className="text-xs sm:text-sm space-y-2">
                   {column.items.map((item) => (
                     <li key={item.id || item.order}>
                       <a href={item.url || "#"} className="hover:underline">
-                        {item.label.default}
+                        {resolveText(item.label, locale)}
                       </a>
                     </li>
                   ))}

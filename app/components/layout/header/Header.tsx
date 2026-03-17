@@ -6,14 +6,17 @@ import { NavItem } from '@/app/types'
 import Search from './Search'
 import styles from '../css/header.module.css'
 import Link from 'next/link'
+import { useLanguage } from '@/lib/i18n/language-provider'
+import { LanguageSwitcher } from '@/components/ui/language-switcher'
 
 export default function Header({ navigation }: { navigation: NavItem[] }) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const { locale, t } = useLanguage()
 
   return (
     <header className={styles.header}>
       <div className={styles.container}>
-        <Link href="/"><div className={styles.logo}>קהל</div></Link>
+        <Link href={`/${locale}`}><div className={styles.logo}>{t('public.site.name', 'קהל')}</div></Link>
         <button
           className={styles.menuToggle}
           onClick={() => setMenuOpen(!menuOpen)}
@@ -23,6 +26,7 @@ export default function Header({ navigation }: { navigation: NavItem[] }) {
         </button>
         <NavMenu navigation={navigation} isOpen={menuOpen} />
         <Search />
+        <LanguageSwitcher />
       </div>
     </header>
   )

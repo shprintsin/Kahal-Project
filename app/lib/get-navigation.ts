@@ -3,23 +3,32 @@ import { getMenuByLocation, getFooterColumns, getSiteSettings } from "@/app/admi
 import { NavItem } from "@/app/types";
 import { MenuItem, FooterColumn } from "@/app/admin/types/menus";
 import { navigation as fallbackNavigation } from "@/app/Data";
+import { getContentTranslation } from "@/lib/i18n/content-translation";
+import { defaultLocale } from "@/lib/i18n/config";
 
-function mapMenuItemToNavItem(item: MenuItem): NavItem {
+function resolveLocalizedText(
+  label: { default: string; translations: Record<string, string> },
+  locale: string
+): string {
+  return getContentTranslation(label.translations, locale, label.default);
+}
+
+function mapMenuItemToNavItem(item: MenuItem, locale: string): NavItem {
   return {
-    label: item.label.default,
+    label: resolveLocalizedText(item.label, locale),
     icon: item.icon || null,
     href: item.url || "#",
     subItems: item.children && item.children.length > 0
-      ? item.children.map(mapMenuItemToNavItem)
+      ? item.children.map(child => mapMenuItemToNavItem(child, locale))
       : undefined
   };
 }
 
-export const getNavigation = cache(async (): Promise<NavItem[]> => {
+export const getNavigation = cache(async (locale: string = defaultLocale): Promise<NavItem[]> => {
   try {
     const headerMenu = await getMenuByLocation("HEADER");
     if (headerMenu && headerMenu.items.length > 0) {
-      return headerMenu.items.map(mapMenuItemToNavItem);
+      return headerMenu.items.map(item => mapMenuItemToNavItem(item, locale));
     }
   } catch (e) {
     console.error("Failed to fetch navigation from DB:", e);
@@ -33,16 +42,20 @@ export interface SiteShellData {
   copyrightText: string;
 }
 
-export const getSiteShellData = cache(async (): Promise<SiteShellData> => {
+export const getSiteShellData = cache(async (locale: string = defaultLocale): Promise<SiteShellData> => {
   const [navigation, footerColumns, siteSettings] = await Promise.all([
-    getNavigation(),
+    getNavigation(locale),
     getFooterColumns().catch(() => []),
     getSiteSettings().catch(() => null),
   ]);
 
+  const copyrightText = siteSettings?.copyrightText
+    ? getContentTranslation(siteSettings.copyrightText.translations, locale, siteSettings.copyrightText.default)
+    : "© 2024 פרויקט הקהל. כל הזכויות שמורות.";
+
   return {
     navigation,
     footerColumns,
-    copyrightText: siteSettings?.copyrightText?.default || "© 2024 פרויקט הקהל. כל הזכויות שמורות.",
+    copyrightText,
   };
 });

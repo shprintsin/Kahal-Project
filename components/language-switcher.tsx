@@ -1,7 +1,6 @@
 "use client";
 
 import { useLanguage } from "@/lib/i18n/language-provider";
-import { getAvailableLanguages } from "@/lib/i18n/load-translations";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,18 +9,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Languages, Check } from "lucide-react";
-
-const languageNames: Record<string, string> = {
-  'he_default': 'עברית',
-  'he': 'עברית',
-  'en': 'English',
-};
+import { locales, localeConfig } from "@/lib/i18n/config";
 
 export function LanguageSwitcher() {
-  const { language, setLanguage, translations } = useLanguage();
-  
-  // For now, hardcode available languages
-  const availableLanguages = ['he_default', 'en'];
+  const { locale, setLanguage } = useLanguage();
 
   return (
     <DropdownMenu>
@@ -32,14 +23,14 @@ export function LanguageSwitcher() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {availableLanguages.map((lang) => (
+        {locales.map((loc) => (
           <DropdownMenuItem
-            key={lang}
-            onClick={() => setLanguage(lang)}
+            key={loc}
+            onClick={() => setLanguage(loc)}
             className="flex items-center justify-between gap-2"
           >
-            <span>{languageNames[lang] || lang}</span>
-            {language === lang && <Check className="h-4 w-4" />}
+            <span>{localeConfig[loc].nativeName}</span>
+            {locale === loc && <Check className="h-4 w-4" />}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

@@ -1,4 +1,6 @@
-import { Button } from "@/components/ui/button"
+"use client"
+
+import { useLanguage } from "@/lib/i18n/language-provider"
 
 export interface SidebarCategory {
   name: string
@@ -24,10 +26,11 @@ export interface SidebarProps {
 }
 
 export default function Sidebar({ categories, tags, recentPosts }: SidebarProps) {
+  const { t } = useLanguage()
   return (
     <div className="space-y-8 bg-surface-subtle p-6 rounded-md">
       <div className="widget">
-        <h3 className="font-display text-xl text-brand-primary mb-4">קטגוריות</h3>
+        <h3 className="font-display text-xl text-brand-primary mb-4">{t('public.sidebar.categories', 'קטגוריות')}</h3>
         <ul className="space-y-3">
           {categories.map((category) => (
             <li key={category.slug}>

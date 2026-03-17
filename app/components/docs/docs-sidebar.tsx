@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { useState, useEffect } from "react"
 import { ChevronDown, ChevronLeft, Menu, X } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { useLanguage } from "@/lib/i18n/language-provider"
 import type { SidebarItem } from "@/lib/docs/types"
 
 function SidebarNode({
@@ -74,6 +75,7 @@ function SidebarNode({
 }
 
 export function DocsSidebar({ items }: { items: SidebarItem[] }) {
+  const { t, locale } = useLanguage()
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(() => {
@@ -109,16 +111,16 @@ export function DocsSidebar({ items }: { items: SidebarItem[] }) {
   }
 
   const sidebarContent = (
-    <nav className="space-y-1 py-4 px-2" dir="rtl">
+    <nav className="space-y-1 py-4 px-2">
       <Link
-        href="/docs"
+        href={`/${locale}/docs`}
         className={`block px-3 py-2 rounded-md text-sm font-semibold transition-colors ${
-          pathname === "/docs"
+          pathname === `/${locale}/docs`
             ? "bg-brand-primary text-white"
             : "text-gray-700 hover:bg-gray-100"
         }`}
       >
-        תיעוד
+        {t('public.docs.documentation')}
       </Link>
       <div className="my-2 border-b border-gray-200" />
       {items.map((item) => (
@@ -139,7 +141,7 @@ export function DocsSidebar({ items }: { items: SidebarItem[] }) {
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
         className="lg:hidden fixed bottom-4 left-4 z-50 bg-brand-primary text-white p-3 rounded-full shadow-lg"
-        aria-label="תפריט ניווט"
+        aria-label={t('public.docs.navMenu')}
       >
         {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>

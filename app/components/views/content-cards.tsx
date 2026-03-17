@@ -1,6 +1,7 @@
 "use client"
 
 import { Calendar, Database, FileText, Layers, Map as MapIcon, Eye } from "lucide-react"
+import { useLanguage } from "@/lib/i18n/language-provider"
 
 interface MetaBadgeProps {
   children: React.ReactNode
@@ -16,7 +17,7 @@ function MetaBadge({ children }: MetaBadgeProps) {
 
 function MetaRow({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2 rtl-dir flex-wrap">
+    <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2 flex-wrap">
       {children}
     </div>
   )
@@ -112,6 +113,7 @@ export interface LayerItem extends ContentItem {
 }
 
 export function PostCard({ item }: { item: PostItem }) {
+  const { locale, t } = useLanguage()
   return (
     <CardWrapper>
       <CardImage src={item.thumbnail} alt={item.title} />
@@ -125,15 +127,16 @@ export function PostCard({ item }: { item: PostItem }) {
             </span>
           )}
         </MetaRow>
-        <CardTitle href={`/posts/${item.slug}`}>{item.title}</CardTitle>
+        <CardTitle href={`/${locale}/posts/${item.slug}`}>{item.title}</CardTitle>
         <CardExcerpt text={item.excerpt} />
-        <CardLink href={`/posts/${item.slug}`} label="קרא עוד" icon={<FileText className="h-4 w-4" />} />
+        <CardLink href={`/${locale}/posts/${item.slug}`} label={t('public.content.readMore', 'קרא עוד')} icon={<FileText className="h-4 w-4" />} />
       </div>
     </CardWrapper>
   )
 }
 
 export function DatasetCard({ item }: { item: DatasetItem }) {
+  const { locale, t } = useLanguage()
   return (
     <CardWrapper>
       <CardImage src={item.thumbnail} alt={item.title} />
@@ -149,19 +152,20 @@ export function DatasetCard({ item }: { item: DatasetItem }) {
           {item.resourceCount !== undefined && (
             <span className="flex items-center gap-1 font-medium text-brand-primary">
               <FileText className="w-3.5 h-3.5" />
-              {item.resourceCount} קבצים
+              {item.resourceCount} {t('public.datasets.resources', 'קבצים')}
             </span>
           )}
         </MetaRow>
-        <CardTitle href={item.slug}>{item.title}</CardTitle>
+        <CardTitle href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug}>{item.title}</CardTitle>
         <CardExcerpt text={item.excerpt} />
-        <CardLink href={item.slug} label="צפה במאגר המלא" icon={<Database className="h-4 w-4" />} />
+        <CardLink href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug} label={t('public.datasets.description', 'צפה במאגר המלא')} icon={<Database className="h-4 w-4" />} />
       </div>
     </CardWrapper>
   )
 }
 
 export function MapCard({ item }: { item: MapItem }) {
+  const { locale, t } = useLanguage()
   return (
     <CardWrapper>
       <CardImage src={item.thumbnail} alt={item.title} />
@@ -178,19 +182,20 @@ export function MapCard({ item }: { item: MapItem }) {
           {item.layerCount !== undefined && (
             <span className="flex items-center gap-1 font-medium text-brand-primary">
               <Layers className="w-3.5 h-3.5" />
-              {item.layerCount} שכבות
+              {item.layerCount} {t('public.layers.title', 'שכבות')}
             </span>
           )}
         </MetaRow>
-        <CardTitle href={item.slug}>{item.title}</CardTitle>
+        <CardTitle href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug}>{item.title}</CardTitle>
         <CardExcerpt text={item.excerpt} />
-        <CardLink href={item.slug} label="צפה במפה" icon={<MapIcon className="h-4 w-4" />} />
+        <CardLink href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug} label={t('public.maps.title', 'צפה במפה')} icon={<MapIcon className="h-4 w-4" />} />
       </div>
     </CardWrapper>
   )
 }
 
 export function LayerCard({ item }: { item: LayerItem }) {
+  const { locale, t } = useLanguage()
   return (
     <CardWrapper>
       <CardImage src={item.thumbnail} alt={item.name} />
@@ -207,13 +212,13 @@ export function LayerCard({ item }: { item: LayerItem }) {
           {item.mapCount !== undefined && item.mapCount > 0 && (
             <span className="flex items-center gap-1 font-medium text-brand-primary">
               <Eye className="w-3.5 h-3.5" />
-              בשימוש ב-{item.mapCount} מפות
+              {item.mapCount} {t('public.maps.title', 'מפות')}
             </span>
           )}
         </MetaRow>
-        <CardTitle href={`/layers/${item.slug}`}>{item.name}</CardTitle>
+        <CardTitle href={`/${locale}/layers/${item.slug}`}>{item.name}</CardTitle>
         <CardExcerpt text={item.excerpt} />
-        <CardLink href={`/layers/${item.slug}`} label="צפה בשכבה" icon={<Layers className="h-4 w-4" />} />
+        <CardLink href={`/${locale}/layers/${item.slug}`} label={t('public.layers.title', 'צפה בשכבה')} icon={<Layers className="h-4 w-4" />} />
       </div>
     </CardWrapper>
   )

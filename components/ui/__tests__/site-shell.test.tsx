@@ -40,9 +40,9 @@ describe("SiteShell", () => {
     expect(screen.getByTestId("footer")).toBeInTheDocument()
   })
 
-  it("sets RTL direction", () => {
+  it("does not set dir on shell div (direction managed by html element)", () => {
     const { container } = render(<SiteShell navigation={nav}>C</SiteShell>)
-    expect(container.firstChild).toHaveAttribute("dir", "rtl")
+    expect(container.firstChild).not.toHaveAttribute("dir")
   })
 
   it("passes footer data", () => {

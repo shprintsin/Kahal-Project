@@ -10,46 +10,50 @@ export interface TranslationData {
 
 const translationsCache = new Map<string, TranslationData>();
 
-export function loadTranslations(language: string = 'he_default'): TranslationData {
-  // Check cache first
-  if (translationsCache.has(language)) {
-    return translationsCache.get(language)!;
+const LANGUAGE_ALIASES: Record<string, string> = {
+  he_default: "he",
+};
+
+function resolveLanguageAlias(language: string): string {
+  return LANGUAGE_ALIASES[language] || language;
+}
+
+export function loadTranslations(language: string = 'he'): TranslationData {
+  const resolved = resolveLanguageAlias(language);
+
+  if (translationsCache.has(resolved)) {
+    return translationsCache.get(resolved)!;
   }
 
   try {
     const languagesDir = path.join(process.cwd(), 'languages');
-    const filePath = path.join(languagesDir, `${language}.yml`);
-    
-    // Check if file exists
+    const filePath = path.join(languagesDir, `${resolved}.yml`);
+
     if (!fs.existsSync(filePath)) {
-      console.warn(`Translation file not found: ${filePath}, falling back to he_default`);
-      if (language !== 'he_default') {
-        return loadTranslations('he_default');
+      console.warn(`Translation file not found: ${filePath}, falling back to he`);
+      if (resolved !== 'he') {
+        return loadTranslations('he');
       }
-      throw new Error('Default translation file (he_default.yml) not found');
+      throw new Error('Default translation file (he.yml) not found');
     }
 
     const fileContents = fs.readFileSync(filePath, 'utf8');
     const data = yaml.load(fileContents) as TranslationData;
 
-    // Validate required fields
     if (!data.lang || typeof data.isRtl !== 'boolean') {
       throw new Error(`Invalid translation file format: ${filePath}`);
     }
 
-    // Cache the translations
-    translationsCache.set(language, data);
+    translationsCache.set(resolved, data);
 
     return data;
   } catch (error) {
-    console.error(`Error loading translations for ${language}:`, error);
-    
-    // If not already trying default, fall back to it
-    if (language !== 'he_default') {
-      return loadTranslations('he_default');
+    console.error(`Error loading translations for ${resolved}:`, error);
+
+    if (resolved !== 'he') {
+      return loadTranslations('he');
     }
-    
-    // Return minimal fallback
+
     return {
       lang: 'Hebrew',
       isRtl: true,
@@ -60,9 +64,9 @@ export function loadTranslations(language: string = 'he_default'): TranslationDa
 export function getAvailableLanguages(): string[] {
   try {
     const languagesDir = path.join(process.cwd(), 'languages');
-    
+
     if (!fs.existsSync(languagesDir)) {
-      return ['he_default'];
+      return ['he'];
     }
 
     const files = fs.readdirSync(languagesDir);
@@ -71,11 +75,10 @@ export function getAvailableLanguages(): string[] {
       .map(file => file.replace('.yml', ''));
   } catch (error) {
     console.error('Error reading available languages:', error);
-    return ['he_default'];
+    return ['he'];
   }
 }
 
-// Helper function to get nested translation value
 export function getTranslation(translations: TranslationData, key: string, fallback?: string): string {
   const keys = key.split('.');
   let value: any = translations;
@@ -84,7 +87,6 @@ export function getTranslation(translations: TranslationData, key: string, fallb
     if (value && typeof value === 'object' && k in value) {
       value = value[k];
     } else {
-      // Key not found, return fallback or key itself
       return fallback || key;
     }
   }

@@ -34,7 +34,7 @@ describe("getNavigation", () => {
     mockGetMenuByLocation.mockResolvedValueOnce({
       location: "HEADER",
       items: [
-        { label: { default: "Home" }, url: "/", icon: "Home", children: [] },
+        { label: { default: "Home", translations: {} }, url: "/", icon: "Home", children: [] },
       ],
     } as any)
 
@@ -66,13 +66,13 @@ describe("getSiteShellData", () => {
   it("returns combined shell data", async () => {
     mockGetMenuByLocation.mockResolvedValueOnce({
       location: "HEADER",
-      items: [{ label: { default: "Home" }, url: "/", icon: null, children: [] }],
+      items: [{ label: { default: "Home", translations: {} }, url: "/", icon: null, children: [] }],
     } as any)
     mockGetFooterColumns.mockResolvedValueOnce([
-      { id: "1", title: { default: "Links" }, links: [] },
+      { id: "1", title: { default: "Links", translations: {} }, links: [] },
     ] as any)
     mockGetSiteSettings.mockResolvedValueOnce({
-      copyrightText: { default: "© Test" },
+      copyrightText: { default: "© Test", translations: {} },
     } as any)
 
     const data = await getSiteShellData()
@@ -84,7 +84,7 @@ describe("getSiteShellData", () => {
   it("handles footer/settings errors gracefully", async () => {
     mockGetMenuByLocation.mockResolvedValueOnce({
       location: "HEADER",
-      items: [{ label: { default: "Home" }, url: "/", icon: null, children: [] }],
+      items: [{ label: { default: "Home", translations: {} }, url: "/", icon: null, children: [] }],
     } as any)
     mockGetFooterColumns.mockRejectedValueOnce(new Error("fail"))
     mockGetSiteSettings.mockRejectedValueOnce(new Error("fail"))

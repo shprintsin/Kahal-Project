@@ -11,6 +11,7 @@ export const PeriodType: ContentTypeDefinition = {
   
   fields: [
     createField.text("name", "Name", { required: true, order: 1 }),
+    createField.translatable("nameI18n", "Name (i18n)"),
     createField.slug("slug", "name", "/period/"),
     createField.date("dateStart", "Start Date", { showInEditor: true, showInList: true }),
     createField.date("dateEnd", "End Date", { showInEditor: true, showInList: true }),
