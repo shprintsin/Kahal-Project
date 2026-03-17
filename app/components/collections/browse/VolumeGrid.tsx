@@ -1,7 +1,8 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/lib/i18n/language-provider';
 import type { VolumeGridItem } from '@/types/collections';
 
 interface VolumeGridProps {
@@ -10,11 +11,12 @@ interface VolumeGridProps {
 }
 
 export default function VolumeGrid({ volumes, collectionId }: VolumeGridProps) {
+  const { t, locale } = useLanguage();
   const router = useRouter();
 
   const handleVolumeClick = (volume: VolumeGridItem) => {
     // Navigate to the volume viewer
-    const volumePath = `/collections/${collectionId || volume.series?.collectionId}/volumes/${volume.id}`;
+    const volumePath = `/${locale}/collections/${collectionId || volume.series?.collectionId}/volumes/${volume.id}`;
     router.push(volumePath);
   };
 
@@ -23,7 +25,7 @@ export default function VolumeGrid({ volumes, collectionId }: VolumeGridProps) {
     console.error('VolumeGrid: volumes is not an array', volumes);
     return (
       <div className="bg-white border border-gray-200 p-12 text-center">
-        <p className="text-gray-600">שגיאה בטעינת כרכים</p>
+        <p className="text-gray-600">{t('public.collections.errorLoading')}</p>
       </div>
     );
   }
@@ -31,7 +33,7 @@ export default function VolumeGrid({ volumes, collectionId }: VolumeGridProps) {
   if (volumes.length === 0) {
     return (
       <div className="bg-white border border-gray-200 p-12 text-center">
-        <p className="text-gray-600">אין כרכים זמינים</p>
+        <p className="text-gray-600">{t('public.collections.emptyVolumes')}</p>
       </div>
     );
   }
@@ -39,7 +41,7 @@ export default function VolumeGrid({ volumes, collectionId }: VolumeGridProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4 bg-white border border-gray-200">
       {volumes.map((volume) => {
-        const title = (volume.titleI18n?.he || volume.titleI18n?.en || volume.title || 'ללא שם');
+        const title = (volume.titleI18n?.he || volume.titleI18n?.en || volume.title || t('public.collections.noName'));
         const thumbnailUrl = volume.thumbnail?.url;
         
         return (
@@ -69,17 +71,17 @@ export default function VolumeGrid({ volumes, collectionId }: VolumeGridProps) {
 
             {/* Info */}
             <div className="p-3 text-right">
-              <h3 className="font-bold text-sm line-clamp-2 mb-1 group-hover:text-brand-primary font-display" dir="rtl">
+              <h3 className="font-bold text-sm line-clamp-2 mb-1 group-hover:text-brand-primary font-display" >
                 {title}
               </h3>
               {volume.indexNumber !== undefined && (
-                <p className="text-xs text-gray-500" dir="rtl">
-                  כרך {volume.indexNumber}
+                <p className="text-xs text-gray-500" >
+                  {t('public.collections.volume')} {volume.indexNumber}
                 </p>
               )}
               {volume.pageCount !== undefined && (
-                <p className="text-xs text-gray-500" dir="rtl">
-                  {volume.pageCount} עמודים
+                <p className="text-xs text-gray-500" >
+                  {volume.pageCount} {t('public.collections.pages')}
                 </p>
               )}
               {volume.year && (

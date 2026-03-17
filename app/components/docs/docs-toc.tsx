@@ -1,9 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useLanguage } from "@/lib/i18n/language-provider"
 import type { TocHeading } from "@/lib/docs/types"
 
 export function DocsToc({ headings }: { headings: TocHeading[] }) {
+  const { t } = useLanguage()
   const [activeId, setActiveId] = useState<string>("")
 
   useEffect(() => {
@@ -34,7 +36,7 @@ export function DocsToc({ headings }: { headings: TocHeading[] }) {
   return (
     <nav className="hidden xl:block w-56 shrink-0">
       <div className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto">
-        <p className="text-sm font-semibold text-gray-500 mb-3">בעמוד הזה</p>
+        <p className="text-sm font-semibold text-gray-500 mb-3">{t('public.docs.onThisPage')}</p>
         <ul className="space-y-2 text-sm">
           {headings.map((heading) => (
             <li

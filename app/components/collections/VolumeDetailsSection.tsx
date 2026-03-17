@@ -27,7 +27,7 @@ export default function VolumeDetailsSection({
           </h1>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 text-right" dir="rtl">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 text-right">
           {/* Right Column (was Left) - Download Options */}
           <div className="lg:col-span-1">
             <h2 className="text-lg font-bold text-brand-primary mb-4 flex items-center gap-2 font-['Rubik']">

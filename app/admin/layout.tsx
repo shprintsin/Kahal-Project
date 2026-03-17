@@ -26,7 +26,7 @@ export default async function AdminLayout({
   const defaultOpen = cookieStore.get("sidebar:state")?.value !== "false";
   
   // Read language preference from cookies
-  const language = cookieStore.get("language")?.value || "he_default";
+  const language = cookieStore.get("language")?.value || cookieStore.get("NEXT_LOCALE")?.value || "he";
   const initialTranslations = loadTranslations(language);
 
   return (

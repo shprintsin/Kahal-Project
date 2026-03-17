@@ -12,6 +12,7 @@ interface SiteShellProps {
   copyrightText?: string
   className?: string
   bg?: string
+  locale?: string
 }
 
 export function SiteShell({
@@ -21,12 +22,13 @@ export function SiteShell({
   copyrightText = "© 2024 פרויקט הקהל. כל הזכויות שמורות.",
   className,
   bg = "bg-surface-light",
+  locale,
 }: SiteShellProps) {
   return (
-    <div className={cn("flex flex-col min-h-screen", bg, className)} dir="rtl">
+    <div className={cn("flex flex-col min-h-screen", bg, className)}>
       <Header navigation={navigation} />
       {children}
-      <SiteFooter columns={footerColumns} copyrightText={copyrightText} />
+      <SiteFooter columns={footerColumns} copyrightText={copyrightText} locale={locale} />
     </div>
   )
 }

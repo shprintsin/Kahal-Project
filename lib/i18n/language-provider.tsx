@@ -1,11 +1,14 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 import { DirectionProvider } from '@radix-ui/react-direction';
+import { usePathname } from 'next/navigation';
+import { isValidLocale, locales, defaultLocale } from './config';
 import type { TranslationData } from './load-translations';
 
 interface LanguageContextType {
   language: string;
+  locale: string;
   translations: TranslationData;
   isRtl: boolean;
   setLanguage: (lang: string) => void;
@@ -28,41 +31,32 @@ interface LanguageProviderProps {
   initialTranslations: TranslationData;
 }
 
-export function LanguageProvider({ 
-  children, 
-  initialLanguage = 'he_default',
-  initialTranslations 
+export function LanguageProvider({
+  children,
+  initialLanguage = 'he',
+  initialTranslations,
 }: LanguageProviderProps) {
   const [language, setLanguageState] = useState(initialLanguage);
   const [translations, setTranslations] = useState<TranslationData>(initialTranslations);
   const [isRtl, setIsRtl] = useState(initialTranslations.isRtl);
+  const pathname = usePathname();
 
-  const setLanguage = useCallback(async (lang: string) => {
-    try {
-      // Fetch translations from API route
-      const response = await fetch(`/api/translations?lang=${lang}`);
-      if (!response.ok) {
-        throw new Error('Failed to load translations');
-      }
-      
-      const data: TranslationData = await response.json();
-      
-      setLanguageState(lang);
-      setTranslations(data);
-      setIsRtl(data.isRtl);
-      
-      // Save to cookie
-      document.cookie = `language=${lang}; path=/; max-age=31536000`; // 1 year
-      
-      // Update document direction
-      document.documentElement.dir = data.isRtl ? 'rtl' : 'ltr';
-      document.documentElement.lang = lang.split('_')[0]; // e.g., 'he' from 'he_default'
-    } catch (error) {
-      console.error('Error changing language:', error);
+  const locale = language.split("_")[0] || defaultLocale;
+
+  const setLanguage = useCallback((lang: string) => {
+    const newLocale = lang.split("_")[0] || defaultLocale;
+    if (!isValidLocale(newLocale)) return;
+
+    const segments = pathname.split('/');
+    if (segments.length > 1 && isValidLocale(segments[1])) {
+      segments[1] = newLocale;
+    } else {
+      segments.splice(1, 0, newLocale);
     }
-  }, []);
+    const newPath = segments.join('/') || `/${newLocale}`;
+    window.location.href = newPath;
+  }, [pathname]);
 
-  // Translation helper function
   const t = useCallback((key: string, fallback?: string): string => {
     const keys = key.split('.');
     let value: any = translations;
@@ -71,10 +65,6 @@ export function LanguageProvider({
       if (value && typeof value === 'object' && k in value) {
         value = value[k];
       } else {
-        // Key not found
-        if (process.env.NODE_ENV === 'development') {
-          console.warn(`Translation key not found: ${key}`);
-        }
         return fallback || key;
       }
     }
@@ -82,14 +72,9 @@ export function LanguageProvider({
     return typeof value === 'string' ? value : (fallback || key);
   }, [translations]);
 
-  // Set initial document direction
-  useEffect(() => {
-    document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
-    document.documentElement.lang = language.split('_')[0];
-  }, [isRtl, language]);
-
   const value: LanguageContextType = {
     language,
+    locale,
     translations,
     isRtl,
     setLanguage,

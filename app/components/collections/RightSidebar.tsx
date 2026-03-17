@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useViewer } from '@/contexts/ViewerContext';
 import { ChevronLeft, ChevronRight, Download } from 'lucide-react';
+import { useLanguage } from '@/lib/i18n/language-provider';
 import type { IVolumeEntry, ViewMode } from '@/types/collections';
 
 interface LSidebarProps {
@@ -11,6 +12,7 @@ interface LSidebarProps {
 }
 
 export default function LSidebar({ volume }: LSidebarProps) {
+  const { t } = useLanguage();
   const metadata = volume.metadata;
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -50,10 +52,10 @@ export default function LSidebar({ volume }: LSidebarProps) {
       {/* Sidebar Content - Only visible when expanded */}
       {isExpanded && (
         <ScrollArea className="flex-1">
-          <div className="p-4 space-y-6" dir="rtl">
+          <div className="p-4 space-y-6">
             {/* Table of Contents */}
             <div>
-              <h3 className="text-sm font-semibold mb-3 text-gray-900 text-right">תוכן עניינים</h3>
+              <h3 className="text-sm font-semibold mb-3 text-gray-900 text-right">{t('public.collections.toc')}</h3>
               <div className="space-y-1 max-h-64 overflow-y-auto">
                 {pages.map((page, index) => (
                   <button
@@ -65,7 +67,7 @@ export default function LSidebar({ volume }: LSidebarProps) {
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >
-                    עמוד {index + 1}
+                    {t('public.collections.page')} {index + 1}
                   </button>
                 ))}
               </div>
@@ -74,32 +76,32 @@ export default function LSidebar({ volume }: LSidebarProps) {
             {/* Volume Metadata */}
             {metadata && (
               <div className="pt-4 border-t border-gray-200">
-                <h3 className="text-sm font-semibold mb-3 text-gray-900 text-right">מידע על הכרך</h3>
+                <h3 className="text-sm font-semibold mb-3 text-gray-900 text-right">{t('public.collections.volumeInfo')}</h3>
                 <div className="space-y-2 text-sm text-right">
                   {metadata.title && (
                     <div>
-                      <span className="text-gray-600">כותרת:</span>
+                      <span className="text-gray-600">{t('public.collections.title_label')}:</span>
                       <p className="font-medium text-gray-900 mt-1">{metadata.title}</p>
                     </div>
                   )}
                   
                   {metadata.description && (
                     <div>
-                      <span className="text-gray-600">תיאור:</span>
+                      <span className="text-gray-600">{t('public.collections.description_label')}:</span>
                       <p className="text-gray-700 mt-1">{metadata.description}</p>
                     </div>
                   )}
 
                   {metadata.language && (
                     <div>
-                      <span className="text-gray-600">שפה:</span>
+                      <span className="text-gray-600">{t('public.collections.language_label')}:</span>
                       <p className="text-gray-700 mt-1">{metadata.language}</p>
                     </div>
                   )}
 
                   {metadata.year && (
                     <div>
-                      <span className="text-gray-600">שנה:</span>
+                      <span className="text-gray-600">{t('public.collections.year')}:</span>
                       <p className="text-gray-700 mt-1">{metadata.year}</p>
                     </div>
                   )}
@@ -109,8 +111,8 @@ export default function LSidebar({ volume }: LSidebarProps) {
 
             {/* Page Navigation */}
             <div className="pt-4 border-t border-gray-200">
-              <div className="flex items-center gap-2 text-sm" dir="rtl">
-                <span className="text-gray-600">עמוד</span>
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-gray-600">{t('public.collections.page')}</span>
                 <input
                   type="number"
                   min="1"
@@ -119,7 +121,7 @@ export default function LSidebar({ volume }: LSidebarProps) {
                   onChange={handlePageInput}
                   className="w-16 px-2 py-1 border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-brand-primary"
                 />
-                <span className="text-gray-600">מתוך {totalPages}</span>
+                <span className="text-gray-600">{t('public.collections.of')} {totalPages}</span>
               </div>
             </div>
 
@@ -127,7 +129,7 @@ export default function LSidebar({ volume }: LSidebarProps) {
             <div className="pt-4 border-t border-gray-200">
               <button className="flex items-center gap-2 px-3 py-2 bg-brand-dark text-white rounded-md hover:shadow-md transition-all text-sm font-medium w-full justify-center">
                 <Download className="w-4 h-4" />
-                הורדה
+                {t('public.collections.download')}
               </button>
             </div>
           </div>

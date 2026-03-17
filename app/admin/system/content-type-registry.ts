@@ -302,6 +302,27 @@ export const createField = {
     listDisplay: "boolean",
     ...options,
   }),
+
+  translatable: (key: string, label: string, options: Partial<FieldDefinition> = {}): FieldDefinition => ({
+    key,
+    type: "translatable",
+    label,
+    showInList: false,
+    showInEditor: true,
+    zone: "main",
+    ...options,
+  }),
+
+  translatableTextarea: (key: string, label: string, options: Partial<FieldDefinition> = {}): FieldDefinition => ({
+    key,
+    type: "translatable" as FieldType,
+    label,
+    showInList: false,
+    showInEditor: true,
+    zone: "main",
+    rows: 4,
+    ...options,
+  }),
 };
 
 // ============================================
@@ -345,6 +366,13 @@ export function generateSchema(fields: FieldDefinition[]): z.ZodObject<any> {
         break;
       case "json":
         fieldSchema = z.any();
+        break;
+      case "translatable":
+        fieldSchema = z.object({
+          he: z.string().optional(),
+          en: z.string().optional(),
+          pl: z.string().optional(),
+        }).optional();
         break;
       default:
         fieldSchema = z.any();

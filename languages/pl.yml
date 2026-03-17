@@ -1,0 +1,289 @@
+lang: Polish
+isRtl: false
+
+# Common translations
+common:
+  welcome: Witamy
+  cancel: Anuluj
+  save: Zapisz
+  edit: Edytuj
+  delete: Usuń
+  create: Utwórz
+  search: Szukaj
+  filter: Filtruj
+  export: Eksportuj
+  import: Importuj
+  actions: Akcje
+  status: Status
+  published: Opublikowany
+  draft: Szkic
+  archived: Zarchiwizowany
+
+# Navigation
+nav:
+  content: Treść
+  posts: Posty
+  pages: Strony
+  categories: Kategorie
+  tags: Tagi
+  taxonomyManager: Menedżer taksonomii
+  research: Badania
+  collections: Kolekcje
+  documents: Dokumenty
+  artifacts: Artefakty
+  artifactCategories: Kategorie artefaktów
+  series: Serie
+  datasets: Zbiory danych
+  layers: Warstwy
+  maps: Mapy
+  system: System
+  media: Media
+  menus: Menu
+  users: Użytkownicy
+  settings: Ustawienia
+  places: Miejsca
+  periods: Okresy
+  regions: Regiony
+
+# Page titles and descriptions
+pages:
+  tags:
+    title: Tagi
+    description: Zarządzanie tagami do organizacji treści
+  categories:
+    title: Kategorie
+    description: Zarządzanie kategoriami treści
+  artifactCategories:
+    title: Kategorie artefaktów
+    description: Zarządzanie kategoriami artefaktów historycznych
+  places:
+    title: Miejsca
+    description: Zarządzanie lokalizacjami geograficznymi
+  periods:
+    title: Okresy
+    description: Zarządzanie okresami historycznymi
+  regions:
+    title: Regiony
+    description: Zarządzanie regionami geograficznymi
+  artifacts:
+    title: Artefakty
+    description: Zarządzanie artefaktami historycznymi
+  datasets:
+    title: Zbiory danych
+    description: Zarządzanie zbiorami danych badawczych
+  maps:
+    title: Mapy
+    description: Zarządzanie mapami i warstwami
+  media:
+    title: Biblioteka mediów
+    description: Zarządzanie obrazami i plikami
+  pages:
+    title: Strony
+    description: Zarządzanie stronami statycznymi
+  archives:
+    title: Archiwa
+    description: Zarządzanie archiwami
+  posts:
+    title: Posty
+    description: Zarządzanie postami na blogu
+  users:
+    title: Użytkownicy
+    description: Zarządzanie użytkownikami
+  documents:
+    title: Dokumenty
+    description: Zarządzanie dokumentami MD
+  collections:
+    title: Kolekcje
+    description: Zarządzanie kolekcjami historycznymi
+  layers:
+    title: Warstwy
+    description: Zarządzanie warstwami GIS
+
+# Admin dashboard
+admin:
+  dashboard: Panel
+  welcomeBack: Witamy ponownie
+  quickActions: Szybkie akcje
+  recentActivity: Ostatnia aktywność
+  systemInfo: Informacje o systemie
+  version: Wersja
+  createNewPost: Utwórz nowy post
+  createNewPage: Utwórz nową stronę
+  uploadMedia: Prześlij media
+  startWriting: Zacznij pisać
+  addPage: Dodaj stronę
+  addFiles: Dodaj pliki
+  checkSections: Sprawdź sekcje aktywności
+  panelDetails: Szczegóły panelu
+
+# Forms
+forms:
+  title: Tytuł
+  slug: Slug
+  description: Opis
+  content: Treść
+  status: Status
+  language: Język
+  category: Kategoria
+  tags: Tagi
+  thumbnail: Miniatura
+  publishedAt: Data publikacji
+  createdAt: Utworzono
+  updatedAt: Zaktualizowano
+
+# Table headers
+table:
+  title: Tytuł
+  slug: Slug
+  status: Status
+  author: Autor
+  date: Data
+  actions: Akcje
+  edit: Edytuj
+  delete: Usuń
+  view: Podgląd
+
+# Buttons
+buttons:
+  new: Nowy
+  save: Zapisz
+  cancel: Anuluj
+  delete: Usuń
+  edit: Edytuj
+  back: Wstecz
+  next: Dalej
+  previous: Poprzedni
+  submit: Wyślij
+  upload: Prześlij
+
+# Messages
+messages:
+  saved: Zapisano pomyślnie
+  deleted: Usunięto pomyślnie
+  error: Błąd
+  loading: Ładowanie...
+  noData: Brak danych
+  confirmDelete: Czy na pewno chcesz usunąć?
+
+# Public site translations
+public:
+  site:
+    name: "Kahal"
+    copyright: "© 2024 Projekt Kahal. Wszelkie prawa zastrzeżone."
+  hero:
+    title: "1000 lat historii"
+    subtitle: "Projekt społeczności żydowskich Europy Wschodniej"
+  search:
+    placeholder: "Szukaj na stronie"
+  posts:
+    title: "Posty"
+    empty: "Brak postów do wyświetlenia"
+  datasets:
+    title: "Zbiory danych"
+    empty: "Brak zbiorów danych do wyświetlenia"
+    status: "Status"
+    period: "Okres"
+    geographicArea: "Obszar geograficzny"
+    lastUpdated: "Ostatnia aktualizacja"
+    temporalCoverage: "Zakres czasowy"
+    resources: "Zasoby"
+    download: "Pobierz"
+    codebook: "Książka kodów"
+    maturity: "Dojrzałość danych"
+    verified: "Zweryfikowany"
+    provisional: "Wstępny"
+    description: "Opis"
+  maps:
+    title: "Mapy"
+    empty: "Brak map do wyświetlenia"
+  pages:
+    title: "Strony"
+  sidebar:
+    categories: "Kategorie"
+  content:
+    defaultCategory: "Ogólne"
+    readMore: "Czytaj więcej"
+    noResults: "Nie znaleziono wyników"
+    backTo: "Powrót do"
+    all: "Wszystkie"
+    filterByCategory: "Filtruj według kategorii"
+  collections:
+    title: "Kolekcje"
+    empty: "Brak kolekcji do wyświetlenia"
+    series: "Serie"
+    volumes: "Tomy"
+    loading: "Ładowanie..."
+    emptyVolumes: "Brak dostępnych tomów"
+    errorLoading: "Błąd ładowania tomów"
+    toc: "Spis treści"
+    volumeInfo: "Informacje o tomie"
+    details: "Szczegóły"
+    title_label: "Tytuł"
+    description_label: "Opis"
+    language_label: "Język"
+    year: "Rok"
+    page: "Strona"
+    pages: "stron"
+    of: "z"
+    download: "Pobierz"
+    volume: "Tom"
+    noName: "Bez nazwy"
+    backToAll: "Powrót do wszystkich kolekcji"
+    collectionIncludes: "Ta kolekcja zawiera {count} udokumentowanych tomów"
+    searchVolumes: "Szukaj tomów w tej kolekcji..."
+    searchPlaceholder: "Szukaj..."
+    noResults: "Nie znaleziono wyników"
+    noVolumesMatch: "Nie znaleziono tomów pasujących do wyszukiwania"
+    sort: "Sortuj"
+    sortNameAsc: "Nazwa A-Z"
+    sortNameDesc: "Nazwa Z-A"
+    sortDateAsc: "Data od najstarszej"
+    sortDateDesc: "Data od najnowszej"
+    show: "Pokaż"
+    perPage: "na stronę"
+    view: "Widok"
+    viewDetails: "Szczegóły"
+    viewBlocks: "Bloki"
+    viewThumbs: "Miniatury"
+  archive:
+    title: "Archiwum"
+    error: "Błąd ładowania archiwum"
+    noCollections: "Brak dostępnych kolekcji"
+    noCollectionsDesc: "Nie znaleziono kolekcji w systemie."
+    unknownError: "Nieznany błąd"
+  docs:
+    title: "Dokumentacja"
+    documentation: "Dokumentacja"
+    onThisPage: "Na tej stronie"
+    navMenu: "Menu nawigacji"
+  map:
+    details: "Szczegóły"
+    dataLayers: "Warstwy danych"
+    downloads: "Pobieranie"
+    links: "Linki"
+    citation: "Zalecany cytat"
+    dataSources: "Źródła danych"
+    codebook: "Słownik danych (Codebook)"
+  layer:
+    description: "Opis warstwy"
+    moreDetails: "Więcej szczegółów"
+    qualityStatus: "Status jakości"
+    yearRange: "Zakres lat"
+    license: "Licencja"
+    downloadFull: "Pobierz pełne dane"
+    notSpecified: "Nie określono"
+    noDescription: "Brak dostępnego opisu."
+  footer:
+    about: "O projekcie"
+    aboutText: "Projekt Społeczności Żydowskich Europy Wschodniej to inicjatywa badawcza dokumentująca 1000 lat historii społeczności żydowskich w Europie Wschodniej."
+    contact: "Kontakt"
+    privacyPolicy: "Polityka prywatności"
+    privacy: "Polityka prywatności"
+    terms: "Regulamin"
+    accessibility: "Dostępność"
+    copyright: "© 2024 Projekt Kahal. Wszelkie prawa zastrzeżone."
+  viewer:
+    title: "Przeglądarka"
+  dates:
+    published: "Opublikowano"
+    updated: "Zaktualizowano"

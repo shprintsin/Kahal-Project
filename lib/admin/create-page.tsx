@@ -31,7 +31,7 @@ export function createAdminPage<T = any>(config: CreateAdminPageConfig<T>) {
 
     // Load translations
     const cookieStore = await cookies();
-    const language = cookieStore.get("language")?.value || "he_default";
+    const language = cookieStore.get("language")?.value || "he";
     const translations = loadTranslations(language);
 
     // Create props object with custom data prop name

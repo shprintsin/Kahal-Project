@@ -27,7 +27,7 @@ export default async function AdminPage() {
 
   // Load translations
   const cookieStore = await cookies();
-  const language = cookieStore.get("language")?.value || "he_default";
+  const language = cookieStore.get("language")?.value || "he";
   const translations = loadTranslations(language);
   const t = (key: string, fallback?: string) => getTranslation(translations, key, fallback);
 

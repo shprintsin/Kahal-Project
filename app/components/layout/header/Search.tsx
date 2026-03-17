@@ -4,16 +4,18 @@ import { Search as SearchIcon } from "lucide-react";
 import React, { useRef, useState } from 'react'
 import styles from '../css/header.module.css'
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/lib/i18n/language-provider";
 
 export default function Search() {
   const [query, setQuery] = useState("");
   const [expanded, setExpanded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const { locale, t } = useLanguage();
 
   const handleSearch = () => {
     if (query.trim()) {
-      router.push(`/search?q=${encodeURIComponent(query)}`);
+      router.push(`/${locale}/search?q=${encodeURIComponent(query)}`);
     }
   };
 
@@ -44,7 +46,7 @@ export default function Search() {
         <input
           ref={inputRef}
           type="text"
-          placeholder="לחיפוש באתר"
+          placeholder={t('public.search.placeholder', 'לחיפוש באתר')}
           className={styles.searchInput}
           value={query}
           onChange={(e) => setQuery(e.target.value)}

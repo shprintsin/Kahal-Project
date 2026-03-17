@@ -7,6 +7,8 @@ import { NoteCard, Section } from '@/components/ui/sections'
 import { Prose } from '@/components/ui/prose'
 import { TagPill, TagPillList } from '@/components/ui/tag-pill'
 import { SiteBreadcrumbs } from '@/components/ui/site-breadcrumbs'
+import { loadTranslations, getTranslation } from '@/lib/i18n/load-translations'
+import { defaultLocale } from '@/lib/i18n/config'
 
 interface PostData extends Omit<ApiPost, 'content' | 'author' | 'tags'> {
   content: string
@@ -19,13 +21,17 @@ interface PostData extends Omit<ApiPost, 'content' | 'author' | 'tags'> {
   sources: { id: string; title: string; author: string; year: string }[]
 }
 
-export default function PostPage({ post }: { post: PostData }) {
+export default function PostPage({ post, locale }: { post: PostData; locale?: string }) {
+  const loc = locale || defaultLocale
+  const translations = loadTranslations(loc)
+  const t = (key: string, fallback: string) => getTranslation(translations, key, fallback)
+
   return (
-    <div className="min-h-screen bg-white" dir="rtl">
+    <div className="min-h-screen bg-white">
       <SiteBreadcrumbs
         items={[
-          { label: "בית", href: "/" },
-          { label: post.category || "", href: `/category/${post.category}` },
+          { label: t('public.site.name', 'קהל'), href: `/${loc}` },
+          { label: post.category || "", href: `/${loc}/categories/${post.category}` },
           { label: post.title },
         ]}
       />

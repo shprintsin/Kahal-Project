@@ -6,6 +6,7 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useLanguage } from '@/lib/i18n/language-provider';
 import { SiteShell } from '@/components/ui/site-shell';
 import type { SiteShellData } from '@/app/lib/get-navigation';
 import DetailsView from './DetailsView';
@@ -23,6 +24,7 @@ type ViewMode = 'details' | 'blocks' | 'thumbs';
 type SortMode = 'name-asc' | 'name-desc';
 
 export default function CollectionDetailView({ collection, siteShellData }: CollectionDetailViewProps) {
+  const { t, locale } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -98,20 +100,20 @@ export default function CollectionDetailView({ collection, siteShellData }: Coll
           <div className="bg-white shadow-sm p-6 flex items-center justify-between">
             <div className="flex items-center gap-2 text-brand-primary text-sm font-medium">
               <Link
-                href="/collections"
+                href={`/${locale}/collections`}
                 className="inline-flex items-center gap-1 hover:opacity-80 transition"
               >
-                חזרה לכל האוספים
+                {t('public.collections.backToAll')}
                 <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
-            <div className="text-xs text-muted-foreground">{volumesCount} כרכים</div>
+            <div className="text-xs text-muted-foreground">{volumesCount} {t('public.collections.volumes')}</div>
           </div>
 
           {/* Page Title */}
           <div className="bg-white shadow-sm p-8 space-y-3">
             <h1 className="text-4xl font-bold text-brand-primary font-display">{collection.id}</h1>
-            <p className="text-body-secondary">אוסף זה כולל {volumesCount} כרכים מתועדים</p>
+            <p className="text-body-secondary">{t('public.collections.collectionIncludes').replace('{count}', String(volumesCount))}</p>
           </div>
 
           {/* Search Bar */}
@@ -119,9 +121,8 @@ export default function CollectionDetailView({ collection, siteShellData }: Coll
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
-                dir="rtl"
-                type="search"
-                placeholder="חיפוש כרכים באוסף זה..."
+                                type="search"
+                placeholder={t('public.collections.searchVolumes')}
                 value={searchQuery}
                 onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                 className="pl-10 pr-3 bg-white text-right border-border-strong focus-visible:ring-1 focus-visible:ring-brand-primary"
@@ -132,7 +133,7 @@ export default function CollectionDetailView({ collection, siteShellData }: Coll
           {/* View Controls */}
           <div className="bg-white shadow-sm p-4 md:p-6 flex flex-col sm:flex-row flex-wrap items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <span className="text-sm text-body">תצוגה</span>
+              <span className="text-sm text-body">{t('public.collections.view')}</span>
               <div className="flex gap-2">
                 {(['details', 'blocks', 'thumbs'] as ViewMode[]).map((mode) => (
                   <button
@@ -144,7 +145,7 @@ export default function CollectionDetailView({ collection, siteShellData }: Coll
                         : 'bg-muted text-foreground hover:bg-muted'
                     } px-4 py-2 text-sm rounded-md transition`}
                   >
-                    {mode === 'details' ? 'פרטים' : mode === 'blocks' ? 'בלוקים' : 'תמונות'}
+                    {mode === 'details' ? t('public.collections.viewDetails') : mode === 'blocks' ? t('public.collections.viewBlocks') : t('public.collections.viewThumbs')}
                   </button>
                 ))}
               </div>
@@ -152,27 +153,27 @@ export default function CollectionDetailView({ collection, siteShellData }: Coll
 
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-body">מיון</span>
-                <Select value={sortMode} onValueChange={(v) => { setSortMode(v as SortMode); setCurrentPage(1); }} dir="rtl">
-                  <SelectTrigger className="w-[150px] border-border-strong bg-white text-right"><SelectValue placeholder="מיון" /></SelectTrigger>
+                <span className="text-sm text-body">{t('public.collections.sort')}</span>
+                <Select value={sortMode} onValueChange={(v) => { setSortMode(v as SortMode); setCurrentPage(1); }}>
+                  <SelectTrigger className="w-[150px] border-border-strong bg-white text-right"><SelectValue placeholder={t('public.collections.sort')} /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="name-asc">שם א-ת</SelectItem>
-                    <SelectItem value="name-desc">שם ת-א</SelectItem>
+                    <SelectItem value="name-asc">{t('public.collections.sortNameAsc')}</SelectItem>
+                    <SelectItem value="name-desc">{t('public.collections.sortNameDesc')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-sm text-body">הצג</span>
-                <Select value={itemsPerPage.toString()} onValueChange={(v) => { setItemsPerPage(parseInt(v)); setCurrentPage(1); }} dir="rtl">
-                  <SelectTrigger className="w-[110px] border-border-strong bg-white text-right"><SelectValue placeholder="כמות" /></SelectTrigger>
-                  <SelectContent dir="rtl">
+                <span className="text-sm text-body">{t('public.collections.show')}</span>
+                <Select value={itemsPerPage.toString()} onValueChange={(v) => { setItemsPerPage(parseInt(v)); setCurrentPage(1); }}>
+                  <SelectTrigger className="w-[110px] border-border-strong bg-white text-right"><SelectValue /></SelectTrigger>
+                  <SelectContent>
                     <SelectItem value="25">25</SelectItem>
                     <SelectItem value="50">50</SelectItem>
                     <SelectItem value="100">100</SelectItem>
                   </SelectContent>
                 </Select>
-                <span className="text-sm text-body">לעמוד</span>
+                <span className="text-sm text-body">{t('public.collections.perPage')}</span>
               </div>
             </div>
           </div>
@@ -180,7 +181,7 @@ export default function CollectionDetailView({ collection, siteShellData }: Coll
           {/* Results */}
           {paginatedData.length === 0 ? (
             <div className="bg-white shadow-sm p-12 text-center text-body-secondary">
-              לא נמצאו כרכים התואמים את החיפוש
+              {t('public.collections.noVolumesMatch')}
             </div>
           ) : (
             <>
