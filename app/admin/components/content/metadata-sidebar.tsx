@@ -49,6 +49,7 @@ interface MetadataSidebarProps {
   // Attachments/Resources
   attachments?: UploadedFile[];
   onAttachmentsChange?: (files: UploadedFile[]) => void;
+  attachmentsAccept?: string;
 
   // Visibility
   isPublic?: boolean;
@@ -99,6 +100,7 @@ export function MetadataSidebar({
   onCreateTag,
   attachments = [],
   onAttachmentsChange,
+  attachmentsAccept,
   isPublic = true,
   onVisibilityChange,
   license,
@@ -229,9 +231,9 @@ export function MetadataSidebar({
           <FileUploadWidget
             files={attachments}
             onFilesChange={onAttachmentsChange}
-            accept="image/*,application/pdf,.doc,.docx"
+            accept={attachmentsAccept || "image/*,application/pdf,.doc,.docx"}
             maxFiles={10}
-            maxSize={10 * 1024 * 1024}
+            maxSize={50 * 1024 * 1024}
           />
         </AdminSidebarCard>
       )}

@@ -8,7 +8,15 @@ const i18nOrString = z.union([
 ]).optional().nullable();
 
 export const datasetSchema = ResearchDatasetOptionalDefaultsSchema
-  .omit({ id: true, createdAt: true, updatedAt: true })
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+    titleI18n: true,
+    descriptionI18n: true,
+    codebookTextI18n: true,
+    sourcesI18n: true,
+  })
   .extend({
     slug: slugField,
     title: i18nOrString,

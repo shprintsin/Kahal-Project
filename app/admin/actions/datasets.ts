@@ -166,6 +166,7 @@ interface ResourceInput {
   filename?: string;
   mimeType?: string;
   format?: string;
+  sizeBytes?: number;
   isMainFile?: boolean;
 }
 
@@ -180,6 +181,7 @@ export async function createDatasetResource(datasetId: string | null, resourceDa
             filename: resourceData.filename,
             mimeType: resourceData.mimeType,
             format: resourceData.format || 'UNKNOWN',
+            sizeBytes: resourceData.sizeBytes || null,
             isMainFile: resourceData.isMainFile || false
         }
     });
@@ -275,7 +277,9 @@ export async function uploadResourceFile(formData: FormData) {
     const url = await uploadFile(file, key);
     
     const name = file.name.split('.')[0];
-    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const baseSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const existing = await prisma.datasetResource.findUnique({ where: { slug: baseSlug } });
+    const slug = existing ? `${baseSlug}-${Date.now()}` : baseSlug;
     
     // Guess format from extension or mime type
     const ext = file.name.split('.').pop()?.toUpperCase();
@@ -296,6 +300,7 @@ export async function uploadResourceFile(formData: FormData) {
         url,
         filename: file.name,
         mimeType: file.type,
+        sizeBytes: file.size,
         name,
         slug,
         format
@@ -531,6 +536,7 @@ export async function getDatasetBySlug(
               mimeType: true,
               format: true,
               isMainFile: true,
+              sizeBytes: true,
               excerptI18n: true,
               createdAt: true,
             },
@@ -590,6 +596,7 @@ export async function getDatasetBySlug(
           mimeType: resource.mimeType,
           format: resource.format,
           isMainFile: resource.isMainFile,
+          sizeBytes: resource.sizeBytes,
           excerpt: getLocalizedField(null, resource.excerptI18n, lang),
           createdAt: toISOStringSafe(resource.createdAt),
         })),
@@ -644,6 +651,7 @@ export async function getDatasetResourcesBySlug(
         mimeType: resource.mimeType,
         format: resource.format,
         isMainFile: resource.isMainFile,
+        sizeBytes: resource.sizeBytes,
         excerpt: getLocalizedField(null, resource.excerptI18n, lang),
         createdAt: toISOStringSafe(resource.createdAt),
       })),

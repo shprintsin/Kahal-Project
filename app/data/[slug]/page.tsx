@@ -11,7 +11,7 @@ interface PageProps {
 export default async function DatasetPage({ params }: PageProps) {
   const { slug } = await params;
   const [apiDataset, shellData] = await Promise.all([
-    getDatasetBySlug(slug),
+    getDatasetBySlug(slug, { includeResources: true }),
     getSiteShellData(),
   ]);
 
@@ -37,7 +37,7 @@ export default async function DatasetPage({ params }: PageProps) {
       name: r.name,
       url: r.url,
       format: r.format,
-      size_bytes: 0,
+      size_bytes: r.sizeBytes || 0,
       is_main_file: r.isMainFile
     }))
   };

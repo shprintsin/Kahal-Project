@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { uploadToR2 } from "@/utils/r2";
+import { uploadFile } from "@/utils/storage";
 
 // Get file type prefix based on mime type
 function getFilePrefix(mimeType: string, filename: string): string {
@@ -58,8 +58,7 @@ export async function uploadMediaFile(file: File) {
     const prefix = getFilePrefix(file.type, file.name);
     const fileName = `${prefix}${Date.now()}-${file.name}`;
     
-    // Upload to R2
-    const publicUrl = await uploadToR2(file, fileName);
+    const publicUrl = await uploadFile(file, fileName);
 
     // Create media record in database
     const mediaData = await prisma.media.create({

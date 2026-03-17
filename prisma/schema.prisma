@@ -225,6 +225,7 @@ model DatasetResource {
   format      ResouceType      @default(UNKNOWN)
   filename    String?
   mimeType    String?
+  sizeBytes   Int?             @map("size_bytes")
   excerptI18n Json?            @default("{}") @map("excerpt_i18n")
   mapId       String?          @map("map_id") @db.Uuid
   dataset     ResearchDataset? @relation(fields: [datasetId], references: [id], onDelete: Cascade)
@@ -255,6 +256,7 @@ model Map {
   status            ContentStatus         @default(draft)
   resources         DatasetResource[]
   layers            MapLayerAssociation[]
+  deployments       MapDeployment[]
   category          Category?             @relation(fields: [categoryId], references: [id])
   thumbnail         Media?                @relation("MapThumbnail", fields: [thumbnailId], references: [id])
   regions           Region[]              @relation("MapToRegion")
@@ -320,6 +322,20 @@ model MapLayerAssociation {
   @@index([mapId])
   @@index([layerId])
   @@map("map_layer_associations")
+}
+
+model MapDeployment {
+  id         String   @id @default(uuid()) @db.Uuid
+  mapId      String   @map("map_id") @db.Uuid
+  map        Map      @relation(fields: [mapId], references: [id], onDelete: Cascade)
+  version    String
+  changeLog  String?  @map("change_log")
+  gitSha     String?  @map("git_sha")
+  cliVersion String?  @map("cli_version")
+  deployedAt DateTime @default(now()) @map("deployed_at") @db.Timestamptz(6)
+
+  @@index([mapId])
+  @@map("map_deployments")
 }
 
 enum ResouceType {

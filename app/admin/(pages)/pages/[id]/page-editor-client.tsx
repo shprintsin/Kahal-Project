@@ -385,6 +385,7 @@ function EditorInner({ page, tags, pages, regions, isNew }: PageEditorClientProp
       backHref="/admin/pages"
       backLabel="Pages"
       onBack={() => router.push("/admin/pages")}
+      previewHref={!isNew && slug ? `/${slug}` : undefined}
       onSave={handleSave}
       onPublish={handlePublish}
       saving={saving}

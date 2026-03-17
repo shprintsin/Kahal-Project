@@ -421,6 +421,7 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
         backHref="/admin/documents"
         backLabel="Documents"
         onBack={() => router.push("/admin/documents")}
+        previewHref={!isNew && slug ? `/documents/${slug}` : undefined}
         onSave={handleSave}
         onPublish={handlePublish}
         saving={saving}

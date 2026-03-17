@@ -72,10 +72,15 @@ export interface ListLayersOptions {
  */
 export async function createLayer(data: LayerFormData) {
   try {
+    let slug = data.slug;
+    const existing = await prisma.layer.findUnique({ where: { slug }, select: { id: true } });
+    if (existing) {
+      slug = `${slug}-${Date.now()}`;
+    }
 
     const layer = await prisma.layer.create({
       data: {
-        slug: data.slug,
+        slug,
         name: data.name,
         nameI18n: data.name_i18n || {},
         description: data.description,

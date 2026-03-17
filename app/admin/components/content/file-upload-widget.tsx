@@ -20,8 +20,10 @@ import {
   GripVertical,
   Edit3,
   Trash2,
+  Eye,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { CsvViewerDialog } from "./csv-viewer-dialog";
 
 /**
  * FileUploadWidget - Drag and drop file upload with preview
@@ -56,6 +58,7 @@ export function FileUploadWidget({
 }: FileUploadWidgetProps) {
   const [isDragging, setIsDragging] = React.useState(false);
   const [showDialog, setShowDialog] = React.useState(false);
+  const [csvPreview, setCsvPreview] = React.useState<{ url: string; name: string } | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   // Handle file selection
@@ -134,6 +137,9 @@ export function FileUploadWidget({
     return <File className="w-4 h-4" />;
   };
 
+  const isCsvFile = (file: UploadedFile) =>
+    file.name.toLowerCase().endsWith(".csv") || file.type === "text/csv";
+
   const displayedFiles = files.slice(0, 3);
   const remainingCount = files.length - 3;
 
@@ -184,8 +190,20 @@ export function FileUploadWidget({
                 <span className="text-muted-foreground">{getFileIcon(file.type)}</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-foreground truncate">{file.name}</p>
-                  <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
+                  {file.size > 0 && (
+                    <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
+                  )}
                 </div>
+                {isCsvFile(file) && file.url && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setCsvPreview({ url: file.url!, name: file.name })}
+                    className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-accent"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="icon"
@@ -225,6 +243,15 @@ export function FileUploadWidget({
         files={files}
         onFilesChange={onFilesChange}
       />
+
+      {csvPreview && (
+        <CsvViewerDialog
+          open={!!csvPreview}
+          onOpenChange={(open) => { if (!open) setCsvPreview(null); }}
+          url={csvPreview.url}
+          name={csvPreview.name}
+        />
+      )}
     </>
   );
 }
@@ -327,7 +354,9 @@ function ResourcesDialog({
                 {/* File Info */}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-foreground truncate font-medium">{file.name}</p>
-                  <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
+                  {file.size > 0 && (
+                    <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
+                  )}
                 </div>
 
                 {/* Order Badge */}
