@@ -5,6 +5,7 @@ import { DlField, DlGroup } from '@/components/ui/dl-field'
 import { InfoPanel, DownloadLink, ExternalLinkItem, VersionBadge } from '@/components/ui/info-panel'
 import { PageTitle } from '@/components/ui/typography'
 import { Calendar, Tag as TagIcon, MapPin } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
 import type { Map } from '@/types/api-types'
 import type { SiteShellData } from '@/app/lib/get-navigation'
 import { SetEditUrl } from '@/components/ui/admin-toolbar'
@@ -27,16 +28,17 @@ export function MapViewerClient({ map, shellData }: MapViewerClientProps) {
               </p>
             )}
             <PageTitle>{map.title}</PageTitle>
-            {map.description && (
-              <p className="text-gray-600 text-lg leading-relaxed max-w-4xl">
-                {map.description}
-              </p>
-            )}
           </div>
 
           <div className="mb-8">
             <MapPreview map={map} />
           </div>
+
+          {map.description && (
+            <div className="prose prose-lg max-w-4xl text-gray-600 mb-8 text-right" dir="rtl">
+              <ReactMarkdown>{map.description}</ReactMarkdown>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             <div className="lg:col-span-2 bg-white p-8 shadow-sm border border-gray-200">
