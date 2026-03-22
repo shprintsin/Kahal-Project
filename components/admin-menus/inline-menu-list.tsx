@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useCallback, useRef } from "react";
 import {
   DndContext,
   closestCenter,
@@ -38,6 +38,9 @@ export function InlineMenuList({
   variantOptions = ["DEFAULT"],
   addButtonText = "Add Menu Item",
 }: InlineMenuListProps) {
+  const idCounter = useRef(0);
+  const nextId = useCallback((prefix: string) => `${prefix}-${++idCounter.current}-${Date.now()}`, []);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -78,7 +81,7 @@ export function InlineMenuList({
 
   const handleAddChild = (parentIndex: number) => {
     const newChild: MenuItem = {
-      id: `child-${Date.now()}`,
+      id: nextId("child"),
       label: { default: "", translations: {} },
       variant: "DEFAULT",
       order: (items[parentIndex].children?.length || 0),
@@ -119,7 +122,7 @@ export function InlineMenuList({
       const { isPlaceholder, ...realItem } = itemWithFlag;
       // If the item id is the placeholder id, give it a real one
       if (realItem.id === "new-item-placeholder") {
-          realItem.id = `item-${Date.now()}`;
+          realItem.id = nextId("item");
       }
 
       const newItems = [...items, realItem];
@@ -182,7 +185,7 @@ export function InlineMenuList({
         sensors={sensors}
         collisionDetection={closestCenter}
       >
-        <SortableContext items={displayItems.map(item => item.id || `temp-${Math.random()}`)} strategy={verticalListSortingStrategy}>
+        <SortableContext items={displayItems.map((item, i) => item.id || `temp-${i}`)} strategy={verticalListSortingStrategy}>
           {displayItems.map((item, index) => {
             const itemWithFlag = item as MenuItem & { isPlaceholder?: boolean };
             const isLast = index === displayItems.length - 1;

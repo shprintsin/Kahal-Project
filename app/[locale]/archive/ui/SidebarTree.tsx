@@ -2,7 +2,7 @@
 
 import { TreeNode } from '@/types/archive.types';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { ChevronDown, ChevronLeft } from 'lucide-react';
 
 interface SidebarTreeProps {
@@ -10,46 +10,41 @@ interface SidebarTreeProps {
   currentPath?: string;
 }
 
-export function SidebarTree({ nodes, currentPath }: SidebarTreeProps) {
-  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(() => {
-    // Auto-expand collections that contain the current path
-    const initialExpanded = new Set<string>();
-    if (currentPath) {
-      nodes.forEach(node => {
-        if (node.children && node.children.some(child => currentPath.startsWith(child.href || ''))) {
-          initialExpanded.add(node.id);
-        }
-      });
-    }
-    return initialExpanded;
-  });
-
-  // Auto-expand when currentPath changes
-  useEffect(() => {
-    if (currentPath) {
-      setExpandedNodes(prev => {
-        const newSet = new Set(prev);
-        nodes.forEach(node => {
-          if (node.children && node.children.some(child => currentPath.startsWith(child.href || ''))) {
-            newSet.add(node.id);
-          }
-        });
-        return newSet;
-      });
-    }
-  }, [currentPath, nodes]);
-
-  const toggleExpand = (nodeId: string) => {
-    setExpandedNodes(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(nodeId)) {
-        newSet.delete(nodeId);
-      } else {
-        newSet.add(nodeId);
+function computeAutoExpanded(nodes: TreeNode[], currentPath?: string): Set<string> {
+  const set = new Set<string>();
+  if (currentPath) {
+    nodes.forEach(node => {
+      if (node.children && node.children.some(child => currentPath.startsWith(child.href || ''))) {
+        set.add(node.id);
       }
-      return newSet;
     });
-  };
+  }
+  return set;
+}
+
+export function SidebarTree({ nodes, currentPath }: SidebarTreeProps) {
+  const [manualToggles, setManualToggles] = useState<Record<string, boolean>>({});
+
+  const autoExpanded = useMemo(() => computeAutoExpanded(nodes, currentPath), [nodes, currentPath]);
+
+  const expandedNodes = useMemo(() => {
+    const merged = new Set(autoExpanded);
+    for (const [id, expanded] of Object.entries(manualToggles)) {
+      if (expanded) {
+        merged.add(id);
+      } else {
+        merged.delete(id);
+      }
+    }
+    return merged;
+  }, [autoExpanded, manualToggles]);
+
+  const toggleExpand = useCallback((nodeId: string) => {
+    setManualToggles(prev => ({
+      ...prev,
+      [nodeId]: !expandedNodes.has(nodeId),
+    }));
+  }, [expandedNodes]);
 
   if (!nodes || nodes.length === 0) {
     return (

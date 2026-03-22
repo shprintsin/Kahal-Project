@@ -3,9 +3,8 @@
 import {
   createContext,
   useContext,
-  useState,
-  useCallback,
   useEffect,
+  useState,
   type ReactNode,
 } from "react";
 import Link from "next/link";
@@ -39,9 +38,13 @@ export function AdminToolbarProvider({
   const [editUrl, setEditUrl] = useState<string | null>(null);
   const pathname = usePathname();
 
-  useEffect(() => {
-    setEditUrl(null);
-  }, [pathname]);
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    if (editUrl !== null) {
+      setEditUrl(null);
+    }
+  }
 
   if (!user) {
     return <>{children}</>;
@@ -104,12 +107,10 @@ function AdminToolbarInner({ user, children }: { user: AdminToolbarUser; childre
 
 export function SetEditUrl({ url }: { url: string }) {
   const { setEditUrl } = useContext(AdminToolbarContext);
-  const stableSetEditUrl = useCallback(setEditUrl, [setEditUrl]);
-
   useEffect(() => {
-    stableSetEditUrl(url);
-    return () => stableSetEditUrl(null);
-  }, [url, stableSetEditUrl]);
+    setEditUrl(url);
+    return () => setEditUrl(null);
+  }, [url, setEditUrl]);
 
   return null;
 }

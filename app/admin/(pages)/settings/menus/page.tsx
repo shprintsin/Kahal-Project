@@ -139,7 +139,7 @@ export default function MenusSettingsPage() {
           <div>
             <h1 className="text-3xl font-bold">Menu Settings</h1>
             <p className="text-muted-foreground mt-1">
-              Customize your site's navigation and layout
+              Customize your site&apos;s navigation and layout
             </p>
           </div>
 

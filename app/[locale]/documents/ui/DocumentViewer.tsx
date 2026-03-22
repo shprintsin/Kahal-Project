@@ -15,25 +15,37 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
   const searchParams = useSearchParams();
   const containerRef = useRef<HTMLDivElement>(null);
   
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(() => {
+    const pageParam = searchParams.get('page');
+    if (pageParam) {
+      const page = parseInt(pageParam, 10);
+      if (!isNaN(page) && page >= 1 && page <= document.pages.length) {
+        return page;
+      }
+    }
+    return 1;
+  });
   const [zoom, setZoom] = useState(100);
 
-  // Defaults
-  const initialLang = (searchParams.get('lang') as 'original' | 'he' | 'en') || 'he';
-  const initialSecLang = (searchParams.get('secLang') as 'original' | 'he' | 'en') || 'en';
-
-  const [language, setLanguage] = useState<'original' | 'he' | 'en'>(initialLang);
+  const [language, setLanguage] = useState<'original' | 'he' | 'en'>(() => {
+    const urlLang = searchParams.get('lang') as 'original' | 'he' | 'en';
+    if (urlLang) return urlLang;
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('doc_lang') as 'original' | 'he' | 'en';
+      if (saved) return saved;
+    }
+    return 'he';
+  });
   const [viewMode, setViewMode] = useState<'single' | 'side-by-side'>('single');
-  const [secondaryLanguage, setSecondaryLanguage] = useState<'original' | 'he' | 'en'>(initialSecLang);
-
-  // Sync from localStorage on mount
-  useEffect(() => {
-    const savedLang = localStorage.getItem('doc_lang') as any;
-    const savedSecLang = localStorage.getItem('doc_sec_lang') as any;
-    
-    if (!searchParams.get('lang') && savedLang) setLanguage(savedLang);
-    if (!searchParams.get('secLang') && savedSecLang) setSecondaryLanguage(savedSecLang);
-  }, []);
+  const [secondaryLanguage, setSecondaryLanguage] = useState<'original' | 'he' | 'en'>(() => {
+    const urlSecLang = searchParams.get('secLang') as 'original' | 'he' | 'en';
+    if (urlSecLang) return urlSecLang;
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('doc_sec_lang') as 'original' | 'he' | 'en';
+      if (saved) return saved;
+    }
+    return 'en';
+  });
 
   // Sync to URL & LocalStorage
   useEffect(() => {
@@ -52,19 +64,12 @@ export function DocumentViewer({ document }: DocumentViewerProps) {
     return page.content;
   };
   
-  // Initialize from URL
   useEffect(() => {
-    const pageParam = searchParams.get('page');
-    if (pageParam) {
-      const page = parseInt(pageParam, 10);
-      if (!isNaN(page) && page >= 1 && page <= document.pages.length) {
-        setCurrentPage(page);
-        // Scroll to page on mount
-        setTimeout(() => {
-          const el = window.document.getElementById(`page-${page - 1}`);
-          el?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      }
+    if (currentPage > 1) {
+      setTimeout(() => {
+        const el = window.document.getElementById(`page-wrapper-${currentPage - 1}`);
+        el?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     }
   }, []);
 

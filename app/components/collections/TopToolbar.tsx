@@ -1,6 +1,7 @@
 "use client";
 
 import { useViewer } from '@/contexts/ViewerContext';
+import Link from 'next/link';
 import { ChevronRight, Download, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import type { ViewMode } from '@/types/collections';
@@ -42,16 +43,16 @@ export default function TopToolbar({
     <div className="bg-white border-b border-gray-300 px-4 py-3 flex items-center justify-between shadow-sm">
       {/* Left: Breadcrumbs */}
       <div className="flex items-center gap-2 text-sm text-gray-600">
-        <a href="/archive" className="hover:text-gray-900 transition-colors">
+        <Link href="/archive/" className="hover:text-gray-900 transition-colors">
           ארכיון
-        </a>
+        </Link>
         <ChevronRight className="w-4 h-4 rotate-180" />
-        <a 
-          href={`/archive/${collectionId}`} 
+        <Link
+          href={`/archive/${collectionId}`}
           className="hover:text-gray-900 transition-colors"
         >
           {collectionId}
-        </a>
+        </Link>
         <ChevronRight className="w-4 h-4 rotate-180" />
         <span className="font-medium text-gray-900">
           כרך {volumeId}

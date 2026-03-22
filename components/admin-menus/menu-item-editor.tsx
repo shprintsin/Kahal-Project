@@ -4,7 +4,7 @@
  * Modal form for creating/editing menu items.
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -58,7 +58,11 @@ export function MenuItemEditor({
 
   const [linkType, setLinkType] = useState<"url" | "page">("url");
 
-  useEffect(() => {
+  const [prevOpen, setPrevOpen] = useState(open);
+  const [prevItem, setPrevItem] = useState(item);
+  if (open && (!prevOpen || item !== prevItem)) {
+    setPrevOpen(open);
+    setPrevItem(item);
     if (item) {
       setFormData(item);
       setLinkType(item.pageId ? "page" : "url");
@@ -74,7 +78,10 @@ export function MenuItemEditor({
       });
       setLinkType("url");
     }
-  }, [item, open, parentId]);
+  }
+  if (!open && prevOpen) {
+    setPrevOpen(false);
+  }
 
   const handleSave = () => {
     const dataToSave = {

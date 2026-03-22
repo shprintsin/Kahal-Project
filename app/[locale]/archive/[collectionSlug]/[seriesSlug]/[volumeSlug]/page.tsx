@@ -22,49 +22,48 @@ export default async function VolumePage({ params, searchParams }: PageProps) {
   const { locale, collectionSlug, seriesSlug, volumeSlug } = await params;
   const { page, pageRange } = await searchParams;
 
+  let volume, shellData;
   try {
-    const [volume, shellData] = await Promise.all([
+    [volume, shellData] = await Promise.all([
       getVolumeWithPages(collectionSlug, seriesSlug, volumeSlug),
       getSiteShellData(locale),
     ]);
-    
-    if (!volume) {
-      notFound();
-    }
-
-    const initialPage = page ? parseInt(page, 10) : 1;
-    
-    // Parse page range if provided (format: "5-10")
-    let initialPageRange;
-    if (pageRange) {
-      const match = pageRange.match(/^(\d+)-(\d+)$/);
-      if (match) {
-        const start = parseInt(match[1], 10);
-        const end = parseInt(match[2], 10);
-        if (start <= end) {
-          initialPageRange = { start, end };
-        }
-      }
-    }
-
-    return (
-      <ViewerProvider 
-        initialPage={initialPage}
-        initialPageRange={initialPageRange}
-      >
-        <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
-          <VolumeViewer
-            volume={volume}
-            collectionSlug={collectionSlug}
-            seriesSlug={seriesSlug}
-            volumeSlug={volumeSlug}
-            siteShellData={shellData}
-          />
-        </Suspense>
-      </ViewerProvider>
-    );
-  } catch (error) {
-    console.error('Error loading volume:', error);
+  } catch {
     notFound();
   }
+
+  if (!volume) {
+    notFound();
+  }
+
+  const initialPage = page ? parseInt(page, 10) : 1;
+
+  let initialPageRange;
+  if (pageRange) {
+    const match = pageRange.match(/^(\d+)-(\d+)$/);
+    if (match) {
+      const start = parseInt(match[1], 10);
+      const end = parseInt(match[2], 10);
+      if (start <= end) {
+        initialPageRange = { start, end };
+      }
+    }
+  }
+
+  return (
+    <ViewerProvider
+      initialPage={initialPage}
+      initialPageRange={initialPageRange}
+    >
+      <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+        <VolumeViewer
+          volume={volume}
+          collectionSlug={collectionSlug}
+          seriesSlug={seriesSlug}
+          volumeSlug={volumeSlug}
+          siteShellData={shellData}
+        />
+      </Suspense>
+    </ViewerProvider>
+  );
 }

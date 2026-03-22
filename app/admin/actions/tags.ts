@@ -127,7 +127,7 @@ export async function listTagsAPI(options: ListTagsOptions = {}) {
     });
 
     // Transform and calculate usage counts
-    let transformedTags = tags.map((tag) => ({
+    const transformedTags = tags.map((tag) => ({
       id: tag.id,
       slug: tag.slug,
       name: tag.name,

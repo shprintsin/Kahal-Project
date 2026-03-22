@@ -119,7 +119,7 @@ export function ContentTable<T extends { id: string }>({
     const c = parseInt(currentCol);
 
     let nextR = r;
-    let nextC = c;
+    const nextC = c;
 
     switch (e.key) {
       case "ArrowUp":

@@ -19,36 +19,19 @@ export default async function ArchivePage({ params }: { params: Promise<{ locale
   const translations = loadTranslations(locale);
   const t = (key: string) => getTranslation(translations, key);
 
+  let collections, shellData;
+  let fetchError: unknown = null;
   try {
-    const [collections, shellData] = await Promise.all([
+    [collections, shellData] = await Promise.all([
       getAllCollectionsWithSeries(),
       getSiteShellData(locale),
     ]);
-
-    if (!collections || collections.length === 0) {
-      return (
-        <SiteShell {...shellData} locale={locale}>
-          <div className="flex-1 p-4 sm:p-8 text-center">
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">{t('public.archive.noCollections')}</h1>
-            <p className="text-gray-600">{t('public.archive.noCollectionsDesc')}</p>
-          </div>
-        </SiteShell>
-      );
-    }
-
-    return (
-      <SiteShell {...shellData} locale={locale}>
-        <div className="flex-1">
-          <ArchiveLayout
-            sidebar={<NavigationSidebar collections={collections} />}
-            content={<EmptyState />}
-          />
-        </div>
-      </SiteShell>
-    );
   } catch (error) {
-    console.error('Error in ArchivePage:', error);
-    const fallbackShell = await getSiteShellData(locale).catch(() => ({
+    fetchError = error;
+  }
+
+  if (fetchError || !shellData) {
+    const fallbackShell = shellData ?? await getSiteShellData(locale).catch(() => ({
       navigation: [],
       footerColumns: [],
       copyrightText: "",
@@ -58,10 +41,32 @@ export default async function ArchivePage({ params }: { params: Promise<{ locale
         <div className="flex-1 p-4 sm:p-8 text-center">
           <h1 className="text-xl sm:text-2xl font-bold text-red-600 mb-4">{t('public.archive.error')}</h1>
           <p className="text-gray-600 mb-4">
-            {error instanceof Error ? error.message : t('public.archive.unknownError')}
+            {fetchError instanceof Error ? fetchError.message : t('public.archive.unknownError')}
           </p>
         </div>
       </SiteShell>
     );
   }
+
+  if (!collections || collections.length === 0) {
+    return (
+      <SiteShell {...shellData} locale={locale}>
+        <div className="flex-1 p-4 sm:p-8 text-center">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">{t('public.archive.noCollections')}</h1>
+          <p className="text-gray-600">{t('public.archive.noCollectionsDesc')}</p>
+        </div>
+      </SiteShell>
+    );
+  }
+
+  return (
+    <SiteShell {...shellData} locale={locale}>
+      <div className="flex-1">
+        <ArchiveLayout
+          sidebar={<NavigationSidebar collections={collections} />}
+          content={<EmptyState />}
+        />
+      </div>
+    </SiteShell>
+  );
 }

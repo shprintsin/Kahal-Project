@@ -87,6 +87,11 @@ function getPolygonStyle(style: PolygonStyleConfig, opacity: number, feature?: F
 }
 
 function PolygonLayer({ layer }: { layer: StudioLayer }) {
+  const debouncedKey = useDebouncedKey(
+    [layer.id, layer.style, layer.opacity, layer.labels],
+    250
+  );
+
   if (!layer.geoJsonData || !layer.visible) return null;
 
   const style = isPolygonStyle(layer.style) ? layer.style : null;
@@ -94,11 +99,6 @@ function PolygonLayer({ layer }: { layer: StudioLayer }) {
 
   const safeData = sanitizeGeoJson(layer.geoJsonData);
   if (safeData.features.length === 0) return null;
-
-  const debouncedKey = useDebouncedKey(
-    [layer.id, style, layer.opacity, layer.labels],
-    250
-  );
 
   const onEachFeature = (feature: Feature, leafletLayer: L.Layer) => {
     if (layer.labels?.show && layer.labels.field) {
