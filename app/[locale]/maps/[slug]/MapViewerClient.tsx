@@ -1,7 +1,10 @@
+"use client"
+
 import { SiteShell, SiteMain } from '@/components/ui/site-shell'
 import { MapPreview } from './components/MapPreview'
 import { TagPill, TagPillList } from '@/components/ui/tag-pill'
 import { DlField, DlGroup } from '@/components/ui/dl-field'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PageTitle } from '@/components/ui/typography'
 import { Calendar, Tag as TagIcon, MapPin, Download, ExternalLink, Layers } from 'lucide-react'
 import { VersionHistory } from './components/VersionHistory'
@@ -49,16 +52,47 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
-              {map.description && (
+              {(map.description || map.codebookText) && (
                 <div className="bg-stone-50 dark:bg-stone-900/30 p-6 sm:p-8 lg:p-10 border border-stone-200 dark:border-stone-700/50 h-full">
-                  <h3 className="text-xl font-bold text-foreground mb-5 font-display">{t('public.datasets.description', 'תיאור')}</h3>
-                  <div
-                    className="prose prose-lg prose-stone max-w-none leading-relaxed"
-                    dir="auto"
-                    style={{ fontSize: '16px', lineHeight: '1.8' }}
-                  >
-                    <ReactMarkdown>{map.description}</ReactMarkdown>
-                  </div>
+                  {map.description && map.codebookText ? (
+                    <Tabs defaultValue="description">
+                      <TabsList>
+                        <TabsTrigger value="description">{t('public.datasets.description', 'תיאור')}</TabsTrigger>
+                        <TabsTrigger value="codebook">{t('public.map.codebook', 'Codebook')}</TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="description">
+                        <div
+                          className="prose prose-lg prose-stone max-w-none leading-relaxed pt-4"
+                          dir="auto"
+                          style={{ fontSize: '16px', lineHeight: '1.8' }}
+                        >
+                          <ReactMarkdown>{map.description}</ReactMarkdown>
+                        </div>
+                      </TabsContent>
+                      <TabsContent value="codebook">
+                        <div
+                          className="prose prose-lg prose-stone max-w-none leading-relaxed pt-4"
+                          dir="auto"
+                          style={{ fontSize: '16px', lineHeight: '1.8' }}
+                        >
+                          <ReactMarkdown>{map.codebookText}</ReactMarkdown>
+                        </div>
+                      </TabsContent>
+                    </Tabs>
+                  ) : (
+                    <>
+                      <h3 className="text-xl font-bold text-foreground mb-5 font-display">
+                        {map.description ? t('public.datasets.description', 'תיאור') : t('public.map.codebook', 'Codebook')}
+                      </h3>
+                      <div
+                        className="prose prose-lg prose-stone max-w-none leading-relaxed"
+                        dir="auto"
+                        style={{ fontSize: '16px', lineHeight: '1.8' }}
+                      >
+                        <ReactMarkdown>{(map.description || map.codebookText)!}</ReactMarkdown>
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
             </div>

@@ -23,9 +23,10 @@ import { ThumbnailDialog } from "./layer-editor-thumbnail";
 interface LayerEditorProps {
   layer?: any;
   mode: "create" | "edit";
+  categories?: any[];
 }
 
-export function LayerEditorV2({ layer, mode }: LayerEditorProps) {
+export function LayerEditorV2({ layer, mode, categories = [] }: LayerEditorProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [geoJsonData, setGeoJsonData] = useState<any>(layer?.geoJsonData || null);
@@ -77,7 +78,7 @@ export function LayerEditorV2({ layer, mode }: LayerEditorProps) {
       description_i18n: layer?.descriptionI18n || {},
       status: layer?.status || "draft",
       version: layer?.version || "1.0.0",
-      categoryId: layer?.categoryId || undefined,
+      categoryId: layer?.categoryId || null,
       type: layer?.type || "POINTS",
       citationText: layer?.citationText || "",
       citation_text_i18n: layer?.citationTextI18n || {},
@@ -109,6 +110,10 @@ export function LayerEditorV2({ layer, mode }: LayerEditorProps) {
   const sources = form.watch("sources");
 
   const fieldConfigs = createLayerFieldConfigs();
+  fieldConfigs.categoryId.options = categories.map((c: any) => ({
+    value: c.id,
+    label: c.title || c.name || "Untitled",
+  }));
 
   const [mapSettings, setMapSettings] = useState(() => {
     const savedPreview = layer?.styleConfig?.previewSettings;
@@ -155,7 +160,7 @@ export function LayerEditorV2({ layer, mode }: LayerEditorProps) {
   async function onSubmit(data: LayerFormValues) {
     setIsSubmitting(true);
     try {
-      const submitData: any = { ...data, geoJsonData, styleConfig: { ...data.styleConfig, previewSettings: mapSettings } };
+      const submitData: any = { ...data, geoJsonData, styleConfig: { ...data.styleConfig, previewSettings: mapSettings }, categoryId: data.categoryId || null };
       if (actualMode === "create") {
         toast.loading("Creating layer...", { id: "layer-save" });
         const result = await createLayer(submitData);

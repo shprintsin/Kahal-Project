@@ -710,6 +710,7 @@ export async function getMapBySlug(
       yearMax: map.yearMax,
       config: map.config,
       globalStyleConfig: map.globalStyleConfig,
+      codebookText: getLocalizedField(map.codebookText, map.codebookTextI18n, lang) || map.codebookText,
       referenceLinks: map.referenceLinks,
       category: map.category
         ? {

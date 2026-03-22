@@ -239,6 +239,8 @@ model Map {
   slug              String                @unique
   titleI18n         Json?                 @default("{}") @map("title_i18n")
   descriptionI18n   Json?                 @default("{}") @map("description_i18n")
+  codebookText      String?               @map("codebook_text")
+  codebookTextI18n  Json?                 @default("{}") @map("codebook_text_i18n")
   year              Int?
   version           String?               @default("1.0.0")
   thumbnailId       String?               @map("thumbnail_id") @db.Uuid

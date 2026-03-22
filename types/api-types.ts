@@ -139,6 +139,7 @@ export interface Map {
     yearMax?: number;
     config?: any;
     globalStyleConfig?: any;
+    codebookText?: string;
     referenceLinks?: any;
     category?: Category;
     regions?: Region[];

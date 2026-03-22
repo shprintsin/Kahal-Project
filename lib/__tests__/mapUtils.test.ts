@@ -77,15 +77,45 @@ describe("getStyle", () => {
     expect(style.fillColor).not.toBe("#ff0000")
   })
 
-  it("returns empty object for non-polygon layers", () => {
+  it("returns point style with defaults", () => {
     const feature = { properties: {} }
     const layerConfig = {
       type: "point" as const,
-      style: {},
+      style: { fillColor: "#ff7800", radius: 4, color: "#000", weight: 0.5, fillOpacity: 0.8 },
       name: "test",
       visible: true,
       sourceType: "url" as const,
     }
-    expect(getStyle(feature, layerConfig as any)).toEqual({})
+    const style = getStyle(feature, layerConfig as any)
+    expect(style.fillColor).toBe("#ff7800")
+    expect(style.radius).toBe(4)
+  })
+
+  it("returns point style with graduated coloring", () => {
+    const feature = { properties: { population: 500 } }
+    const layerConfig = {
+      type: "point" as const,
+      style: {
+        type: "graduated",
+        fillColor: "#ff7800",
+        radius: 4,
+        color: "#000",
+        weight: 0.5,
+        fillOpacity: 0.8,
+        graduated: {
+          field: "population",
+          method: "equal_interval",
+          classes: 3,
+          colorRamp: { start: "#ffffcc", end: "#800026" },
+          breaks: [200, 600],
+        },
+      },
+      name: "test",
+      visible: true,
+      sourceType: "url" as const,
+    }
+    const style = getStyle(feature, layerConfig as any)
+    expect(style.fillColor).toMatch(/^#[0-9a-f]{6}$/)
+    expect(style.fillColor).not.toBe("#ff7800")
   })
 })

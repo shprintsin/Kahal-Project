@@ -6,6 +6,7 @@ export const layerSchema = LayerOptionalDefaultsSchema
   .omit({ id: true, createdAt: true, updatedAt: true, thumbnail: true })
   .extend({
     slug: slugField,
+    categoryId: z.string().nullable().optional(),
     name_i18n: i18nRecord,
     description_i18n: i18nRecord,
     citation_text_i18n: i18nRecord,
