@@ -143,7 +143,7 @@ export function IconPicker({ value, onChange, triggerClassName }: IconPickerProp
             </div>
             {filteredIcons.length === 0 && (
               <div className="text-center text-muted-foreground py-8">
-                No icons found matching "{search}"
+                No icons found matching &quot;{search}&quot;
               </div>
             )}
           </ScrollArea>

@@ -304,7 +304,7 @@ export function TagInput({
                           className="text-blue-400 hover:bg-accent cursor-pointer"
                         >
                           <Plus className="mr-2 h-4 w-4" />
-                          Create "{inputValue.trim()}"
+                          Create &quot;{inputValue.trim()}&quot;
                         </CommandItem>
                       </CommandGroup>
                     </>

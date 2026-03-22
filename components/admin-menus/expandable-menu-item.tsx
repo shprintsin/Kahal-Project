@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useId, useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
@@ -35,14 +35,25 @@ export function ExpandableMenuItem({
   const [linkType, setLinkType] = useState<"url" | "page">(
     item.pageId ? "page" : "url"
   );
+  const [prevPageId, setPrevPageId] = useState(item.pageId);
+  const [prevUrl, setPrevUrl] = useState(item.url);
+  if (item.pageId !== prevPageId || item.url !== prevUrl) {
+    setPrevPageId(item.pageId);
+    setPrevUrl(item.url);
+    const derived = item.pageId ? "page" : "url";
+    if (derived !== linkType) {
+      setLinkType(derived);
+    }
+  }
 
+  const fallbackId = useId();
   const {
     attributes,
     listeners,
     setNodeRef,
     transform,
     transition,
-  } = useSortable({ id: item.id || `item-${Math.random()}` });
+  } = useSortable({ id: item.id || fallbackId });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -54,12 +65,6 @@ export function ExpandableMenuItem({
   const updateField = (field: keyof MenuItem, value: any) => {
     onChange({ ...item, [field]: value });
   };
-
-  // Auto-switch link type based on content
-  useEffect(() => {
-    if (item.pageId) setLinkType("page");
-    else if (item.url) setLinkType("url");
-  }, [item.pageId, item.url]);
 
   return (
     <div

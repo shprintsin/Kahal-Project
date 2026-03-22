@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { ChevronDown, ChevronLeft, Menu, X } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useLanguage } from "@/lib/i18n/language-provider"
@@ -88,18 +88,24 @@ export function DocsSidebar({ items }: { items: SidebarItem[] }) {
     return initial
   })
 
-  useEffect(() => {
+  const [prevPathname, setPrevPathname] = useState(pathname)
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname)
     setExpandedNodes((prev) => {
       const next = new Set(prev)
+      let changed = false
       items.forEach((item) => {
         if (item.children?.some((child) => pathname.startsWith(child.href))) {
-          next.add(item.href)
+          if (!next.has(item.href)) {
+            next.add(item.href)
+            changed = true
+          }
         }
       })
-      return next
+      return changed ? next : prev
     })
     setMobileOpen(false)
-  }, [pathname, items])
+  }
 
   const toggleExpand = (href: string) => {
     setExpandedNodes((prev) => {

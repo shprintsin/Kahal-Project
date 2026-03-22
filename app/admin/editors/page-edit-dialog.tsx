@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreateDocumentPageInput } from "@/types/document";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface PageEditDialogProps {
   open: boolean;
@@ -31,14 +31,6 @@ export function PageEditDialog({
   const [contentHe, setContentHe] = useState(page.contentHe || "");
   const [contentEn, setContentEn] = useState(page.contentEn || "");
   const [bookmark, setBookmark] = useState(page.bookmark || "");
-
-  // Update local state when page prop changes
-  useEffect(() => {
-    setContent(page.content);
-    setContentHe(page.contentHe || "");
-    setContentEn(page.contentEn || "");
-    setBookmark(page.bookmark || "");
-  }, [page]);
 
   const handleSave = () => {
     onSave({

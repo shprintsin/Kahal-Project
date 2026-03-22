@@ -49,29 +49,22 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
   const [expandedCollections, setExpandedCollections] = useState<Set<string>>(new Set());
   
   // Selected series for showing volumes
-  const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(null);
+  const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(
+    () => searchParams.get('series') || null
+  );
   const [selectedSeriesVolumes, setSelectedSeriesVolumes] = useState<VolumeGridItem[]>([]);
   const [loadingVolumes, setLoadingVolumes] = useState(false);
 
-
-  // Initialize selectedSeriesId from URL on mount
-  useEffect(() => {
-    const seriesFromUrl = searchParams.get('series');
-    // console.log('URL sync effect - series param:', seriesFromUrl, 'current selectedSeriesId:', selectedSeriesId);
-    
-    // Only update if URL has a series and it's different from current state
-    if (seriesFromUrl && seriesFromUrl !== selectedSeriesId) {
-      // console.log('Setting selectedSeriesId from URL:', seriesFromUrl);
-      setSelectedSeriesId(seriesFromUrl);
-    } else if (!seriesFromUrl && selectedSeriesId) {
-      // Clear selection if URL doesn't have series param
-      // console.log('Clearing selectedSeriesId (not in URL)');
-      setSelectedSeriesId(null);
+  const [prevSeriesId, setPrevSeriesId] = useState(selectedSeriesId);
+  if (selectedSeriesId !== prevSeriesId) {
+    setPrevSeriesId(selectedSeriesId);
+    if (!selectedSeriesId) {
+      setSelectedSeriesVolumes([]);
+      setLoadingVolumes(false);
+    } else {
+      setLoadingVolumes(true);
     }
-  }, [searchParams]); // React to URL changes
-
-
-
+  }
 
   // Sync state back to URL
   useEffect(() => {
@@ -108,20 +101,22 @@ export default function CollectionsBrowse({ collections, allSeries, siteShellDat
   }, [activeTab, searchQuery, viewMode, sortMode, itemsPerPage, currentPage, selectedSeriesId, pathname, router, searchParams]);
 
   useEffect(() => {
-    if (selectedSeriesId) {
-      setLoadingVolumes(true);
-      getVolumesBySeriesId(selectedSeriesId)
-        .then((data) => {
+    if (!selectedSeriesId) return;
+    let cancelled = false;
+    getVolumesBySeriesId(selectedSeriesId)
+      .then((data) => {
+        if (!cancelled) {
           setSelectedSeriesVolumes(Array.isArray(data) ? data : []);
           setLoadingVolumes(false);
-        })
-        .catch(() => {
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
           setSelectedSeriesVolumes([]);
           setLoadingVolumes(false);
-        });
-    } else {
-      setSelectedSeriesVolumes([]);
-    }
+        }
+      });
+    return () => { cancelled = true; };
   }, [selectedSeriesId]);
 
 

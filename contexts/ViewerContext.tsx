@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 import type { ViewMode, ViewerState, PageRange } from '@/types/collections';
 
 interface ViewerContextType {
@@ -52,24 +52,16 @@ export function ViewerProvider({
   const [totalPages, setTotalPages] = useState(0);
   const [showTwoPages, setShowTwoPages] = useState(false);
   
-  // Use refs to avoid recreating callbacks on every state change
-  const stateRef = useRef(state);
-  const totalPagesRef = useRef(totalPages);
-  
-  // Update refs when state changes
-  stateRef.current = state;
-  totalPagesRef.current = totalPages;
-
   const setMode = useCallback((mode: ViewMode) => {
     setState(prev => prev.mode === mode ? prev : { ...prev, mode });
   }, []);
 
   const setCurrentPage = useCallback((page: number) => {
     setState(prev => {
-      const newPage = Math.max(1, Math.min(page, totalPagesRef.current || page));
+      const newPage = Math.max(1, Math.min(page, totalPages || page));
       return prev.currentPage === newPage ? prev : { ...prev, currentPage: newPage };
     });
-  }, []);
+  }, [totalPages]);
 
   const setZoom = useCallback((zoom: number) => {
     setState(prev => {
@@ -107,10 +99,10 @@ export function ViewerProvider({
   // Fix: Use functional updates to avoid dependency on state
   const nextPage = useCallback(() => {
     setState(prev => {
-      const newPage = Math.min(prev.currentPage + 1, totalPagesRef.current || prev.currentPage + 1);
+      const newPage = Math.min(prev.currentPage + 1, totalPages || prev.currentPage + 1);
       return prev.currentPage === newPage ? prev : { ...prev, currentPage: newPage };
     });
-  }, []);
+  }, [totalPages]);
 
   const previousPage = useCallback(() => {
     setState(prev => {

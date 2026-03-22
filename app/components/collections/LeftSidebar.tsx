@@ -68,7 +68,7 @@ export default function RSidebar({ volume }: RSidebarProps) {
             <SidebarGroupContent>
               <ScrollArea className="h-48">
                 <div className="p-3 text-sm text-gray-600">
-                  No results found for "{searchQuery}"
+                  No results found for &quot;{searchQuery}&quot;
                 </div>
               </ScrollArea>
             </SidebarGroupContent>

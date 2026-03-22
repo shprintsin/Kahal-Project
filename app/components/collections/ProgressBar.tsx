@@ -18,7 +18,9 @@ export default function ProgressBar({ totalPages }: ProgressBarProps) {
   const totalPagesRef = useRef(totalPages);
   const [inverted, setInverted] = useState(false);
 
-  totalPagesRef.current = totalPages;
+  useEffect(() => {
+    totalPagesRef.current = totalPages;
+  }, [totalPages]);
 
   const progress = totalPages > 0 ? ((state.currentPage - 1) / (totalPages - 1)) * 100 : 0;
 

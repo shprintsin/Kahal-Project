@@ -123,7 +123,7 @@ export async function listCategoriesAPI(options: ListCategoriesOptions = {}) {
     });
 
     // Transform and calculate usage counts
-    let transformedCategories = categories.map((category) => ({
+    const transformedCategories = categories.map((category) => ({
       id: category.id,
       slug: category.slug,
       title: category.title,

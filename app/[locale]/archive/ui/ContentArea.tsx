@@ -28,15 +28,21 @@ export function ContentArea({
   // Find collection by slug from the initial data
   const collection = collections.find(c => c.id === selectedCollectionSlug) || null;
 
-  // Fetch series with volumes when both collection and series are selected
-  useEffect(() => {
-    if (!selectedCollectionSlug || !selectedSeriesSlug) {
+  const [prevSlugs, setPrevSlugs] = useState({ c: selectedCollectionSlug, s: selectedSeriesSlug });
+  if (selectedCollectionSlug !== prevSlugs.c || selectedSeriesSlug !== prevSlugs.s) {
+    setPrevSlugs({ c: selectedCollectionSlug, s: selectedSeriesSlug });
+    if (selectedCollectionSlug && selectedSeriesSlug) {
+      setLoading(true);
+    } else {
       setSeriesData(null);
-      return;
+      setLoading(false);
     }
+  }
+
+  useEffect(() => {
+    if (!selectedCollectionSlug || !selectedSeriesSlug) return;
 
     let cancelled = false;
-    setLoading(true);
 
     getSeriesWithVolumes(selectedCollectionSlug, selectedSeriesSlug)
       .then(data => {
