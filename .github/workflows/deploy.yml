@@ -39,6 +39,5 @@ jobs:
           host: ${{ secrets.ORACLE_HOST }}
           username: opc
           key: ${{ secrets.ORACLE_SSH_KEY }}
-          script_stop: true
           command_timeout: 15m
           script: /home/opc/deploy.sh
