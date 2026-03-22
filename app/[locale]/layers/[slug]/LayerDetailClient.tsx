@@ -1,3 +1,5 @@
+"use client"
+
 import { MapPreview } from "../../maps/[slug]/components/MapPreview"
 import type { SiteShellData } from "@/app/lib/get-navigation"
 import { Calendar, FileText, Link as LinkIcon, Download, Info } from "lucide-react"
@@ -7,16 +9,11 @@ import { DownloadButton } from "@/components/ui/action-button"
 import { SiteShell, SiteMain } from "@/components/ui/site-shell"
 import { SetEditUrl } from "@/components/ui/admin-toolbar"
 import { useLanguage } from "@/lib/i18n/language-provider"
+import { resolveBasemapTile } from "@/lib/basemaps"
 
 export function LayerDetailClient({ layer, shellData, locale }: { layer: any; shellData: SiteShellData; locale?: string }) {
   const { t } = useLanguage()
   const previewSettings = layer?.styleConfig?.previewSettings || {
-    tile: {
-      src: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      maxZoom: 18,
-      subdomains: 'abc',
-      attribution: '© OpenStreetMap contributors'
-    },
     zoom: 6,
     center: [52.0, 20.0] as [number, number]
   };
@@ -27,7 +24,8 @@ export function LayerDetailClient({ layer, shellData, locale }: { layer: any; sh
     config: {
       center: previewSettings.center,
       zoom: previewSettings.zoom,
-      tile: previewSettings.tile
+      basemap: previewSettings.basemap,
+      tile: resolveBasemapTile(previewSettings.basemap, previewSettings.tile),
     },
     layers: [{
         ...layer,

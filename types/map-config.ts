@@ -37,10 +37,40 @@ export interface PopupConfig {
   template?: string;
 }
 
+// Hover panel configuration
+export interface HoverPanelConfig {
+  fields?: string[];
+  template?: string;
+}
+
 // Hover configuration
 export interface HoverConfig {
   enable: boolean;
-  style?: PolygonStyleConfig | PointStyleConfig;
+  display?: 'floating' | 'sidebar';
+  style?: { fillOpacity?: number; weight?: number; color?: string };
+  panel?: HoverPanelConfig;
+}
+
+// Legend configuration
+export interface LegendConfig {
+  position?: 'topright' | 'bottomright' | 'bottomleft' | 'topleft';
+  layers?: string[];
+  collapsed?: boolean;
+}
+
+// Control configuration
+export interface ControlConfig {
+  type: 'layer-toggle' | 'search';
+  layers?: string[];
+  layer?: string;
+  field?: string;
+}
+
+// Behaviors configuration
+export interface BehaviorsConfig {
+  legend?: LegendConfig;
+  controls?: ControlConfig[];
+  url_state?: boolean;
 }
 
 // Style configurations
@@ -89,6 +119,7 @@ export interface LayerConfig {
   labels?: LabelConfig;
   popup?: PopupConfig;
   hover?: HoverConfig;
+  zIndex?: number;
   minZoom?: number;
   maxZoom?: number;
   feature_id?: string;
@@ -101,6 +132,7 @@ export interface MapConfig {
   center: [number, number];
   layers: LayerConfig[];
   customCSS?: string;
+  behaviors?: BehaviorsConfig;
 }
 
 // Utility types

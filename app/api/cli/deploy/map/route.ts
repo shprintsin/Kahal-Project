@@ -11,6 +11,11 @@ export async function POST(req: NextRequest) {
     const {
       slug, title, description, status, config, metadata,
       layerSlugs, changeLog, gitSha, cliVersion,
+      // Direct i18n fields (new CLI v2 — take precedence over metadata)
+      titleI18n: directTitleI18n,
+      descriptionI18n: directDescriptionI18n,
+      codebookTextI18n,
+      thumbnailId,
     } = body;
 
     if (!slug) {
@@ -22,8 +27,12 @@ export async function POST(req: NextRequest) {
 
     // Extract metadata fields
     const year = metadata?.year ?? null;
-    const titleI18n = metadata?.title ?? { en: title };
-    const descriptionI18n = metadata?.description ?? { en: description ?? '' };
+    // Direct i18n fields from CLI v2 take precedence over metadata-wrapped ones
+    const titleI18n = directTitleI18n ?? metadata?.title ?? { en: title };
+    const descriptionI18n = directDescriptionI18n ?? metadata?.description ?? { en: description ?? '' };
+    // Primary title/description: prefer Hebrew, then English, then bare value
+    const resolvedTitle = titleI18n?.he || titleI18n?.en || title;
+    const resolvedDescription = descriptionI18n?.he || descriptionI18n?.en || description;
 
     const existing = await prisma.map.findUnique({ where: { slug } });
 
@@ -45,10 +54,16 @@ export async function POST(req: NextRequest) {
       map = await prisma.map.update({
         where: { id: existing.id },
         data: {
-          title: title ?? existing.title,
+          title: resolvedTitle ?? existing.title,
           titleI18n,
-          description: description ?? existing.description,
+          description: resolvedDescription ?? existing.description,
           descriptionI18n,
+          ...(codebookTextI18n ? {
+            codebookText: codebookTextI18n.he || codebookTextI18n.en || null,
+            codebookTextI18n,
+          } : {}),
+          // Only connect thumbnail if provided — preserves existing otherwise
+          ...(thumbnailId ? { thumbnail: { connect: { id: thumbnailId } } } : {}),
           status: (status ?? existing.status) as any,
           config: mapConfig,
           year,
@@ -60,10 +75,15 @@ export async function POST(req: NextRequest) {
       map = await prisma.map.create({
         data: {
           slug,
-          title: title ?? slug,
+          title: resolvedTitle ?? slug,
           titleI18n,
-          description: description ?? '',
+          description: resolvedDescription ?? '',
           descriptionI18n,
+          ...(codebookTextI18n ? {
+            codebookText: codebookTextI18n.he || codebookTextI18n.en || null,
+            codebookTextI18n,
+          } : {}),
+          ...(thumbnailId ? { thumbnail: { connect: { id: thumbnailId } } } : {}),
           status: (status ?? 'draft') as any,
           config: mapConfig,
           year,
