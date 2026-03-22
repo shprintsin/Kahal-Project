@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { authenticateCli } from '../../../middleware';
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ slug: string }> },
 ) {
+  const authError = authenticateCli(req);
+  if (authError) return authError;
+
   try {
     const { slug } = await params;
 
