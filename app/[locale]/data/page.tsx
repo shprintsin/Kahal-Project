@@ -28,7 +28,7 @@ export default async function DatasetsPage({ params }: { params: Promise<{ local
     title: d.title,
     excerpt: d.description || undefined,
     thumbnail: d.thumbnail?.url,
-    slug: `/${locale}/data/${d.slug}`,
+    slug: `/data/${d.slug}`,
     date: d.createdAt ? new Date(d.createdAt).toLocaleDateString(getDateLocale(locale as Locale)) : null,
     category: d.category?.title,
     resourceCount: d.resourceCount
@@ -37,7 +37,7 @@ export default async function DatasetsPage({ params }: { params: Promise<{ local
   const categories = (categoriesData.categories || []).map((c) => ({
     name: c.title,
     count: 0,
-    slug: `/${locale}/categories/${c.slug}`,
+    slug: `/categories/${c.slug}`,
   }));
 
   return <DatasetsPageClient
