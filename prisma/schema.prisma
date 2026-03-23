@@ -203,6 +203,7 @@ model ResearchDataset {
   minYear          Int?              @map("min_year")
   sources          String?
   isVisible        Boolean           @default(true) @map("is_visible")
+  isFeatured       Boolean           @default(false) @map("is_featured")
   sourcesI18n      Json?             @default("{}") @map("sources_i18n")
   descriptionI18n  Json?             @default("{}") @map("description_i18n")
   resources        DatasetResource[]
@@ -256,6 +257,7 @@ model Map {
   yearMin           Int?                  @map("year_min")
   categoryId        String?               @map("category_id") @db.Uuid
   status            ContentStatus         @default(draft)
+  isFeatured        Boolean               @default(false) @map("is_featured")
   resources         DatasetResource[]
   layers            MapLayerAssociation[]
   deployments       MapDeployment[]
@@ -295,6 +297,7 @@ model Layer {
   geoJsonData      Json?                 @map("geojson_data")
   styleConfig      Json                  @default("{}") @map("style_config")
   thumbnail        String?               @map("thumbnail")
+  isFeatured       Boolean               @default(false) @map("is_featured")
   createdAt        DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt        DateTime              @updatedAt @map("updated_at") @db.Timestamptz(6)
   category         Category?             @relation(fields: [categoryId], references: [id])

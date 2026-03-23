@@ -205,40 +205,13 @@ export const GetIcons = ({icon, className}: {icon: string, className: string}) =
 
 
 export const navigation: NavItem[] = [
-  {
-    label: "בית",
-    icon: "FaHome",
-    href: "/"
-  },  
-  {
-    label: "דוקומנטציה",
-    icon: "FaBook",
-    href: "#"
-  },
-  {
-    label: "נתונים",
-    icon: "FaDatabase",
-    href: "/data"
-  },
-  {
-    label: "מפות",
-    icon: "FaMap",
-    href: "/maps"
-  },
-  
-    {
-      label: "משאבים",
-      icon: "FaArchive",
-      href: "#",
-      subItems: [
-        { label: "מאמרים", icon: null, href: "#" },
-        { label: "ספרים", icon: null, href: "#" },
-        { label: "מסמכים היסטוריים", icon: null, href: "#" },
-        { label: "תמונות וצילומים", icon: null, href: "#" }
-      ]
-    }
-  
-  ]
+  { label: "מאמרים", icon: "Newspaper", href: "/posts" },
+  { label: "מפות", icon: "Globe", href: "/maps" },
+  { label: "שכבות", icon: "Layers", href: "/layers" },
+  { label: "נתונים", icon: "Table", href: "/data" },
+  { label: "ארכיון", icon: "Library", href: "/archive" },
+  { label: "אודות", icon: "Info", href: "/about" },
+]
 
 
   export const POST = {

@@ -175,6 +175,22 @@ public:
     subtitle: "Eastern European Jewish Communities Project"
   search:
     placeholder: "Search the site"
+  stats:
+    communities: "Communities"
+    datasets: "Datasets"
+    maps: "Maps"
+    years: "Years of History"
+  sections:
+    data: "Data"
+    mapsAndLayers: "Maps & Layers"
+    links: "Links"
+    posts: "Posts"
+    team: "Research Team"
+    allData: "All Data"
+    allMaps: "All Maps"
+    allPosts: "All Posts"
+    citation: "Copy citation"
+    copied: "Copied!"
   posts:
     title: "Posts"
     empty: "No posts to display"
