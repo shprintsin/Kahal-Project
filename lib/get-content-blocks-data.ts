@@ -41,10 +41,10 @@ export async function getContentBlocksData(): Promise<ContentBlocksProps> {
     d.toLocaleDateString(dateLocales[locale] || "he-IL", { day: "numeric", month: "long", year: "numeric" });
 
   return {
-    datasets: datasets.map((d) => ({ title: d.title, description: truncate(d.description ?? ""), slug: d.slug })),
+    datasets: datasets.map((d) => ({ title: d.title, description: d.summary || truncate(d.description ?? ""), slug: d.slug })),
     maps: [
-      ...maps.map((m) => ({ title: m.title, description: truncate(m.description ?? ""), href: `/maps/${m.slug}` })),
-      ...layers.map((l) => ({ title: l.name, description: truncate(l.description ?? ""), href: `/layers/${l.slug}` })),
+      ...maps.map((m) => ({ title: m.title, description: m.summary || truncate(m.description ?? ""), href: `/maps/${m.slug}` })),
+      ...layers.map((l) => ({ title: l.name, description: l.summary || truncate(l.description ?? ""), href: `/layers/${l.slug}` })),
     ].slice(0, 4),
     posts: posts.map((p) => ({ title: p.title, date: formatDate(p.createdAt, "he"), slug: p.slug })),
     links: siteLinks.map((l) => ({ title: l.title, description: l.description ?? "", icon: l.icon ?? "Globe", url: l.url })),

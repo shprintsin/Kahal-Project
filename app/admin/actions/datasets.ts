@@ -50,19 +50,20 @@ export async function createDataset(datasetData: Record<string, unknown>) {
   
   const titleSplit = splitI18nField(validated.title);
   const descriptionSplit = splitI18nField(validated.description);
+  const summarySplit = splitI18nField(validated.summary);
   const sourcesSplit = splitI18nField(validated.sources);
   const codebookTextSplit = splitI18nField(validated.codebookText);
 
   const data: Prisma.ResearchDatasetCreateInput = {
     slug: validated.slug,
-    
-    // Split Title
+
     title: titleSplit.main,
     titleI18n: titleSplit.i18n,
-    
-    // Split fields
+
     description: descriptionSplit.main,
     descriptionI18n: descriptionSplit.i18n,
+    summary: summarySplit.main,
+    summaryI18n: summarySplit.i18n,
     sources: sourcesSplit.main,
     sourcesI18n: sourcesSplit.i18n,
     codebookText: codebookTextSplit.main,
@@ -116,6 +117,11 @@ export async function updateDataset(id: string, datasetData: Record<string, unkn
     const descriptionSplit = splitI18nField(validated.description);
     data.description = descriptionSplit.main;
     data.descriptionI18n = descriptionSplit.i18n;
+  }
+  if (validated.summary !== undefined) {
+    const summarySplit = splitI18nField(validated.summary);
+    data.summary = summarySplit.main;
+    data.summaryI18n = summarySplit.i18n;
   }
   if (validated.sources !== undefined) {
     const sourcesSplit = splitI18nField(validated.sources);
@@ -454,6 +460,7 @@ export async function listDatasetsAPI(options: ListDatasetsOptions = {}) {
       slug: dataset.slug,
       title: getLocalizedField(dataset.title, dataset.titleI18n, lang) || dataset.title,
       description: getLocalizedField(dataset.description, dataset.descriptionI18n, lang) || dataset.description,
+      summary: getLocalizedField(dataset.summary, dataset.summaryI18n, lang) || dataset.summary,
       status: dataset.status,
       maturity: dataset.maturity,
       version: dataset.version,
@@ -558,6 +565,7 @@ export async function getDatasetBySlug(
       slug: dataset.slug,
       title: getLocalizedField(dataset.title, dataset.titleI18n, lang) || dataset.title,
       description: getLocalizedField(dataset.description, dataset.descriptionI18n, lang) || dataset.description,
+      summary: getLocalizedField(dataset.summary, dataset.summaryI18n, lang) || dataset.summary,
       status: dataset.status,
       maturity: dataset.maturity,
       version: dataset.version,

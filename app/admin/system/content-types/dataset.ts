@@ -12,6 +12,7 @@ export const DatasetType: ContentTypeDefinition = {
     createField.text("title", "Title", { required: true, order: 1 }),
     createField.slug("slug", "title", "/data/"),
     createField.text("description", "Description", { showInList: false, order: 3 }),
+    createField.text("summary", "Summary", { showInList: false, order: 3.5, placeholder: "Short description for cards and listings" }),
     {
       key: "status",
       label: "Status",
