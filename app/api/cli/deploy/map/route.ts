@@ -16,6 +16,8 @@ export async function POST(req: NextRequest) {
       descriptionI18n: directDescriptionI18n,
       codebookTextI18n,
       thumbnailId,
+      summary,
+      summaryI18n,
     } = body;
 
     if (!slug) {
@@ -58,6 +60,8 @@ export async function POST(req: NextRequest) {
           titleI18n,
           description: resolvedDescription ?? existing.description,
           descriptionI18n,
+          summary: summary ?? existing.summary,
+          ...(summaryI18n ? { summaryI18n } : {}),
           ...(codebookTextI18n ? {
             codebookText: codebookTextI18n.he || codebookTextI18n.en || null,
             codebookTextI18n,
@@ -79,6 +83,8 @@ export async function POST(req: NextRequest) {
           titleI18n,
           description: resolvedDescription ?? '',
           descriptionI18n,
+          summary: summary ?? '',
+          ...(summaryI18n ? { summaryI18n } : {}),
           ...(codebookTextI18n ? {
             codebookText: codebookTextI18n.he || codebookTextI18n.en || null,
             codebookTextI18n,

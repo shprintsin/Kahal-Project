@@ -9,7 +9,8 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const {
-      slug, title, description, status, maturity, version,
+      slug, title, description, summary, summaryI18n,
+      status, maturity, version,
       license, citationText, minYear, maxYear, isVisible,
       categorySlug, regionSlugs,
       titleI18n, descriptionI18n, codebookTextI18n, sourcesI18n,
@@ -71,6 +72,8 @@ export async function POST(req: NextRequest) {
           titleI18n: titleI18n ?? existing.titleI18n,
           description: resolvedDescription,
           descriptionI18n: descriptionI18n ?? existing.descriptionI18n,
+          summary: summary ?? existing.summary,
+          ...(summaryI18n ? { summaryI18n } : {}),
           ...(codebookTextI18n ? {
             codebookText: codebookTextI18n.he || codebookTextI18n.en || null,
             codebookTextI18n,
@@ -100,6 +103,8 @@ export async function POST(req: NextRequest) {
           titleI18n: titleI18n ?? {},
           description: resolvedDescription,
           descriptionI18n: descriptionI18n ?? {},
+          summary: summary ?? '',
+          ...(summaryI18n ? { summaryI18n } : {}),
           ...(codebookTextI18n ? {
             codebookText: codebookTextI18n.he || codebookTextI18n.en || null,
             codebookTextI18n,
