@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { slug, name, description, type, status, geoJsonData, style, dataCsvContent, changeLog } = body;
+    const { slug, name, description, summary, summaryI18n, type, status, geoJsonData, style, dataCsvContent, changeLog } = body;
 
     if (!slug) {
       return NextResponse.json({ error: 'slug is required' }, { status: 400 });
@@ -38,6 +38,8 @@ export async function POST(req: NextRequest) {
         data: {
           name: name ?? existing.name,
           description: description ?? existing.description,
+          summary: summary ?? existing.summary,
+          ...(summaryI18n ? { summaryI18n } : {}),
           type: dbType as any,
           status: (status ?? existing.status) as any,
           geoJsonData: geoJsonData ?? existing.geoJsonData,
@@ -54,6 +56,8 @@ export async function POST(req: NextRequest) {
           slug,
           name: name ?? slug,
           description: description ?? '',
+          summary: summary ?? '',
+          ...(summaryI18n ? { summaryI18n } : {}),
           type: dbType as any,
           status: (status ?? 'draft') as any,
           geoJsonData: geoJsonData ?? {},
