@@ -11,6 +11,7 @@ import { SeeMoreButton } from '@/components/ui/nav-links';
 import { Section } from '@/components/ui/sections';
 import { StatCard } from '@/components/ui/stat-card';
 import { H3 } from '@/components/ui/typography';
+import { useLanguage } from '@/lib/i18n/language-provider';
 
 interface DatasetItem {
   title: string;
@@ -45,7 +46,7 @@ interface Author {
 
 interface Stats {
   communities: string;
-  documents: string;
+  datasets: string;
   maps: string;
   years: string;
 }
@@ -69,11 +70,13 @@ export function ContentBlocks({
   citation,
   stats,
 }: ContentBlocksProps) {
+  const { t } = useLanguage();
+
   const statItems = [
-    { icon: <Users className="w-5 h-5" />, label: 'קהילות', value: stats.communities },
-    { icon: <FileText className="w-5 h-5" />, label: 'מסמכים', value: stats.documents },
-    { icon: <Map className="w-5 h-5" />, label: 'מפות', value: stats.maps },
-    { icon: <Clock className="w-5 h-5" />, label: 'שנות היסטוריה', value: stats.years },
+    { icon: <Users className="w-5 h-5" />, label: t('public.stats.communities', 'קהילות'), value: stats.communities },
+    { icon: <Database className="w-5 h-5" />, label: t('public.stats.datasets', 'מערכי נתונים'), value: stats.datasets },
+    { icon: <Map className="w-5 h-5" />, label: t('public.stats.maps', 'מפות'), value: stats.maps },
+    { icon: <Clock className="w-5 h-5" />, label: t('public.stats.years', 'שנות היסטוריה'), value: stats.years },
   ];
 
   return (
@@ -89,33 +92,33 @@ export function ContentBlocks({
         <Section className="md:col-span-2 lg:col-span-2">
           <H3 className="flex items-center gap-2">
             <Database className="w-5 h-5" />
-            נתונים
+            {t('public.sections.data', 'נתונים')}
           </H3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-grow">
             {datasets.map((d) => (
               <GridTile key={d.slug} href={`/data/${d.slug}`} title={d.title} description={d.description} />
             ))}
           </div>
-          <SeeMoreButton href="/data">כל הנתונים</SeeMoreButton>
+          <SeeMoreButton href="/data">{t('public.sections.allData', 'כל הנתונים')}</SeeMoreButton>
         </Section>
 
         <Section className="md:col-span-2 lg:col-span-2">
           <H3 className="flex items-center gap-2">
             <Layers className="w-5 h-5" />
-            מפות ושכבות
+            {t('public.sections.mapsAndLayers', 'מפות ושכבות')}
           </H3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-grow">
             {maps.map((m) => (
               <GridTile key={m.href} href={m.href} title={m.title} description={m.description} />
             ))}
           </div>
-          <SeeMoreButton href="/maps">כל המפות</SeeMoreButton>
+          <SeeMoreButton href="/maps">{t('public.sections.allMaps', 'כל המפות')}</SeeMoreButton>
         </Section>
 
         <Section className="lg:col-span-1">
           <H3 className="flex items-center gap-2">
             <Link2 className="w-5 h-5" />
-            קישורים
+            {t('public.sections.links', 'קישורים')}
           </H3>
           <ul className="space-y-3 flex-grow">
             {links.map((l) => (
@@ -135,7 +138,7 @@ export function ContentBlocks({
         <Section className="lg:col-span-1">
           <H3 className="flex items-center gap-2">
             <FileText className="w-5 h-5" />
-            פוסטים
+            {t('public.sections.posts', 'פוסטים')}
           </H3>
           <ul className="space-y-3 flex-grow">
             {posts.map((p) => (
@@ -148,14 +151,14 @@ export function ContentBlocks({
               />
             ))}
           </ul>
-          <SeeMoreButton href="/posts">כל הפוסטים</SeeMoreButton>
+          <SeeMoreButton href="/posts">{t('public.sections.allPosts', 'כל הפוסטים')}</SeeMoreButton>
         </Section>
 
         <div className="flex flex-col gap-6 md:col-span-2 lg:col-span-2">
           <Section className="flex-grow">
             <H3 className="flex items-center gap-2">
               <Users className="w-5 h-5" />
-              צוות המחקר
+              {t('public.sections.team', 'צוות המחקר')}
             </H3>
             <div className="flex flex-col gap-4 flex-grow">
               {authors.map((a) => (
@@ -163,7 +166,7 @@ export function ContentBlocks({
               ))}
             </div>
           </Section>
-          <CitationBox text={citation} variant="inline" />
+          <CitationBox text={citation} />
         </div>
 
       </div>

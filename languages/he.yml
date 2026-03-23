@@ -175,6 +175,22 @@ public:
     subtitle: "פרויקט קהילות מזרח אירופה"
   search:
     placeholder: "לחיפוש באתר"
+  stats:
+    communities: "קהילות"
+    datasets: "מערכי נתונים"
+    maps: "מפות"
+    years: "שנות היסטוריה"
+  sections:
+    data: "נתונים"
+    mapsAndLayers: "מפות ושכבות"
+    links: "קישורים"
+    posts: "פוסטים"
+    team: "צוות המחקר"
+    allData: "כל הנתונים"
+    allMaps: "כל המפות"
+    allPosts: "כל הפוסטים"
+    citation: "העתקת ציטוט"
+    copied: "הועתק!"
   posts:
     title: "פוסטים"
     empty: "אין פוסטים להצגה"

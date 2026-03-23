@@ -69,6 +69,7 @@ export const DatasetType: ContentTypeDefinition = {
       placement: "sidebar",
     },
     createField.boolean("isVisible", "Visible", { showInList: true, order: 13 }),
+    createField.boolean("isFeatured", "Featured", { showInList: true, order: 14, placement: "sidebar" }),
     createField.date("createdAt", "Created"),
     createField.date("updatedAt", "Updated"),
   ],

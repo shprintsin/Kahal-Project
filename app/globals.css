@@ -6,7 +6,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-rubik), "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  --font-sans: "Rubik", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   --font-mono: var(--font-geist-mono);
   --font-display: var(--font-secular), "Secular One", sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
@@ -71,6 +71,7 @@
 }
 
 :root {
+  --dark-green: #1a472a;
   --brand-primary: #1a472a;
   --brand-primary-dark: #0d4d2c;
   --brand-primary-darker: #083d22;

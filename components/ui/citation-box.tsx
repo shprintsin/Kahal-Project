@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { Copy as FaCopy } from 'lucide-react'
-import { CopyButton } from '@/components/ui/action-button'
+import { Copy, Check } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface CitationBoxProps {
   text: string
   className?: string
+  variant?: 'inline' | 'default'
 }
 
 export function CitationBox({ text, className }: CitationBoxProps) {
@@ -23,17 +24,18 @@ export function CitationBox({ text, className }: CitationBoxProps) {
   }
 
   return (
-    <div className={`relative bg-surface-light p-6 border border-border w-full h-[80px] ${className || ''}`}>
-      <textarea
-        rows={1}
-        className="w-10/12 text-foreground border-none overflow-hidden leading-relaxed resize-none bg-transparent"
-        defaultValue={text}
-        readOnly
-      />
-      <CopyButton onClick={handleCopy} className="absolute top-4 left-4">
-        <FaCopy className="text-base" />
-        {copySuccess ? 'הועתק!' : 'העתק'}
-      </CopyButton>
+    <div className={cn("flex items-center justify-end", className)}>
+      <button
+        onClick={handleCopy}
+        className="group relative flex items-center justify-center w-10 h-10 rounded-md bg-brand-primary-light text-brand-primary hover:bg-brand-primary hover:text-white transition-colors"
+        title={text}
+        aria-label="Copy citation"
+      >
+        {copySuccess ? <Check size={18} /> : <Copy size={18} />}
+        <span className="absolute bottom-full mb-2 end-0 px-2 py-1 text-xs bg-foreground text-white rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+          {copySuccess ? '✓' : 'Copy citation'}
+        </span>
+      </button>
     </div>
   )
 }

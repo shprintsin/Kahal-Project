@@ -144,5 +144,11 @@ export function createLayerFieldConfigs(): Record<string, FieldConfig> {
       placeholder: "original-file.geojson",
       description: "Original filename of the source data",
     },
+    isFeatured: {
+      name: "isFeatured",
+      label: "Featured",
+      type: "checkbox",
+      description: "Show on homepage",
+    },
   };
 }

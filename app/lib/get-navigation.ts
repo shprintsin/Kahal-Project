@@ -10,7 +10,9 @@ function resolveLocalizedText(
   label: { default: string; translations: Record<string, string> },
   locale: string
 ): string {
-  return getContentTranslation(label.translations, locale, label.default);
+  const translated = label.translations?.[locale];
+  if (translated) return translated;
+  return label.default || "";
 }
 
 function mapMenuItemToNavItem(item: MenuItem, locale: string): NavItem {

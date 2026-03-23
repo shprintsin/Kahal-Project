@@ -43,6 +43,11 @@ export default function Search() {
   return (
     <div className={`${styles.search} ${expanded ? styles.searchExpanded : ''}`}>
       <div className={styles.searchContainer}>
+        <SearchIcon
+          className={styles.searchIcon}
+          size={16}
+          onClick={handleIconClick}
+        />
         <input
           ref={inputRef}
           type="text"
@@ -53,10 +58,9 @@ export default function Search() {
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
         />
-        <SearchIcon
-          className={`${styles.searchIcon} cursor-pointer hover:text-brand-primary transition-colors duration-200`}
-          onClick={handleIconClick}
-        />
+        <button className={styles.searchButton} onClick={handleSearch}>
+          {t('common.search', 'חיפוש')}
+        </button>
       </div>
     </div>
   )

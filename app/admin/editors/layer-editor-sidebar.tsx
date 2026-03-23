@@ -64,6 +64,7 @@ export function LayerEditorSidebar({
             <FormFieldRenderer config={fieldConfigs.status} control={form.control as any} />
             <FormFieldRenderer config={fieldConfigs.type} control={form.control as any} />
             <FormFieldRenderer config={fieldConfigs.categoryId} control={form.control as any} />
+            {fieldConfigs.isFeatured && <FormFieldRenderer config={fieldConfigs.isFeatured} control={form.control as any} />}
           </div>
         </AdminSidebarCard>
 
