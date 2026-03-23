@@ -21,6 +21,7 @@ export const datasetSchema = ResearchDatasetOptionalDefaultsSchema
     slug: slugField,
     title: i18nOrString,
     description: i18nOrString,
+    summary: i18nOrString,
     sources: i18nOrString,
     codebookText: i18nOrString,
     regions: z.array(z.string()).default([]),
@@ -28,4 +29,4 @@ export const datasetSchema = ResearchDatasetOptionalDefaultsSchema
 
 export const datasetUpdateSchema = datasetSchema.partial();
 
-export type DatasetFormValues = typeof datasetSchema._type;
+export type DatasetFormValues = z.infer<typeof datasetSchema>;

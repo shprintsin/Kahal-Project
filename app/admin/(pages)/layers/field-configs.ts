@@ -23,7 +23,14 @@ export function createLayerFieldConfigs(): Record<string, FieldConfig> {
       label: "Description",
       type: "textarea",
       placeholder: "Describe this layer...",
-      description: "Brief description of the layer content",
+      description: "Full description of the layer content",
+    },
+    summary: {
+      name: "summary",
+      label: "Summary",
+      type: "text",
+      placeholder: "Short description for cards and listings",
+      description: "Brief summary shown on homepage cards and list views",
     },
     status: {
       name: "status",

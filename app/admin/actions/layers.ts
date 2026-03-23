@@ -16,6 +16,8 @@ export interface LayerFormData {
   name_i18n?: Record<string, string>;
   description?: string;
   description_i18n?: Record<string, string>;
+  summary?: string;
+  summary_i18n?: Record<string, string>;
   status: "draft" | "published" | "archived";
   version?: string;
   categoryId?: string;
@@ -85,6 +87,8 @@ export async function createLayer(data: LayerFormData) {
         nameI18n: data.name_i18n || {},
         description: data.description,
         descriptionI18n: data.description_i18n || {},
+        summary: data.summary,
+        summaryI18n: data.summary_i18n || {},
         status: data.status,
         version: data.version || "1.0.0",
         categoryId: data.categoryId,
@@ -148,6 +152,8 @@ export async function updateLayer(id: string, data: Partial<LayerFormData>) {
         ...(data.name_i18n && { nameI18n: data.name_i18n }),
         ...(data.description !== undefined && { description: data.description }),
         ...(data.description_i18n && { descriptionI18n: data.description_i18n }),
+        ...(data.summary !== undefined && { summary: data.summary }),
+        ...(data.summary_i18n && { summaryI18n: data.summary_i18n }),
         ...(data.status && { status: data.status }),
         ...(data.version && { version: data.version }),
         ...(data.categoryId !== undefined && { categoryId: data.categoryId }),
@@ -290,6 +296,7 @@ export async function getLayer(id: string, options: GetLayerOptions = {}) {
       ...layer,
       name: getLocalizedField(layer.name, layer.nameI18n, lang) || layer.name,
       description: getLocalizedField(layer.description, layer.descriptionI18n, lang) || layer.description,
+      summary: getLocalizedField(layer.summary, layer.summaryI18n, lang) || layer.summary,
       citationText: getLocalizedField(layer.citationText, layer.citationTextI18n, lang) || layer.citationText,
       codebookText: getLocalizedField(layer.codebookText, layer.codebookTextI18n, lang) || layer.codebookText,
       sources: getLocalizedField(layer.sources, layer.sourcesI18n, lang) || layer.sources,
@@ -381,6 +388,7 @@ export async function getLayerBySlug(slug: string, options: GetLayerOptions = {}
       ...layer,
       name: getLocalizedField(layer.name, layer.nameI18n, lang) || layer.name,
       description: getLocalizedField(layer.description, layer.descriptionI18n, lang) || layer.description,
+      summary: getLocalizedField(layer.summary, layer.summaryI18n, lang) || layer.summary,
       citationText: getLocalizedField(layer.citationText, layer.citationTextI18n, lang) || layer.citationText,
       codebookText: getLocalizedField(layer.codebookText, layer.codebookTextI18n, lang) || layer.codebookText,
       sources: getLocalizedField(layer.sources, layer.sourcesI18n, lang) || layer.sources,
@@ -523,6 +531,7 @@ export async function listLayersAPI(options: ListLayersOptions = {}) {
         ...layerWithoutGeoJson,
         name: getLocalizedField(layer.name, layer.nameI18n, lang) || layer.name,
         description: getLocalizedField(layer.description, layer.descriptionI18n, lang) || layer.description,
+        summary: getLocalizedField(layer.summary, layer.summaryI18n, lang) || layer.summary,
         category: layer.category
           ? {
               ...layer.category,

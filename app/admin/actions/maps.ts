@@ -34,10 +34,13 @@ export interface MapInput {
   status?: string;
   title?: string;
   description?: string;
+  summary?: string;
   title_i18n?: Prisma.InputJsonValue;
   titleI18n?: Prisma.InputJsonValue;
   description_i18n?: Prisma.InputJsonValue;
   descriptionI18n?: Prisma.InputJsonValue;
+  summary_i18n?: Prisma.InputJsonValue;
+  summaryI18n?: Prisma.InputJsonValue;
   area_i18n?: Prisma.InputJsonValue;
   areaI18n?: Prisma.InputJsonValue;
   year?: string | number | null;
@@ -156,6 +159,8 @@ export async function createMap(mapData: MapInput) {
     titleI18n: mapData.title_i18n || mapData.titleI18n,
     ...(mapData.description !== undefined && { description: mapData.description }),
     descriptionI18n: mapData.description_i18n || mapData.descriptionI18n,
+    ...(mapData.summary !== undefined && { summary: mapData.summary }),
+    summaryI18n: mapData.summary_i18n || mapData.summaryI18n,
     areaI18n: mapData.area_i18n || mapData.areaI18n,
     year: mapData.year,
     yearMin: mapData.yearMin,
@@ -248,6 +253,7 @@ export async function updateMap(id: string, mapData: MapInput) {
   if (mapData.status !== undefined) data.status = mapData.status as ContentStatus;
   if (mapData.title !== undefined) data.title = mapData.title;
   if (mapData.description !== undefined) data.description = mapData.description;
+  if (mapData.summary !== undefined) data.summary = mapData.summary;
   if (mapData.year !== undefined) data.year = mapData.year;
   if (mapData.yearMin !== undefined) data.yearMin = mapData.yearMin;
   if (mapData.yearMax !== undefined) data.yearMax = mapData.yearMax;
@@ -259,6 +265,8 @@ export async function updateMap(id: string, mapData: MapInput) {
   if (titleI18n !== undefined) data.titleI18n = titleI18n;
   const descriptionI18n = mapData.description_i18n || mapData.descriptionI18n;
   if (descriptionI18n !== undefined) data.descriptionI18n = descriptionI18n;
+  const summaryI18n = mapData.summary_i18n || mapData.summaryI18n;
+  if (summaryI18n !== undefined) data.summaryI18n = summaryI18n;
   const areaI18n = mapData.area_i18n || mapData.areaI18n;
   if (areaI18n !== undefined) data.areaI18n = areaI18n;
 
@@ -582,6 +590,7 @@ export async function listMapsAPI(options: ListMapsOptions = {}) {
       slug: map.slug,
       title: getLocalizedField(map.title, map.titleI18n, lang) || map.title,
       description: getLocalizedField(map.description, map.descriptionI18n, lang) || map.description,
+      summary: getLocalizedField(map.summary, map.summaryI18n, lang) || map.summary,
       status: map.status,
       version: map.version,
       year: map.year,
@@ -702,6 +711,7 @@ export async function getMapBySlug(
       slug: map.slug,
       title: getLocalizedField(map.title, map.titleI18n, lang) || map.title,
       description: getLocalizedField(map.description, map.descriptionI18n, lang) || map.description,
+      summary: getLocalizedField(map.summary, map.summaryI18n, lang) || map.summary,
       status: map.status,
       version: map.version,
       year: map.year,

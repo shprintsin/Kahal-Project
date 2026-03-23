@@ -195,6 +195,8 @@ model ResearchDataset {
   createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt        DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
   description      String?           @default("")
+  summary          String?           @default("")
+  summaryI18n      Json?             @default("{}") @map("summary_i18n")
   title            String            @default("Untitled Dataset")
   categoryId       String?           @map("category_id") @db.Uuid
   citationText     String?
@@ -251,6 +253,8 @@ model Map {
   createdAt         DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt         DateTime              @updatedAt @map("updated_at") @db.Timestamptz(6)
   description       String?
+  summary           String?               @default("")
+  summaryI18n       Json?                 @default("{}") @map("summary_i18n")
   period            String?
   title             String                @default("Untitled")
   yearMax           Int?                  @map("year_max")
@@ -275,6 +279,8 @@ model Layer {
   name             String                @default("Untitled")
   nameI18n         Json?                 @default("{}") @map("name_i18n")
   description      String?               @default("")
+  summary          String?               @default("")
+  summaryI18n      Json?                 @default("{}") @map("summary_i18n")
   descriptionI18n  Json?                 @default("{}") @map("description_i18n")
   filename         String?               @default("")
   status           ContentStatus         @default(draft)
