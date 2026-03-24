@@ -4,10 +4,10 @@ import { Col } from "@/components/ui/flex";
 import { CategoryTile } from "@/components/ui/category-tile";
 import { ContentBlocks } from "@/components/ui/content-blocks";
 import { DynamicIcon as GetIcons } from "@/components/ui/dynamic-icon";
-import { HeroFooter, FooterLink } from "@/components/ui/page-layout";
 import { ActionButton as ActionButtonUI } from "@/components/ui/action-button";
 import { SiteFooter } from "@/components/ui/site-footer";
 import { getIcon } from "../utils/icons";
+import { DevLinksStrip } from "../layout/DevLinksStrip";
 import type { ContentBlocksProps } from "@/components/ui/content-blocks";
 import type { FooterColumn } from "@/app/admin/types/menus";
 
@@ -15,7 +15,7 @@ interface HomePageProps {
   navigation: NavItem[];
   heroGrid: { id: string; title: string; icon: string; href: string; hoverColor: string }[];
   heroActions: { id: string; title: string; icon: string; href: string }[];
-  heroStrip: { label: string; icon: string; href: string }[];
+  heroStrip?: { label: string; icon: string; href: string }[];
   contentBlocks?: ContentBlocksProps;
   copyrightText: string;
   footerColumns: FooterColumn[];
@@ -86,18 +86,7 @@ export default function HomePageComponent({
             </div>
           </Col>
 
-          {heroStrip.length > 0 && (
-            <HeroFooter>
-              {heroStrip.map((item, index) => (
-                <FooterLink
-                  key={index}
-                  href={item.href}
-                  label={item.label}
-                  icon={getIcon({ name: item.icon })}
-                />
-              ))}
-            </HeroFooter>
-          )}
+          <DevLinksStrip />
         </div>
       </section>
 

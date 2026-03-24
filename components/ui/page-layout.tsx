@@ -35,9 +35,17 @@ export function HeroFooter({ children, className }: { children: ReactNode; class
   )
 }
 
-export function FooterLink({ href, icon, label }: { href: string; icon: ReactNode; label: string }) {
+export function FooterLink({ href, icon, label, onClick }: { href: string; icon: ReactNode; label: string; onClick?: () => void }) {
+  if (onClick) {
+    return (
+      <button onClick={onClick} className="flex items-center transition-opacity duration-200 hover:opacity-80 cursor-pointer">
+        <span className="text-sm sm:text-base ml-2">{label}</span>
+        {icon}
+      </button>
+    )
+  }
   return (
-    <a href={href} className="flex transition-opacity duration-200 hover:opacity-80">
+    <a href={href} className="flex items-center transition-opacity duration-200 hover:opacity-80">
       <span className="text-sm sm:text-base ml-2">{label}</span>
       {icon}
     </a>
