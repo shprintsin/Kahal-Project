@@ -3,19 +3,18 @@ import { render, screen } from "@testing-library/react"
 import { CitationBox } from "../citation-box"
 
 describe("CitationBox", () => {
-  it("renders citation text in textarea", () => {
+  it("renders copy button with aria-label", () => {
     render(<CitationBox text="Doe, J. (2024). Study." />)
-    expect(screen.getByDisplayValue("Doe, J. (2024). Study.")).toBeInTheDocument()
+    expect(screen.getByLabelText("Copy citation")).toBeInTheDocument()
   })
 
-  it("renders copy button", () => {
+  it("sets citation text as button title", () => {
     render(<CitationBox text="Citation text" />)
-    expect(screen.getByText("העתק")).toBeInTheDocument()
+    expect(screen.getByTitle("Citation text")).toBeInTheDocument()
   })
 
-  it("textarea is readonly", () => {
+  it("shows tooltip text", () => {
     render(<CitationBox text="Citation" />)
-    const textarea = screen.getByDisplayValue("Citation")
-    expect(textarea).toHaveAttribute("readonly")
+    expect(screen.getByText("Copy citation")).toBeInTheDocument()
   })
 })
