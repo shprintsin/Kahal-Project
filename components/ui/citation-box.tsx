@@ -24,17 +24,14 @@ export function CitationBox({ text, className }: CitationBoxProps) {
   }
 
   return (
-    <div className={cn("flex items-center justify-end", className)}>
+    <div className={cn("bg-surface-light border border-border rounded-md p-4 flex items-start gap-3", className)}>
+      <p className="text-sm text-foreground leading-relaxed flex-1" dir="auto">{text}</p>
       <button
         onClick={handleCopy}
-        className="group relative flex items-center justify-center w-10 h-10 rounded-md bg-brand-primary-light text-brand-primary hover:bg-brand-primary hover:text-white transition-colors"
-        title={text}
+        className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-md bg-brand-primary-light text-brand-primary hover:bg-brand-primary hover:text-white transition-colors"
         aria-label="Copy citation"
       >
-        {copySuccess ? <Check size={18} /> : <Copy size={18} />}
-        <span className="absolute bottom-full mb-2 end-0 px-2 py-1 text-xs bg-foreground text-white rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-          {copySuccess ? '✓' : 'Copy citation'}
-        </span>
+        {copySuccess ? <Check size={16} /> : <Copy size={16} />}
       </button>
     </div>
   )
