@@ -10,6 +10,7 @@ import { Calendar, Tag as TagIcon, MapPin, Download, ExternalLink, Layers } from
 import { VersionHistory } from './components/VersionHistory'
 import { LayerDownloadButton } from './components/LayerDownloadButton'
 import ReactMarkdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
 import type { Map } from '@/types/api-types'
 import type { SiteShellData } from '@/app/lib/get-navigation'
@@ -62,21 +63,13 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                         <TabsTrigger value="codebook">{t('public.map.codebook', 'Codebook')}</TabsTrigger>
                       </TabsList>
                       <TabsContent value="description">
-                        <div
-                          className="prose prose-lg prose-stone max-w-none leading-relaxed pt-4"
-                          dir="auto"
-                          style={{ fontSize: '16px', lineHeight: '1.8' }}
-                        >
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{map.description}</ReactMarkdown>
+                        <div className="markdown-content pt-4" dir="rtl">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{map.description}</ReactMarkdown>
                         </div>
                       </TabsContent>
                       <TabsContent value="codebook">
-                        <div
-                          className="prose prose-lg prose-stone max-w-none leading-relaxed pt-4"
-                          dir="auto"
-                          style={{ fontSize: '16px', lineHeight: '1.8' }}
-                        >
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{map.codebookText}</ReactMarkdown>
+                        <div className="markdown-content pt-4" dir="rtl">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{map.codebookText}</ReactMarkdown>
                         </div>
                       </TabsContent>
                     </Tabs>
@@ -85,12 +78,8 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                       <h3 className="text-xl font-bold text-foreground mb-5 font-display">
                         {map.description ? t('public.datasets.description', 'תיאור') : t('public.map.codebook', 'Codebook')}
                       </h3>
-                      <div
-                        className="prose prose-lg prose-stone max-w-none leading-relaxed"
-                        dir="auto"
-                        style={{ fontSize: '16px', lineHeight: '1.8' }}
-                      >
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{(map.description || map.codebookText)!}</ReactMarkdown>
+                      <div className="markdown-content" dir="rtl">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{(map.description || map.codebookText)!}</ReactMarkdown>
                       </div>
                     </>
                   )}
