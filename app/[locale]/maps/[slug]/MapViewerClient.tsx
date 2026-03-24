@@ -10,6 +10,7 @@ import { Calendar, Tag as TagIcon, MapPin, Download, ExternalLink, Layers } from
 import { VersionHistory } from './components/VersionHistory'
 import { LayerDownloadButton } from './components/LayerDownloadButton'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import type { Map } from '@/types/api-types'
 import type { SiteShellData } from '@/app/lib/get-navigation'
 import { SetEditUrl } from '@/components/ui/admin-toolbar'
@@ -66,7 +67,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                           dir="auto"
                           style={{ fontSize: '16px', lineHeight: '1.8' }}
                         >
-                          <ReactMarkdown>{map.description}</ReactMarkdown>
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{map.description}</ReactMarkdown>
                         </div>
                       </TabsContent>
                       <TabsContent value="codebook">
@@ -75,7 +76,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                           dir="auto"
                           style={{ fontSize: '16px', lineHeight: '1.8' }}
                         >
-                          <ReactMarkdown>{map.codebookText}</ReactMarkdown>
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{map.codebookText}</ReactMarkdown>
                         </div>
                       </TabsContent>
                     </Tabs>
@@ -89,7 +90,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                         dir="auto"
                         style={{ fontSize: '16px', lineHeight: '1.8' }}
                       >
-                        <ReactMarkdown>{(map.description || map.codebookText)!}</ReactMarkdown>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{(map.description || map.codebookText)!}</ReactMarkdown>
                       </div>
                     </>
                   )}
