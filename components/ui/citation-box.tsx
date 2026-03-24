@@ -24,11 +24,11 @@ export function CitationBox({ text, className }: CitationBoxProps) {
   }
 
   return (
-    <div className={cn("bg-surface-light border border-border rounded-md p-4 flex items-start gap-3", className)}>
+    <div className={cn("bg-white shadow-sm p-5 sm:p-6 lg:p-8 flex items-start gap-3", className)}>
       <p className="text-sm text-foreground leading-relaxed flex-1" dir="auto">{text}</p>
       <button
         onClick={handleCopy}
-        className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-md bg-brand-primary-light text-brand-primary hover:bg-brand-primary hover:text-white transition-colors"
+        className="flex-shrink-0 flex items-center justify-center w-8 h-8 text-muted-foreground hover:text-brand-primary transition-colors"
         aria-label="Copy citation"
       >
         {copySuccess ? <Check size={16} /> : <Copy size={16} />}
