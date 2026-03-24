@@ -71,12 +71,12 @@ export default function HomePageComponent({
 
               {heroGrid.length > 0 && (
                 <div className="w-full md:w-6/12 flex flex-col justify-around">
-                  <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-6 max-w-md md:max-w-none mx-auto w-full">
+                  <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:gap-6 max-w-sm md:max-w-md mx-auto w-full">
                     {heroGrid.map((category) => (
                       <CategoryTile
                         key={category.id}
                         href={category.href}
-                        icon={<GetIcons icon={category.icon} className="text-white text-3xl sm:text-4xl lg:text-5xl mx-auto transition-all duration-300" />}
+                        icon={<GetIcons icon={category.icon} className="text-white w-10 h-10 sm:w-12 sm:h-12 mx-auto transition-all duration-300" />}
                         title={category.title}
                       />
                     ))}

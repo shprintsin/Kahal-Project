@@ -14,15 +14,15 @@ export function CategoryTile({ href, icon, title, className }: CategoryTileProps
     <Link
       href={href}
       className={cn(
-        "no-underline bg-brand-primary p-6 sm:p-8 lg:p-10 rounded-md text-center cursor-pointer",
-        "w-full aspect-[4/3]",
-        "transition-shadow duration-300 hover:shadow-lg",
+        "no-underline bg-brand-primary p-4 sm:p-5 lg:p-6 rounded-lg text-center cursor-pointer",
+        "w-full aspect-square",
+        "transition-all duration-300 hover:shadow-lg hover:scale-[1.02]",
         "grid place-content-center",
         className
       )}
     >
-      <div className="text-white text-3xl sm:text-4xl lg:text-5xl mx-auto mb-2 sm:mb-4">{icon}</div>
-      <h3 className="text-white text-lg sm:text-xl lg:text-2xl font-bold">{title}</h3>
+      <div className="text-white mx-auto mb-3">{icon}</div>
+      <h3 className="text-white text-base sm:text-lg font-semibold">{title}</h3>
     </Link>
   )
 }
