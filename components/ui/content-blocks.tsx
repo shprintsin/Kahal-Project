@@ -94,7 +94,7 @@ export function ContentBlocks({
             <Database className="w-5 h-5" />
             {t('public.sections.data', 'נתונים')}
           </H3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-grow">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {datasets.map((d) => (
               <GridTile key={d.slug} href={`/data/${d.slug}`} title={d.title} description={d.description} />
             ))}
@@ -107,7 +107,7 @@ export function ContentBlocks({
             <Layers className="w-5 h-5" />
             {t('public.sections.mapsAndLayers', 'מפות ושכבות')}
           </H3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-grow">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {maps.map((m) => (
               <GridTile key={m.href} href={m.href} title={m.title} description={m.description} />
             ))}

@@ -103,7 +103,7 @@ export default function HomePageComponent({
 
       {contentBlocks && (
         <section className="relative z-10 bg-surface-light">
-          <div className="flex flex-col gap-4 sm:gap-6 w-full px-4 sm:px-6 lg:w-10/12 mx-auto py-6 sm:py-10">
+          <div className="flex flex-col gap-6 sm:gap-10 w-full px-4 sm:px-6 lg:w-10/12 mx-auto py-6 sm:py-10">
             <ContentBlocks {...contentBlocks} />
           </div>
         </section>
