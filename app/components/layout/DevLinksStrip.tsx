@@ -1,6 +1,6 @@
 'use client'
 
-import { FileText, Github, Code } from 'lucide-react'
+import { FaFileAlt, FaGithub, FaCode } from 'react-icons/fa'
 import { HeroFooter, FooterLink } from '@/components/ui/page-layout'
 import { useLanguage } from '@/lib/i18n/language-provider'
 
@@ -19,17 +19,17 @@ export function DevLinksStrip() {
     <HeroFooter>
       <FooterLink
         href={`/${locale}/docs`}
-        icon={<FileText className="w-5 h-5" />}
+        icon={<FaFileAlt className="w-5 h-5" />}
         label={l.docs}
       />
       <FooterLink
         href="https://github.com/shprintsin/shtetlatlas_data"
-        icon={<Github className="w-5 h-5" />}
+        icon={<FaGithub className="w-5 h-5" />}
         label={l.github}
       />
       <FooterLink
         href="#"
-        icon={<Code className="w-5 h-5" />}
+        icon={<FaCode className="w-5 h-5" />}
         label={l.api}
         onClick={() => alert(l.apiAlert)}
       />
