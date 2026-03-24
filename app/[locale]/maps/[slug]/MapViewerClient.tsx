@@ -40,7 +40,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
       <main className="flex-grow w-full">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="mb-10 text-right">
-            <div className="flex items-center gap-2 justify-end mb-3 text-sm" dir="rtl">
+            <div className="flex items-center gap-2 mb-3 text-sm" dir="rtl">
               <a href={`/${locale}/maps`} className="text-muted-foreground hover:text-brand-primary transition-colors">
                 {t('public.maps.title', 'מפות')}
               </a>
