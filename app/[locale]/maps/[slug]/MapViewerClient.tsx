@@ -159,7 +159,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                         </div>
                         <div className="flex-1 text-right">
                           <div className="text-sm font-semibold text-foreground mb-1">{layer.name}</div>
-                          <div className="text-xs text-muted-foreground">GeoJSON</div>
+                          <div className="text-xs text-muted-foreground">{layer.filename || `${layer.slug}.geojson`}</div>
                         </div>
                         <LayerDownloadButton layer={layer} />
                       </div>
