@@ -37,16 +37,9 @@ export default async function LayersPage({ params }: { params: Promise<{ locale:
     createdAt: l.createdAt
   }));
 
-  const categoryCounts = new Map<string, number>();
-  for (const l of layersData.layers || []) {
-    if ((l as any).category?.title) {
-      categoryCounts.set((l as any).category.title, (categoryCounts.get((l as any).category.title) || 0) + 1);
-    }
-  }
-
   const categories = (categoriesData.categories || []).map((c) => ({
     name: c.title,
-    count: categoryCounts.get(c.title) || 0,
+    count: c.usageCount?.total || 0,
     slug: `/categories/${c.slug}`,
   }));
 
