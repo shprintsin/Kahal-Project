@@ -205,14 +205,14 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
 
               {(dataset.codebook_url || dataset.codebook_text) && (
                 <div className="bg-white p-4 sm:p-6 shadow-sm border border-border">
-                  <h3 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-5 font-display">{t('public.datasets.codebook', 'תיעוד')}</h3>
+                  <h3 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-5 font-display">{t('public.datasets.codebook', 'מילון נתונים (Codebook)')}</h3>
                   <a
                     href="#codebook"
                     onClick={handleCodebookClick}
                     className="flex items-center gap-3 p-3 sm:p-4 bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all"
                   >
                     <BookOpen className="w-5 h-5 text-brand-primary" />
-                    <span className="text-sm sm:text-base font-semibold text-foreground">צפה בקודבוק / משתנים</span>
+                    <span className="text-sm sm:text-base font-semibold text-foreground">{t('public.datasets.viewCodebook', 'צפה במילון הנתונים')}</span>
                   </a>
                 </div>
               )}
@@ -237,37 +237,18 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
                 </TabsTrigger>
                 {dataset.codebook_text && (
                   <TabsTrigger value="codebook" className="text-sm sm:text-base px-4 sm:px-6 data-[state=active]:bg-white">
-                    {t('public.datasets.codebook', 'קודבוק ומשתנים')}
+                    {t('public.datasets.codebook', 'מילון נתונים (Codebook)')}
                   </TabsTrigger>
                 )}
               </TabsList>
 
               <TabsContent value="description">
-                <div
-                  className="prose prose-lg max-w-none text-right leading-relaxed font-hebrew"
-                  dir="auto"
-                  style={{
-                    fontSize: '16px',
-                    lineHeight: '1.8',
-                  }}
-                >
-                  <div dangerouslySetInnerHTML={{ __html: descriptionHtml }} />
-                </div>
+                <div className="markdown-content pt-4" dir="rtl" dangerouslySetInnerHTML={{ __html: descriptionHtml }} />
               </TabsContent>
 
               {dataset.codebook_text && (
                 <TabsContent value="codebook">
-                  <div
-                    className="prose prose-lg max-w-none text-right leading-relaxed font-hebrew"
-                    dir="auto"
-                    style={{
-                      fontSize: '16px',
-                      lineHeight: '1.8',
-                      fontFamily: '"Assistant", "Heebo", sans-serif'
-                    }}
-                  >
-                    <div dangerouslySetInnerHTML={{ __html: codebookHtml }} />
-                  </div>
+                  <div className="markdown-content pt-4" dir="rtl" dangerouslySetInnerHTML={{ __html: codebookHtml }} />
                 </TabsContent>
               )}
             </Tabs>
