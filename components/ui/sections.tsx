@@ -8,7 +8,7 @@ interface SectionProps {
 }
 
 export const Section = ({ children, className }: SectionProps) => (
-  <div className={cx("bg-white shadow-sm p-5 sm:p-6 lg:p-8 flex flex-col", className)}>
+  <div className={cx("bg-white shadow-sm p-5 sm:p-6 lg:p-8 flex flex-col gap-4", className)}>
     {children}
   </div>
 )
