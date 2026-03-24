@@ -109,6 +109,7 @@ export interface ResearchDataset {
 
 export interface MapLayer {
     id: string;
+    slug: string;
     name: string;
     description?: string;
     type: 'POINTS' | 'POLYGONS' | 'POLYLINES' | 'MULTI_POLYGONS' | 'RASTER';

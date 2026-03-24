@@ -19,7 +19,7 @@ export function LayerDownloadButton({ layer, className }: LayerDownloadButtonPro
     try {
       await fetchAndDownloadGeoJson(
         layer.id,
-        layer.filename || layer.name,
+        layer.filename || layer.slug,
         layer.geoJsonData,
         layer.sourceUrl,
       )

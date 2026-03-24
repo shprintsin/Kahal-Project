@@ -748,6 +748,7 @@ export async function getMapBySlug(
       ...(includeLayers && {
         layers: ((map as Record<string, unknown>).layers as MapLayerAssociationWithLayer[]).map((assoc) => ({
           id: assoc.layer.id,
+          slug: assoc.layer.slug,
           layerId: assoc.layerId,
           name: getLocalizedField(assoc.layer.name, assoc.layer.nameI18n, lang) || assoc.layer.name,
           description: getLocalizedField(assoc.layer.description, assoc.layer.descriptionI18n, lang) || assoc.layer.description,
