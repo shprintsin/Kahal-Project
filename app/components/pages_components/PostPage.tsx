@@ -30,7 +30,7 @@ export default function PostPage({ post, locale }: { post: PostData; locale?: st
     <div className="min-h-screen bg-white">
       <SiteBreadcrumbs
         items={[
-          { label: t('public.site.name', 'קהל'), href: `/${loc}` },
+          { label: t('public.site.name', 'ShtetlAtlas'), href: `/${loc}` },
           { label: post.category || "", href: `/${loc}/categories/${post.category}` },
           { label: post.title },
         ]}

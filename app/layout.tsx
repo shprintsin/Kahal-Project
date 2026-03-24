@@ -25,7 +25,7 @@ const secular = Secular_One({
 });
 
 export const metadata: Metadata = {
-  title: "Kahal",
+  title: "ShtetlAtlas",
   description: "Digital Archive of Jewish Communities",
 };
 

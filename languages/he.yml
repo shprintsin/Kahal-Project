@@ -168,7 +168,7 @@ messages:
 # Public site translations
 public:
   site:
-    name: "קהל"
+    name: "ShtetlAtlas"
     copyright: "© 2024 פרויקט הקהל. כל הזכויות שמורות."
   hero:
     title: "1000 שנות היסטוריה"

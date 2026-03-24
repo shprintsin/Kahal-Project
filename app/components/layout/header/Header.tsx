@@ -16,7 +16,7 @@ export default function Header({ navigation }: { navigation: NavItem[] }) {
   return (
     <header className={styles.header}>
       <div className={styles.container}>
-        <Link href={`/${locale}`}><div className={styles.logo}>{t('public.site.name', 'קהל')}</div></Link>
+        <Link href={`/${locale}`}><div className={styles.logo}>{t('public.site.name', 'ShtetlAtlas')}</div></Link>
         <button
           className={styles.menuToggle}
           onClick={() => setMenuOpen(!menuOpen)}
