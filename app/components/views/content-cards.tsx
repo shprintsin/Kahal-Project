@@ -43,8 +43,8 @@ function CardLink({ href, label }: { href: string; label: string; icon?: React.R
         href={href}
         className="inline-flex items-center gap-2 text-brand-primary font-semibold hover:gap-3 transition-all duration-200"
       >
-        <ArrowLeft className="h-4 w-4" />
         {label}
+        <ArrowLeft className="h-4 w-4" />
       </a>
     </div>
   )
