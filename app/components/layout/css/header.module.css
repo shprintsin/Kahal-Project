@@ -109,6 +109,7 @@
 
 .searchContainer {
   display: flex;
+  flex-direction: row-reverse;
   align-items: center;
   gap: 0.5rem;
 }
@@ -136,21 +137,6 @@
   color: var(--dark-green);
 }
 
-.searchButton {
-  background-color: var(--dark-green);
-  color: white;
-  border: none;
-  padding: 0.3rem 0.75rem;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background-color 0.2s;
-}
-
-.searchButton:hover {
-  background-color: var(--brand-primary-dark, #1a3a2a);
-}
 
 /* Mobile + Tablet: < 1024px */
 @media (max-width: 1023px) {
@@ -202,10 +188,6 @@
   }
 
   /* Collapse search to icon-only, expand on focus */
-  .searchContainer {
-    flex-direction: row-reverse;
-  }
-
   .searchInput {
     width: 0;
     padding: 0;
@@ -213,18 +195,10 @@
     transition: width 0.3s ease, padding 0.3s ease, opacity 0.2s ease;
   }
 
-  .searchButton {
-    display: none;
-  }
-
   .search.searchExpanded .searchInput {
     width: 8rem;
     padding-right: 0.5rem;
     opacity: 1;
-  }
-
-  .search.searchExpanded .searchButton {
-    display: block;
   }
 }
 
