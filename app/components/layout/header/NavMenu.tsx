@@ -10,7 +10,7 @@ export default function NavMenu({ navigation, isOpen }: { navigation: NavItem[];
       {navigation.map((item, index) => (
         <div key={index} className={item.subItems ? styles.navItem : ""}>
           <a href={item.href} className={styles.navLink}>
-            <GetIcons icon={item.icon ?? ""} className="ml-2 text-xl" />
+            <GetIcons icon={item.icon ?? ""} className="ml-1.5 w-4 h-4" />
             {item.label}
             {item.subItems && <ChevronDown className={styles.dropdownIcon} />}
           </a>
