@@ -180,9 +180,9 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
                       <div className="text-brand-primary">
                         {getFileIcon(resource.format)}
                       </div>
-                      <div className="flex-1 text-right">
+                      <div className="flex-1 text-right min-w-0">
                         <div className="text-xs sm:text-sm font-semibold text-foreground mb-1">{resource.name}</div>
-                        <div className="text-[11px] sm:text-xs text-muted-foreground font-mono truncate" dir="ltr">{resource.url.split('/').pop()}</div>
+                        <div className="text-[11px] sm:text-xs text-muted-foreground font-mono truncate" dir="ltr">{resource.url.split('/').pop()?.replace(/^\d+_/, '')}</div>
                         <div className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">
                           {resource.format}{resource.size_bytes > 0 ? ` • ${formatFileSize(resource.size_bytes)}` : ""}
                         </div>
