@@ -204,7 +204,7 @@ public:
     temporalCoverage: "כיסוי זמני"
     resources: "משאבים"
     download: "הורדה"
-    codebook: "ספר קודים"
+    codebook: "מילון נתונים (Codebook)"
     maturity: "בשלות נתונים"
     verified: "מאומת"
     provisional: "זמני"

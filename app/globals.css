@@ -220,9 +220,7 @@
 
 .markdown-content table {
   @apply w-full border-collapse mb-4 text-sm border border-border;
-  direction: ltr;
-  text-align: left;
-  font-size: clamp(9px, 1.2vw, 13px);
+  font-size: clamp(10px, 1.3vw, 14px);
   table-layout: auto;
   width: 100%;
 }
@@ -232,15 +230,17 @@
 }
 
 .markdown-content th {
-  @apply border border-border px-3 py-2 font-semibold text-left bg-muted;
+  @apply border border-border px-3 py-2 font-semibold bg-muted;
   font-weight: 600;
-  direction: ltr;
+  direction: auto;
+  unicode-bidi: plaintext;
 }
 
 .markdown-content td {
   @apply border border-border px-3 py-2;
   vertical-align: top;
-  direction: ltr;
+  direction: auto;
+  unicode-bidi: plaintext;
   min-width: 50px;
   white-space: normal;
   word-wrap: break-word;
