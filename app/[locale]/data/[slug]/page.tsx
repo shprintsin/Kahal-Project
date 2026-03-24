@@ -22,6 +22,7 @@ export default async function DatasetPage({ params }: PageProps) {
   const viewDataset: any = {
     ...apiDataset,
     category: apiDataset.category?.title || "כללי",
+    categorySlug: apiDataset.category?.slug || null,
     last_updated: apiDataset.updatedAt,
     temporal_coverage: (apiDataset.minYear && apiDataset.maxYear) ? {
       start_year: apiDataset.minYear,

@@ -112,7 +112,11 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
       <main className="flex-grow w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
           <div className="mb-6 sm:mb-10 text-right">
-            <p className="text-brand-primary text-sm sm:text-base mb-2 sm:mb-3 font-semibold uppercase tracking-wide">{dataset.category}</p>
+            {dataset.categorySlug ? (
+              <a href={`/${localeProp}/categories/${dataset.categorySlug}`} className="text-brand-primary text-sm sm:text-base mb-2 sm:mb-3 font-semibold uppercase tracking-wide hover:underline inline-block">{dataset.category}</a>
+            ) : (
+              <p className="text-brand-primary text-sm sm:text-base mb-2 sm:mb-3 font-semibold uppercase tracking-wide">{dataset.category}</p>
+            )}
             <SectionTitle className="mb-0 text-3xl sm:text-4xl lg:text-5xl leading-tight">{dataset.title}</SectionTitle>
           </div>
 
