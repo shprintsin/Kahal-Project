@@ -58,9 +58,6 @@ export default function Search() {
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
         />
-        <button className={styles.searchButton} onClick={handleSearch}>
-          {t('common.search', 'חיפוש')}
-        </button>
       </div>
     </div>
   )
