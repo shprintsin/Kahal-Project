@@ -38,9 +38,11 @@ export async function GET(
   const contentType = MIME_TYPES[ext] || "application/octet-stream";
   const buffer = readFileSync(absolutePath);
 
+  const filename = path.basename(absolutePath);
   return new NextResponse(buffer, {
     headers: {
       "Content-Type": contentType,
+      "Content-Disposition": `attachment; filename="${encodeURIComponent(filename)}"`,
       "Cache-Control": "public, max-age=2592000",
     },
   });

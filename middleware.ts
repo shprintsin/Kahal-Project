@@ -16,7 +16,7 @@ const securityHeaders = new Headers({
 const LOCALES = ["he", "en", "pl"]
 const DEFAULT_LOCALE = "he"
 
-const SKIP_LOCALE_PREFIXES = ["/admin", "/api", "/login", "/_next", "/favicon.ico"]
+const SKIP_LOCALE_PREFIXES = ["/admin", "/api", "/uploads", "/login", "/_next", "/favicon.ico"]
 
 function shouldSkipLocaleRouting(pathname: string): boolean {
   return SKIP_LOCALE_PREFIXES.some(prefix => pathname.startsWith(prefix)) ||
