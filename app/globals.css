@@ -248,6 +248,13 @@
   hyphens: auto;
 }
 
+[dir="rtl"] .markdown-content th,
+[dir="rtl"] .markdown-content td,
+.markdown-content[dir="rtl"] th,
+.markdown-content[dir="rtl"] td {
+  text-align: right !important;
+}
+
 .markdown-content tbody tr:nth-child(even) {
   @apply bg-muted/30;
 }
@@ -265,7 +272,7 @@
 }
 
 .markdown-content blockquote {
-  @apply border-l-4 border-border pl-4 italic my-3;
+  @apply border-s-4 border-border ps-4 italic my-3;
 }
 
 .markdown-content hr {

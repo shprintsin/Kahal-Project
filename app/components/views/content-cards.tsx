@@ -38,7 +38,7 @@ function CardExcerpt({ text }: { text?: string | null }) {
 
 function CardLink({ href, label }: { href: string; label: string; icon?: React.ReactNode }) {
   return (
-    <div className="mt-auto">
+    <div className="mt-auto flex justify-end">
       <a
         href={href}
         className="inline-flex items-center gap-2 text-brand-primary font-semibold hover:gap-3 transition-all duration-200"
