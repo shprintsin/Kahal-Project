@@ -37,9 +37,16 @@ export default async function MapsPage({ params }: { params: Promise<{ locale: s
     layerCount: m.layerCount
   }));
 
+  const categoryCounts = new Map<string, number>();
+  for (const m of mapsData.maps || []) {
+    if ((m as any).category?.title) {
+      categoryCounts.set((m as any).category.title, (categoryCounts.get((m as any).category.title) || 0) + 1);
+    }
+  }
+
   const categories = (categoriesData.categories || []).map((c) => ({
     name: c.title,
-    count: 0,
+    count: categoryCounts.get(c.title) || 0,
     slug: `/categories/${c.slug}`,
   }));
 
