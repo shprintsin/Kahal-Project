@@ -40,11 +40,19 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
       <main className="flex-grow w-full">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="mb-10 text-right">
-            {map.category && (
-              <p className="text-emerald-700 text-base mb-3 font-semibold uppercase tracking-wide">
-                {map.category.title}
-              </p>
-            )}
+            <div className="flex items-center gap-2 justify-end mb-3 text-sm">
+              <a href={`/${locale}/maps`} className="text-muted-foreground hover:text-brand-primary transition-colors">
+                {t('public.maps.title', 'מפות')}
+              </a>
+              {map.category && (
+                <>
+                  <span className="text-muted-foreground">/</span>
+                  <a href={`/${locale}/categories/${map.category.slug}`} className="text-brand-primary font-semibold hover:underline">
+                    {map.category.title}
+                  </a>
+                </>
+              )}
+            </div>
             <PageTitle>{map.title}</PageTitle>
           </div>
 
