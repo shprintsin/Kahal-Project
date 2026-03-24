@@ -14,8 +14,8 @@ export function CategoryTile({ href, icon, title, className }: CategoryTileProps
     <Link
       href={href}
       className={cn(
-        "no-underline bg-brand-primary p-4 sm:p-6 lg:p-8 rounded-md text-center cursor-pointer",
-        "w-full aspect-[4/3] lg:aspect-auto lg:h-[165px]",
+        "no-underline bg-brand-primary p-6 sm:p-8 lg:p-10 rounded-md text-center cursor-pointer",
+        "w-full aspect-[4/3]",
         "transition-shadow duration-300 hover:shadow-lg",
         "grid place-content-center",
         className
