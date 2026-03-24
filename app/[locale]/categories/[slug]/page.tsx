@@ -30,9 +30,16 @@ export default async function CategoryPage({ params }: { params: Promise<{ local
     date: p.createdAt ? new Date(p.createdAt).toLocaleDateString(dateLocale) : null,
   }));
 
+  const categoryCounts = new Map<string, number>();
+  for (const p of postsData.posts || []) {
+    for (const cat of (p as any).categories || []) {
+      categoryCounts.set(cat.title, (categoryCounts.get(cat.title) || 0) + 1);
+    }
+  }
+
   const categories = (categoriesData.categories || []).map((c) => ({
     name: c.title,
-    count: 0,
+    count: categoryCounts.get(c.title) || 0,
     slug: `/categories/${c.slug}`,
   }));
 

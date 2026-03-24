@@ -32,9 +32,16 @@ export default async function PostsPage({ params }: { params: Promise<{ locale: 
     category: p.categories?.[0]?.title,
   }));
 
+  const categoryCounts = new Map<string, number>();
+  for (const p of postsData.posts || []) {
+    for (const cat of p.categories || []) {
+      categoryCounts.set(cat.title, (categoryCounts.get(cat.title) || 0) + 1);
+    }
+  }
+
   const categories = (categoriesData.categories || []).map((c) => ({
     name: c.title,
-    count: 0,
+    count: categoryCounts.get(c.title) || 0,
     slug: `/${locale}/categories/${c.slug}`,
   }));
 

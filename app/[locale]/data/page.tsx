@@ -34,9 +34,16 @@ export default async function DatasetsPage({ params }: { params: Promise<{ local
     resourceCount: d.resourceCount
   }));
 
+  const categoryCounts = new Map<string, number>();
+  for (const d of datasetsData.datasets || []) {
+    if (d.category?.title) {
+      categoryCounts.set(d.category.title, (categoryCounts.get(d.category.title) || 0) + 1);
+    }
+  }
+
   const categories = (categoriesData.categories || []).map((c) => ({
     name: c.title,
-    count: 0,
+    count: categoryCounts.get(c.title) || 0,
     slug: `/categories/${c.slug}`,
   }));
 
