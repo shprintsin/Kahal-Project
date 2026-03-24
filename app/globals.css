@@ -246,6 +246,13 @@
   word-wrap: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
+  line-height: 1.7;
+}
+
+.markdown-content td br {
+  display: block;
+  content: "";
+  margin-top: 0.25em;
 }
 
 [dir="rtl"] .markdown-content th,
