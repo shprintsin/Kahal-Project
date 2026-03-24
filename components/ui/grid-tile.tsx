@@ -17,9 +17,9 @@ export function GridTile({ href, title, description, className }: GridTileProps)
         className
       )}
     >
-      <h4 className="font-semibold text-foreground text-base leading-snug">{title}</h4>
+      <h4 className="font-semibold text-foreground text-sm sm:text-base leading-snug">{title}</h4>
       {description && (
-        <p className="text-muted-foreground text-sm leading-relaxed flex-grow line-clamp-4">{description}</p>
+        <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed flex-grow line-clamp-2 sm:line-clamp-4">{description}</p>
       )}
     </Link>
   )
