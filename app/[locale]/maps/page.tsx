@@ -34,7 +34,8 @@ export default async function MapsPage({ params }: { params: Promise<{ locale: s
     category: m.category?.title,
     year: m.year,
     period: m.period,
-    layerCount: m.layerCount
+    layerCount: m.layerCount,
+    layerTypes: m.layerTypes || []
   }));
 
   const categories = (categoriesData.categories || []).map((c) => ({

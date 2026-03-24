@@ -102,6 +102,7 @@ export interface MapItem extends ContentItem {
   year?: number | null
   period?: string | null
   layerCount?: number
+  layerTypes?: string[]
 }
 
 export interface LayerItem extends ContentItem {
@@ -185,6 +186,11 @@ export function MapCard({ item }: { item: MapItem }) {
               {item.layerCount} {t('public.layers.title', 'שכבות')}
             </span>
           )}
+          {item.layerTypes?.map((type) => (
+            <span key={type} className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-stone-100 text-stone-600">
+              {type === 'POINTS' ? 'נקודות' : type === 'POLYGONS' ? 'גבולות' : type === 'POLYLINES' ? 'קווים' : type === 'MULTI_POLYGONS' ? 'גבולות' : type.toLowerCase()}
+            </span>
+          ))}
         </MetaRow>
         <CardTitle href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug}>{item.title}</CardTitle>
         <CardExcerpt text={item.excerpt} />

@@ -573,6 +573,15 @@ export async function listMapsAPI(options: ListMapsOptions = {}) {
               altTextI18n: true,
             },
           },
+          layers: {
+            select: {
+              layer: {
+                select: {
+                  type: true,
+                },
+              },
+            },
+          },
           _count: {
             select: {
               layers: true,
@@ -611,6 +620,7 @@ export async function listMapsAPI(options: ListMapsOptions = {}) {
           }
         : null,
       layerCount: map._count.layers,
+      layerTypes: [...new Set(map.layers.map((l: any) => l.layer.type as string))],
       resourceCount: map._count.resources,
       createdAt: map.createdAt.toISOString(),
       updatedAt: map.updatedAt.toISOString(),
