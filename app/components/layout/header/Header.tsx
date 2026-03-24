@@ -7,7 +7,7 @@ import Search from './Search'
 import styles from '../css/header.module.css'
 import Link from 'next/link'
 import { useLanguage } from '@/lib/i18n/language-provider'
-import { LanguageSwitcher } from '@/components/ui/language-switcher'
+import { LanguageSwitcher } from '@/components/language-switcher'
 
 export default function Header({ navigation }: { navigation: NavItem[] }) {
   const [menuOpen, setMenuOpen] = useState(false)
