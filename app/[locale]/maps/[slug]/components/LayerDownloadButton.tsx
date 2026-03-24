@@ -1,17 +1,17 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Download, Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { fetchAndDownloadGeoJson } from '@/lib/downloadGeoJson'
 import type { MapLayer } from '@/types/api-types'
 
 interface LayerDownloadButtonProps {
   layer: MapLayer
   className?: string
+  children?: ReactNode
 }
 
-export function LayerDownloadButton({ layer, className }: LayerDownloadButtonProps) {
+export function LayerDownloadButton({ layer, className, children }: LayerDownloadButtonProps) {
   const [downloading, setDownloading] = useState(false)
 
   const handleDownload = async () => {
@@ -31,19 +31,18 @@ export function LayerDownloadButton({ layer, className }: LayerDownloadButtonPro
   }
 
   return (
-    <Button
-      variant="ghost"
-      size="icon-sm"
+    <button
       onClick={handleDownload}
       disabled={downloading}
       className={className}
       title={`הורד ${layer.name} כ-GeoJSON`}
     >
+      {children}
       {downloading ? (
-        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        <Loader2 className="h-4 w-4 animate-spin text-brand-primary" />
       ) : (
-        <Download className="h-3.5 w-3.5" />
+        <Download className="h-4 w-4 text-brand-primary" />
       )}
-    </Button>
+    </button>
   )
 }

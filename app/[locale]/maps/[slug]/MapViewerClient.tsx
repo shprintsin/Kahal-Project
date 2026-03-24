@@ -150,9 +150,10 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                   <h3 className="text-lg font-bold text-foreground mb-4 font-display">{t('public.map.dataLayers')}</h3>
                   <div className="space-y-3">
                     {map.layers.map((layer) => (
-                      <div
+                      <LayerDownloadButton
                         key={layer.id}
-                        className="flex items-center gap-3 p-3 sm:p-4 bg-white border border-border-strong shadow-sm"
+                        layer={layer}
+                        className="flex items-center gap-3 p-3 sm:p-4 w-full bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all cursor-pointer"
                       >
                         <div className="text-brand-primary">
                           <Layers className="w-5 h-5" />
@@ -161,8 +162,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                           <div className="text-sm font-semibold text-foreground mb-1">{layer.name}</div>
                           <div className="text-xs text-muted-foreground">{layer.filename || `${layer.slug}.geojson`}</div>
                         </div>
-                        <LayerDownloadButton layer={layer} />
-                      </div>
+                      </LayerDownloadButton>
                     ))}
                   </div>
                 </div>
