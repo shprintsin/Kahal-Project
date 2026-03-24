@@ -6,7 +6,7 @@ import { TagPill, TagPillList } from '@/components/ui/tag-pill'
 import { DlField, DlGroup } from '@/components/ui/dl-field'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PageTitle } from '@/components/ui/typography'
-import { Calendar, Tag as TagIcon, MapPin, Download, ExternalLink, Hexagon, Layers, Waypoints } from 'lucide-react'
+import { Calendar, Tag as TagIcon, MapPin, Download, ExternalLink, Layers } from 'lucide-react'
 import { VersionHistory } from './components/VersionHistory'
 import { LayerDownloadButton } from './components/LayerDownloadButton'
 import ReactMarkdown from 'react-markdown'
@@ -145,11 +145,10 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                         layer={layer}
                         className="flex items-center gap-3 p-3 sm:p-4 w-full bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all cursor-pointer"
                       >
-                        <div className="text-brand-primary">
-                          {layer.type === 'POINTS' ? <Waypoints className="w-5 h-5" /> : <Hexagon className="w-5 h-5" />}
-                        </div>
                         <div className="flex-1 text-right">
-                          <div className="flex items-center gap-2 justify-end mb-1">
+                          <div className="text-sm font-semibold text-foreground mb-1">{layer.name}</div>
+                          <div className="flex items-center gap-2 justify-end">
+                            <span className="text-xs text-muted-foreground">{layer.filename || `${layer.slug}.geojson`}</span>
                             <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
                               layer.type === 'POINTS'
                                 ? 'bg-blue-100 text-blue-700'
@@ -157,9 +156,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                             }`}>
                               {layer.type === 'POINTS' ? t('public.map.points', 'נקודות') : t('public.map.polygons', 'גבולות')}
                             </span>
-                            <span className="text-sm font-semibold text-foreground">{layer.name}</span>
                           </div>
-                          <div className="text-xs text-muted-foreground">{layer.filename || `${layer.slug}.geojson`}</div>
                         </div>
                       </LayerDownloadButton>
                     ))}
