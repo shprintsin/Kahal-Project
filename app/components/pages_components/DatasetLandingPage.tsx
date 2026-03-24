@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { ResearchDataset } from '@/types/dataset';
 import { SectionTitle } from '@/components/ui/typography';
-import { FileSpreadsheet, FileJson, BookOpen, AlertCircle, FileText, Download, Eye } from 'lucide-react';
+import { FileSpreadsheet, FileJson, AlertCircle, FileText, Download, Eye } from 'lucide-react';
 import { CsvViewerDialog } from '@/app/admin/components/content/csv-viewer-dialog';
-import { Col } from '@/components/ui/flex';
+
 import { MaturityBadge, PublishStatusBadge } from '@/components/ui/status-badge';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
@@ -99,13 +99,6 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
     }
   }, [dataset.codebook_text]);
 
-  const handleCodebookClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setActiveTab('codebook');
-    setTimeout(() => {
-      document.getElementById('content-tabs')?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-  };
 
   return (
     <SiteShell {...shellData} locale={localeProp}>
@@ -120,62 +113,89 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
             <SectionTitle className="mb-0 text-3xl sm:text-4xl lg:text-5xl leading-tight">{dataset.title}</SectionTitle>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
-            <div className="lg:col-span-2 bg-white p-4 sm:p-6 lg:p-8 shadow-sm border border-border">
-              <dl className="space-y-4 text-right">
-                <div className="flex flex-col gap-2 pb-4 border-b border-border">
-                  <dt className="text-sm font-semibold text-body font-display">{t('public.datasets.status', 'סטטוס')}</dt>
-                  <dd className="flex gap-3 flex-wrap">
-                    <PublishStatusBadge status={dataset.status} />
-                    <MaturityBadge maturity={dataset.maturity} />
-                  </dd>
-                </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <div className="bg-white p-4 sm:p-6 lg:p-10 shadow-sm border border-border h-full">
+                <Tabs value={activeTab} onValueChange={setActiveTab} dir={dir}>
+                  <TabsList className="bg-muted mb-4 sm:mb-6">
+                    <TabsTrigger value="description" className="text-sm sm:text-base px-4 sm:px-6 data-[state=active]:bg-white">
+                      {t('public.datasets.description', 'תיאור המאגר')}
+                    </TabsTrigger>
+                    {dataset.codebook_text && (
+                      <TabsTrigger value="codebook" className="text-sm sm:text-base px-4 sm:px-6 data-[state=active]:bg-white">
+                        {t('public.datasets.codebook', 'מילון נתונים (Codebook)')}
+                      </TabsTrigger>
+                    )}
+                  </TabsList>
 
-                {dataset.temporal_coverage && (
-                  <div className="flex flex-col gap-2 pb-4 border-b border-border">
-                    <dt className="text-sm font-semibold text-body font-display">{t('public.datasets.period', 'תקופה')}</dt>
-                    <dd className="text-foreground text-base font-medium">
-                      {dataset.temporal_coverage.start_year} - {dataset.temporal_coverage.end_year}
-                    </dd>
-                  </div>
-                )}
+                  <TabsContent value="description">
+                    <div className="markdown-content pt-4" dir="rtl" dangerouslySetInnerHTML={{ __html: descriptionHtml }} />
+                  </TabsContent>
 
-                {dataset.geographic_coverage && (
-                  <div className="flex flex-col gap-2 pb-4 border-b border-border">
-                    <dt className="text-sm font-semibold text-body font-display">{t('public.datasets.geographicArea', 'אזור גיאוגרפי')}</dt>
-                    <dd className="text-foreground text-base">{dataset.geographic_coverage}</dd>
-                  </div>
-                )}
-
-                <div className="flex flex-col gap-2 pb-4 border-b border-border">
-                  <dt className="text-sm font-semibold text-body font-display">{t('public.datasets.lastUpdated', 'עדכון אחרון')}</dt>
-                  <dd className="text-foreground text-base">
-                    {new Date(dataset.last_updated).toLocaleDateString(dateLocale)}
-                  </dd>
-                </div>
-
-                <div className="flex flex-col gap-2 pb-4 border-b border-border">
-                  <dt className="text-sm font-semibold text-body font-display">גרסה</dt>
-                  <dd className="text-foreground text-base font-mono">{dataset.version}</dd>
-                </div>
-
-                {dataset.license && (
-                  <div className="flex flex-col gap-2">
-                    <dt className="text-sm font-semibold text-body font-display">רישיון</dt>
-                    <dd className="text-foreground text-base font-mono">{dataset.license}</dd>
-                  </div>
-                )}
-              </dl>
+                  {dataset.codebook_text && (
+                    <TabsContent value="codebook">
+                      <div className="markdown-content pt-4" dir="rtl" dangerouslySetInnerHTML={{ __html: codebookHtml }} />
+                    </TabsContent>
+                  )}
+                </Tabs>
+              </div>
             </div>
 
-            <Col className="gap-4 sm:gap-6">
+            <div className="flex flex-col gap-4">
+              <div className="bg-white p-5 border border-border shadow-sm">
+                <dl className="space-y-3 text-right">
+                  <div className="flex flex-col gap-1 pb-3 border-b border-border">
+                    <dt className="text-xs font-semibold text-body font-display">{t('public.datasets.status', 'סטטוס')}</dt>
+                    <dd className="flex gap-2 flex-wrap">
+                      <PublishStatusBadge status={dataset.status} />
+                      <MaturityBadge maturity={dataset.maturity} />
+                    </dd>
+                  </div>
+
+                  {dataset.temporal_coverage && (
+                    <div className="flex flex-col gap-1 pb-3 border-b border-border">
+                      <dt className="text-xs font-semibold text-body font-display">{t('public.datasets.period', 'תקופה')}</dt>
+                      <dd className="text-sm text-foreground font-medium">
+                        {dataset.temporal_coverage.start_year} - {dataset.temporal_coverage.end_year}
+                      </dd>
+                    </div>
+                  )}
+
+                  {dataset.geographic_coverage && (
+                    <div className="flex flex-col gap-1 pb-3 border-b border-border">
+                      <dt className="text-xs font-semibold text-body font-display">{t('public.datasets.geographicArea', 'אזור גיאוגרפי')}</dt>
+                      <dd className="text-sm text-foreground">{dataset.geographic_coverage}</dd>
+                    </div>
+                  )}
+
+                  <div className="flex flex-col gap-1 pb-3 border-b border-border">
+                    <dt className="text-xs font-semibold text-body font-display">{t('public.datasets.lastUpdated', 'עדכון אחרון')}</dt>
+                    <dd className="text-sm text-foreground">
+                      {new Date(dataset.last_updated).toLocaleDateString(dateLocale)}
+                    </dd>
+                  </div>
+
+                  <div className="flex flex-col gap-1 pb-3 border-b border-border">
+                    <dt className="text-xs font-semibold text-body font-display">גרסה</dt>
+                    <dd className="text-sm text-foreground font-mono">{dataset.version}</dd>
+                  </div>
+
+                  {dataset.license && (
+                    <div className="flex flex-col gap-1">
+                      <dt className="text-xs font-semibold text-body font-display">רישיון</dt>
+                      <dd className="text-sm text-foreground font-mono">{dataset.license}</dd>
+                    </div>
+                  )}
+                </dl>
+              </div>
+
               <div className="bg-white p-4 sm:p-6 shadow-sm border border-border">
-                <h3 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-5 font-display">{t('public.datasets.resources', 'קבצי נתונים')}</h3>
+                <h3 className="text-sm font-bold text-foreground mb-3 font-display">{t('public.datasets.resources', 'קבצי נתונים')}</h3>
                 <div className="space-y-3">
                   {dataset.resources.map((resource) => (
                     <div
                       key={resource.id}
-                      className="flex items-center gap-3 p-3 sm:p-4 bg-white border border-border-strong shadow-sm group"
+                      className="flex items-center gap-3 p-3 sm:p-4 bg-white border border-border-strong shadow-sm"
                     >
                       <div className="text-brand-primary">
                         {getFileIcon(resource.format)}
@@ -211,55 +231,16 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
                 </div>
               </div>
 
-              {(dataset.codebook_url || dataset.codebook_text) && (
-                <div className="bg-white p-4 sm:p-6 shadow-sm border border-border">
-                  <h3 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-5 font-display">{t('public.datasets.codebook', 'מילון נתונים (Codebook)')}</h3>
-                  <a
-                    href="#codebook"
-                    onClick={handleCodebookClick}
-                    className="flex items-center gap-3 p-3 sm:p-4 bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all"
-                  >
-                    <BookOpen className="w-5 h-5 text-brand-primary" />
-                    <span className="text-sm sm:text-base font-semibold text-foreground">{t('public.datasets.viewCodebook', 'צפה במילון הנתונים')}</span>
-                  </a>
-                </div>
-              )}
-
-              <div className="bg-white p-4 shadow-sm border border-border mt-auto">
+              <div className="bg-white p-4 border border-border shadow-sm">
                 <a
                   href="#"
-                  className="flex items-center gap-2 text-sm text-body-secondary hover:text-brand-primary transition-colors justify-center"
+                  className="flex items-center gap-2 text-xs text-body-secondary hover:text-brand-primary transition-colors justify-center py-1"
                 >
-                  <AlertCircle className="w-4 h-4" />
+                  <AlertCircle className="w-3.5 h-3.5" />
                   <span>מצאת טעות? דווח לנו</span>
                 </a>
               </div>
-            </Col>
-          </div>
-
-          <div id="content-tabs" className="bg-white p-4 sm:p-6 lg:p-10 shadow-sm border border-border">
-            <Tabs value={activeTab} onValueChange={setActiveTab} dir={dir}>
-              <TabsList className="bg-muted mb-4 sm:mb-6">
-                <TabsTrigger value="description" className="text-sm sm:text-base px-4 sm:px-6 data-[state=active]:bg-white">
-                  {t('public.datasets.description', 'תיאור המאגר')}
-                </TabsTrigger>
-                {dataset.codebook_text && (
-                  <TabsTrigger value="codebook" className="text-sm sm:text-base px-4 sm:px-6 data-[state=active]:bg-white">
-                    {t('public.datasets.codebook', 'מילון נתונים (Codebook)')}
-                  </TabsTrigger>
-                )}
-              </TabsList>
-
-              <TabsContent value="description">
-                <div className="markdown-content pt-4" dir="rtl" dangerouslySetInnerHTML={{ __html: descriptionHtml }} />
-              </TabsContent>
-
-              {dataset.codebook_text && (
-                <TabsContent value="codebook">
-                  <div className="markdown-content pt-4" dir="rtl" dangerouslySetInnerHTML={{ __html: codebookHtml }} />
-                </TabsContent>
-              )}
-            </Tabs>
+            </div>
           </div>
         </div>
       </main>
