@@ -186,10 +186,20 @@ export async function mapLayout(
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
   });
 
-  const map = L.map(container).setView(config.center, config.zoom);
+  const map = L.map(container, {
+    attributionControl: false,
+    zoomControl: false,
+  }).setView(config.center, config.zoom);
+
+  L.control.zoom({ position: 'topleft' }).addTo(map);
+
+  L.control.attribution({ prefix: false }).addTo(map);
+  map.attributionControl.addAttribution(
+    '<a href="/copyright" target="_blank">© ShtetlAtlas</a> | © <a href="https://carto.com">CARTO</a>'
+  );
 
   L.tileLayer(config.tile.src, {
-    attribution: config.tile.attribution,
+    attribution: '',
     subdomains: config.tile.subdomains,
     maxZoom: config.tile.maxZoom
   }).addTo(map);
