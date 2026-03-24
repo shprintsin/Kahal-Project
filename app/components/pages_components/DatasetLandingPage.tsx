@@ -11,6 +11,7 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
 import remarkRehype from 'remark-rehype';
+import rehypeRaw from 'rehype-raw';
 import rehypeStringify from 'rehype-stringify';
 import { SiteShell } from '@/components/ui/site-shell';
 import type { SiteShellData } from '@/app/lib/get-navigation';
@@ -64,7 +65,8 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
         const file = await unified()
           .use(remarkParse)
           .use(remarkGfm)
-          .use(remarkRehype)
+          .use(remarkRehype, { allowDangerousHtml: true })
+          .use(rehypeRaw)
           .use(rehypeStringify)
           .process(dataset.description);
         setDescriptionHtml(String(file));
@@ -83,7 +85,8 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
           const file = await unified()
             .use(remarkParse)
             .use(remarkGfm)
-            .use(remarkRehype)
+            .use(remarkRehype, { allowDangerousHtml: true })
+            .use(rehypeRaw)
             .use(rehypeStringify)
             .process(dataset.codebook_text);
           setCodebookHtml(String(file));
