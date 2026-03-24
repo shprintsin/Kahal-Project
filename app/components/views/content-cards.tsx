@@ -1,6 +1,6 @@
 "use client"
 
-import { Calendar, Database, FileText, Layers, Map as MapIcon, Eye } from "lucide-react"
+import { ArrowLeft, Calendar, Database, FileText, Layers, Map as MapIcon, Eye } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-provider"
 
 interface MetaBadgeProps {
@@ -36,15 +36,15 @@ function CardExcerpt({ text }: { text?: string | null }) {
   return <p className="text-body-secondary line-clamp-3 mb-4 leading-relaxed">{text}</p>
 }
 
-function CardLink({ href, label, icon }: { href: string; label: string; icon: React.ReactNode }) {
+function CardLink({ href, label }: { href: string; label: string; icon?: React.ReactNode }) {
   return (
     <div className="mt-auto">
       <a
         href={href}
-        className="inline-flex items-center gap-2 text-brand-primary font-bold font-display hover:translate-x-[-4px] transition-transform duration-200"
+        className="inline-flex items-center gap-2 text-brand-primary font-semibold hover:gap-3 transition-all duration-200"
       >
+        <ArrowLeft className="h-4 w-4" />
         {label}
-        {icon}
       </a>
     </div>
   )
@@ -129,7 +129,7 @@ export function PostCard({ item }: { item: PostItem }) {
         </MetaRow>
         <CardTitle href={`/${locale}/posts/${item.slug}`}>{item.title}</CardTitle>
         <CardExcerpt text={item.excerpt} />
-        <CardLink href={`/${locale}/posts/${item.slug}`} label={t('public.content.readMore', 'קרא עוד')} icon={<FileText className="h-4 w-4" />} />
+        <CardLink href={`/${locale}/posts/${item.slug}`} label={t('public.content.readMore', 'ראה עוד')} />
       </div>
     </CardWrapper>
   )
@@ -158,7 +158,7 @@ export function DatasetCard({ item }: { item: DatasetItem }) {
         </MetaRow>
         <CardTitle href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug}>{item.title}</CardTitle>
         <CardExcerpt text={item.excerpt} />
-        <CardLink href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug} label={t('public.datasets.description', 'צפה במאגר המלא')} icon={<Database className="h-4 w-4" />} />
+        <CardLink href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug} label={t('public.content.readMore', 'ראה עוד')} />
       </div>
     </CardWrapper>
   )
@@ -188,7 +188,7 @@ export function MapCard({ item }: { item: MapItem }) {
         </MetaRow>
         <CardTitle href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug}>{item.title}</CardTitle>
         <CardExcerpt text={item.excerpt} />
-        <CardLink href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug} label={t('public.maps.title', 'צפה במפה')} icon={<MapIcon className="h-4 w-4" />} />
+        <CardLink href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug} label={t('public.content.readMore', 'ראה עוד')} />
       </div>
     </CardWrapper>
   )
@@ -218,7 +218,7 @@ export function LayerCard({ item }: { item: LayerItem }) {
         </MetaRow>
         <CardTitle href={`/${locale}/layers/${item.slug}`}>{item.name}</CardTitle>
         <CardExcerpt text={item.excerpt} />
-        <CardLink href={`/${locale}/layers/${item.slug}`} label={t('public.layers.title', 'צפה בשכבה')} icon={<Layers className="h-4 w-4" />} />
+        <CardLink href={`/${locale}/layers/${item.slug}`} label={t('public.content.readMore', 'ראה עוד')} />
       </div>
     </CardWrapper>
   )
