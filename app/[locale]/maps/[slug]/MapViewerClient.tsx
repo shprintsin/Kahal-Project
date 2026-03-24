@@ -60,7 +60,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                     <Tabs defaultValue="description">
                       <TabsList>
                         <TabsTrigger value="description">{t('public.datasets.description', 'תיאור')}</TabsTrigger>
-                        <TabsTrigger value="codebook">{t('public.map.codebook', 'Codebook')}</TabsTrigger>
+                        <TabsTrigger value="codebook">{t('public.map.codebook', 'מילון נתונים (Codebook)')}</TabsTrigger>
                       </TabsList>
                       <TabsContent value="description">
                         <div className="markdown-content pt-4" dir="rtl">
@@ -76,7 +76,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                   ) : (
                     <>
                       <h3 className="text-xl font-bold text-foreground mb-5 font-display">
-                        {map.description ? t('public.datasets.description', 'תיאור') : t('public.map.codebook', 'Codebook')}
+                        {map.description ? t('public.datasets.description', 'תיאור') : t('public.map.codebook', 'מילון נתונים (Codebook)')}
                       </h3>
                       <div className="markdown-content" dir="rtl">
                         <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{(map.description || map.codebookText)!}</ReactMarkdown>
