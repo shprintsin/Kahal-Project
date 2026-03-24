@@ -71,7 +71,7 @@ export default function HomePageComponent({
 
               {heroGrid.length > 0 && (
                 <div className="w-full md:w-6/12 flex flex-col justify-around">
-                  <div className="grid grid-cols-2 gap-5 sm:gap-6 lg:gap-8 max-w-sm md:max-w-md mx-auto w-full">
+                  <div className="grid grid-cols-2 gap-7 sm:gap-8 lg:gap-10 max-w-sm md:max-w-md mx-auto w-full">
                     {heroGrid.map((category) => (
                       <CategoryTile
                         key={category.id}
