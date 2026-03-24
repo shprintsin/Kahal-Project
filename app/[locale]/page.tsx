@@ -11,7 +11,7 @@ import { getContentBlocksData } from "@/lib/get-content-blocks-data";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return createPageMetadata(locale, 'public.hero.title', '/');
+  return createPageMetadata(locale, 'public.hero.subtitle', '/');
 }
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
