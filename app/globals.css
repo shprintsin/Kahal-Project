@@ -303,6 +303,17 @@ body {
   font-family: 'Rubik', sans-serif;
 }
 
+@keyframes fade-in-out {
+  0% { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  75% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+}
+
+.animate-fade-in-out {
+  animation: fade-in-out 2s ease-in-out forwards;
+}
+
 .map-label {
   background: transparent !important;
   border: none !important;
