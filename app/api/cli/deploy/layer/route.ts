@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { slug, name, description, summary, summaryI18n, type, status, geoJsonData, style, dataCsvContent, changeLog } = body;
+    const { slug, name, description, summary, summaryI18n, type, status, geoJsonData, style, filename, dataCsvContent, changeLog } = body;
 
     if (!slug) {
       return NextResponse.json({ error: 'slug is required' }, { status: 400 });
@@ -21,8 +21,11 @@ export async function POST(req: NextRequest) {
       POLYLINES: 'POLYLINES',
       MULTI_POLYGONS: 'MULTI_POLYGONS',
       points: 'POINTS',
+      point: 'POINTS',
       polygons: 'POLYGONS',
+      polygon: 'POLYGONS',
       polylines: 'POLYLINES',
+      polyline: 'POLYLINES',
     };
     const dbType = layerTypeMap[type] ?? 'POINTS';
 
@@ -45,6 +48,7 @@ export async function POST(req: NextRequest) {
           geoJsonData: geoJsonData ?? existing.geoJsonData,
           styleConfig: style ?? existing.styleConfig,
           sourceType: 'database' as any,
+          ...(filename ? { filename } : {}),
           ...(dataCsvContent ? { downloadUrl: `data:text/csv;base64,${Buffer.from(dataCsvContent).toString('base64')}` } : {}),
         },
       });
@@ -63,6 +67,7 @@ export async function POST(req: NextRequest) {
           geoJsonData: geoJsonData ?? {},
           styleConfig: style ?? {},
           sourceType: 'database' as any,
+          ...(filename ? { filename } : {}),
           ...(dataCsvContent ? { downloadUrl: `data:text/csv;base64,${Buffer.from(dataCsvContent).toString('base64')}` } : {}),
         },
       });
