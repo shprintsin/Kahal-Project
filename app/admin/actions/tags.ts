@@ -118,7 +118,7 @@ export async function listTagsAPI(options: ListTagsOptions = {}) {
             pages: true,
             collections: true,
             series: true,
-            maps: true,
+            datasets: true,
             artifacts: true,
           },
         },
@@ -138,13 +138,13 @@ export async function listTagsAPI(options: ListTagsOptions = {}) {
           tag._count.pages +
           tag._count.collections +
           tag._count.series +
-          tag._count.maps +
+          tag._count.datasets +
           tag._count.artifacts,
         posts: tag._count.posts,
         pages: tag._count.pages,
         collections: tag._count.collections,
         series: tag._count.series,
-        maps: tag._count.maps,
+        datasets: tag._count.datasets,
         artifacts: tag._count.artifacts,
       },
       createdAt: toISOStringSafe(tag.createdAt),
@@ -183,7 +183,7 @@ export async function getTagBySlug(slug: string, options: GetTagOptions = {}) {
             pages: true,
             collections: true,
             series: true,
-            maps: true,
+            datasets: true,
             artifacts: true,
           },
         },
@@ -235,13 +235,13 @@ export async function getTagBySlug(slug: string, options: GetTagOptions = {}) {
           tag._count.pages +
           tag._count.collections +
           tag._count.series +
-          tag._count.maps +
+          tag._count.datasets +
           tag._count.artifacts,
         posts: tag._count.posts,
         pages: tag._count.pages,
         collections: tag._count.collections,
         series: tag._count.series,
-        maps: tag._count.maps,
+        datasets: tag._count.datasets,
         artifacts: tag._count.artifacts,
       },
       ...(includeContent && {

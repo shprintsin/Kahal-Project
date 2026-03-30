@@ -115,7 +115,6 @@ export async function listCategoriesAPI(options: ListCategoriesOptions = {}) {
             posts: true,
             series: true,
             datasets: true,
-            maps: true,
           },
         },
       },
@@ -138,12 +137,10 @@ export async function listCategoriesAPI(options: ListCategoriesOptions = {}) {
         total:
           category._count.posts +
           category._count.series +
-          category._count.datasets +
-          category._count.maps,
+          category._count.datasets,
         posts: category._count.posts,
         series: category._count.series,
         datasets: category._count.datasets,
-        maps: category._count.maps,
       },
       createdAt: toISOStringSafe(category.createdAt),
     }));
@@ -186,7 +183,6 @@ export async function getCategoryBySlug(slug: string, options: GetCategoryOption
             posts: true,
             series: true,
             datasets: true,
-            maps: true,
           },
         },
         ...(includeContent && {
@@ -229,12 +225,10 @@ export async function getCategoryBySlug(slug: string, options: GetCategoryOption
         total:
           category._count.posts +
           category._count.series +
-          category._count.datasets +
-          category._count.maps,
+          category._count.datasets,
         posts: category._count.posts,
         series: category._count.series,
         datasets: category._count.datasets,
-        maps: category._count.maps,
       },
       ...(includeContent && {
         content: {
