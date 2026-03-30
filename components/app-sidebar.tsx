@@ -78,9 +78,8 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
           { title: t('nav.artifacts'), url: "/admin/artifacts" },
           // { title: t('nav.artifactCategories'), url: "/admin/artifact-categories" },
           // { title: t('nav.series'), url: "/admin/series" },
-          { title: t('nav.datasets'), url: "/admin/datasets" },
           { title: t('nav.layers'), url: "/admin/layers" },
-          { title: t('nav.maps'), url: "/admin/maps" },
+          { title: "Data Studio", url: "/admin/datastudio" },
         ],
       },
 

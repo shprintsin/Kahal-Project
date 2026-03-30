@@ -84,7 +84,7 @@ export interface DatasetResource {
     createdAt: string;
 }
 
-export interface ResearchDataset {
+export interface Dataset {
     id: string;
     title: string;
     slug: string;
@@ -127,7 +127,7 @@ export interface MapLayer {
     updatedAt: string;
 }
 
-export interface Map {
+export interface MapDataset {
     id: string;
     slug: string;
     title: string;
@@ -183,6 +183,6 @@ export interface Layer {
     createdAt: string;
     updatedAt: string;
     _count?: {
-        maps: number;
+        datasets: number;
     };
 }

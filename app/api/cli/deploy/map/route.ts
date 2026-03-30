@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     const resolvedTitle = titleI18n?.he || titleI18n?.en || title;
     const resolvedDescription = descriptionI18n?.he || descriptionI18n?.en || description;
 
-    const existing = await prisma.map.findUnique({ where: { slug } });
+    const existing = await prisma.dataset.findUnique({ where: { slug } });
 
     let map;
     let action: string;
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
         nextVersion = '1.0.1';
       }
 
-      map = await prisma.map.update({
+      map = await prisma.dataset.update({
         where: { id: existing.id },
         data: {
           title: resolvedTitle ?? existing.title,
@@ -66,7 +66,6 @@ export async function POST(req: NextRequest) {
             codebookText: codebookTextI18n.he || codebookTextI18n.en || null,
             codebookTextI18n,
           } : {}),
-          // Only connect thumbnail if provided — preserves existing otherwise
           ...(thumbnailId ? { thumbnail: { connect: { id: thumbnailId } } } : {}),
           status: (status ?? existing.status) as any,
           config: mapConfig,
@@ -76,7 +75,7 @@ export async function POST(req: NextRequest) {
       });
       action = 'updated';
     } else {
-      map = await prisma.map.create({
+      map = await prisma.dataset.create({
         data: {
           slug,
           title: resolvedTitle ?? slug,
@@ -100,9 +99,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Create deployment record
-    await prisma.mapDeployment.create({
+    await prisma.datasetDeployment.create({
       data: {
-        mapId: map.id,
+        datasetId: map.id,
         version: nextVersion,
         changeLog: changeLog ?? null,
         gitSha: gitSha ?? null,
@@ -113,7 +112,7 @@ export async function POST(req: NextRequest) {
     // Recreate layer associations if layerSlugs provided
     if (layerSlugs && layerSlugs.length > 0) {
       // Delete existing associations
-      await prisma.mapLayerAssociation.deleteMany({ where: { mapId: map.id } });
+      await prisma.datasetLayerAssociation.deleteMany({ where: { datasetId: map.id } });
 
       // Create new associations
       for (let i = 0; i < layerSlugs.length; i++) {
@@ -122,9 +121,9 @@ export async function POST(req: NextRequest) {
           console.warn(`Layer "${layerSlugs[i]}" not found — skipping association`);
           continue;
         }
-        await prisma.mapLayerAssociation.create({
+        await prisma.datasetLayerAssociation.create({
           data: {
-            mapId: map.id,
+            datasetId: map.id,
             layerId: layer.id,
             zIndex: i,
             isVisible: true,

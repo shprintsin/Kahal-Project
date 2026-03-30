@@ -1,6 +1,6 @@
 "use client";
 
-import { useMapStudio, BASEMAPS } from "../store";
+import { useDataStudio, BASEMAPS } from "../store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -27,7 +27,7 @@ interface MapToolbarProps {
 }
 
 export function MapToolbar({ onSave, onBack }: MapToolbarProps) {
-  const { state, dispatch } = useMapStudio();
+  const { state, dispatch } = useDataStudio();
 
   return (
     <div className="h-12 border-b border-border bg-card flex items-center gap-2 px-3 flex-shrink-0">

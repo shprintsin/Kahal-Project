@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
       regionIds = regions.map((r: { id: string }) => r.id);
     }
 
-    const existing = await prisma.researchDataset.findUnique({ where: { slug } });
+    const existing = await prisma.dataset.findUnique({ where: { slug } });
 
     let dataset;
     let action: string;
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
         nextVersion = parts.join('.');
       }
 
-      dataset = await prisma.researchDataset.update({
+      dataset = await prisma.dataset.update({
         where: { id: existing.id },
         data: {
           title: resolvedTitle,
@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
       });
       action = 'updated';
     } else {
-      dataset = await prisma.researchDataset.create({
+      dataset = await prisma.dataset.create({
         data: {
           slug,
           title: resolvedTitle,
@@ -130,7 +130,7 @@ export async function POST(req: NextRequest) {
 
     // Set regions
     if (regionIds.length > 0) {
-      await prisma.researchDataset.update({
+      await prisma.dataset.update({
         where: { id: dataset.id },
         data: { regions: { set: regionIds.map((id: string) => ({ id })) } },
       });

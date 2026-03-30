@@ -25,17 +25,17 @@ export async function addLayerToMap(
 ) {
   try {
     // Check if association already exists
-    const existing = await prisma.mapLayerAssociation.findFirst({
-      where: { mapId, layerId },
+    const existing = await prisma.datasetLayerAssociation.findFirst({
+      where: { datasetId: mapId, layerId },
     });
 
     if (existing) {
-      throw new Error("Layer is already added to this map");
+      throw new Error("Layer is already added to this dataset");
     }
 
-    const association = await prisma.mapLayerAssociation.create({
+    const association = await prisma.datasetLayerAssociation.create({
       data: {
-        mapId,
+        datasetId: mapId,
         layerId,
         zIndex: config?.zIndex ?? 0,
         isVisible: config?.isVisible ?? true,
@@ -45,7 +45,7 @@ export async function addLayerToMap(
       },
     });
 
-    revalidatePath(`/admin/maps/${mapId}`);
+    revalidatePath(`/admin/datastudio/${mapId}`);
     return association;
   } catch (error) {
     console.error("Error adding layer to map:", error);
@@ -58,11 +58,11 @@ export async function addLayerToMap(
  */
 export async function removeLayerFromMap(mapId: string, layerId: string) {
   try {
-    await prisma.mapLayerAssociation.deleteMany({
-      where: { mapId, layerId },
+    await prisma.datasetLayerAssociation.deleteMany({
+      where: { datasetId: mapId, layerId },
     });
 
-    revalidatePath(`/admin/maps/${mapId}`);
+    revalidatePath(`/admin/datastudio/${mapId}`);
     return { success: true };
   } catch (error) {
     console.error("Error removing layer from map:", error);
@@ -85,15 +85,15 @@ export async function updateLayerInMap(
   }
 ) {
   try {
-    const association = await prisma.mapLayerAssociation.findFirst({
-      where: { mapId, layerId },
+    const association = await prisma.datasetLayerAssociation.findFirst({
+      where: { datasetId: mapId, layerId },
     });
 
     if (!association) {
       throw new Error("Layer association not found");
     }
 
-    const updated = await prisma.mapLayerAssociation.update({
+    const updated = await prisma.datasetLayerAssociation.update({
       where: { id: association.id },
       data: {
         ...(config.zIndex !== undefined && { zIndex: config.zIndex }),
@@ -108,7 +108,7 @@ export async function updateLayerInMap(
       },
     });
 
-    revalidatePath(`/admin/maps/${mapId}`);
+    revalidatePath(`/admin/datastudio/${mapId}`);
     return updated;
   } catch (error) {
     console.error("Error updating layer in map:", error);
@@ -156,7 +156,7 @@ export async function createMapWithLayers(
       referenceLinks: mapData.reference_links || mapData.referenceLinks,
     };
 
-    const createdMap = await prisma.map.create({
+    const createdMap = await prisma.dataset.create({
       data,
     });
 
@@ -165,9 +165,9 @@ export async function createMapWithLayers(
     if (layerAssociations.length > 0) {
 
       for (const assoc of layerAssociations) {
-        await prisma.mapLayerAssociation.create({
+        await prisma.datasetLayerAssociation.create({
           data: {
-            mapId: createdMap.id,
+            datasetId: createdMap.id,
             layerId: assoc.layerId,
             zIndex: assoc.zIndex ?? 0,
             isVisible: assoc.isVisible ?? true,
@@ -181,7 +181,7 @@ export async function createMapWithLayers(
     }
 
 
-    revalidatePath("/admin/maps");
+    revalidatePath("/admin/datastudio");
     return createdMap;
   } catch (error) {
     console.error("Error creating map with layers:", error);
@@ -206,16 +206,16 @@ export async function updateMapLayers(
   try {
 
     // Delete all existing associations
-    await prisma.mapLayerAssociation.deleteMany({
-      where: { mapId },
+    await prisma.datasetLayerAssociation.deleteMany({
+      where: { datasetId: mapId },
     });
 
 
     // Create new associations
     for (const assoc of layerAssociations) {
-      await prisma.mapLayerAssociation.create({
+      await prisma.datasetLayerAssociation.create({
         data: {
-          mapId,
+          datasetId: mapId,
           layerId: assoc.layerId,
           zIndex: assoc.zIndex ?? 0,
           isVisible: assoc.isVisible ?? true,
@@ -227,7 +227,7 @@ export async function updateMapLayers(
     }
 
 
-    revalidatePath(`/admin/maps/${mapId}`);
+    revalidatePath(`/admin/datastudio/${mapId}`);
     return { success: true };
   } catch (error) {
     console.error("Error updating map layers:", error);
@@ -238,9 +238,9 @@ export async function updateMapLayers(
 /**
  * Get Map with Layer associations (new architecture)
  */
-export async function getMapWithLayers(id: string, lang?: string) {
+export async function getDatasetWithLayers(id: string, lang?: string) {
   try {
-    const map = await prisma.map.findUnique({
+    const map = await prisma.dataset.findUnique({
       where: { id },
       include: {
         category: {
@@ -327,3 +327,10 @@ export async function getMapWithLayers(id: string, lang?: string) {
     throw error;
   }
 }
+
+export const getMapWithLayers = getDatasetWithLayers;
+export const addLayerToDataset = addLayerToMap;
+export const removeLayerFromDataset = removeLayerFromMap;
+export const updateLayerInDataset = updateLayerInMap;
+export const createDatasetWithLayers = createMapWithLayers;
+export const updateDatasetLayers = updateMapLayers;

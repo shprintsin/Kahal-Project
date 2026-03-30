@@ -215,7 +215,7 @@ async function main() {
   ]);
 
   const datasets = await Promise.all([
-    prisma.researchDataset.create({
+    prisma.dataset.create({
       data: {
         title: "מפקד אוכלוסין גליציה 1890",
         titleI18n: { he: "מפקד אוכלוסין גליציה 1890", en: "Galicia Census 1890", pl: "Spis ludności Galicji 1890" },
@@ -237,7 +237,7 @@ async function main() {
         regions: { connect: [{ id: regions[0].id }] },
       },
     }),
-    prisma.researchDataset.create({
+    prisma.dataset.create({
       data: {
         title: "רשימת יישובים יהודיים בקונגרס פולין",
         titleI18n: { he: "רשימת יישובים יהודיים בקונגרס פולין", en: "Jewish Settlements in Congress Poland", pl: "Osady żydowskie w Kongresówce" },
@@ -258,7 +258,7 @@ async function main() {
         regions: { connect: [{ id: regions[1].id }] },
       },
     }),
-    prisma.researchDataset.create({
+    prisma.dataset.create({
       data: {
         title: "בתי כנסת בגליציה - מאגר מידע",
         titleI18n: { he: "בתי כנסת בגליציה", en: "Synagogues of Galicia Database", pl: "Baza danych synagog Galicji" },
@@ -273,7 +273,7 @@ async function main() {
         regions: { connect: [{ id: regions[0].id }] },
       },
     }),
-    prisma.researchDataset.create({
+    prisma.dataset.create({
       data: {
         title: 'נתוני שמות משפחה יהודיים',
         titleI18n: { he: 'נתוני שמות משפחה יהודיים', en: 'Jewish Surname Data', pl: 'Dane o żydowskich nazwiskach' },
@@ -408,7 +408,7 @@ async function main() {
   ]);
 
   const maps = await Promise.all([
-    prisma.map.create({
+    prisma.dataset.create({
       data: {
         title: "יישובים יהודיים בגליציה 1890",
         titleI18n: { he: "יישובים יהודיים בגליציה 1890", en: "Jewish Settlements in Galicia 1890", pl: "Osady żydowskie w Galicji 1890" },
@@ -430,7 +430,7 @@ async function main() {
         tags: { connect: [{ id: tags[0].id }, { id: tags[2].id }] },
       },
     }),
-    prisma.map.create({
+    prisma.dataset.create({
       data: {
         title: "בתי כנסת בגליציה",
         titleI18n: { he: "בתי כנסת בגליציה", en: "Synagogues in Galicia", pl: "Synagogi w Galicji" },
@@ -498,17 +498,17 @@ async function main() {
   ]);
 
   await Promise.all([
-    prisma.mapLayerAssociation.create({
-      data: { mapId: maps[0].id, layerId: layers[0].id, zIndex: 2, isVisible: true, isVisibleByDefault: true },
+    prisma.datasetLayerAssociation.create({
+      data: { datasetId: maps[0].id, layerId: layers[0].id, zIndex: 2, isVisible: true, isVisibleByDefault: true },
     }),
-    prisma.mapLayerAssociation.create({
-      data: { mapId: maps[0].id, layerId: layers[1].id, zIndex: 1, isVisible: true, isVisibleByDefault: true },
+    prisma.datasetLayerAssociation.create({
+      data: { datasetId: maps[0].id, layerId: layers[1].id, zIndex: 1, isVisible: true, isVisibleByDefault: true },
     }),
-    prisma.mapLayerAssociation.create({
-      data: { mapId: maps[1].id, layerId: layers[2].id, zIndex: 2, isVisible: true, isVisibleByDefault: true },
+    prisma.datasetLayerAssociation.create({
+      data: { datasetId: maps[1].id, layerId: layers[2].id, zIndex: 2, isVisible: true, isVisibleByDefault: true },
     }),
-    prisma.mapLayerAssociation.create({
-      data: { mapId: maps[1].id, layerId: layers[1].id, zIndex: 1, isVisible: true, isVisibleByDefault: true },
+    prisma.datasetLayerAssociation.create({
+      data: { datasetId: maps[1].id, layerId: layers[1].id, zIndex: 1, isVisible: true, isVisibleByDefault: true },
     }),
   ]);
 

@@ -6,7 +6,7 @@ export const DatasetType: ContentTypeDefinition = {
   slug: "datasets",
   icon: "Database",
 
-  model: "ResearchDataset",
+  model: "Dataset",
 
   fields: [
     createField.text("title", "Title", { required: true, order: 1 }),

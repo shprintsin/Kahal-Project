@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Maximize2, Minimize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { Map as MapType } from '@/types/api-types';
+import type { MapDataset as MapType } from '@/types/api-types';
 import type { MapConfig, LayerConfig, BehaviorsConfig } from '@/types/map-config';
 import { resolveBasemapTile } from '@/lib/basemaps';
 import type { MapLayoutResult } from '@/lib/mapUtils';

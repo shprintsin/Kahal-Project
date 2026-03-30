@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { useMapStudio, type StudioLayer } from "../store";
+import { useDataStudio, type StudioLayer } from "../store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -111,7 +111,7 @@ function LayerRow({ layer, color, isSelected, isDragged, onDragStart, onDragOver
 }
 
 export function LayerPanel({ layerLibrary, onAddFromLibrary, onAddInline }: LayerPanelProps) {
-  const { state, dispatch } = useMapStudio();
+  const { state, dispatch } = useDataStudio();
   const [search, setSearch] = useState("");
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [draggedId, setDraggedId] = useState<string | null>(null);

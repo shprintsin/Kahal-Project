@@ -32,8 +32,8 @@ export interface ReferenceLink {
   url: string;
 }
 
-export interface MapStudioState {
-  mapId: string | null;
+export interface DataStudioState {
+  datasetId: string | null;
   title: string;
   slug: string;
   description: string;
@@ -61,7 +61,7 @@ export interface MapStudioState {
   referenceLinks: ReferenceLink[];
 }
 
-export type MapStudioAction =
+export type DataStudioAction =
   | { type: "SET_TITLE"; title: string }
   | { type: "SET_SLUG"; slug: string }
   | { type: "SET_DESCRIPTION"; description: string }
@@ -94,10 +94,10 @@ export type MapStudioAction =
   | { type: "SET_THUMBNAIL"; thumbnailId: string | null; thumbnailUrl: string | null }
   | { type: "SET_REFERENCE_LINKS"; referenceLinks: ReferenceLink[] };
 
-export function mapStudioReducer(
-  state: MapStudioState,
-  action: MapStudioAction
-): MapStudioState {
+export function dataStudioReducer(
+  state: DataStudioState,
+  action: DataStudioAction
+): DataStudioState {
   switch (action.type) {
     case "SET_TITLE":
       return { ...state, title: action.title, isDirty: true };
@@ -235,16 +235,22 @@ export function mapStudioReducer(
   }
 }
 
-export const MapStudioContext = createContext<{
-  state: MapStudioState;
-  dispatch: React.Dispatch<MapStudioAction>;
+export const DataStudioContext = createContext<{
+  state: DataStudioState;
+  dispatch: React.Dispatch<DataStudioAction>;
 } | null>(null);
 
-export function useMapStudio() {
-  const ctx = useContext(MapStudioContext);
-  if (!ctx) throw new Error("useMapStudio must be used within MapStudioProvider");
+export function useDataStudio() {
+  const ctx = useContext(DataStudioContext);
+  if (!ctx) throw new Error("useDataStudio must be used within DataStudioProvider");
   return ctx;
 }
+
+export const MapStudioContext = DataStudioContext;
+export function useMapStudio() { return useDataStudio(); }
+export type MapStudioState = DataStudioState;
+export type MapStudioAction = DataStudioAction;
+export const mapStudioReducer = dataStudioReducer;
 
 export { BASEMAPS } from '@/lib/basemaps';
 

@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { MapOptionalDefaultsSchema } from "@/prisma/generated/zod/modelSchema/MapSchema";
+import { DatasetOptionalDefaultsSchema } from "@/prisma/generated/zod/modelSchema/DatasetSchema";
 import { slugField, i18nRecord } from "./shared";
 
-export const mapSchema = MapOptionalDefaultsSchema
+export const mapSchema = DatasetOptionalDefaultsSchema
   .omit({ id: true, createdAt: true, updatedAt: true, title: true, description: true })
   .extend({
     slug: slugField,

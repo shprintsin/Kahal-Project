@@ -18,6 +18,24 @@ const nextConfig: NextConfig = {
         source: '/uploads/:path*',
         destination: '/api/uploads/:path*',
       },
+      {
+        source: '/admin/datastudio/:path*',
+        destination: '/admin/maps2/:path*',
+      },
+    ];
+  },
+  async redirects() {
+    return [
+      {
+        source: '/:locale/maps',
+        destination: '/:locale/data',
+        permanent: true,
+      },
+      {
+        source: '/:locale/maps/:slug',
+        destination: '/:locale/data/:slug',
+        permanent: true,
+      },
     ];
   },
   experimental: {

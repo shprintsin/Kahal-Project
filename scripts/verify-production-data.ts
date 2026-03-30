@@ -63,16 +63,16 @@ async function verifyPosts() {
   }
 }
 
-async function verifyMaps() {
-    console.log("--- Verifying Maps (Like /maps) ---");
+async function verifyDatasets() {
+    console.log("--- Verifying Datasets (Like /maps + /datasets) ---");
     try {
-      const maps = await prisma.map.findMany({
+      const datasets = await prisma.dataset.findMany({
         take: 1,
       });
-      console.log(`✅ Success! Found ${maps.length} maps.`);
+      console.log(`✅ Success! Found ${datasets.length} datasets.`);
       return true;
     } catch (error) {
-      console.error("❌ Maps Query Failed:", error);
+      console.error("❌ Datasets Query Failed:", error);
       return false;
     }
   }
@@ -82,7 +82,7 @@ async function main() {
   
   await verifyCollections();
   await verifyLayers();
-  await verifyMaps();
+  await verifyDatasets();
   await verifyPosts();
 }
 

@@ -1,4 +1,4 @@
-import type { Post, Page, Category, ResearchDataset, Map } from '@/types/api-types';
+import type { Post, Page, Category, Dataset, MapDataset } from '@/types/api-types';
 
 function getBaseUrl(): string {
   if (process.env.NEXT_PUBLIC_API_URL) {
@@ -116,15 +116,14 @@ export const getPostsByCategory = async (categorySlug: string): Promise<{ docs: 
 };
 
 // Datasets
-export const getDatasets = async (): Promise<{ docs: ResearchDataset[] }> => {
-  const data = await fetchAPI<ResearchDataset[]>('/api/datasets?status=published');
+export const getDatasets = async (): Promise<{ docs: Dataset[] }> => {
+  const data = await fetchAPI<Dataset[]>('/api/datasets?status=published');
   return { docs: Array.isArray(data) ? data : [] };
 };
 
-export const getDataset = async (slug: string): Promise<ResearchDataset | null> => {
+export const getDataset = async (slug: string): Promise<Dataset | null> => {
   try {
-    // We want to include resources by default on the dataset page
-    const dataset = await fetchAPI<ResearchDataset>(`/api/datasets/${slug}?includeResources=true`);
+    const dataset = await fetchAPI<Dataset>(`/api/datasets/${slug}?includeResources=true`);
     return dataset;
   } catch (error) {
     console.error(`Dataset not found: ${slug}`, error);
@@ -133,15 +132,14 @@ export const getDataset = async (slug: string): Promise<ResearchDataset | null> 
 };
 
 // Maps
-export const getMaps = async (): Promise<{ docs: Map[] }> => {
-  const data = await fetchAPI<Map[]>('/api/maps?status=published');
+export const getMaps = async (): Promise<{ docs: MapDataset[] }> => {
+  const data = await fetchAPI<MapDataset[]>('/api/maps?status=published');
   return { docs: Array.isArray(data) ? data : [] };
 };
 
-export const getMap = async (slug: string): Promise<Map | null> => {
+export const getMap = async (slug: string): Promise<MapDataset | null> => {
   try {
-    // Include layers by default (includeLayers=true is default in backend)
-    const map = await fetchAPI<Map>(`/api/maps/${slug}`);
+    const map = await fetchAPI<MapDataset>(`/api/maps/${slug}`);
     return map;
   } catch (error) {
     console.error(`Map not found: ${slug}`, error);

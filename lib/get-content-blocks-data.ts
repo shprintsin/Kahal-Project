@@ -14,25 +14,25 @@ const AUTHORS = [
 const CITATION = 'Spitzer, Y., Shprintsin, S. (2024). The Eastern European Jewish Communities Project. The Hebrew University of Jerusalem.';
 
 export async function getContentBlocksData(): Promise<ContentBlocksProps> {
-  const featuredDatasets = await prisma.researchDataset.findMany({ where: { status: "published", isFeatured: true }, orderBy: { createdAt: "desc" }, take: 4 });
-  const featuredMaps = await prisma.map.findMany({ where: { status: "published", isFeatured: true }, orderBy: { createdAt: "desc" }, take: 4 });
+  const featuredDatasets = await prisma.dataset.findMany({ where: { status: "published", isFeatured: true }, orderBy: { createdAt: "desc" }, take: 4 });
+  const featuredMaps = await prisma.dataset.findMany({ where: { status: "published", isFeatured: true }, orderBy: { createdAt: "desc" }, take: 4 });
   const featuredLayers = await prisma.layer.findMany({ where: { status: "published", isFeatured: true }, orderBy: { createdAt: "desc" }, take: 4 });
 
   const [datasets, maps, layers, posts, siteLinks, placeCount, datasetCount, mapCount, layerCount] = await Promise.all([
     featuredDatasets.length > 0
       ? Promise.resolve(featuredDatasets)
-      : prisma.researchDataset.findMany({ where: { status: "published" }, orderBy: { createdAt: "desc" }, take: 4 }),
+      : prisma.dataset.findMany({ where: { status: "published" }, orderBy: { createdAt: "desc" }, take: 4 }),
     featuredMaps.length > 0
       ? Promise.resolve(featuredMaps)
-      : prisma.map.findMany({ where: { status: "published" }, orderBy: { createdAt: "desc" }, take: 4 }),
+      : prisma.dataset.findMany({ where: { status: "published" }, orderBy: { createdAt: "desc" }, take: 4 }),
     featuredLayers.length > 0
       ? Promise.resolve(featuredLayers)
       : prisma.layer.findMany({ where: { status: "published" }, orderBy: { createdAt: "desc" }, take: 4 }),
     prisma.post.findMany({ where: { status: "published" }, orderBy: { createdAt: "desc" }, take: 4 }),
     prisma.siteLink.findMany({ where: { status: "published" }, orderBy: { order: "asc" } }),
     prisma.place.count(),
-    prisma.researchDataset.count({ where: { status: "published" } }),
-    prisma.map.count({ where: { status: "published" } }),
+    prisma.dataset.count({ where: { status: "published" } }),
+    prisma.dataset.count({ where: { status: "published" } }),
     prisma.layer.count({ where: { status: "published" } }),
   ]);
 

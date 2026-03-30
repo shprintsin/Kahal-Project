@@ -1,9 +1,9 @@
 "use client";
 
-import { useMapStudio } from "../store";
+import { useDataStudio } from "../store";
 
 export function StatusBar() {
-  const { state } = useMapStudio();
+  const { state } = useDataStudio();
 
   const totalFeatures = state.layers.reduce((sum, l) => sum + l.featureCount, 0);
   const visibleLayers = state.layers.filter((l) => l.visible).length;

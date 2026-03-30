@@ -12,7 +12,7 @@ import { LayerDownloadButton } from './components/LayerDownloadButton'
 import ReactMarkdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
-import type { Map } from '@/types/api-types'
+import type { MapDataset } from '@/types/api-types'
 import type { SiteShellData } from '@/app/lib/get-navigation'
 import { SetEditUrl } from '@/components/ui/admin-toolbar'
 import { useLanguage } from '@/lib/i18n/language-provider'
@@ -26,7 +26,7 @@ interface Deployment {
 }
 
 interface MapViewerClientProps {
-  map: Map;
+  map: MapDataset;
   shellData: SiteShellData;
   deployments?: Deployment[];
   locale?: string;
