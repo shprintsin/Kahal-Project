@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ResearchDataset } from '@/types/dataset';
+import { Dataset } from '@/types/dataset';
 import { SectionTitle } from '@/components/ui/typography';
 import { FileSpreadsheet, FileJson, AlertCircle, FileText, Download, Eye } from 'lucide-react';
 import { CsvViewerDialog } from '@/app/admin/components/content/csv-viewer-dialog';
@@ -21,7 +21,7 @@ import { getDateLocale, getDir } from '@/lib/i18n/config';
 import type { Locale } from '@/lib/i18n/config';
 
 interface DatasetLandingPageProps {
-  dataset: ResearchDataset;
+  dataset: Dataset;
   shellData: SiteShellData;
   locale?: string;
 }

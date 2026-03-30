@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getMapWithLayers } from "@/app/admin/actions/map-layers";
+import { getDatasetWithLayers } from "@/app/admin/actions/map-layers";
 import { MapStudio } from "./map-studio";
 import prisma from "@/lib/prisma";
 
@@ -17,7 +17,7 @@ export default async function MapEditorPage({ params }: MapEditorPageProps) {
 
   if (!isNew) {
     try {
-      mapData = await getMapWithLayers(id);
+      mapData = await getDatasetWithLayers(id);
       if (!mapData) notFound();
     } catch {
       notFound();

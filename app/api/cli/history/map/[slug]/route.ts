@@ -12,8 +12,8 @@ export async function GET(
   try {
     const { slug } = await params;
 
-    const deployments = await prisma.mapDeployment.findMany({
-      where: { map: { slug } },
+    const deployments = await prisma.datasetDeployment.findMany({
+      where: { dataset: { slug } },
       orderBy: { deployedAt: 'desc' },
       take: 20,
       select: {

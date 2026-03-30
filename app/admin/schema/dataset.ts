@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ResearchDatasetOptionalDefaultsSchema } from "@/prisma/generated/zod/modelSchema/ResearchDatasetSchema";
+import { DatasetOptionalDefaultsSchema } from "@/prisma/generated/zod/modelSchema/DatasetSchema";
 import { slugField } from "./shared";
 
 const i18nOrString = z.union([
@@ -7,7 +7,7 @@ const i18nOrString = z.union([
   z.record(z.string(), z.string()),
 ]).optional().nullable();
 
-export const datasetSchema = ResearchDatasetOptionalDefaultsSchema
+export const datasetSchema = DatasetOptionalDefaultsSchema
   .omit({
     id: true,
     createdAt: true,

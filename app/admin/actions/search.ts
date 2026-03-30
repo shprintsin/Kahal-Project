@@ -94,8 +94,8 @@ export async function searchContent(query: string): Promise<SearchResult[]> {
       take: 10
     }),
 
-    // 4. Research Datasets
-    prisma.researchDataset.findMany({
+    // 4. Datasets
+    prisma.dataset.findMany({
       where: {
         AND: [
           { status: 'published' },

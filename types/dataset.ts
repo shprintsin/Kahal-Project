@@ -93,7 +93,7 @@ export interface DataVariable {
  * Generic Interface for a Research Dataset.
  * T = The shape of the actual data rows (optional, defaults to any).
  */
-export interface ResearchDataset<T = any> {
+export interface Dataset<T = any> {
   // --- Identity ---
   id: string;
   slug: string;                  // Friendly URL (e.g., 'krakow-census-1764')

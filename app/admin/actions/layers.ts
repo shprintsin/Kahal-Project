@@ -21,6 +21,7 @@ export interface LayerFormData {
   status: "draft" | "published" | "archived";
   version?: string;
   categoryId?: string;
+  datasetId?: string;
   type: "POINTS" | "POLYGONS" | "POLYLINES" | "MULTI_POLYGONS" | "RASTER";
   citationText?: string;
   citation_text_i18n?: Record<string, string>;
@@ -46,6 +47,7 @@ export interface LayerFormData {
 export interface GetLayerOptions {
   lang?: string;
   includeMaps?: boolean;
+  includeDatasets?: boolean;
 }
 
 export interface ListLayersOptions {
@@ -92,6 +94,7 @@ export async function createLayer(data: LayerFormData) {
         status: data.status,
         version: data.version || "1.0.0",
         categoryId: data.categoryId,
+        datasetId: data.datasetId,
         type: data.type,
         citationText: data.citationText,
         citationTextI18n: data.citation_text_i18n || {},
@@ -137,13 +140,13 @@ export async function createLayer(data: LayerFormData) {
 export async function updateLayer(id: string, data: Partial<LayerFormData>) {
   try {
 
-    // Check if layer is used in any maps
-    const layerWithMaps = await prisma.layer.findUnique({
+    // Check if layer is used in any datasets
+    const layerWithDatasets = await prisma.layer.findUnique({
       where: { id },
-      include: { maps: true },
+      include: { datasets: true },
     });
 
-    if (layerWithMaps && layerWithMaps.maps.length > 0) {
+    if (layerWithDatasets && layerWithDatasets.datasets.length > 0) {
     }
 
     const updateData: any = {
@@ -157,6 +160,7 @@ export async function updateLayer(id: string, data: Partial<LayerFormData>) {
         ...(data.status && { status: data.status }),
         ...(data.version && { version: data.version }),
         ...(data.categoryId !== undefined && { categoryId: data.categoryId }),
+        ...(data.datasetId !== undefined && { datasetId: data.datasetId }),
         ...(data.type && { type: data.type }),
         ...(data.citationText !== undefined && { citationText: data.citationText }),
         ...(data.citation_text_i18n && { citationTextI18n: data.citation_text_i18n }),
@@ -208,19 +212,19 @@ export async function updateLayer(id: string, data: Partial<LayerFormData>) {
  */
 export async function deleteLayer(id: string) {
   try {
-    // Check if layer is used in any maps
-    const layerWithMaps = await prisma.layer.findUnique({
+    // Check if layer is used in any datasets
+    const layerWithDatasets = await prisma.layer.findUnique({
       where: { id },
-      include: { maps: true },
+      include: { datasets: true },
     });
 
-    if (!layerWithMaps) {
+    if (!layerWithDatasets) {
       throw new Error("Layer not found");
     }
 
-    if (layerWithMaps.maps.length > 0) {
+    if (layerWithDatasets.datasets.length > 0) {
       throw new Error(
-        `Cannot delete layer: it is used in ${layerWithMaps.maps.length} map(s). Remove it from all maps first.`
+        `Cannot delete layer: it is used in ${layerWithDatasets.datasets.length} dataset(s). Remove it from all datasets first.`
       );
     }
 
@@ -240,7 +244,8 @@ export async function deleteLayer(id: string) {
  * Get a single Layer by ID
  */
 export async function getLayer(id: string, options: GetLayerOptions = {}) {
-  const { lang, includeMaps = false } = options;
+  const { lang, includeMaps = false, includeDatasets = false } = options;
+  const shouldIncludeDatasets = includeDatasets || includeMaps;
 
   try {
     const layer = await prisma.layer.findUnique({
@@ -270,10 +275,10 @@ export async function getLayer(id: string, options: GetLayerOptions = {}) {
             nameI18n: true,
           },
         },
-        ...(includeMaps && {
-          maps: {
+        ...(shouldIncludeDatasets && {
+          datasets: {
             include: {
-              map: {
+              dataset: {
                 select: {
                   id: true,
                   slug: true,
@@ -314,11 +319,11 @@ export async function getLayer(id: string, options: GetLayerOptions = {}) {
         ...region,
         name: getLocalizedField(region.name, region.nameI18n, lang) || region.name,
       })),
-      ...(includeMaps && {
-        maps: (layer as unknown as { maps: Array<{ map: { id: string; slug: string; title: string; titleI18n: unknown } }> }).maps.map((assoc) => ({
-          id: assoc.map.id,
-          slug: assoc.map.slug,
-          title: getLocalizedField(assoc.map.title, assoc.map.titleI18n, lang) || assoc.map.title,
+      ...(shouldIncludeDatasets && {
+        datasets: (layer as unknown as { datasets: Array<{ dataset: { id: string; slug: string; title: string; titleI18n: unknown } }> }).datasets.map((assoc) => ({
+          id: assoc.dataset.id,
+          slug: assoc.dataset.slug,
+          title: getLocalizedField(assoc.dataset.title, assoc.dataset.titleI18n, lang) || assoc.dataset.title,
         })),
       }),
     };
@@ -332,7 +337,8 @@ export async function getLayer(id: string, options: GetLayerOptions = {}) {
  * Get a Layer by slug
  */
 export async function getLayerBySlug(slug: string, options: GetLayerOptions = {}) {
-  const { lang, includeMaps = false } = options;
+  const { lang, includeMaps = false, includeDatasets = false } = options;
+  const shouldIncludeDatasets = includeDatasets || includeMaps;
 
   try {
     const layer = await prisma.layer.findUnique({
@@ -362,10 +368,10 @@ export async function getLayerBySlug(slug: string, options: GetLayerOptions = {}
             nameI18n: true,
           },
         },
-        ...(includeMaps && {
-          maps: {
+        ...(shouldIncludeDatasets && {
+          datasets: {
             include: {
-              map: {
+              dataset: {
                 select: {
                   id: true,
                   slug: true,
@@ -406,11 +412,11 @@ export async function getLayerBySlug(slug: string, options: GetLayerOptions = {}
         ...region,
         name: getLocalizedField(region.name, region.nameI18n, lang) || region.name,
       })),
-      ...(includeMaps && {
-        maps: (layer as unknown as { maps: Array<{ map: { id: string; slug: string; title: string; titleI18n: unknown } }> }).maps.map((assoc) => ({
-          id: assoc.map.id,
-          slug: assoc.map.slug,
-          title: getLocalizedField(assoc.map.title, assoc.map.titleI18n, lang) || assoc.map.title,
+      ...(shouldIncludeDatasets && {
+        datasets: (layer as unknown as { datasets: Array<{ dataset: { id: string; slug: string; title: string; titleI18n: unknown } }> }).datasets.map((assoc) => ({
+          id: assoc.dataset.id,
+          slug: assoc.dataset.slug,
+          title: getLocalizedField(assoc.dataset.title, assoc.dataset.titleI18n, lang) || assoc.dataset.title,
         })),
       }),
     };
@@ -512,7 +518,7 @@ export async function listLayersAPI(options: ListLayersOptions = {}) {
           },
           _count: {
             select: {
-              maps: true,
+              datasets: true,
             },
           },
         },
@@ -546,7 +552,7 @@ export async function listLayersAPI(options: ListLayersOptions = {}) {
           ...region,
           name: getLocalizedField(region.name, region.nameI18n, lang) || region.name,
         })),
-        mapsCount: (layer as unknown as { _count: { maps: number } })._count.maps,
+        datasetsCount: (layer as unknown as { _count: { datasets: number } })._count.datasets,
         geoJsonUrl: `/api/geo/layers/${layer.slug}/geojson`,
       };
     });
@@ -594,6 +600,40 @@ export async function searchLayers(query: string, limit = 10) {
     return layers;
   } catch (error) {
     console.error("Error searching layers:", error);
+    throw error;
+  }
+}
+
+export async function getLayersByDatasetId(datasetId: string) {
+  try {
+    const associations = await prisma.datasetLayerAssociation.findMany({
+      where: { datasetId },
+      include: {
+        layer: {
+          include: {
+            category: {
+              select: { id: true, slug: true, title: true, titleI18n: true },
+            },
+            tags: {
+              select: { id: true, slug: true, name: true, nameI18n: true },
+            },
+          },
+        },
+      },
+      orderBy: { zIndex: "asc" },
+    });
+
+    return associations.map((assoc) => ({
+      associationId: assoc.id,
+      zIndex: assoc.zIndex,
+      isVisible: assoc.isVisible,
+      isVisibleByDefault: assoc.isVisibleByDefault,
+      styleOverride: assoc.styleOverride,
+      interactionConfig: assoc.interactionConfig,
+      layer: assoc.layer,
+    }));
+  } catch (error) {
+    console.error("Error fetching layers by dataset ID:", error);
     throw error;
   }
 }

@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
 import {
-  MapStudioContext,
-  mapStudioReducer,
+  DataStudioContext,
+  dataStudioReducer,
   BASEMAPS,
-  type MapStudioState,
+  type DataStudioState,
   type StudioLayer,
 } from "./store";
 import { MapToolbar } from "./components/map-toolbar";
@@ -35,10 +35,10 @@ interface MapStudioProps {
   regions: { id: string; name: string }[];
 }
 
-function buildInitialState(mapData: Record<string, unknown> | null): MapStudioState {
+function buildInitialState(mapData: Record<string, unknown> | null): DataStudioState {
   if (!mapData) {
     return {
-      mapId: null,
+      datasetId: null,
       title: "",
       slug: "",
       description: "",
@@ -114,7 +114,7 @@ function buildInitialState(mapData: Record<string, unknown> | null): MapStudioSt
   const mapRefLinks = (mapData.referenceLinks as { title: string; url: string }[]) || [];
 
   return {
-    mapId: mapData.id as string,
+    datasetId: mapData.id as string,
     title: titleI18n.en || titleI18n.he || (mapData.title as string) || "",
     slug: (mapData.slug as string) || "",
     description: descI18n.en || descI18n.he || "",
@@ -145,7 +145,7 @@ function buildInitialState(mapData: Record<string, unknown> | null): MapStudioSt
 
 export function MapStudio({ mapData, layerLibrary, isNew, categories, tags, regions }: MapStudioProps) {
   const router = useRouter();
-  const [state, dispatch] = useReducer(mapStudioReducer, mapData, buildInitialState);
+  const [state, dispatch] = useReducer(dataStudioReducer, mapData, buildInitialState);
 
   const handleSave = useCallback(async () => {
     dispatch({ type: "SET_SAVING", saving: true });
@@ -198,13 +198,13 @@ export function MapStudio({ mapData, layerLibrary, isNew, categories, tags, regi
         },
       };
 
-      if (isNew || !state.mapId) {
+      if (isNew || !state.datasetId) {
         const result = await createMap(mapPayload);
         dispatch({ type: "MARK_CLEAN" });
         toast.success("Map created");
         router.push(`/admin/maps2/${result.id}`);
       } else {
-        await updateMap(state.mapId, mapPayload);
+        await updateMap(state.datasetId, mapPayload);
         dispatch({ type: "MARK_CLEAN" });
         toast.success("Map saved");
       }
@@ -307,7 +307,7 @@ export function MapStudio({ mapData, layerLibrary, isNew, categories, tags, regi
   );
 
   return (
-    <MapStudioContext.Provider value={{ state, dispatch }}>
+    <DataStudioContext.Provider value={{ state, dispatch }}>
       <div className="fixed inset-0 z-50 flex flex-col bg-background">
         <MapToolbar
           onSave={handleSave}
@@ -334,6 +334,6 @@ export function MapStudio({ mapData, layerLibrary, isNew, categories, tags, regi
 
         <StatusBar />
       </div>
-    </MapStudioContext.Provider>
+    </DataStudioContext.Provider>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { useMapStudio, type ReferenceLink } from "../store";
+import { useDataStudio, type ReferenceLink } from "../store";
 import {
   AdminSidebarCard,
   AdminFieldLabel,
@@ -20,7 +20,7 @@ interface DetailsPanelProps {
 }
 
 export function DetailsPanel({ categories, tags, regions }: DetailsPanelProps) {
-  const { state, dispatch } = useMapStudio();
+  const { state, dispatch } = useDataStudio();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!state.rightPanelOpen || state.rightPanelMode !== "details") return null;

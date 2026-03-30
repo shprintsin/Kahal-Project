@@ -68,6 +68,7 @@ export interface MapInput {
 interface LayerAssociationInput {
   map_id?: string;
   mapId?: string;
+  datasetId?: string;
   layer_id?: string;
   layerId?: string;
   z_index?: number;
@@ -82,7 +83,9 @@ interface LayerAssociationInput {
   interactionConfig?: Prisma.InputJsonValue;
 }
 
-type MapLayerAssociationWithLayer = Prisma.MapLayerAssociationGetPayload<{
+export type DatasetInput = MapInput;
+
+type DatasetLayerAssociationWithLayer = Prisma.DatasetLayerAssociationGetPayload<{
   include: { layer: true };
 }>;
 
@@ -101,7 +104,7 @@ interface MapResourceItem {
 
 // Maps
 export async function getMaps() {
-  const maps = await prisma.map.findMany({
+  const maps = await prisma.dataset.findMany({
     orderBy: {
       createdAt: 'desc',
     },
@@ -111,7 +114,7 @@ export async function getMaps() {
 }
 
 export async function getMap(id: string) {
-  const map = await prisma.map.findUnique({
+  const map = await prisma.dataset.findUnique({
     where: { id },
     include: {
       layers: {
@@ -134,7 +137,7 @@ export async function createMap(mapData: MapInput) {
 
   // Deduplicate slug
   if (mapData.slug) {
-    const existing = await prisma.map.findUnique({ where: { slug: mapData.slug }, select: { id: true } });
+    const existing = await prisma.dataset.findUnique({ where: { slug: mapData.slug }, select: { id: true } });
     if (existing) {
       mapData.slug = `${mapData.slug}-${Date.now()}`;
     }
@@ -187,8 +190,8 @@ export async function createMap(mapData: MapInput) {
     referenceLinks: mapData.reference_links || mapData.referenceLinks,
   };
 
-  const createdMap = await prisma.map.create({
-    data: data as Prisma.MapCreateInput,
+  const createdMap = await prisma.dataset.create({
+    data: data as Prisma.DatasetCreateInput,
   });
 
 
@@ -208,9 +211,9 @@ export async function createMap(mapData: MapInput) {
                               layer.type.toUpperCase();
       
 
-      await prisma.mapLayerAssociation.create({
+      await prisma.datasetLayerAssociation.create({
         data: {
-          mapId: createdMap.id,
+          datasetId: createdMap.id,
           layerId: (layer.layerId || layer.id)!,
           zIndex: i,
           isVisible: layer.visible !== false,
@@ -229,6 +232,7 @@ export async function createMap(mapData: MapInput) {
 
   revalidatePath("/admin/maps");
   revalidatePath("/admin/maps2");
+  revalidatePath("/admin/datastudio");
   revalidatePath("/maps");
   return createdMap;
 }
@@ -298,15 +302,15 @@ export async function updateMap(id: string, mapData: MapInput) {
     data.regions = { set: mapData.regionIds.map((id) => ({ id })) };
   }
 
-  const updatedMap = await prisma.map.update({
+  const updatedMap = await prisma.dataset.update({
     where: { id },
-    data: data as Prisma.MapUpdateInput,
+    data: data as Prisma.DatasetUpdateInput,
   });
 
 
   // Delete existing layer associations and recreate
-  await prisma.mapLayerAssociation.deleteMany({
-    where: { mapId: id },
+  await prisma.datasetLayerAssociation.deleteMany({
+    where: { datasetId: id },
   });
 
   // Create new MapLayer records
@@ -325,9 +329,9 @@ export async function updateMap(id: string, mapData: MapInput) {
                               layer.type.toUpperCase();
       
 
-      await prisma.mapLayerAssociation.create({
+      await prisma.datasetLayerAssociation.create({
         data: {
-          mapId: id,
+          datasetId: id,
           layerId: (layer.layerId || layer.id)!,
           zIndex: i,
           isVisible: layer.visible !== false,
@@ -346,24 +350,28 @@ export async function updateMap(id: string, mapData: MapInput) {
 
   revalidatePath("/admin/maps");
   revalidatePath("/admin/maps2");
+  revalidatePath("/admin/datastudio");
   revalidatePath(`/admin/maps/${id}`);
   revalidatePath(`/admin/maps2/${id}`);
+  revalidatePath(`/admin/datastudio/${id}`);
   revalidatePath("/maps");
   return updatedMap;
 }
 
 export async function deleteMap(id: string) {
-  await prisma.map.delete({
+  await prisma.dataset.delete({
     where: { id },
   });
 
   revalidatePath("/admin/maps");
+  revalidatePath("/admin/maps2");
+  revalidatePath("/admin/datastudio");
 }
 
 // Layer Associations for Maps
 export async function getLayers(mapId: string) {
-  const associations = await prisma.mapLayerAssociation.findMany({
-    where: { mapId },
+  const associations = await prisma.datasetLayerAssociation.findMany({
+    where: { datasetId: mapId },
     include: {
       layer: true,
     },
@@ -377,7 +385,7 @@ export async function getLayers(mapId: string) {
 
 export async function createLayerAssociation(layerData: LayerAssociationInput) {
   const data: Record<string, unknown> = {
-    mapId: layerData.map_id || layerData.mapId,
+    datasetId: layerData.datasetId || layerData.map_id || layerData.mapId,
     layerId: layerData.layer_id || layerData.layerId,
     zIndex: layerData.z_index || layerData.zIndex || 0,
     isVisible: layerData.is_visible ?? layerData.isVisible ?? true,
@@ -386,15 +394,17 @@ export async function createLayerAssociation(layerData: LayerAssociationInput) {
     interactionConfig: layerData.interaction_config || layerData.interactionConfig || {},
   };
 
-  const createdAssociation = await prisma.mapLayerAssociation.create({
-    data: data as Prisma.MapLayerAssociationUncheckedCreateInput,
+  const createdAssociation = await prisma.datasetLayerAssociation.create({
+    data: data as Prisma.DatasetLayerAssociationUncheckedCreateInput,
     include: {
       layer: true,
     },
   });
 
-  if (createdAssociation.mapId) {
-    revalidatePath(`/admin/maps/${createdAssociation.mapId}`);
+  if (createdAssociation.datasetId) {
+    revalidatePath(`/admin/maps/${createdAssociation.datasetId}`);
+    revalidatePath(`/admin/maps2/${createdAssociation.datasetId}`);
+    revalidatePath(`/admin/datastudio/${createdAssociation.datasetId}`);
   }
   return createdAssociation;
 }
@@ -409,32 +419,36 @@ export async function updateLayerAssociation(id: string, layerData: LayerAssocia
     interactionConfig: layerData.interaction_config || layerData.interactionConfig,
   };
 
-  const updatedAssociation = await prisma.mapLayerAssociation.update({
+  const updatedAssociation = await prisma.datasetLayerAssociation.update({
     where: { id },
-    data: data as Prisma.MapLayerAssociationUncheckedUpdateInput,
+    data: data as Prisma.DatasetLayerAssociationUncheckedUpdateInput,
     include: {
       layer: true,
     },
   });
 
-  if (updatedAssociation.mapId) {
-    revalidatePath(`/admin/maps/${updatedAssociation.mapId}`);
+  if (updatedAssociation.datasetId) {
+    revalidatePath(`/admin/maps/${updatedAssociation.datasetId}`);
+    revalidatePath(`/admin/maps2/${updatedAssociation.datasetId}`);
+    revalidatePath(`/admin/datastudio/${updatedAssociation.datasetId}`);
   }
   return updatedAssociation;
 }
 
 export async function deleteLayerAssociation(id: string, mapId: string) {
-  await prisma.mapLayerAssociation.delete({
+  await prisma.datasetLayerAssociation.delete({
     where: { id },
   });
 
   revalidatePath(`/admin/maps/${mapId}`);
+  revalidatePath(`/admin/maps2/${mapId}`);
+  revalidatePath(`/admin/datastudio/${mapId}`);
 }
 
 export async function reorderLayers(layers: Array<{ id: string; z_index: number }>) {
   // Update all layer associations with new z_index
   const promises = layers.map(({ id, z_index }) =>
-    prisma.mapLayerAssociation.update({
+    prisma.datasetLayerAssociation.update({
       where: { id },
       data: { zIndex: z_index },
     })
@@ -444,13 +458,15 @@ export async function reorderLayers(layers: Array<{ id: string; z_index: number 
 
   // Revalidate the map page
   if (layers.length > 0) {
-    const association = await prisma.mapLayerAssociation.findUnique({
+    const association = await prisma.datasetLayerAssociation.findUnique({
       where: { id: layers[0].id },
-      select: { mapId: true },
+      select: { datasetId: true },
     });
-    
-    if (association?.mapId) {
-      revalidatePath(`/admin/maps/${association.mapId}`);
+
+    if (association?.datasetId) {
+      revalidatePath(`/admin/maps/${association.datasetId}`);
+      revalidatePath(`/admin/maps2/${association.datasetId}`);
+      revalidatePath(`/admin/datastudio/${association.datasetId}`);
     }
   }
 }
@@ -526,7 +542,7 @@ export async function listMapsAPI(options: ListMapsOptions = {}) {
   } = options;
 
   // Build where clause dynamically
-  const where: Prisma.MapWhereInput = {
+  const where: Prisma.DatasetWhereInput = {
     ...(status && { status: status as ContentStatus }),
     ...(year && { year }),
     ...(yearMin && { yearMin: { gte: yearMin } }),
@@ -547,13 +563,13 @@ export async function listMapsAPI(options: ListMapsOptions = {}) {
   const take = Math.min(limit, 100);
 
   // Order by
-  const orderBy: Prisma.MapOrderByWithRelationInput = {
+  const orderBy: Prisma.DatasetOrderByWithRelationInput = {
     [sort]: order,
   };
 
   try {
     const [maps, total] = await Promise.all([
-      prisma.map.findMany({
+      prisma.dataset.findMany({
         where,
         skip,
         take,
@@ -590,7 +606,7 @@ export async function listMapsAPI(options: ListMapsOptions = {}) {
           },
         },
       }),
-      prisma.map.count({ where }),
+      prisma.dataset.count({ where }),
     ]);
 
     // Transform data with i18n support
@@ -649,7 +665,7 @@ export async function getMapBySlug(
   const { lang, includeLayers = true, includeResources = false } = options;
 
   try {
-    const map = await prisma.map.findUnique({
+    const map = await prisma.dataset.findUnique({
       where: { slug },
       include: {
         category: {
@@ -756,7 +772,7 @@ export async function getMapBySlug(
           }
         : null,
       ...(includeLayers && {
-        layers: ((map as Record<string, unknown>).layers as MapLayerAssociationWithLayer[]).map((assoc) => ({
+        layers: ((map as Record<string, unknown>).layers as DatasetLayerAssociationWithLayer[]).map((assoc) => ({
           id: assoc.layer.id,
           slug: assoc.layer.slug,
           layerId: assoc.layerId,
@@ -814,8 +830,8 @@ export async function getMapBySlug(
 // (Functions will be added via separate file)
 
 export async function getMapDeployments(slug: string) {
-  return prisma.mapDeployment.findMany({
-    where: { map: { slug } },
+  return prisma.datasetDeployment.findMany({
+    where: { dataset: { slug } },
     orderBy: { deployedAt: 'desc' },
     take: 20,
     select: { id: true, version: true, changeLog: true, gitSha: true, deployedAt: true },

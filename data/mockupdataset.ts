@@ -1,6 +1,6 @@
-import { LicenseType, ResearchDataset } from "@/types/dataset";
+import { LicenseType, Dataset } from "@/types/dataset";
 
-export const mockDatasets: ResearchDataset[] = [
+export const mockDatasets: Dataset[] = [
   // ------------------------------------------------------------------
   // דוגמה 1: "סטנדרט הזהב" (מפקד לובלין 1764)
   // נתונים מאומתים, מלאים, עם דוקומנטציה עשירה

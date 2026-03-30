@@ -1,6 +1,6 @@
 "use client";
 
-import { useMapStudio, COLOR_PALETTES, type StudioLayer } from "../store";
+import { useDataStudio, COLOR_PALETTES, type StudioLayer } from "../store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -53,7 +53,7 @@ function ColorSwatch({
 }
 
 function StyleSection({ layer }: { layer: StudioLayer }) {
-  const { dispatch } = useMapStudio();
+  const { dispatch } = useDataStudio();
   const isPoint = layer.type === "POINTS";
   const style = layer.style;
 
@@ -363,7 +363,7 @@ function StyleSection({ layer }: { layer: StudioLayer }) {
 }
 
 function LabelsSection({ layer }: { layer: StudioLayer }) {
-  const { dispatch } = useMapStudio();
+  const { dispatch } = useDataStudio();
   const labels: LabelConfig = layer.labels || {
     show: false,
     field: "",
@@ -441,7 +441,7 @@ function LabelsSection({ layer }: { layer: StudioLayer }) {
 }
 
 export function StylePanel() {
-  const { state, dispatch } = useMapStudio();
+  const { state, dispatch } = useDataStudio();
 
   if (!state.rightPanelOpen) return null;
 

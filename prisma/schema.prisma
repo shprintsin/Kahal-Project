@@ -182,143 +182,119 @@ enum ContentStatus {
   @@map("content_status")
 }
 
-model ResearchDataset {
-  id               String            @id @default(uuid()) @db.Uuid
-  slug             String            @unique
-  titleI18n        Json?             @default("{}") @map("title_i18n")
-  codebookTextI18n Json?             @default("{}") @map("codebook_text_i18n")
-  status           ContentStatus     @default(draft)
-  maturity         DataMaturity      @default(Provisional)
-  version          String?           @default("1.0.0")
-  license          String?
-  thumbnailId      String?           @map("thumbnail_id") @db.Uuid
-  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
-  description      String?           @default("")
-  summary          String?           @default("")
-  summaryI18n      Json?             @default("{}") @map("summary_i18n")
-  title            String            @default("Untitled Dataset")
-  categoryId       String?           @map("category_id") @db.Uuid
-  citationText     String?
-  codebookText     String?
-  maxYear          Int?              @map("max_year")
-  minYear          Int?              @map("min_year")
-  sources          String?
-  isVisible        Boolean           @default(true) @map("is_visible")
-  isFeatured       Boolean           @default(false) @map("is_featured")
-  sourcesI18n      Json?             @default("{}") @map("sources_i18n")
-  descriptionI18n  Json?             @default("{}") @map("description_i18n")
-  resources        DatasetResource[]
-  category         Category?         @relation(fields: [categoryId], references: [id])
-  thumbnail        Media?            @relation("DatasetThumbnail", fields: [thumbnailId], references: [id])
-  regions          Region[]          @relation("RegionToResearchDataset")
+model Dataset {
+  id                String                  @id @default(uuid()) @db.Uuid
+  slug              String                  @unique
+  title             String                  @default("Untitled")
+  titleI18n         Json?                   @default("{}") @map("title_i18n")
+  description       String?
+  descriptionI18n   Json?                   @default("{}") @map("description_i18n")
+  summary           String?                 @default("")
+  summaryI18n       Json?                   @default("{}") @map("summary_i18n")
+  codebookText      String?                 @map("codebook_text")
+  codebookTextI18n  Json?                   @default("{}") @map("codebook_text_i18n")
+  citationText      String?                 @map("citation_text")
+  citationTextI18n  Json?                   @default("{}") @map("citation_text_i18n")
+  sources           String?
+  sourcesI18n       Json?                   @default("{}") @map("sources_i18n")
+  maturity          DataMaturity            @default(Provisional)
+  isVisible         Boolean                 @default(true) @map("is_visible")
+  license           String?
+  year              Int?
+  yearMin           Int?                    @map("year_min")
+  yearMax           Int?                    @map("year_max")
+  period            String?
+  version           String?                 @default("1.0.0")
+  config            Json?                   @default("{}")
+  globalStyleConfig Json?                   @default("{}") @map("global_style_config")
+  referenceLinks    Json?                   @default("[]") @map("reference_links")
+  thumbnailId       String?                 @map("thumbnail_id") @db.Uuid
+  categoryId        String?                 @map("category_id") @db.Uuid
+  status            ContentStatus           @default(draft)
+  isFeatured        Boolean                 @default(false) @map("is_featured")
+  createdAt         DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime                @updatedAt @map("updated_at") @db.Timestamptz(6)
+  resources         DatasetResource[]
+  layers            DatasetLayerAssociation[]
+  ownedLayers       Layer[]                 @relation("DatasetOwnedLayers")
+  deployments       DatasetDeployment[]
+  category          Category?               @relation(fields: [categoryId], references: [id])
+  thumbnail         Media?                  @relation("DatasetThumbnail", fields: [thumbnailId], references: [id])
+  regions           Region[]                @relation("MapToRegion")
+  tags              Tag[]                   @relation("MapToTag")
 
   @@index([status])
-  @@map("research_datasets")
+  @@map("maps")
 }
 
 model DatasetResource {
-  id          String           @id @default(uuid()) @db.Uuid
-  datasetId   String?          @map("dataset_id") @db.Uuid
+  id          String       @id @default(uuid()) @db.Uuid
+  datasetId   String?      @map("map_id") @db.Uuid
   url         String
-  isMainFile  Boolean          @default(false) @map("is_main_file")
-  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  isMainFile  Boolean      @default(false) @map("is_main_file")
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
   name        String
-  slug        String           @unique
-  format      ResouceType      @default(UNKNOWN)
+  slug        String       @unique
+  format      ResouceType  @default(UNKNOWN)
   filename    String?
   mimeType    String?
-  sizeBytes   Int?             @map("size_bytes")
-  excerptI18n Json?            @default("{}") @map("excerpt_i18n")
-  mapId       String?          @map("map_id") @db.Uuid
-  dataset     ResearchDataset? @relation(fields: [datasetId], references: [id], onDelete: Cascade)
-  map         Map?             @relation(fields: [mapId], references: [id], onDelete: Cascade)
+  sizeBytes   Int?         @map("size_bytes")
+  excerptI18n Json?        @default("{}") @map("excerpt_i18n")
+  dataset     Dataset?     @relation(fields: [datasetId], references: [id], onDelete: Cascade)
 
   @@map("dataset_resources")
 }
 
-model Map {
-  id                String                @id @default(uuid()) @db.Uuid
-  slug              String                @unique
-  titleI18n         Json?                 @default("{}") @map("title_i18n")
-  descriptionI18n   Json?                 @default("{}") @map("description_i18n")
-  codebookText      String?               @map("codebook_text")
-  codebookTextI18n  Json?                 @default("{}") @map("codebook_text_i18n")
-  year              Int?
-  version           String?               @default("1.0.0")
-  thumbnailId       String?               @map("thumbnail_id") @db.Uuid
-  config            Json?                 @default("{}")
-  globalStyleConfig Json?                 @default("{}") @map("global_style_config")
-  referenceLinks    Json?                 @default("[]") @map("reference_links")
-  createdAt         DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime              @updatedAt @map("updated_at") @db.Timestamptz(6)
-  description       String?
-  summary           String?               @default("")
-  summaryI18n       Json?                 @default("{}") @map("summary_i18n")
-  period            String?
-  title             String                @default("Untitled")
-  yearMax           Int?                  @map("year_max")
-  yearMin           Int?                  @map("year_min")
-  categoryId        String?               @map("category_id") @db.Uuid
-  status            ContentStatus         @default(draft)
-  isFeatured        Boolean               @default(false) @map("is_featured")
-  resources         DatasetResource[]
-  layers            MapLayerAssociation[]
-  deployments       MapDeployment[]
-  category          Category?             @relation(fields: [categoryId], references: [id])
-  thumbnail         Media?                @relation("MapThumbnail", fields: [thumbnailId], references: [id])
-  regions           Region[]              @relation("MapToRegion")
-  tags              Tag[]                 @relation("MapToTag")
-
-  @@map("maps")
-}
 
 model Layer {
-  id               String                @id @default(uuid()) @db.Uuid
-  slug             String                @unique
-  name             String                @default("Untitled")
-  nameI18n         Json?                 @default("{}") @map("name_i18n")
-  description      String?               @default("")
-  summary          String?               @default("")
-  summaryI18n      Json?                 @default("{}") @map("summary_i18n")
-  descriptionI18n  Json?                 @default("{}") @map("description_i18n")
-  filename         String?               @default("")
-  status           ContentStatus         @default(draft)
-  version          String?               @default("1.0.0")
-  categoryId       String?               @map("category_id") @db.Uuid
-  type             LayerType             @default(POINTS)
-  citationText     String?               @map("citation_text")
-  citationTextI18n Json?                 @default("{}") @map("citation_text_i18n")
-  codebookText     String?               @map("codebook_text")
-  codebookTextI18n Json?                 @default("{}") @map("codebook_text_i18n")
+  id               String                    @id @default(uuid()) @db.Uuid
+  slug             String                    @unique
+  name             String                    @default("Untitled")
+  nameI18n         Json?                     @default("{}") @map("name_i18n")
+  description      String?                   @default("")
+  summary          String?                   @default("")
+  summaryI18n      Json?                     @default("{}") @map("summary_i18n")
+  descriptionI18n  Json?                     @default("{}") @map("description_i18n")
+  filename         String?                   @default("")
+  status           ContentStatus             @default(draft)
+  version          String?                   @default("1.0.0")
+  categoryId       String?                   @map("category_id") @db.Uuid
+  datasetId        String?                   @map("dataset_id") @db.Uuid
+  type             LayerType                 @default(POINTS)
+  citationText     String?                   @map("citation_text")
+  citationTextI18n Json?                     @default("{}") @map("citation_text_i18n")
+  codebookText     String?                   @map("codebook_text")
+  codebookTextI18n Json?                     @default("{}") @map("codebook_text_i18n")
   sources          String?
-  sourcesI18n      Json?                 @default("{}") @map("sources_i18n")
+  sourcesI18n      Json?                     @default("{}") @map("sources_i18n")
   license          String?
-  maturity         DataMaturity          @default(Provisional)
-  minYear          Int?                  @map("min_year")
-  maxYear          Int?                  @map("max_year")
-  sourceType       LayerSourceType       @default(database) @map("source_type")
-  sourceUrl        String?               @map("source_url")
-  downloadUrl      String?               @map("download_url")
-  geoJsonData      Json?                 @map("geojson_data")
-  styleConfig      Json                  @default("{}") @map("style_config")
-  thumbnail        String?               @map("thumbnail")
-  isFeatured       Boolean               @default(false) @map("is_featured")
-  createdAt        DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime              @updatedAt @map("updated_at") @db.Timestamptz(6)
-  category         Category?             @relation(fields: [categoryId], references: [id])
-  maps             MapLayerAssociation[]
-  regions          Region[]              @relation("LayerToRegion")
-  tags             Tag[]                 @relation("LayerToTag")
+  maturity         DataMaturity              @default(Provisional)
+  minYear          Int?                      @map("min_year")
+  maxYear          Int?                      @map("max_year")
+  sourceType       LayerSourceType           @default(database) @map("source_type")
+  sourceUrl        String?                   @map("source_url")
+  downloadUrl      String?                   @map("download_url")
+  geoJsonData      Json?                     @map("geojson_data")
+  styleConfig      Json                      @default("{}") @map("style_config")
+  thumbnail        String?                   @map("thumbnail")
+  isFeatured       Boolean                   @default(false) @map("is_featured")
+  createdAt        DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime                  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  category         Category?                 @relation(fields: [categoryId], references: [id])
+  dataset          Dataset?                  @relation("DatasetOwnedLayers", fields: [datasetId], references: [id], onDelete: SetNull)
+  datasets         DatasetLayerAssociation[]
+  regions          Region[]                  @relation("LayerToRegion")
+  tags             Tag[]                     @relation("LayerToTag")
 
   @@index([status])
   @@index([categoryId])
+  @@index([datasetId])
   @@map("layers")
 }
 
-model MapLayerAssociation {
+model DatasetLayerAssociation {
   id                 String   @id @default(uuid()) @db.Uuid
-  mapId              String   @map("map_id") @db.Uuid
+  datasetId          String   @map("map_id") @db.Uuid
   layerId            String   @map("layer_id") @db.Uuid
   zIndex             Int      @default(0) @map("z_index")
   isVisible          Boolean  @default(true) @map("is_visible")
@@ -327,25 +303,25 @@ model MapLayerAssociation {
   interactionConfig  Json?    @default("{}") @map("interaction_config")
   createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   layer              Layer    @relation(fields: [layerId], references: [id], onDelete: Cascade)
-  map                Map      @relation(fields: [mapId], references: [id], onDelete: Cascade)
+  dataset            Dataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade)
 
-  @@unique([mapId, layerId])
-  @@index([mapId])
+  @@unique([datasetId, layerId])
+  @@index([datasetId])
   @@index([layerId])
   @@map("map_layer_associations")
 }
 
-model MapDeployment {
+model DatasetDeployment {
   id         String   @id @default(uuid()) @db.Uuid
-  mapId      String   @map("map_id") @db.Uuid
-  map        Map      @relation(fields: [mapId], references: [id], onDelete: Cascade)
+  datasetId  String   @map("map_id") @db.Uuid
+  dataset    Dataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade)
   version    String
   changeLog  String?  @map("change_log")
   gitSha     String?  @map("git_sha")
   cliVersion String?  @map("cli_version")
   deployedAt DateTime @default(now()) @map("deployed_at") @db.Timestamptz(6)
 
-  @@index([mapId])
+  @@index([datasetId])
   @@map("map_deployments")
 }
 
@@ -588,11 +564,10 @@ model Media {
   createdAt               DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
   thumbnailForCategory    Category[]        @relation("CategoryThumbnail")
   thumbnailForCollections Collection[]      @relation("CollectionThumbnail")
-  thumbnailForMaps        Map[]             @relation("MapThumbnail")
+  thumbnailForDatasets    Dataset[]         @relation("DatasetThumbnail")
   storageFile             StorageFile?      @relation(fields: [storageFileId], references: [id])
   thumbnailForPages       Page[]            @relation("PageThumbnail")
   thumbnailForPosts       Post[]            @relation("PostThumbnail")
-  thumbnailForDataset     ResearchDataset[] @relation("DatasetThumbnail")
   thumbnailForSeries      Series[]          @relation("SeriesThumbnail")
   thumbnailForVolumes     Volume[]          @relation("VolumeThumbnail")
 
@@ -645,7 +620,7 @@ model Tag {
   artifacts   Artifact[]   @relation("ArtifactToTag")
   collections Collection[] @relation("CollectionToTag")
   layers      Layer[]      @relation("LayerToTag")
-  maps        Map[]        @relation("MapToTag")
+  datasets    Dataset[]    @relation("MapToTag")
   pages       Page[]       @relation("PageToTag")
   series      Series[]     @relation("SeriesToTag")
 
@@ -661,10 +636,9 @@ model Region {
   artifacts   Artifact[]        @relation("ArtifactToRegion")
   collections Collection[]      @relation("CollectionToRegion")
   layers      Layer[]           @relation("LayerToRegion")
-  maps        Map[]             @relation("MapToRegion")
+  datasets    Dataset[]         @relation("MapToRegion")
   pages       Page[]            @relation("PageToRegion")
   posts       Post[]            @relation("PostToRegion")
-  datasets    ResearchDataset[] @relation("RegionToResearchDataset")
   series      Series[]          @relation("RegionToSeries")
   volumes     Volume[]          @relation("RegionToVolume")
 
@@ -680,8 +654,7 @@ model Category {
   titleI18n   Json              @default("{}") @map("title_i18n")
   thumbnail   Media?            @relation("CategoryThumbnail", fields: [thumbnailId], references: [id])
   layers      Layer[]
-  maps        Map[]
-  datasets    ResearchDataset[]
+  datasets    Dataset[]
   posts       Post[]            @relation("CategoryToPost")
   series      Series[]          @relation("CategoryToSeries")
 

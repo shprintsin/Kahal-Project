@@ -74,7 +74,7 @@ export function Maps2ListClient({ initialMaps }: { initialMaps: MapItem[] }) {
     <ContentListPage
       config={{
         contentType: "maps2",
-        title: "Map Studio",
+        title: "Data Studio",
         newButtonLabel: "New Map",
         searchPlaceholder: "Search maps...",
         emptyText: "No maps yet. Create your first map!",

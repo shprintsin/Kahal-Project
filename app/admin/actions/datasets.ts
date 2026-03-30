@@ -8,26 +8,42 @@ import { uploadFile } from "@/utils/storage";
 
 // Datasets
 export async function getDatasets() {
-  const datasets = await prisma.researchDataset.findMany({
+  const datasets = await prisma.dataset.findMany({
     orderBy: {
       createdAt: 'desc',
     },
     include: {
-        category: true
-    }
+      category: true,
+      _count: {
+        select: {
+          layers: true,
+          ownedLayers: true,
+        },
+      },
+    },
   });
 
   return datasets;
 }
 
 export async function getDataset(id: string) {
-  const dataset = await prisma.researchDataset.findUnique({
+  const dataset = await prisma.dataset.findUnique({
     where: { id },
     include: {
       resources: true,
       regions: true,
       category: true,
-      thumbnail: true
+      thumbnail: true,
+      layers: {
+        include: { layer: true },
+        orderBy: { zIndex: 'asc' },
+      },
+      tags: true,
+      ownedLayers: true,
+      deployments: {
+        orderBy: { deployedAt: 'desc' },
+        take: 10,
+      },
     },
   });
 
@@ -54,7 +70,7 @@ export async function createDataset(datasetData: Record<string, unknown>) {
   const sourcesSplit = splitI18nField(validated.sources);
   const codebookTextSplit = splitI18nField(validated.codebookText);
 
-  const data: Prisma.ResearchDatasetCreateInput = {
+  const data: Prisma.DatasetCreateInput = {
     slug: validated.slug,
 
     title: titleSplit.main,
@@ -75,8 +91,8 @@ export async function createDataset(datasetData: Record<string, unknown>) {
     maturity: validated.maturity,
     status: validated.status,
     version: validated.version,
-    minYear: validated.minYear,
-    maxYear: validated.maxYear,
+    yearMin: validated.yearMin,
+    yearMax: validated.yearMax,
     
     category: validated.categoryId ? { connect: { id: validated.categoryId } } : undefined,
     thumbnail: validated.thumbnailId ? { connect: { id: validated.thumbnailId } } : undefined,
@@ -85,7 +101,7 @@ export async function createDataset(datasetData: Record<string, unknown>) {
     } : undefined,
   };
 
-  const createdDataset = await prisma.researchDataset.create({
+  const createdDataset = await prisma.dataset.create({
     data,
   });
 
@@ -96,7 +112,7 @@ export async function createDataset(datasetData: Record<string, unknown>) {
 export async function updateDataset(id: string, datasetData: Record<string, unknown>) {
   const validated = datasetUpdateSchema.parse(datasetData);
 
-  const data: Prisma.ResearchDatasetUpdateInput = {};
+  const data: Prisma.DatasetUpdateInput = {};
 
   if (validated.slug !== undefined) data.slug = validated.slug;
   if (validated.citationText !== undefined) data.citationText = validated.citationText;
@@ -105,8 +121,8 @@ export async function updateDataset(id: string, datasetData: Record<string, unkn
   if (validated.maturity !== undefined) data.maturity = validated.maturity as DataMaturity;
   if (validated.status !== undefined) data.status = validated.status as ContentStatus;
   if (validated.version !== undefined) data.version = validated.version;
-  if (validated.minYear !== undefined) data.minYear = validated.minYear;
-  if (validated.maxYear !== undefined) data.maxYear = validated.maxYear;
+  if (validated.yearMin !== undefined) data.yearMin = validated.yearMin;
+  if (validated.yearMax !== undefined) data.yearMax = validated.yearMax;
 
   if (validated.title !== undefined) {
     const titleSplit = splitI18nField(validated.title);
@@ -144,7 +160,7 @@ export async function updateDataset(id: string, datasetData: Record<string, unkn
     data.regions = { set: validated.regions.map((id: string) => ({ id })) };
   }
 
-  const updatedDataset = await prisma.researchDataset.update({
+  const updatedDataset = await prisma.dataset.update({
     where: { id },
     data,
   });
@@ -155,7 +171,7 @@ export async function updateDataset(id: string, datasetData: Record<string, unkn
 }
 
 export async function deleteDataset(id: string) {
-  await prisma.researchDataset.delete({
+  await prisma.dataset.delete({
     where: { id },
   });
 
@@ -328,6 +344,7 @@ export interface ListDatasetsOptions {
   yearMin?: number;
   yearMax?: number;
   search?: string;
+  hasLayers?: boolean;
   page?: number;
   limit?: number;
   sort?: "createdAt" | "updatedAt" | "title";
@@ -338,6 +355,7 @@ export interface ListDatasetsOptions {
 export interface GetDatasetOptions {
   lang?: string;
   includeResources?: boolean;
+  includeLayers?: boolean;
 }
 
 export interface GetResourcesOptions {
@@ -378,6 +396,7 @@ export async function listDatasetsAPI(options: ListDatasetsOptions = {}) {
     yearMin,
     yearMax,
     search,
+    hasLayers,
     page = 1,
     limit = 20,
     sort = "createdAt",
@@ -386,11 +405,11 @@ export async function listDatasetsAPI(options: ListDatasetsOptions = {}) {
   } = options;
 
   // Build where clause
-  const where: Prisma.ResearchDatasetWhereInput = {
+  const where: Prisma.DatasetWhereInput = {
     ...(status && { status: status as ContentStatus }),
     ...(maturity && { maturity: maturity as DataMaturity }),
-    ...(yearMin && { minYear: { gte: yearMin } }),
-    ...(yearMax && { maxYear: { lte: yearMax } }),
+    ...(yearMin && { yearMin: { gte: yearMin } }),
+    ...(yearMax && { yearMax: { lte: yearMax } }),
     ...(search && {
       OR: [
         { title: { contains: search, mode: "insensitive" } },
@@ -413,18 +432,25 @@ export async function listDatasetsAPI(options: ListDatasetsOptions = {}) {
     where.regions = { some: { slug: regionSlug } };
   }
 
+  // Handle hasLayers filter
+  if (hasLayers === true) {
+    where.layers = { some: {} };
+  } else if (hasLayers === false) {
+    where.layers = { none: {} };
+  }
+
   // Pagination
   const skip = (page - 1) * Math.min(limit, 100);
   const take = Math.min(limit, 100);
 
   // Order by
-  const orderBy: Prisma.ResearchDatasetOrderByWithRelationInput = {
+  const orderBy: Prisma.DatasetOrderByWithRelationInput = {
     [sort]: order,
   };
 
   try {
     const [datasets, total] = await Promise.all([
-      prisma.researchDataset.findMany({
+      prisma.dataset.findMany({
         where,
         skip,
         take,
@@ -447,11 +473,13 @@ export async function listDatasetsAPI(options: ListDatasetsOptions = {}) {
           _count: {
             select: {
               resources: true,
+              layers: true,
+              ownedLayers: true,
             },
           },
         },
       }),
-      prisma.researchDataset.count({ where }),
+      prisma.dataset.count({ where }),
     ]);
 
     // Transform data with i18n support
@@ -464,8 +492,8 @@ export async function listDatasetsAPI(options: ListDatasetsOptions = {}) {
       status: dataset.status,
       maturity: dataset.maturity,
       version: dataset.version,
-      minYear: dataset.minYear,
-      maxYear: dataset.maxYear,
+      yearMin: dataset.yearMin,
+      yearMax: dataset.yearMax,
       category: dataset.category
         ? {
             id: dataset.category.id,
@@ -480,6 +508,8 @@ export async function listDatasetsAPI(options: ListDatasetsOptions = {}) {
           }
         : null,
       resourceCount: dataset._count.resources,
+      layerCount: dataset._count.layers,
+      ownedLayerCount: dataset._count.ownedLayers,
       createdAt: toISOStringSafe(dataset.createdAt),
       updatedAt: toISOStringSafe(dataset.updatedAt),
     }));
@@ -504,10 +534,10 @@ export async function getDatasetBySlug(
   slug: string,
   options: GetDatasetOptions = {}
 ) {
-  const { lang, includeResources = false } = options;
+  const { lang, includeResources = false, includeLayers = false } = options;
 
   try {
-    const dataset = await prisma.researchDataset.findUnique({
+    const dataset = await prisma.dataset.findUnique({
       where: { slug },
       include: {
         category: {
@@ -552,6 +582,16 @@ export async function getDatasetBySlug(
             },
           },
         }),
+        ...(includeLayers && {
+          layers: {
+            include: {
+              layer: true,
+            },
+            orderBy: {
+              zIndex: "asc",
+            },
+          },
+        }),
       },
     });
 
@@ -569,8 +609,8 @@ export async function getDatasetBySlug(
       status: dataset.status,
       maturity: dataset.maturity,
       version: dataset.version,
-      minYear: dataset.minYear,
-      maxYear: dataset.maxYear,
+      yearMin: dataset.yearMin,
+      yearMax: dataset.yearMax,
       license: dataset.license,
       citationText: dataset.citationText,
       codebookText: getLocalizedField(dataset.codebookText, dataset.codebookTextI18n, lang) || dataset.codebookText,
@@ -609,6 +649,20 @@ export async function getDatasetBySlug(
           createdAt: toISOStringSafe(resource.createdAt),
         })),
       }),
+      ...(includeLayers && {
+        layers: (dataset as any).layers.map((assoc: any) => ({
+          id: assoc.layer.id,
+          slug: assoc.layer.slug,
+          layerId: assoc.layerId,
+          name: getLocalizedField(assoc.layer.name, assoc.layer.nameI18n, lang) || assoc.layer.name,
+          description: getLocalizedField(assoc.layer.description, assoc.layer.descriptionI18n, lang) || assoc.layer.description,
+          type: assoc.layer.type,
+          sourceType: assoc.layer.sourceType,
+          isVisible: assoc.isVisible,
+          isVisibleByDefault: assoc.isVisibleByDefault,
+          zIndex: assoc.zIndex,
+        })),
+      }),
       createdAt: toISOStringSafe(dataset.createdAt),
       updatedAt: toISOStringSafe(dataset.updatedAt),
     };
@@ -627,7 +681,7 @@ export async function getDatasetResourcesBySlug(
 
   try {
     // First get the dataset to verify it exists
-    const dataset = await prisma.researchDataset.findUnique({
+    const dataset = await prisma.dataset.findUnique({
       where: { slug },
       select: { id: true, slug: true },
     });
@@ -679,7 +733,7 @@ export async function getDatasetMetadataBySlug(
   const { lang } = options;
 
   try {
-    const dataset = await prisma.researchDataset.findUnique({
+    const dataset = await prisma.dataset.findUnique({
       where: { slug },
       select: {
         id: true,
@@ -694,8 +748,8 @@ export async function getDatasetMetadataBySlug(
         codebookTextI18n: true,
         sources: true,
         sourcesI18n: true,
-        minYear: true,
-        maxYear: true,
+        yearMin: true,
+        yearMax: true,
         createdAt: true,
         updatedAt: true,
         category: {
@@ -731,8 +785,8 @@ export async function getDatasetMetadataBySlug(
       citationText: dataset.citationText,
       codebookText: getLocalizedField(dataset.codebookText, dataset.codebookTextI18n, lang) || dataset.codebookText,
       sources: getLocalizedField(dataset.sources, dataset.sourcesI18n, lang) || dataset.sources,
-      minYear: dataset.minYear,
-      maxYear: dataset.maxYear,
+      yearMin: dataset.yearMin,
+      yearMax: dataset.yearMax,
       category: dataset.category
         ? {
             id: dataset.category.id,

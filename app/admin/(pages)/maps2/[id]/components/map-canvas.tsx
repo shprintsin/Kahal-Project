@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from "react-leaflet";
 import type { PathOptions } from "leaflet";
-import { useMapStudio, BASEMAPS, type StudioLayer } from "../store";
+import { useDataStudio, BASEMAPS, type StudioLayer } from "../store";
 import type { Feature, FeatureCollection } from "geojson";
 import type { PolygonStyleConfig, PointStyleConfig } from "@/types/map-config";
 import "leaflet/dist/leaflet.css";
@@ -52,7 +52,7 @@ function useDebouncedKey(parts: unknown[], delayMs: number): string {
 }
 
 function MapViewController() {
-  const { dispatch } = useMapStudio();
+  const { dispatch } = useDataStudio();
 
   useMapEvents({
     moveend: (e) => {
@@ -180,7 +180,7 @@ function PointLayer({ layer }: { layer: StudioLayer }) {
 }
 
 export function MapCanvas() {
-  const { state } = useMapStudio();
+  const { state } = useDataStudio();
   const basemap = BASEMAPS[state.basemap] || BASEMAPS["carto-voyager"];
 
   const sortedLayers = useMemo(
