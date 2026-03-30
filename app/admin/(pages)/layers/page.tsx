@@ -11,7 +11,7 @@ async function getLayers() {
       },
       _count: {
         select: {
-          maps: true,
+          datasets: true,
         },
       },
     },

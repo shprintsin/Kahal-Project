@@ -58,13 +58,13 @@ const columns: ContentTableColumn<Layer>[] = [
     ),
   },
   {
-    id: "maps",
-    header: "Used in Maps",
-    accessor: (row) => row._count.maps,
+    id: "datasets",
+    header: "Used in Datasets",
+    accessor: (row) => row._count.datasets,
     width: "w-[120px]",
     render: (row) =>
-      row._count.maps > 0 ? (
-        <span className="text-sm">{row._count.maps} map(s)</span>
+      row._count.datasets > 0 ? (
+        <span className="text-sm">{row._count.datasets} dataset(s)</span>
       ) : (
         <span className="text-sm text-muted-foreground">Not used</span>
       ),
