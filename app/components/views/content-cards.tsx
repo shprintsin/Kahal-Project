@@ -1,7 +1,8 @@
 "use client"
 
-import { ArrowLeft, Calendar, Database, FileText, Layers, Map as MapIcon, Eye } from "lucide-react"
+import { ArrowLeft, Calendar, Database, FileText, Layers, Map as MapIcon, Eye, Newspaper, ScrollText, Library } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-provider"
+import type { SearchContentType } from "@/app/admin/actions/search"
 
 interface MetaBadgeProps {
   children: React.ReactNode
@@ -225,6 +226,50 @@ export function LayerCard({ item }: { item: LayerItem }) {
         <CardTitle href={`/${locale}/layers/${item.slug}`}>{item.name}</CardTitle>
         <CardExcerpt text={item.excerpt} />
         <CardLink href={`/${locale}/layers/${item.slug}`} label={t('public.content.readMore', 'ראה עוד')} />
+      </div>
+    </CardWrapper>
+  )
+}
+
+const SEARCH_TYPE_CONFIG: Record<SearchContentType, { icon: typeof FileText; labelKey: string; fallback: string; color: string }> = {
+  page:     { icon: FileText,   labelKey: 'search.type.page',     fallback: 'דפים',     color: 'bg-blue-100 text-blue-800' },
+  post:     { icon: Newspaper,  labelKey: 'search.type.post',     fallback: 'מאמרים',   color: 'bg-green-100 text-green-800' },
+  layer:    { icon: MapIcon,    labelKey: 'search.type.layer',    fallback: 'שכבות',    color: 'bg-amber-100 text-amber-800' },
+  dataset:  { icon: Database,   labelKey: 'search.type.dataset',  fallback: 'מפות',     color: 'bg-purple-100 text-purple-800' },
+  artifact: { icon: ScrollText, labelKey: 'search.type.artifact', fallback: 'מסמכים',   color: 'bg-rose-100 text-rose-800' },
+  series:   { icon: Library,    labelKey: 'search.type.series',   fallback: 'סדרות',    color: 'bg-teal-100 text-teal-800' },
+}
+
+export interface SearchResultItem extends ContentItem {
+  type: SearchContentType
+}
+
+export function SearchResultCard({ item }: { item: SearchResultItem }) {
+  const { locale, t } = useLanguage()
+  const cfg = SEARCH_TYPE_CONFIG[item.type]
+  const Icon = cfg.icon
+  const href = item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug
+
+  return (
+    <CardWrapper>
+      <CardImage src={item.thumbnail} alt={item.title} />
+      <div className="w-full md:w-2/3 flex flex-col">
+        <MetaRow>
+          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-xs font-semibold ${cfg.color}`}>
+            <Icon className="w-3 h-3" />
+            {t(cfg.labelKey, cfg.fallback)}
+          </span>
+          {item.date && (
+            <span className="flex items-center gap-1">
+              <Calendar className="w-3.5 h-3.5" />
+              {item.date}
+            </span>
+          )}
+          {item.category && <MetaBadge>{item.category}</MetaBadge>}
+        </MetaRow>
+        <CardTitle href={href}>{item.title}</CardTitle>
+        <CardExcerpt text={item.excerpt} />
+        <CardLink href={href} label={t('public.content.readMore', 'ראה עוד')} />
       </div>
     </CardWrapper>
   )
