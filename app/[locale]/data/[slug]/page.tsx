@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
 import DatasetLandingPage from '@/app/components/pages_components/DatasetLandingPage';
-import { getDatasetBySlug } from '@/app/admin/actions/datasets';
+import { getMapBySlug } from '@/app/admin/actions/maps';
 import { getSiteShellData } from '@/app/lib/get-navigation';
 import { SetEditUrl } from '@/components/ui/admin-toolbar';
+import { MapViewerClient } from '@/app/[locale]/maps/[slug]/MapViewerClient';
 
 interface PageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -11,7 +12,7 @@ interface PageProps {
 export default async function DatasetPage({ params }: PageProps) {
   const { locale, slug } = await params;
   const [apiDataset, shellData] = await Promise.all([
-    getDatasetBySlug(slug, { includeResources: true }),
+    getMapBySlug(slug, { lang: locale, includeLayers: true, includeResources: true }),
     getSiteShellData(locale),
   ]);
 
@@ -19,14 +20,20 @@ export default async function DatasetPage({ params }: PageProps) {
     notFound();
   }
 
+  const hasLayers = Array.isArray(apiDataset.layers) && apiDataset.layers.length > 0;
+
+  if (hasLayers) {
+    return <MapViewerClient map={apiDataset as any} shellData={shellData} locale={locale} />;
+  }
+
   const viewDataset: any = {
     ...apiDataset,
     category: apiDataset.category?.title || "כללי",
     categorySlug: apiDataset.category?.slug || null,
     last_updated: apiDataset.updatedAt,
-    temporal_coverage: (apiDataset.minYear && apiDataset.maxYear) ? {
-      start_year: apiDataset.minYear,
-      end_year: apiDataset.maxYear
+    temporal_coverage: (apiDataset.yearMin && apiDataset.yearMax) ? {
+      start_year: apiDataset.yearMin,
+      end_year: apiDataset.yearMax
     } : undefined,
     geographic_coverage: apiDataset.regions?.map(r => r.name).join(', ') || "",
     codebook_text: apiDataset.codebookText,
@@ -45,7 +52,7 @@ export default async function DatasetPage({ params }: PageProps) {
 
   return (
     <>
-      <SetEditUrl url={`/admin/datasets/${apiDataset.id}`} />
+      <SetEditUrl url={`/admin/datastudio/${apiDataset.id}`} />
       <DatasetLandingPage dataset={viewDataset} shellData={shellData} locale={locale} />
     </>
   );
