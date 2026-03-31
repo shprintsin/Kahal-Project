@@ -1,11 +1,11 @@
 'use client';
 
-import { Clock, Database, ExternalLink, FileText, Layers, Link2, Map, Users } from 'lucide-react';
+import Link from 'next/link';
+import { Clock, Database, ExternalLink, FileSpreadsheet, FileText, Grid3X3, Link2, Map, MapPin, Route, Scan, Users } from 'lucide-react';
 
 import { AuthorCard } from '@/components/ui/author-card';
 import { CitationBox } from '@/components/ui/citation-box';
 import { DynamicIcon } from '@/components/ui/dynamic-icon';
-import { GridTile } from '@/components/ui/grid-tile';
 import { IconListItem } from '@/components/ui/icon-list-item';
 import { SeeMoreButton } from '@/components/ui/nav-links';
 import { Section } from '@/components/ui/sections';
@@ -17,12 +17,9 @@ interface DatasetItem {
   title: string;
   description: string;
   slug: string;
-}
-
-interface MapLayerItem {
-  title: string;
-  description: string;
-  href: string;
+  thumbnail: string | null;
+  layerTypes: string[];
+  resourceCount: number;
 }
 
 interface PostItem {
@@ -53,7 +50,6 @@ interface Stats {
 
 export interface ContentBlocksProps {
   datasets: DatasetItem[];
-  maps: MapLayerItem[];
   posts: PostItem[];
   links: LinkItem[];
   authors: Author[];
@@ -61,9 +57,80 @@ export interface ContentBlocksProps {
   stats: Stats;
 }
 
+const BADGE_CONFIG: Record<string, { label: string; icon: typeof MapPin }> = {
+  POINTS: { label: 'נקודות', icon: MapPin },
+  POLYGONS: { label: 'גבולות', icon: Scan },
+  MULTI_POLYGONS: { label: 'גבולות', icon: Scan },
+  POLYLINES: { label: 'מסלולים', icon: Route },
+  RASTER: { label: 'רסטר', icon: Grid3X3 },
+  CSV: { label: 'CSV', icon: FileSpreadsheet },
+};
+
+function TypeBadge({ type }: { type: string }) {
+  const config = BADGE_CONFIG[type];
+  if (!config) return null;
+  const Icon = config.icon;
+  return (
+    <span className="inline-flex items-center gap-1 text-muted-foreground text-xs">
+      <Icon className="w-3.5 h-3.5" />
+      {config.label}
+    </span>
+  );
+}
+
+function BadgeRow({ layerTypes, resourceCount }: { layerTypes: string[]; resourceCount: number }) {
+  const badges: string[] = [];
+  const seen = new Set<string>();
+  for (const t of layerTypes) {
+    const key = t === 'MULTI_POLYGONS' ? 'POLYGONS' : t;
+    if (!seen.has(key)) {
+      seen.add(key);
+      badges.push(t);
+    }
+  }
+  if (resourceCount > 0) badges.push('CSV');
+  if (badges.length === 0) return null;
+  return (
+    <div className="flex items-center gap-3">
+      {badges.map((b) => <TypeBadge key={b} type={b} />)}
+    </div>
+  );
+}
+
+function PlaceholderThumb({ className }: { className?: string }) {
+  return (
+    <div className={`bg-gradient-to-br from-brand-primary-light via-surface-brand-light to-stone-100 flex items-center justify-center ${className || ''}`}>
+      <svg width="32" height="32" viewBox="0 0 64 64" fill="none" className="text-brand-primary opacity-30">
+        <rect x="8" y="16" width="48" height="32" rx="1" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="22" cy="28" r="4" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M8 40l12-8 8 6 12-10 16 12" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      </svg>
+    </div>
+  );
+}
+
+function DataCard({ item }: { item: DatasetItem }) {
+  return (
+    <Link
+      href={`/data/${item.slug}`}
+      className="bg-surface-light border border-border overflow-hidden flex flex-col hover:shadow-md transition-shadow group"
+    >
+      {item.thumbnail ? (
+        <img src={item.thumbnail} alt={item.title} className="w-full aspect-[3/1] object-cover" />
+      ) : (
+        <PlaceholderThumb className="w-full aspect-[3/1]" />
+      )}
+      <div className="p-3 flex flex-col gap-1.5">
+        <BadgeRow layerTypes={item.layerTypes} resourceCount={item.resourceCount} />
+        <h4 className="font-bold text-foreground text-sm leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">{item.title}</h4>
+        <p className="text-muted-foreground text-xs leading-relaxed line-clamp-2">{item.description}</p>
+      </div>
+    </Link>
+  );
+}
+
 export function ContentBlocks({
   datasets,
-  maps,
   posts,
   links,
   authors,
@@ -89,30 +156,17 @@ export function ContentBlocks({
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
 
-        <Section className="md:col-span-2 lg:col-span-2">
+        <Section className="md:col-span-2 lg:col-span-4">
           <H3 className="flex items-center gap-2">
             <Database className="w-5 h-5" />
             {t('public.sections.data', 'נתונים')}
           </H3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {datasets.map((d) => (
-              <GridTile key={d.slug} href={`/data/${d.slug}`} title={d.title} description={d.description} />
+              <DataCard key={d.slug} item={d} />
             ))}
           </div>
           <SeeMoreButton href="/data">{t('public.sections.allData', 'כל הנתונים')}</SeeMoreButton>
-        </Section>
-
-        <Section className="md:col-span-2 lg:col-span-2">
-          <H3 className="flex items-center gap-2">
-            <Layers className="w-5 h-5" />
-            {t('public.sections.mapsAndLayers', 'מפות ושכבות')}
-          </H3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {maps.map((m) => (
-              <GridTile key={m.href} href={m.href} title={m.title} description={m.description} />
-            ))}
-          </div>
-          <SeeMoreButton href="/maps">{t('public.sections.allMaps', 'כל המפות')}</SeeMoreButton>
         </Section>
 
         <Section className="lg:col-span-1">
