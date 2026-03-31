@@ -5,6 +5,13 @@ import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
 export async function signUp(formData: FormData) {
+  // Only admins can create new accounts
+  const session = await auth();
+  const role = (session?.user as any)?.role;
+  if (!session?.user || role !== "ADMIN") {
+    return { error: "Only administrators can create accounts" };
+  }
+
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const name = formData.get("name") as string;
@@ -29,10 +36,10 @@ export async function signUp(formData: FormData) {
               email,
               name,
               passwordHash: hashedPassword,
-              role: "CONTRIBUTOR", // Default role
+              role: "CONTRIBUTOR",
           }
       });
-      
+
       return { success: true, message: "Account created successfully" };
   } catch (error) {
       console.error("Error creating user:", error);

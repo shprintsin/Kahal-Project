@@ -90,7 +90,7 @@ const apiRoutes = [
   { path: "/api/places/search", label: "Places search" },
   { path: "/api/translations", label: "Translations" },
   { path: "/api/translate", label: "Translate" },
-  { path: "/api/admin/menus", label: "Admin menus API" },
+  { path: "/api/menus", label: "Menus API" },
 ];
 
 function isDynamic(path: string) {

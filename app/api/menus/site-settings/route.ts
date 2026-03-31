@@ -1,5 +1,5 @@
 /**
- * GET /api/admin/menus/site-settings
+ * GET /api/menus/site-settings
  * 
  * Retrieve global site settings (copyright text, etc.)
  */
@@ -19,7 +19,7 @@ export async function GET() {
 
     return NextResponse.json(settings);
   } catch (error) {
-    console.error("Error in GET /api/admin/menus/site-settings:", error);
+    console.error("Error in GET /api/menus/site-settings:", error);
     return NextResponse.json(
       { error: "Failed to fetch site settings" },
       { status: 500 }

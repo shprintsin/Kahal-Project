@@ -1,5 +1,5 @@
 /**
- * GET /api/admin/menus/[location]
+ * GET /api/menus/[location]
  * 
  * Retrieve menu items for a specific location
  */
@@ -42,7 +42,7 @@ export async function GET(
 
     return NextResponse.json(menu);
   } catch (error) {
-    console.error(`Error in GET /api/admin/menus/[location]:`, error);
+    console.error(`Error in GET /api/menus/[location]:`, error);
     return NextResponse.json(
       { error: "Failed to fetch menu" },
       { status: 500 }

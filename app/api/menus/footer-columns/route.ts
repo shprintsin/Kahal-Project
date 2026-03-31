@@ -1,5 +1,5 @@
 /**
- * GET /api/admin/menus/footer-columns
+ * GET /api/menus/footer-columns
  * 
  * Retrieve all footer columns
  */
@@ -12,7 +12,7 @@ export async function GET() {
     const columns = await getFooterColumns();
     return NextResponse.json(columns);
   } catch (error) {
-    console.error("Error in GET /api/admin/menus/footer-columns:", error);
+    console.error("Error in GET /api/menus/footer-columns:", error);
     return NextResponse.json(
       { error: "Failed to fetch footer columns" },
       { status: 500 }

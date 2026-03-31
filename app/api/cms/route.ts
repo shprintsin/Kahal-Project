@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { timingSafeEqual } from "node:crypto";
 import { auth } from "@/auth";
 
 import type { ListPostsOptions } from "@/app/admin/actions/posts";
@@ -230,7 +231,11 @@ export async function POST(request: NextRequest) {
   const apiKey = request.headers.get("x-api-key");
   const validKey = process.env.CMS_API_KEY;
 
-  const apiKeyValid = validKey && apiKey === validKey;
+  const apiKeyValid = validKey && apiKey && (() => {
+    const a = Buffer.from(apiKey, 'utf-8');
+    const b = Buffer.from(validKey, 'utf-8');
+    return a.length === b.length && timingSafeEqual(a, b);
+  })();
 
   if (!apiKeyValid) {
     const session = await auth();

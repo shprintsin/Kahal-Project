@@ -1,5 +1,5 @@
 /**
- * GET /api/admin/menus
+ * GET /api/menus
  * 
  * Retrieve all site menu settings
  */
@@ -12,7 +12,7 @@ export async function GET() {
     const settings = await getAllSiteSettings();
     return NextResponse.json(settings);
   } catch (error) {
-    console.error("Error in GET /api/admin/menus:", error);
+    console.error("Error in GET /api/menus:", error);
     return NextResponse.json(
       { error: "Failed to fetch menu settings" },
       { status: 500 }

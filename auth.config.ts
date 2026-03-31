@@ -10,8 +10,10 @@ export const authConfig = {
       const isOnAdmin = nextUrl.pathname.startsWith('/admin');
 
       if (isOnAdmin) {
-        if (isLoggedIn) return true;
-        return false;
+        if (!isLoggedIn) return false;
+        const role = (auth as any)?.user?.role ?? (auth as any)?.token?.role;
+        if (role && role !== 'ADMIN' && role !== 'EDITOR') return false;
+        return true;
       }
       return true;
     },
