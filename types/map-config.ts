@@ -16,6 +16,9 @@ export interface FilterConfig {
 }
 
 // Label configuration
+// NOTE: sibling definition of LabelConfigSchema in
+// mapstudio/packages/shared/src/schemas/map-config.ts. Keep in sync manually
+// until the type fork is unified via @kahal/shared.
 export interface LabelConfig {
   show: boolean;
   field: string;
@@ -27,6 +30,14 @@ export interface LabelConfig {
   fontColor?: string;
   fontFamily?: string;
   fontWeight?: 'normal' | 'bold' | '400' | '500' | '600' | '700';
+  collision?: 'none' | 'hide';
+  priorityField?: string;
+  // Only render labels for features where `field` equals `value`. Independent
+  // of include_list/exclude_list (which filter on the label field itself).
+  filter?: {
+    field: string;
+    value: string | number | boolean;
+  };
 }
 
 // Popup configuration
@@ -82,15 +93,43 @@ export interface GraduatedStyleConfig {
     breaks: number[];
 }
 
+export interface GraduatedRadiusConfig {
+  field: string;
+  method?: 'sqrt' | 'log' | 'linear';
+  minRadius?: number;
+  maxRadius?: number;
+}
+
+export interface HighlightCondition {
+  field: string;
+  value: string | number | boolean;
+}
+
+export interface HighlightConfig {
+  condition: HighlightCondition;
+  color?: string;
+  weight?: number;
+  radiusBoost?: number;
+  fillOpacity?: number;
+}
+
+// NOTE: sibling definition of PolygonStyleConfigSchema in
+// mapstudio/packages/shared/src/schemas/map-config.ts. Keep in sync manually.
 export interface PolygonStyleConfig {
   type: 'category' | 'simple' | 'graduated';
   field?: string;
   color_dict?: Record<string, string>;
+  // Per-category stroke color/weight. When set alongside category styling,
+  // stroke is looked up by `field` value; missing values fall back to
+  // `color`/`weight`.
+  stroke_color_dict?: Record<string, string>;
+  stroke_weight_dict?: Record<string, number>;
   graduated?: GraduatedStyleConfig;
   default_color: string;
   opacity: number;
   weight: number;
   color: string; // border color
+  highlight?: HighlightConfig;
 }
 
 export interface PointStyleConfig {
@@ -103,6 +142,8 @@ export interface PointStyleConfig {
   color: string; // stroke color
   weight: number;
   fillOpacity: number;
+  graduatedRadius?: GraduatedRadiusConfig;
+  highlight?: HighlightConfig;
 }
 
 // Layer configuration
