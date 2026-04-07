@@ -8,7 +8,12 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { slug, name, description, summary, summaryI18n, type, status, geoJsonData, style, filename, dataCsvContent, changeLog } = body;
+    const {
+      slug, name, description, summary, summaryI18n,
+      type, status, geoJsonData,
+      style, labels, popup, filter, hover,
+      filename, dataCsvContent, changeLog,
+    } = body;
 
     if (!slug) {
       return NextResponse.json({ error: 'slug is required' }, { status: 400 });
@@ -29,6 +34,20 @@ export async function POST(req: NextRequest) {
     };
     const dbType = layerTypeMap[type] ?? 'POINTS';
 
+    // Build the unified styleConfig wrapper. The viewer's buildLayerConfig
+    // (app/[locale]/maps/[slug]/components/MapPreview.tsx) reads style/labels/
+    // popup/filter/hover as siblings inside styleConfig and falls back to
+    // treating styleConfig as a bare style for legacy records. Persist all of
+    // them so renderer features like labels.filter and stroke_color_dict
+    // survive the round-trip from CLI YAML -> DB -> viewer.
+    const builtStyleConfig: Record<string, unknown> = {};
+    if (style !== undefined) builtStyleConfig.style = style;
+    if (labels !== undefined) builtStyleConfig.labels = labels;
+    if (popup !== undefined) builtStyleConfig.popup = popup;
+    if (filter !== undefined) builtStyleConfig.filter = filter;
+    if (hover !== undefined) builtStyleConfig.hover = hover;
+    const hasStyleFields = Object.keys(builtStyleConfig).length > 0;
+
     const existing = await prisma.layer.findUnique({ where: { slug } });
 
     let layer;
@@ -46,7 +65,7 @@ export async function POST(req: NextRequest) {
           type: dbType as any,
           status: (status ?? existing.status) as any,
           geoJsonData: geoJsonData ?? existing.geoJsonData,
-          styleConfig: style ?? existing.styleConfig,
+          styleConfig: hasStyleFields ? (builtStyleConfig as any) : (existing.styleConfig as any),
           sourceType: 'database' as any,
           ...(filename ? { filename } : {}),
           ...(dataCsvContent ? { downloadUrl: `data:text/csv;base64,${Buffer.from(dataCsvContent).toString('base64')}` } : {}),
@@ -65,7 +84,7 @@ export async function POST(req: NextRequest) {
           type: dbType as any,
           status: (status ?? 'draft') as any,
           geoJsonData: geoJsonData ?? {},
-          styleConfig: style ?? {},
+          styleConfig: hasStyleFields ? (builtStyleConfig as any) : {},
           sourceType: 'database' as any,
           ...(filename ? { filename } : {}),
           ...(dataCsvContent ? { downloadUrl: `data:text/csv;base64,${Buffer.from(dataCsvContent).toString('base64')}` } : {}),
