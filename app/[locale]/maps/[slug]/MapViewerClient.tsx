@@ -12,6 +12,8 @@ import { VersionHistory } from './components/VersionHistory'
 import { LayerDownloadButton } from './components/LayerDownloadButton'
 import { MaturityBadge, PublishStatusBadge } from '@/components/ui/status-badge'
 import { CsvViewerDialog } from '@/app/admin/components/content/csv-viewer-dialog'
+import { useDownloadTerms } from '@/components/ui/download-terms-provider'
+import { triggerBrowserDownload } from '@/lib/downloadGeoJson'
 import ReactMarkdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
@@ -69,6 +71,7 @@ interface MapViewerClientProps {
 export function MapViewerClient({ map, shellData, deployments = [], locale }: MapViewerClientProps) {
   const { t } = useLanguage()
   const [csvPreview, setCsvPreview] = useState<{ url: string; name: string } | null>(null)
+  const { requestDownload } = useDownloadTerms()
   const dateLocale = getDateLocale(locale as Locale)
   return (
     <SiteShell {...shellData} locale={locale}>
@@ -233,10 +236,10 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                   <div className="space-y-3">
                     {map.resources.map((resource) => (
                       <div key={resource.id} className="flex items-center gap-2">
-                        <a
-                          href={resource.url}
-                          download
-                          className="flex items-center gap-3 p-3 sm:p-4 flex-1 bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all cursor-pointer min-w-0"
+                        <button
+                          type="button"
+                          onClick={() => requestDownload(() => triggerBrowserDownload(resource.url, resource.filename || resource.name))}
+                          className="flex items-center gap-3 p-3 sm:p-4 flex-1 bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all cursor-pointer min-w-0 text-right"
                           title={`${t('public.map.download', 'הורד')} ${resource.name}`}
                         >
                           <div className="text-brand-primary shrink-0">
@@ -252,7 +255,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                             </div>
                           </div>
                           <Download className="h-4 w-4 text-brand-primary shrink-0" />
-                        </a>
+                        </button>
                         {(resource.format || '').toUpperCase() === 'CSV' && (
                           <button
                             type="button"

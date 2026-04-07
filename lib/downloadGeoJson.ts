@@ -1,3 +1,13 @@
+export function triggerBrowserDownload(url: string, filename?: string) {
+  const link = document.createElement('a')
+  link.href = url
+  if (filename) link.download = filename
+  link.rel = 'noopener'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
 export function downloadGeoJson(data: unknown, filename: string) {
   const json = JSON.stringify(data, null, 2)
   const blob = new Blob([json], { type: 'application/geo+json' })

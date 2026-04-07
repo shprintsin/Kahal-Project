@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from 'react'
 import { Download, Loader2 } from 'lucide-react'
 import { fetchAndDownloadGeoJson } from '@/lib/downloadGeoJson'
+import { useDownloadTerms } from '@/components/ui/download-terms-provider'
 import type { MapLayer } from '@/types/api-types'
 
 interface LayerDownloadButtonProps {
@@ -13,26 +14,29 @@ interface LayerDownloadButtonProps {
 
 export function LayerDownloadButton({ layer, className, children }: LayerDownloadButtonProps) {
   const [downloading, setDownloading] = useState(false)
+  const { requestDownload } = useDownloadTerms()
 
-  const handleDownload = async () => {
-    setDownloading(true)
-    try {
-      await fetchAndDownloadGeoJson(
-        layer.id,
-        layer.filename || layer.slug,
-        layer.geoJsonData,
-        layer.sourceUrl,
-      )
-    } catch (err) {
-      console.error(`Failed to download layer "${layer.name}":`, err)
-    } finally {
-      setDownloading(false)
-    }
+  const handleClick = () => {
+    requestDownload(async () => {
+      setDownloading(true)
+      try {
+        await fetchAndDownloadGeoJson(
+          layer.id,
+          layer.filename || layer.slug,
+          layer.geoJsonData,
+          layer.sourceUrl,
+        )
+      } catch (err) {
+        console.error(`Failed to download layer "${layer.name}":`, err)
+      } finally {
+        setDownloading(false)
+      }
+    })
   }
 
   return (
     <button
-      onClick={handleDownload}
+      onClick={handleClick}
       disabled={downloading}
       className={className}
       title={`הורד ${layer.name} כ-GeoJSON`}

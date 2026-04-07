@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { isValidLocale, locales, defaultLocale, getDir } from "@/lib/i18n/config";
 import { loadTranslations } from "@/lib/i18n/load-translations";
 import { LanguageProvider } from "@/lib/i18n/language-provider";
+import { DownloadTermsProvider } from "@/components/ui/download-terms-provider";
 import type { Locale } from "@/lib/i18n/config";
 
 export function generateStaticParams() {
@@ -25,7 +26,9 @@ export default async function LocaleLayout({
 
   return (
     <LanguageProvider initialLanguage={locale} initialTranslations={translations}>
-      {children}
+      <DownloadTermsProvider>
+        {children}
+      </DownloadTermsProvider>
     </LanguageProvider>
   );
 }

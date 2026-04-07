@@ -5,14 +5,17 @@ import type { SiteShellData } from "@/app/lib/get-navigation"
 import { Calendar, FileText, Link as LinkIcon, Download, Info } from "lucide-react"
 import { StatusBadgeLarge } from "@/components/ui/status-badge"
 import { ContentCard, SidebarInfoCard } from "@/components/ui/sections"
-import { DownloadButton } from "@/components/ui/action-button"
 import { SiteShell, SiteMain } from "@/components/ui/site-shell"
 import { SetEditUrl } from "@/components/ui/admin-toolbar"
 import { useLanguage } from "@/lib/i18n/language-provider"
 import { resolveBasemapTile } from "@/lib/basemaps"
+import { useDownloadTerms } from "@/components/ui/download-terms-provider"
+import { triggerBrowserDownload } from "@/lib/downloadGeoJson"
+import { cn } from "@/lib/utils"
 
 export function LayerDetailClient({ layer, shellData, locale }: { layer: any; shellData: SiteShellData; locale?: string }) {
   const { t } = useLanguage()
+  const { requestDownload } = useDownloadTerms()
   const previewSettings = layer?.styleConfig?.previewSettings || {
     zoom: 6,
     center: [52.0, 20.0] as [number, number]
@@ -127,10 +130,18 @@ export function LayerDetailClient({ layer, shellData, locale }: { layer: any; sh
 
                     {layer.downloadUrl && (
                         <div className="mt-6 sm:mt-8">
-                            <DownloadButton href={layer.downloadUrl}>
+                            <button
+                                type="button"
+                                onClick={() => requestDownload(() => triggerBrowserDownload(layer.downloadUrl, layer.filename))}
+                                className={cn(
+                                    "flex items-center justify-center gap-2 w-full",
+                                    "bg-brand-primary hover:bg-brand-primary-dark text-white font-bold py-3 px-4",
+                                    "rounded-lg transition-colors shadow-lg hover:shadow-xl",
+                                )}
+                            >
                                 <Download className="w-4 h-4" />
                                 {t('public.layer.downloadFull')}
-                            </DownloadButton>
+                            </button>
                         </div>
                     )}
                 </SidebarInfoCard>

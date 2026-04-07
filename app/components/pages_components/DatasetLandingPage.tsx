@@ -5,6 +5,8 @@ import { Dataset } from '@/types/dataset';
 import { SectionTitle } from '@/components/ui/typography';
 import { FileSpreadsheet, FileJson, AlertCircle, FileText, Download, Eye } from 'lucide-react';
 import { CsvViewerDialog } from '@/app/admin/components/content/csv-viewer-dialog';
+import { useDownloadTerms } from '@/components/ui/download-terms-provider';
+import { triggerBrowserDownload } from '@/lib/downloadGeoJson';
 
 import { MaturityBadge, PublishStatusBadge } from '@/components/ui/status-badge';
 import { unified } from 'unified';
@@ -68,6 +70,7 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
   const [codebookHtml, setCodebookHtml] = useState<string>('');
   const [activeTab, setActiveTab] = useState<string>('description');
   const [csvPreview, setCsvPreview] = useState<{ url: string; name: string } | null>(null);
+  const { requestDownload } = useDownloadTerms();
 
   useEffect(() => {
     const processMarkdown = async () => {
@@ -204,10 +207,10 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
                 <div className="space-y-3">
                   {dataset.resources.map((resource) => (
                     <div key={resource.id} className="flex items-center gap-2">
-                      <a
-                        href={resource.url}
-                        download
-                        className="flex items-center gap-3 p-3 sm:p-4 flex-1 bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all cursor-pointer min-w-0"
+                      <button
+                        type="button"
+                        onClick={() => requestDownload(() => triggerBrowserDownload(resource.url, resource.name))}
+                        className="flex items-center gap-3 p-3 sm:p-4 flex-1 bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all cursor-pointer min-w-0 text-right"
                         title={`הורד ${resource.name}`}
                       >
                         <div className="text-brand-primary shrink-0">
@@ -221,7 +224,7 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
                           </div>
                         </div>
                         <Download className="h-4 w-4 text-brand-primary shrink-0" />
-                      </a>
+                      </button>
                       {resource.format?.toUpperCase() === 'CSV' && (
                         <button
                           onClick={() => setCsvPreview({ url: resource.url, name: resource.name })}
