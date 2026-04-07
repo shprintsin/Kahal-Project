@@ -1,16 +1,23 @@
+/**
+ * @deprecated Use `GET /api/v1/layers` instead. Near-duplicate of
+ * `/api/layers` (filters to status=published only). Kept as a thin wrapper
+ * for backward compatibility. See A-4.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { listLayersAPI } from "@/app/admin/actions/layers";
+import { deprecationHeaders, warnDeprecated } from "../../_deprecated";
 
 /**
  * GET /api/geo/layers
- * Public endpoint for listing published layers
+ * Public endpoint for listing published layers.
  */
 export async function GET(request: NextRequest) {
+  warnDeprecated("/api/geo/layers", "/api/v1/layers?status=published");
   try {
     const searchParams = request.nextUrl.searchParams;
 
     const options = {
-      status: "published", // Only show published layers
+      status: "published",
       categorySlug: searchParams.get("category") || undefined,
       tagSlug: searchParams.get("tag") || undefined,
       regionSlug: searchParams.get("region") || undefined,
@@ -28,9 +35,10 @@ export async function GET(request: NextRequest) {
     };
 
     const result = await listLayersAPI(options);
-    
-    // Return just the layers array for simpler frontend consumption
-    return NextResponse.json(result.layers);
+
+    return NextResponse.json(result.layers, {
+      headers: deprecationHeaders("/api/v1/layers?status=published"),
+    });
   } catch (error) {
     console.error("Error in GET /api/geo/layers:", error);
     return NextResponse.json({ error: "Failed to fetch layers" }, { status: 500 });

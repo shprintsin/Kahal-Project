@@ -1,3 +1,5 @@
+// TODO(A-6): Fold this projection into `/api/v1/datasets/{slug}?fields=metadata`.
+// Left intact for now — A-4 only collapses the bare list/get routes.
 import { NextRequest, NextResponse } from "next/server";
 import { getDatasetMetadataBySlug } from "@/app/admin/actions/datasets";
 

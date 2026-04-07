@@ -4,7 +4,7 @@ import { useState, type ReactNode } from 'react'
 import { Download, Loader2 } from 'lucide-react'
 import { fetchAndDownloadGeoJson } from '@/lib/downloadGeoJson'
 import { useDownloadTerms } from '@/components/ui/download-terms-provider'
-import type { MapLayer } from '@/types/api-types'
+import type { MapLayer } from '@/lib/view-types'
 
 interface LayerDownloadButtonProps {
   layer: MapLayer

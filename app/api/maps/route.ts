@@ -1,7 +1,14 @@
+/**
+ * @deprecated Use `GET /api/v1/maps` instead. This route is kept as a thin
+ * wrapper for backward compatibility and emits a `Deprecation: true` header
+ * + a one-time `console.warn` on every cold call. See A-4.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { listMapsAPI } from "@/app/admin/actions/maps";
+import { deprecationHeaders, warnDeprecated } from "../_deprecated";
 
 export async function GET(request: NextRequest) {
+  warnDeprecated("/api/maps", "/api/v1/maps");
   try {
     const searchParams = request.nextUrl.searchParams;
 
@@ -36,8 +43,9 @@ export async function GET(request: NextRequest) {
     };
 
     const result = await listMapsAPI(options);
-    // Return just the maps array for simpler frontend consumption
-    return NextResponse.json(result.maps);
+    return NextResponse.json(result.maps, {
+      headers: deprecationHeaders("/api/v1/maps"),
+    });
   } catch (error) {
     console.error("Error in GET /api/maps:", error);
     return NextResponse.json(

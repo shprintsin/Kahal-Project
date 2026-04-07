@@ -1,7 +1,13 @@
+/**
+ * @deprecated Use `GET /api/v1/categories` instead. Kept as a thin wrapper
+ * for backward compatibility — emits a `Deprecation: true` header. See A-4.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { listCategoriesAPI } from "@/app/admin/actions/categories";
+import { deprecationHeaders, warnDeprecated } from "../_deprecated";
 
 export async function GET(request: NextRequest) {
+  warnDeprecated("/api/categories", "/api/v1/categories");
   try {
     const searchParams = request.nextUrl.searchParams;
 
@@ -13,8 +19,9 @@ export async function GET(request: NextRequest) {
     };
 
     const result = await listCategoriesAPI(options);
-    // Return just the categories array for simpler frontend consumption
-    return NextResponse.json(result.categories);
+    return NextResponse.json(result.categories, {
+      headers: deprecationHeaders("/api/v1/categories"),
+    });
   } catch (error) {
     console.error("Error in GET /api/categories:", error);
     return NextResponse.json(

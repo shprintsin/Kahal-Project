@@ -18,10 +18,24 @@ import {
 const mockFetch = vi.fn()
 vi.stubGlobal("fetch", mockFetch)
 
-function mockOk(data: unknown) {
+/**
+ * Mock a v1 list response. The v1 API responds with `{ data, pagination }`,
+ * so list helpers in `lib/api.ts` unwrap `data`.
+ */
+function mockListOk(items: unknown[]) {
   mockFetch.mockResolvedValueOnce({
     ok: true,
-    json: () => Promise.resolve(data),
+    json: () => Promise.resolve({ data: items }),
+  })
+}
+
+/**
+ * Mock a v1 single-record response: `{ data: <record> }`.
+ */
+function mockItemOk(item: unknown) {
+  mockFetch.mockResolvedValueOnce({
+    ok: true,
+    json: () => Promise.resolve({ data: item }),
   })
 }
 
@@ -41,13 +55,16 @@ beforeEach(() => {
 describe("getPosts", () => {
   it("returns posts wrapped in docs", async () => {
     const posts = [{ id: "1", title: "Test" }]
-    mockOk(posts)
+    mockListOk(posts)
     const result = await getPosts()
     expect(result.docs).toEqual(posts)
   })
 
-  it("returns empty docs when response is not array", async () => {
-    mockOk({ data: [] })
+  it("returns empty docs when response data is missing", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({}),
+    })
     const result = await getPosts()
     expect(result.docs).toEqual([])
   })
@@ -56,7 +73,7 @@ describe("getPosts", () => {
 describe("getPost", () => {
   it("returns post by slug", async () => {
     const post = { id: "1", slug: "test", title: "Test" }
-    mockOk(post)
+    mockItemOk(post)
     const result = await getPost("test")
     expect(result).toEqual(post)
   })
@@ -71,7 +88,7 @@ describe("getPost", () => {
 describe("getPages", () => {
   it("returns pages wrapped in docs", async () => {
     const pages = [{ id: "1", title: "About" }]
-    mockOk(pages)
+    mockListOk(pages)
     const result = await getPages()
     expect(result.docs).toEqual(pages)
   })
@@ -88,7 +105,7 @@ describe("getPage", () => {
 describe("getCategories", () => {
   it("returns categories wrapped in docs", async () => {
     const cats = [{ id: "1", title: "History" }]
-    mockOk(cats)
+    mockListOk(cats)
     const result = await getCategories()
     expect(result.docs).toEqual(cats)
   })
@@ -105,7 +122,7 @@ describe("getCategory", () => {
 describe("getPostsByCategory", () => {
   it("returns posts for category", async () => {
     const posts = [{ id: "1" }]
-    mockOk(posts)
+    mockListOk(posts)
     const result = await getPostsByCategory("history")
     expect(result.docs).toEqual(posts)
   })
@@ -114,7 +131,7 @@ describe("getPostsByCategory", () => {
 describe("getDatasets", () => {
   it("returns datasets wrapped in docs", async () => {
     const ds = [{ id: "1" }]
-    mockOk(ds)
+    mockListOk(ds)
     const result = await getDatasets()
     expect(result.docs).toEqual(ds)
   })
@@ -131,7 +148,7 @@ describe("getDataset", () => {
 describe("getMaps", () => {
   it("returns maps wrapped in docs", async () => {
     const maps = [{ id: "1" }]
-    mockOk(maps)
+    mockListOk(maps)
     const result = await getMaps()
     expect(result.docs).toEqual(maps)
   })
@@ -148,7 +165,7 @@ describe("getMap", () => {
 describe("getLayers", () => {
   it("returns layers wrapped in docs", async () => {
     const layers = [{ id: "1" }]
-    mockOk(layers)
+    mockListOk(layers)
     const result = await getLayers()
     expect(result.docs).toEqual(layers)
   })

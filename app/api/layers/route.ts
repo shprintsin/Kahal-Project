@@ -1,8 +1,15 @@
+/**
+ * @deprecated GET is superseded by `GET /api/v1/layers` (A-4). Kept as a
+ * thin wrapper for backward compat. POST is left intact for admin writes
+ * and is NOT considered deprecated.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { listLayersAPI, createLayer } from "@/app/admin/actions/layers";
+import { deprecationHeaders, warnDeprecated } from "../_deprecated";
 
 export async function GET(request: NextRequest) {
+  warnDeprecated("/api/layers", "/api/v1/layers");
   try {
     const searchParams = request.nextUrl.searchParams;
 
@@ -34,16 +41,22 @@ export async function GET(request: NextRequest) {
     };
 
     const result = await listLayersAPI(options);
-    return NextResponse.json({
-      docs: result.layers,
-      ...result.pagination,
-    });
+    return NextResponse.json(
+      {
+        docs: result.layers,
+        ...result.pagination,
+      },
+      { headers: deprecationHeaders("/api/v1/layers") }
+    );
   } catch (error) {
     console.error("Error in GET /api/layers:", error);
     return NextResponse.json({ error: "Failed to fetch layers" }, { status: 500 });
   }
 }
 
+/**
+ * Admin write endpoint — NOT deprecated. See `app/admin/actions/layers.ts`.
+ */
 export async function POST(request: NextRequest) {
   const session = await auth();
   if (!session?.user) {

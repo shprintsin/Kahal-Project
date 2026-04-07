@@ -1,11 +1,18 @@
-import type { Post, Page, Category, Dataset, MapDataset } from '@/types/api-types';
+import type {
+  Post,
+  Page,
+  Category,
+  Dataset,
+  MapDataset,
+  APIResponse,
+} from "@/lib/view-types";
 
 function getBaseUrl(): string {
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
   }
-  if (typeof window !== 'undefined') {
-    return '';
+  if (typeof window !== "undefined") {
+    return "";
   }
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
@@ -19,184 +26,201 @@ async function fetchAPI<T>(endpoint: string): Promise<T> {
 
   try {
     const res = await fetch(url, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       next: { revalidate: 60 },
     });
 
     if (!res.ok) {
-        // Instead of throwing, we might want to return a safe default or rethrow for specific codes.
-        // For "connection refused", catch block handles it. 
-        // For 404/500, we log and throw.
-        const errorText = await res.text();
-        console.error(`[API] Error ${res.status} at ${endpoint}:`, errorText);
-        throw new Error(`Failed to fetch from ${endpoint}: ${res.status} ${res.statusText}`);
+      const errorText = await res.text();
+      console.error(`[API] Error ${res.status} at ${endpoint}:`, errorText);
+      throw new Error(
+        `Failed to fetch from ${endpoint}: ${res.status} ${res.statusText}`
+      );
     }
 
-    const data = await res.json();
-    // console.log(`[API] Success: ${endpoint}`, Array.isArray(data) ? `(${data.length} items)` : '(1 item)');
-    return data;
+    return (await res.json()) as T;
   } catch (error) {
     console.error(`[API] Fetch error for ${endpoint}:`, error);
-    // Determine if we should throw or return empty. 
-    // For listing endpoints, returning empty array [] is often safer for UI.
-    // For single item endpoints, null might be better. 
-    // Since T is generic, we can't easily fallback to "empty value" without casting.
-    // However, the caller usually catches or we assume the caller handles rejection.
-    // The user's specific error was "fetch failed" likely due to connection refused. 
-    // Propagating the error is correct, but the CALLER needs to catch it.
-    // Let's modify the CALLERS to catch, or return a rejected promise that allows key fetchers to fallback.
-    // Actually, looking at `getDocumentsMetadata`, I added catch there. 
-    // The issue reported is line 11, which IS inside try/catch here in the current file?
-    // Wait, the user showed a stack trace pointing to `fetchAPI` line 11.
-    // The code I viewed earlier HAS a try/catch block around fetch already? (lines 7-31).
-    // Let's look closely at previous `view_file`.
-    // Yes lines 7-28 are `try { ... } catch (error) { ... throw error }`.
-    // It re-throws the error at line 30.
-    // So the error IS propagating to component. 
-    // I need to ensure `getDocumentsMetadata` and others CATCH it and return empty arrays.
     throw error;
   }
 }
 
+/**
+ * Fetch a v1 list endpoint and return the unwrapped `data` array.
+ *
+ * The v1 API responds with `{ data: T[], pagination?: ... }`. This helper
+ * always returns an array (empty on shape mismatch) so callers don't have
+ * to remember to unwrap.
+ */
+async function fetchV1List<T>(endpoint: string): Promise<T[]> {
+  const res = await fetchAPI<APIResponse<T[]>>(endpoint);
+  return Array.isArray(res?.data) ? res.data : [];
+}
+
+/**
+ * Fetch a v1 single-record endpoint and return the unwrapped `data`.
+ */
+async function fetchV1Item<T>(endpoint: string): Promise<T | null> {
+  try {
+    const res = await fetchAPI<APIResponse<T>>(endpoint);
+    return (res?.data as T) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+// ============================================================================
 // Posts
+// ============================================================================
+
 export const getPosts = async (): Promise<{ docs: Post[] }> => {
-  const data = await fetchAPI<Post[]>('/api/posts?status=published');
-  return { docs: Array.isArray(data) ? data : [] };
+  const docs = await fetchV1List<Post>("/api/v1/posts?status=published");
+  return { docs };
 };
 
 export const getPost = async (slug: string): Promise<Post | null> => {
-  try {
-    const post = await fetchAPI<Post>(`/api/posts/${slug}`);
-    return post;
-  } catch (error) {
-    console.error(`Post not found: ${slug}`, error);
-    return null;
-  }
+  return fetchV1Item<Post>(`/api/v1/posts/${slug}`);
 };
 
+// ============================================================================
 // Pages
+// ============================================================================
+
 export const getPages = async (): Promise<{ docs: Page[] }> => {
-  const data = await fetchAPI<Page[]>('/api/pages?status=published');
-  return { docs: Array.isArray(data) ? data : [] };
+  const docs = await fetchV1List<Page>("/api/v1/pages?status=published");
+  return { docs };
 };
 
 export const getPage = async (slug: string): Promise<Page | null> => {
-  try {
-    const page = await fetchAPI<Page>(`/api/pages/${slug}`);
-    return page;
-  } catch (error) {
-    console.error(`Page not found: ${slug}`, error);
-    return null;
-  }
+  return fetchV1Item<Page>(`/api/v1/pages/${slug}`);
 };
 
+// ============================================================================
 // Categories
+// ============================================================================
+
 export const getCategories = async (): Promise<{ docs: Category[] }> => {
-  const data = await fetchAPI<Category[]>('/api/categories');
-  return { docs: Array.isArray(data) ? data : [] };
+  const docs = await fetchV1List<Category>("/api/v1/categories");
+  return { docs };
 };
 
-export const getCategory = async (slug: string): Promise<Category | null> => {
-  try {
-    const category = await fetchAPI<Category>(`/api/categories/${slug}`);
-    return category;
-  } catch (error) {
-    console.error(`Category not found: ${slug}`, error);
-    return null;
-  }
+export const getCategory = async (
+  slug: string
+): Promise<Category | null> => {
+  return fetchV1Item<Category>(`/api/v1/categories/${slug}`);
 };
 
 // Get posts by category
-export const getPostsByCategory = async (categorySlug: string): Promise<{ docs: Post[] }> => {
-  const data = await fetchAPI<Post[]>(`/api/posts?category=${categorySlug}&status=published`);
-  return { docs: Array.isArray(data) ? data : [] };
+export const getPostsByCategory = async (
+  categorySlug: string
+): Promise<{ docs: Post[] }> => {
+  const docs = await fetchV1List<Post>(
+    `/api/v1/posts?category=${categorySlug}&status=published`
+  );
+  return { docs };
 };
 
+// ============================================================================
 // Datasets
+// ============================================================================
+
 export const getDatasets = async (): Promise<{ docs: Dataset[] }> => {
-  const data = await fetchAPI<Dataset[]>('/api/datasets?status=published');
-  return { docs: Array.isArray(data) ? data : [] };
+  const docs = await fetchV1List<Dataset>("/api/v1/datasets?status=published");
+  return { docs };
 };
 
-export const getDataset = async (slug: string): Promise<Dataset | null> => {
-  try {
-    const dataset = await fetchAPI<Dataset>(`/api/datasets/${slug}?includeResources=true`);
-    return dataset;
-  } catch (error) {
-    console.error(`Dataset not found: ${slug}`, error);
-    return null;
-  }
+export const getDataset = async (
+  slug: string
+): Promise<Dataset | null> => {
+  return fetchV1Item<Dataset>(
+    `/api/v1/datasets/${slug}?includeResources=true`
+  );
 };
 
+// ============================================================================
 // Maps
+// ============================================================================
+
 export const getMaps = async (): Promise<{ docs: MapDataset[] }> => {
-  const data = await fetchAPI<MapDataset[]>('/api/maps?status=published');
-  return { docs: Array.isArray(data) ? data : [] };
+  const docs = await fetchV1List<MapDataset>("/api/v1/maps?status=published");
+  return { docs };
 };
 
 export const getMap = async (slug: string): Promise<MapDataset | null> => {
-  try {
-    const map = await fetchAPI<MapDataset>(`/api/maps/${slug}`);
-    return map;
-  } catch (error) {
-    console.error(`Map not found: ${slug}`, error);
-    return null;
-  }
+  return fetchV1Item<MapDataset>(`/api/v1/maps/${slug}`);
 };
 
+// ============================================================================
 // Layers
+// ============================================================================
+
+// `getLayers` historically called `/api/geo/layers`, which only returns
+// published layers. The v1 endpoint exposes the same filter via querystring.
 export const getLayers = async (): Promise<{ docs: any[] }> => {
-  const data = await fetchAPI<any[]>('/api/geo/layers');
-  return { docs: Array.isArray(data) ? data : [] };
+  const docs = await fetchV1List<any>("/api/v1/layers?status=published");
+  return { docs };
 };
 
+// `/api/v1/layers/[slug]` returns the rich projection from getLayerBySlug
+// (with category/tags/regions). `includeMaps=true` adds the dataset edges.
 export const getLayer = async (slug: string): Promise<any | null> => {
-  try {
-    const layer = await fetchAPI<any>(`/api/geo/layers/${slug}?includeMaps=true`);
-    return layer;
-  } catch (error) {
-    console.error(`Layer not found: ${slug}`, error);
-    return null;
-  }
+  return fetchV1Item<any>(`/api/v1/layers/${slug}?includeMaps=true`);
 };
 
-// ============================================
-// Archive (Collections, Series, Volumes)
-// ============================================
+// ============================================================================
+// Archive (Collections, Series, Volumes) — left on legacy routes
+// (the hierarchy is too complex for the registry-driven catch-all)
+// ============================================================================
 
-import type { Collection, CollectionWithSeries, Series, SeriesWithVolumes, Volume } from '@/types/archive.types';
+import type {
+  CollectionWithSeries,
+  Series,
+  SeriesWithVolumes,
+  Volume,
+} from "@/types/archive.types";
 
 /**
  * Fetch all collections with their series
  */
 export async function getArchiveCollections(): Promise<CollectionWithSeries[]> {
-  const data = await fetchAPI<CollectionWithSeries[]>('/api/collections');
+  const data = await fetchAPI<CollectionWithSeries[]>("/api/collections");
   return Array.isArray(data) ? data : [];
 }
 
 /**
  * Fetch a single collection with its series (supports both ID and slug)
  */
-export async function getCollectionWithSeries(collectionIdOrSlug: string): Promise<CollectionWithSeries> {
-  return await fetchAPI<CollectionWithSeries>(`/api/collections/${collectionIdOrSlug}`);
+export async function getCollectionWithSeries(
+  collectionIdOrSlug: string
+): Promise<CollectionWithSeries> {
+  return await fetchAPI<CollectionWithSeries>(
+    `/api/collections/${collectionIdOrSlug}`
+  );
 }
 
 /**
  * Fetch a single collection by slug
  */
-export async function getCollectionBySlug(slug: string): Promise<CollectionWithSeries> {
+export async function getCollectionBySlug(
+  slug: string
+): Promise<CollectionWithSeries> {
   return await fetchAPI<CollectionWithSeries>(`/api/collections/${slug}`);
 }
 
 /**
  * Fetch all volumes for a series (supports both ID and slug)
  */
-export async function getSeriesVolumes(collectionSlug: string, seriesSlug: string): Promise<SeriesWithVolumes> {
-  const data = await fetchAPI<any>(`/api/collections/${collectionSlug}/${seriesSlug}`);
-  
+export async function getSeriesVolumes(
+  collectionSlug: string,
+  seriesSlug: string
+): Promise<SeriesWithVolumes> {
+  const data = await fetchAPI<any>(
+    `/api/collections/${collectionSlug}/${seriesSlug}`
+  );
+
   // Transform API response to frontend types
   return {
     id: data.id,
@@ -224,23 +248,33 @@ export async function getSeriesVolumes(collectionSlug: string, seriesSlug: strin
 /**
  * Fetch series details with volumes by slug
  */
-export async function getSeriesBySlug(slug: string): Promise<Series & { volumes: Volume[] }> {
+export async function getSeriesBySlug(
+  slug: string
+): Promise<Series & { volumes: Volume[] }> {
   return await fetchAPI<Series & { volumes: Volume[] }>(`/api/series/${slug}`);
 }
 
 /**
  * Fetch series details with volumes by ID
  */
-export async function getSeriesById(id: string): Promise<Series & { volumes: Volume[] }> {
+export async function getSeriesById(
+  id: string
+): Promise<Series & { volumes: Volume[] }> {
   return await fetchAPI<Series & { volumes: Volume[] }>(`/api/series/${id}`);
 }
 
 /**
  * Fetch volume with pages for viewer
  */
-export async function getVolumePages(collectionSlug: string, seriesSlug: string, volumeSlug: string): Promise<any> {
-  const data = await fetchAPI<any>(`/api/collections/${collectionSlug}/${seriesSlug}/${volumeSlug}`);
-  
+export async function getVolumePages(
+  collectionSlug: string,
+  seriesSlug: string,
+  volumeSlug: string
+): Promise<any> {
+  const data = await fetchAPI<any>(
+    `/api/collections/${collectionSlug}/${seriesSlug}/${volumeSlug}`
+  );
+
   // Transform API response to format expected by VolumeViewer
   return {
     slug: data.slug,
@@ -261,30 +295,21 @@ export async function getVolumePages(collectionSlug: string, seriesSlug: string,
   };
 }
 
+// ============================================================================
+// Documents (Single Documents) — left on legacy routes (out of A-4 scope)
+// ============================================================================
 
-
-// ============================================
-// Documents (Single Documents)
-// ============================================
-
-import { Document, DocumentWithPages } from '@/types/document';
+import { Document, DocumentWithPages } from "@/types/document";
 
 /**
  * Fetch a single document with pages by slug
  */
-export async function getDocumentBySlug(slug: string): Promise<DocumentWithPages | null> {
+export async function getDocumentBySlug(
+  slug: string
+): Promise<DocumentWithPages | null> {
   try {
-    const documents = await fetchAPI<DocumentWithPages[]>('/api/documents');
-    // Since the API returns all, we filter here. 
-    // Ideally the API should support /api/documents/:slug, but per plan we use the bulk endpoint or simple filtering for now.
-    // If the API supports filtering or single fetch, use that.
-    // Based on previous step, we only made GET /api/documents returning ALL. 
-    // We should probably filter on client side for now or assume the user wants this simple implementation.
-    // BETTER: Let's assume the API might return all and we find one, OR we could updated the API to support slug.
-    // Given constraints, I will fetch all and find. 
-    // Wait, the API I created `GET /api/documents` calls `getAllDocumentsWithPages`. 
-    // I should create a specific fetcher for this or just filter.
-    const doc = documents.find(d => d.slug === slug);
+    const documents = await fetchAPI<DocumentWithPages[]>("/api/documents");
+    const doc = documents.find((d) => d.slug === slug);
     return doc || null;
   } catch (error) {
     console.error(`Document not found: ${slug}`, error);
@@ -297,10 +322,12 @@ export async function getDocumentBySlug(slug: string): Promise<DocumentWithPages
  */
 export async function getDocumentsMetadata(): Promise<Document[]> {
   try {
-     const data = await fetchAPI<Document[]>('/api/documents?metadataOnly=true');
-     return Array.isArray(data) ? data : [];
+    const data = await fetchAPI<Document[]>(
+      "/api/documents?metadataOnly=true"
+    );
+    return Array.isArray(data) ? data : [];
   } catch (error) {
-     console.error("Failed to fetch documents metadata", error);
-     return [];
+    console.error("Failed to fetch documents metadata", error);
+    return [];
   }
 }

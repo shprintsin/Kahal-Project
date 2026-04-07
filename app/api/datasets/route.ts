@@ -1,11 +1,16 @@
+/**
+ * @deprecated Use `GET /api/v1/datasets` instead. Kept as a thin wrapper
+ * for backward compatibility — emits a `Deprecation: true` header. See A-4.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { listDatasetsAPI } from "@/app/admin/actions/datasets";
+import { deprecationHeaders, warnDeprecated } from "../_deprecated";
 
 export async function GET(request: NextRequest) {
+  warnDeprecated("/api/datasets", "/api/v1/datasets");
   try {
     const searchParams = request.nextUrl.searchParams;
 
-    // Extract query parameters
     const options = {
       status: searchParams.get("status") || undefined,
       categoryId: searchParams.get("categoryId") || undefined,
@@ -32,8 +37,9 @@ export async function GET(request: NextRequest) {
     };
 
     const result = await listDatasetsAPI(options);
-    // Return just the datasets array for simpler frontend consumption
-    return NextResponse.json(result.datasets);
+    return NextResponse.json(result.datasets, {
+      headers: deprecationHeaders("/api/v1/datasets"),
+    });
   } catch (error) {
     console.error("Error in GET /api/datasets:", error);
     return NextResponse.json(

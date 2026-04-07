@@ -13,7 +13,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import type { FeatureCollection } from 'geojson';
 import { Maximize2, Minimize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { MapDataset as MapType, MapLayer } from '@/types/api-types';
+import type { MapDataset as MapType, MapLayer } from '@/lib/view-types';
 import type {
   MapConfig,
   LayerConfig,

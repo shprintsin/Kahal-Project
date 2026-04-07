@@ -1,7 +1,14 @@
+/**
+ * @deprecated Use `GET /api/v1/maps` instead. Identical to `/api/maps` but
+ * historically served with public CORS + cache headers. Kept as a thin
+ * wrapper for backward compatibility. See A-4.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { listMapsAPI } from "@/app/admin/actions/maps";
+import { deprecationHeaders, warnDeprecated } from "../../_deprecated";
 
 export async function GET(request: NextRequest) {
+  warnDeprecated("/api/geo/maps", "/api/v1/maps");
   try {
     const searchParams = request.nextUrl.searchParams;
 
@@ -36,12 +43,14 @@ export async function GET(request: NextRequest) {
     };
 
     const result = await listMapsAPI(options);
-    
+
     return NextResponse.json(result.maps, {
       headers: {
-        'Cache-Control': 'public, max-age=300',
-        'Access-Control-Allow-Origin': process.env.NEXTAUTH_URL || 'http://localhost:3000'
-      }
+        "Cache-Control": "public, max-age=300",
+        "Access-Control-Allow-Origin":
+          process.env.NEXTAUTH_URL || "http://localhost:3000",
+        ...deprecationHeaders("/api/v1/maps"),
+      },
     });
   } catch (error) {
     console.error("Error in GET /api/geo/maps:", error);
