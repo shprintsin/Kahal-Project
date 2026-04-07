@@ -66,6 +66,10 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const layer = await createLayer(body);
+    if ("ok" in layer && layer.ok === false) {
+      // LayerActionFailure from A-2 styleConfig validation — surface as 400
+      return NextResponse.json(layer, { status: 400 });
+    }
     return NextResponse.json(layer, { status: 201 });
   } catch (error) {
     console.error("Error in POST /api/layers:", error);

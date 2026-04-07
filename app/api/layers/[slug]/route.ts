@@ -47,6 +47,10 @@ export async function PUT(
     }
 
     const layer = await updateLayer(existingLayer.id, body);
+    if ("ok" in layer && layer.ok === false) {
+      // LayerActionFailure from A-2 styleConfig validation — surface as 400
+      return NextResponse.json(layer, { status: 400 });
+    }
     return NextResponse.json(layer);
   } catch (error) {
     console.error("Error in PUT /api/layers/[slug]:", error);
