@@ -1,0 +1,363 @@
+{
+  "common": {
+    "welcome": "ברוכים הבאים",
+    "cancel": "ביטול",
+    "save": "שמירה",
+    "edit": "עריכה",
+    "delete": "מחיקה",
+    "create": "יצירה",
+    "search": "חיפוש",
+    "filter": "סינון",
+    "export": "ייצוא",
+    "import": "ייבוא",
+    "actions": "פעולות",
+    "status": "סטטוס",
+    "published": "פורסם",
+    "draft": "טיוטה",
+    "archived": "בארכיון"
+  },
+  "nav": {
+    "content": "תוכן",
+    "posts": "פוסטים",
+    "pages": "עמודים",
+    "categories": "קטגוריות",
+    "tags": "תגיות",
+    "taxonomyManager": "מנהל טקסונומיה",
+    "research": "מחקר",
+    "collections": "אוספים",
+    "documents": "מסמכים",
+    "artifacts": "חפצים",
+    "artifactCategories": "קטגוריות חפצים",
+    "series": "סדרות",
+    "datasets": "מערכי נתונים",
+    "layers": "שכבות",
+    "maps": "מפות",
+    "system": "מערכת",
+    "media": "מדיה",
+    "menus": "תפריטים",
+    "users": "משתמשים",
+    "settings": "הגדרות",
+    "places": "מקומות",
+    "periods": "תקופות",
+    "regions": "אזורים"
+  },
+  "pages": {
+    "tags": {
+      "title": "תגיות",
+      "description": "ניהול תגיות לארגון תוכן"
+    },
+    "categories": {
+      "title": "קטגוריות",
+      "description": "ניהול קטגוריות תוכן"
+    },
+    "artifactCategories": {
+      "title": "קטגוריות חפצים",
+      "description": "ניהול קטגוריות לחפצים היסטוריים"
+    },
+    "places": {
+      "title": "מקומות",
+      "description": "ניהול מיקומים גיאוגרפיים"
+    },
+    "periods": {
+      "title": "תקופות",
+      "description": "ניהול תקופות היסטוריות"
+    },
+    "regions": {
+      "title": "אזורים",
+      "description": "ניהול אזורים גיאוגרפיים"
+    },
+    "artifacts": {
+      "title": "חפצים",
+      "description": "ניהול חפצים היסטוריים"
+    },
+    "datasets": {
+      "title": "מערכי נתונים",
+      "description": "ניהול מערכי נתונים למחקר"
+    },
+    "maps": {
+      "title": "מפות",
+      "description": "ניהול מפות ושכבות"
+    },
+    "media": {
+      "title": "ספריית מדיה",
+      "description": "ניהול תמונות וקבצים"
+    },
+    "pages": {
+      "title": "עמודים",
+      "description": "ניהול עמודים סטטיים"
+    },
+    "archives": {
+      "title": "ארכיונים",
+      "description": "ניהול ארכיונים"
+    },
+    "posts": {
+      "title": "פוסטים",
+      "description": "ניהול פוסטים בבלוג"
+    },
+    "users": {
+      "title": "משתמשים",
+      "description": "ניהול משתמשים"
+    },
+    "documents": {
+      "title": "מסמכים",
+      "description": "ניהול מסמכי MD"
+    },
+    "collections": {
+      "title": "אוספים",
+      "description": "ניהול אוספים היסטוריים"
+    },
+    "layers": {
+      "title": "שכבות",
+      "description": "ניהול שכבות GIS"
+    }
+  },
+  "admin": {
+    "dashboard": "לוח בקרה",
+    "welcomeBack": "ברוך שובך",
+    "quickActions": "פעולות מהירות",
+    "recentActivity": "פעילות אחרונה",
+    "systemInfo": "מידע מערכת",
+    "version": "גרסה",
+    "createNewPost": "צור פוסט חדש",
+    "createNewPage": "צור עמוד חדש",
+    "uploadMedia": "העלה מדיה",
+    "startWriting": "התחל לכתוב",
+    "addPage": "הוסף עמוד",
+    "addFiles": "הוסף קבצים",
+    "checkSections": "בדוק קטעים לפעילות",
+    "panelDetails": "פרטי הפאנל"
+  },
+  "forms": {
+    "title": "כותרת",
+    "slug": "סלאג",
+    "description": "תיאור",
+    "content": "תוכן",
+    "status": "סטטוס",
+    "language": "שפה",
+    "category": "קטגוריה",
+    "tags": "תגיות",
+    "thumbnail": "תמונה ראשית",
+    "publishedAt": "תאריך פרסום",
+    "createdAt": "נוצר ב",
+    "updatedAt": "עודכן ב"
+  },
+  "table": {
+    "title": "כותרת",
+    "slug": "סלאג",
+    "status": "סטטוס",
+    "author": "מחבר",
+    "date": "תאריך",
+    "actions": "פעולות",
+    "edit": "עריכה",
+    "delete": "מחיקה",
+    "view": "צפייה"
+  },
+  "buttons": {
+    "new": "חדש",
+    "save": "שמור",
+    "cancel": "בטל",
+    "delete": "מחק",
+    "edit": "ערוך",
+    "back": "חזור",
+    "next": "הבא",
+    "previous": "הקודם",
+    "submit": "שלח",
+    "upload": "העלה"
+  },
+  "messages": {
+    "saved": "נשמר בהצלחה",
+    "deleted": "נמחק בהצלחה",
+    "error": "שגיאה",
+    "loading": "טוען...",
+    "noData": "אין נתונים",
+    "confirmDelete": "האם אתה בטוח שברצונך למחוק?"
+  },
+  "public": {
+    "site": {
+      "name": "ShtetlAtlas",
+      "copyright": "© 2024 פרויקט הקהל. כל הזכויות שמורות."
+    },
+    "hero": {
+      "title": "1000 שנות היסטוריה",
+      "subtitle": "פרויקט קהילות מזרח אירופה"
+    },
+    "search": {
+      "placeholder": "לחיפוש באתר"
+    },
+    "stats": {
+      "communities": "קהילות",
+      "datasets": "מערכי נתונים",
+      "maps": "מפות",
+      "years": "שנות היסטוריה"
+    },
+    "sections": {
+      "data": "נתונים",
+      "mapsAndLayers": "מפות ושכבות",
+      "links": "קישורים",
+      "posts": "פוסטים",
+      "team": "צוות המחקר",
+      "allData": "כל הנתונים",
+      "allMaps": "כל המפות",
+      "allPosts": "כל הפוסטים",
+      "citation": "העתקת ציטוט",
+      "copied": "הועתק!"
+    },
+    "posts": {
+      "title": "פוסטים",
+      "empty": "אין פוסטים להצגה"
+    },
+    "datasets": {
+      "title": "מערכי נתונים",
+      "empty": "אין מערכי נתונים להצגה",
+      "status": "סטטוס",
+      "period": "תקופה",
+      "geographicArea": "אזור גיאוגרפי",
+      "lastUpdated": "עדכון אחרון",
+      "temporalCoverage": "כיסוי זמני",
+      "resources": "משאבים",
+      "download": "הורדה",
+      "codebook": "מילון נתונים (Codebook)",
+      "maturity": "בשלות נתונים",
+      "verified": "מאומת",
+      "provisional": "זמני",
+      "description": "תיאור"
+    },
+    "maps": {
+      "title": "מפות",
+      "empty": "אין מפות להצגה"
+    },
+    "pages": {
+      "title": "עמודים"
+    },
+    "sidebar": {
+      "categories": "קטגוריות"
+    },
+    "content": {
+      "defaultCategory": "כללי",
+      "readMore": "קרא עוד",
+      "noResults": "לא נמצאו תוצאות",
+      "backTo": "חזרה ל",
+      "all": "הכל",
+      "filterByCategory": "סינון לפי קטגוריה"
+    },
+    "collections": {
+      "title": "אוספים",
+      "empty": "אין אוספים להצגה",
+      "series": "סדרות",
+      "volumes": "כרכים",
+      "loading": "טוען...",
+      "emptyVolumes": "אין כרכים זמינים",
+      "errorLoading": "שגיאה בטעינת כרכים",
+      "toc": "תוכן עניינים",
+      "volumeInfo": "מידע על הכרך",
+      "details": "פרטים",
+      "title_label": "כותרת",
+      "description_label": "תיאור",
+      "language_label": "שפה",
+      "year": "שנה",
+      "page": "עמוד",
+      "pages": "עמודים",
+      "of": "מתוך",
+      "download": "הורדה",
+      "volume": "כרך",
+      "noName": "ללא שם",
+      "backToAll": "חזרה לכל האוספים",
+      "collectionIncludes": "אוסף זה כולל {count} כרכים מתועדים",
+      "searchVolumes": "חיפוש כרכים באוסף זה...",
+      "searchPlaceholder": "חיפוש...",
+      "noResults": "לא נמצאו תוצאות",
+      "noVolumesMatch": "לא נמצאו כרכים התואמים את החיפוש",
+      "sort": "מיון",
+      "sortNameAsc": "שם א-ת",
+      "sortNameDesc": "שם ת-א",
+      "sortDateAsc": "תאריך ישן-חדש",
+      "sortDateDesc": "תאריך חדש-ישן",
+      "show": "הצג",
+      "perPage": "לעמוד",
+      "view": "תצוגה",
+      "viewDetails": "פרטים",
+      "viewBlocks": "בלוקים",
+      "viewThumbs": "תמונות"
+    },
+    "archive": {
+      "title": "ארכיון",
+      "error": "שגיאה בטעינת הארכיון",
+      "noCollections": "אין אוספים זמינים",
+      "noCollectionsDesc": "לא נמצאו אוספים במערכת.",
+      "unknownError": "שגיאה לא ידועה"
+    },
+    "docs": {
+      "title": "מסמכים",
+      "documentation": "תיעוד",
+      "onThisPage": "בעמוד הזה",
+      "navMenu": "תפריט ניווט"
+    },
+    "map": {
+      "details": "פרטים",
+      "dataLayers": "שכבות נתונים",
+      "downloads": "הורדות",
+      "links": "קישורים",
+      "citation": "ציטוט מומלץ",
+      "dataSources": "מקורות הנתונים",
+      "codebook": "מילון נתונים (Codebook)"
+    },
+    "layer": {
+      "description": "תיאור השכבה",
+      "moreDetails": "פרטים נוספים",
+      "qualityStatus": "סטטוס איכות",
+      "yearRange": "טווח שנים",
+      "license": "רישיון שימוש",
+      "downloadFull": "הורדת נתונים מלאים",
+      "notSpecified": "לא צוין",
+      "noDescription": "אין תיאור זמין."
+    },
+    "footer": {
+      "about": "אודות",
+      "aboutText": "פרויקט קהילות מזרח אירופה הוא מיזם מחקרי המתעד 1000 שנות היסטוריה של קהילות יהודיות במזרח אירופה.",
+      "contact": "צור קשר",
+      "privacyPolicy": "מדיניות פרטיות",
+      "privacy": "מדיניות פרטיות",
+      "terms": "תנאי שימוש",
+      "accessibility": "נגישות",
+      "copyright": "© 2024 פרויקט הקהל. כל הזכויות שמורות."
+    },
+    "viewer": {
+      "title": "צפייה"
+    },
+    "dates": {
+      "published": "פורסם",
+      "updated": "עודכן"
+    },
+    "contact": {
+      "title": "צור קשר",
+      "intro": "יש לכם שאלה, תיקון או רעיון לשיתוף פעולה? שלחו לנו הודעה ונחזור אליכם בהקדם.",
+      "name": "שם",
+      "email": "אימייל",
+      "subject": "נושא",
+      "message": "הודעה",
+      "captchaLabel": "בדיקת אנטי-ספאם — פתרו את התרגיל",
+      "captchaRefresh": "רענון אתגר",
+      "send": "שליחת הודעה",
+      "sending": "שולח…",
+      "sendAnother": "שליחת הודעה נוספת",
+      "successTitle": "ההודעה נשלחה",
+      "successBody": "תודה על פנייתכם — נחזור אליכם בהקדם.",
+      "errors": {
+        "invalid_input": "אנא בדקו את השדות ונסו שוב.",
+        "captcha_failed": "התשובה לבדיקת האנטי-ספאם שגויה. נסו שוב.",
+        "mail_not_configured": "שירות הדוא\"ל אינו מוגדר בשרת.",
+        "send_failed": "לא הצלחנו לשלוח את ההודעה. נסו שוב מאוחר יותר.",
+        "network_error": "שגיאת רשת. בדקו את החיבור ונסו שוב."
+      }
+    },
+    "downloadTerms": {
+      "title": "תנאי שימוש והבהרה בנוגע לנתונים (Work in Progress)",
+      "srDescription": "אישור תנאי שימוש לפני הורדת נתונים",
+      "paragraph1": "הנתונים והשכבות הגיאוגרפיות הזמינים להורדה הם חלק ממחקר פעיל ומסופקים כמות שהם (As-Is). הנתונים בשלב זה אינם סופיים או שלמים, וייתכן שיתוקנו או יעודכנו בהמשך. כדי להגן על שלמות המחקר, חלים התנאים הבאים:",
+      "paragraph2": "אין לעשות שימוש מסחרי או אקדמי-מחקרי בנתונים, אין לפרסם עבודות או מאמרים המבוססים עליהם, ואין להפיץ אותם הלאה לצד שלישי. כמו כן, אין להשתמש בנתונים לצורך קבלת החלטות מקצועית, ללא קבלת אישור מפורש מראש והתייעצות עם צוות המחקר.",
+      "paragraph3": "בלחיצה על 'הורדה', הנך מאשר/ת שקראת והבנת תנאים אלו, וכי כל זכויות היוצרים שמורות לחוקרים.",
+      "cancel": "ביטול",
+      "accept": "הורדה"
+    }
+  }
+}
