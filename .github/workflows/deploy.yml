@@ -36,7 +36,7 @@ jobs:
     environment: production
     steps:
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@2ead5d36353fdd47d10ca9bd4259a2871b9d7c4c  # v1.2.0
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2  # v1.2.5
         with:
           host: ${{ secrets.ORACLE_HOST }}
           username: opc
