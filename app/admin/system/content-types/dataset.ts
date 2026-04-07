@@ -39,8 +39,8 @@ export const DatasetType: ContentTypeDefinition = {
       listDisplay: "badge",
     },
     createField.text("version", "Version", { showInList: true, order: 6 }),
-    createField.number("minYear", "Min Year", { showInList: true, order: 7 }),
-    createField.number("maxYear", "Max Year", { showInList: true, order: 8 }),
+    createField.number("yearMin", "Min Year", { showInList: true, order: 7 }),
+    createField.number("yearMax", "Max Year", { showInList: true, order: 8 }),
     createField.text("license", "License", { showInList: false, order: 9 }),
     createField.text("citationText", "Citation", { showInList: false, order: 10 }),
     {

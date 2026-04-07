@@ -1,6 +1,6 @@
 import { Calendar, User } from "lucide-react"
+import type { Post as PrismaPost } from "@prisma/client"
 import { PostSideBar } from './PostSideBar'
-import { Post as ApiPost } from "@/payload-types"
 import { PageTitle, PageSubtitle } from '@/components/ui/typography'
 import { MetaRow, MetaItem } from '@/components/ui/metadata'
 import { NoteCard, Section } from '@/components/ui/sections'
@@ -10,7 +10,10 @@ import { SiteBreadcrumbs } from '@/components/ui/site-breadcrumbs'
 import { loadTranslations, getTranslation } from '@/lib/i18n/load-translations'
 import { defaultLocale } from '@/lib/i18n/config'
 
-interface PostData extends Omit<ApiPost, 'content' | 'author' | 'tags'> {
+// View-model for the rendered post page. Built from a Prisma Post plus
+// flattened relation fields (author name, primary category, tag names) and
+// page-specific extras (subtitle, date, imageUrl, sources).
+interface PostData extends Omit<PrismaPost, 'content' | 'createdAt' | 'updatedAt'> {
   content: string
   subtitle?: string
   author?: string

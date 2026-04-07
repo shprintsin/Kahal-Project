@@ -1,6 +1,6 @@
 /**
  * Content Types Barrel Export
- * 
+ *
  * Import this file to register all content types with the registry.
  */
 
@@ -12,6 +12,11 @@ import "./period";
 import "./place";
 import "./artifact-category";
 import "./site-link";
+import "./dataset";
+import "./layer";
+import "./category";
+import "./tag";
+import "./region";
 
 // Re-export for direct access
 export { ArticleType } from "./article";
@@ -23,3 +28,6 @@ export { PeriodType } from "./period";
 export { PlaceType } from "./place";
 export { ArtifactCategoryType } from "./artifact-category";
 export { SiteLinkType } from "./site-link";
+export { DatasetType } from "./dataset";
+export { LayerType } from "./layer";
+export { RegionType } from "./region";
