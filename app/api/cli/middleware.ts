@@ -32,7 +32,7 @@ function unauthorized(message: string, status = 401): NextResponse {
  *   1. SHA-256(token) match against an unrevoked ApiKey row in the DB.
  *      If found, lastUsedAt is updated fire-and-forget and the row's
  *      scopes are returned.
- *   2. Fallback: timing-safe compare against the CLI_API_KEY env var.
+ *   2. Fallback: timing-safe compare against the SHT_API_KEY env var.
  *      Returns the default deploy/pull/cms:write scope set on match.
  *      The env-var path is kept for backward compat with field CLIs
  *      and can be removed once all CLIs have been migrated to ApiKey.
@@ -76,9 +76,9 @@ export async function authenticateCli(
   }
 
   // 2. Env-var fallback.
-  const expectedKey = process.env.CLI_API_KEY;
+  const expectedKey = process.env.SHT_API_KEY;
   if (!expectedKey) {
-    return unauthorized('CLI_API_KEY not configured on server', 500);
+    return unauthorized('SHT_API_KEY not configured on server', 500);
   }
   if (safeCompare(token, expectedKey)) {
     return { ok: true, keyId: 'env', scopes: [...ENV_KEY_DEFAULT_SCOPES] };
