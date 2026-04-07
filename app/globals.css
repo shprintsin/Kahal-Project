@@ -6,8 +6,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Rubik", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-heebo), "Heebo", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --font-display: var(--font-secular), "Secular One", sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -93,7 +93,7 @@
   --brand-primary-light: #ecfdf5;
   --interactive-accent: #2563eb;
   --link-external: #1e40af;
-  --font-hebrew: "Assistant", "Heebo", sans-serif;
+  --font-hebrew: var(--font-heebo), "Heebo", sans-serif;
 
   --radius: 0.5rem;
   --background: oklch(1 0 0);
@@ -299,9 +299,6 @@
   @apply line-through text-muted-foreground;
 }
 
-body {
-  font-family: 'Rubik', sans-serif;
-}
 
 @keyframes fade-in-out {
   0% { opacity: 0; transform: translateX(-50%) translateY(4px); }

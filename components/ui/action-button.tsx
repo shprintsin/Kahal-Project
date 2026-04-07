@@ -20,7 +20,7 @@ export function ActionButton({ children, href, className, icon, iconPosition = '
   )
 
   const classes = cn(
-    "bg-brand-dark text-white px-6 py-3 rounded-md flex items-center",
+    "bg-brand-dark text-white px-6 py-3 rounded-md flex items-center font-semibold",
     "transition-all duration-300 hover:shadow-lg",
     className
   )

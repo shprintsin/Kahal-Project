@@ -22,7 +22,7 @@ export function CategoryTile({ href, icon, title, className }: CategoryTileProps
       )}
     >
       <div className="text-white mx-auto mb-3">{icon}</div>
-      <h3 className="text-white text-base sm:text-lg font-semibold">{title}</h3>
+      <h3 className="text-white text-base sm:text-lg font-bold">{title}</h3>
     </Link>
   )
 }

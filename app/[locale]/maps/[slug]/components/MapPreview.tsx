@@ -1,76 +1,225 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import {
+  Map as MapGL,
+  Source,
+  Layer,
+  NavigationControl,
+  ScaleControl,
+} from 'react-map-gl/maplibre';
+import type { MapRef, MapLayerMouseEvent } from 'react-map-gl/maplibre';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import type { FeatureCollection } from 'geojson';
 import { Maximize2, Minimize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { MapDataset as MapType } from '@/types/api-types';
-import type { MapConfig, LayerConfig, BehaviorsConfig } from '@/types/map-config';
+import type { MapDataset as MapType, MapLayer } from '@/types/api-types';
+import type {
+  MapConfig,
+  LayerConfig,
+  BehaviorsConfig,
+  PolygonStyleConfig,
+  PointStyleConfig,
+} from '@/types/map-config';
+import {
+  compileMapConfig,
+  type CompiledMapConfig,
+} from '@/lib/maplibre-renderer';
 import { resolveBasemapTile } from '@/lib/basemaps';
-import type { MapLayoutResult } from '@/lib/mapUtils';
 import { Legend } from './Legend';
+import type { LegendLayerInput } from './Legend';
 import { LayerToggle, toggleLayerVisibility } from './LayerToggle';
 import type { LayerToggleItem } from './LayerToggle';
 import { SearchControl } from './SearchControl';
+import type { SearchFeature } from './SearchControl';
 import { HoverInfoPanel } from './HoverInfoPanel';
-import 'leaflet/dist/leaflet.css';
+import type { HoverData } from './HoverInfoPanel';
+import { MapPopup, type FeaturePopupData } from './MapPopup';
+
+// ─── Props ──────────────────────────────────────
 
 interface MapPreviewProps {
   map: MapType;
 }
 
-function buildLayerConfig(layer: MapType['layers'] extends (infer T)[] ? T : never): LayerConfig {
+// ─── GeoJSON cache ──────────────────────────────
+
+const geoJsonCache = new Map<string, FeatureCollection>();
+
+async function fetchGeoJSON(url: string): Promise<FeatureCollection> {
+  const cached = geoJsonCache.get(url);
+  if (cached) return cached;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Failed to fetch GeoJSON: ${response.statusText}`);
+  const data = (await response.json()) as FeatureCollection;
+  geoJsonCache.set(url, data);
+  return data;
+}
+
+// ─── API-to-LayerConfig converter ───────────────
+
+function buildLayerConfig(layer: MapLayer): LayerConfig {
+  const styleConfig = layer.styleConfig as Record<string, unknown> | null;
+
+  const rawStyle = (styleConfig?.style ?? (styleConfig?.type ? styleConfig : null)) as
+    | PolygonStyleConfig
+    | PointStyleConfig
+    | null;
+
+  const defaultPolygonStyle: PolygonStyleConfig = {
+    type: 'simple', default_color: '#3388ff', opacity: 0.6, weight: 1, color: '#fff',
+  };
+  const defaultPointStyle: PointStyleConfig = {
+    type: 'simple', radius: 6, fillColor: '#3388ff', color: '#fff', weight: 1, fillOpacity: 0.8,
+  };
+
+  const layerType = layer.type === 'POINTS' ? 'point' : 'polygon';
+  const interactionConfig = layer.interactionConfig as Record<string, unknown> | null;
+
   return {
     id: layer.id,
     name: layer.name,
-    type: layer.type === 'POINTS' ? 'point' : 'polygon',
+    type: layerType,
     sourceType: layer.sourceType || 'url',
     url: layer.sourceUrl,
-    data: layer.geoJsonData || null,
+    data: (layer.geoJsonData as FeatureCollection | null) || null,
     visible: layer.isVisibleByDefault,
     zIndex: layer.zIndex,
-    style: layer.styleConfig?.style
-      || (layer.styleConfig?.type ? layer.styleConfig : null)
-      || (layer.type === 'POINTS' ? {
-        type: 'simple', radius: 6, fillColor: '#3388ff', color: '#fff', weight: 1, fillOpacity: 0.8
-      } : {
-        type: 'simple', default_color: '#3388ff', opacity: 0.6, weight: 1, color: '#fff'
-      }),
-    labels: layer.styleConfig?.labels || (layer.styleConfig?.show !== undefined ? layer.styleConfig : undefined),
-    popup: layer.styleConfig?.popup,
-    filter: layer.styleConfig?.filter || (layer.styleConfig?.field && layer.styleConfig?.include ? layer.styleConfig : undefined),
-    hover: layer.styleConfig?.hover || layer.interactionConfig?.hover,
-    minZoom: layer.styleConfig?.minZoom,
-    maxZoom: layer.styleConfig?.maxZoom,
-    feature_id: layer.styleConfig?.feature_id,
+    style: rawStyle ?? (layerType === 'point' ? defaultPointStyle : defaultPolygonStyle),
+    labels: (styleConfig?.labels as unknown as LayerConfig['labels']) ??
+      (styleConfig && typeof styleConfig === 'object' && 'show' in styleConfig
+        ? (styleConfig as unknown as LayerConfig['labels']) : undefined),
+    popup: styleConfig?.popup as unknown as LayerConfig['popup'],
+    filter: (styleConfig?.filter as unknown as LayerConfig['filter']) ??
+      (styleConfig && typeof styleConfig === 'object' && 'field' in styleConfig && 'include' in styleConfig
+        ? (styleConfig as unknown as LayerConfig['filter']) : undefined),
+    hover: (styleConfig?.hover as unknown as LayerConfig['hover']) ??
+      (interactionConfig?.hover as unknown as LayerConfig['hover']),
+    minZoom: styleConfig?.minZoom as number | undefined,
+    maxZoom: styleConfig?.maxZoom as number | undefined,
+    feature_id: styleConfig?.feature_id as string | undefined,
   };
 }
 
+// ─── Resolve source URL ─────────────────────────
+
+function resolveLayerSourceUrl(layerConfig: LayerConfig): string | null {
+  if (layerConfig.sourceType === 'database' && layerConfig.id) {
+    const apiUrl = process.env.NEXT_PUBLIC_ADMIN_API_URL || '';
+    return `${apiUrl}/api/geo/geojson/${layerConfig.id}`;
+  }
+  return layerConfig.url ?? null;
+}
+
+// ─── Centroid helper for search flyTo ───────────
+
+function computeCentroid(geometry: GeoJSON.Geometry): [number, number] {
+  if (geometry.type === 'Point') {
+    return geometry.coordinates as [number, number];
+  }
+  let lngSum = 0;
+  let latSum = 0;
+  let count = 0;
+
+  function accumulateCoords(coords: number[]) {
+    lngSum += coords[0];
+    latSum += coords[1];
+    count++;
+  }
+
+  function walkRings(rings: number[][][]) {
+    for (const c of rings[0]) accumulateCoords(c);
+  }
+
+  if (geometry.type === 'Polygon') {
+    walkRings(geometry.coordinates);
+  } else if (geometry.type === 'MultiPolygon') {
+    for (const poly of geometry.coordinates) walkRings(poly);
+  } else if (geometry.type === 'MultiPoint') {
+    for (const c of geometry.coordinates) accumulateCoords(c);
+  } else if (geometry.type === 'LineString') {
+    for (const c of geometry.coordinates) accumulateCoords(c);
+  } else if (geometry.type === 'MultiLineString') {
+    for (const ring of geometry.coordinates) for (const c of ring) accumulateCoords(c);
+  }
+
+  if (count === 0) return [0, 0];
+  return [lngSum / count, latSum / count];
+}
+
+function computeBbox(geometry: GeoJSON.Geometry): [number, number, number, number] | undefined {
+  if (geometry.type === 'Point') return undefined;
+  let minLng = Infinity, minLat = Infinity, maxLng = -Infinity, maxLat = -Infinity;
+
+  function checkCoord(c: number[]) {
+    if (c[0] < minLng) minLng = c[0];
+    if (c[1] < minLat) minLat = c[1];
+    if (c[0] > maxLng) maxLng = c[0];
+    if (c[1] > maxLat) maxLat = c[1];
+  }
+
+  function walkRings(rings: number[][][]) {
+    for (const c of rings[0]) checkCoord(c);
+  }
+
+  if (geometry.type === 'Polygon') {
+    walkRings(geometry.coordinates);
+  } else if (geometry.type === 'MultiPolygon') {
+    for (const poly of geometry.coordinates) walkRings(poly);
+  } else if (geometry.type === 'MultiPoint') {
+    for (const c of geometry.coordinates) checkCoord(c);
+  } else if (geometry.type === 'LineString') {
+    for (const c of geometry.coordinates) checkCoord(c);
+  } else if (geometry.type === 'MultiLineString') {
+    for (const ring of geometry.coordinates) for (const c of ring) checkCoord(c);
+  }
+
+  if (minLng === Infinity) return undefined;
+  return [minLng, minLat, maxLng, maxLat];
+}
+
+// ─── Component ──────────────────────────────────
+
 export function MapPreview({ map }: MapPreviewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const layerRefsRef = useRef<Record<string, any>>({});
-  const allFeaturesRef = useRef<MapLayoutResult['allFeatures']>([]);
+  const mapRef = useRef<MapRef | null>(null);
+
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  // Compiled config
+  const [compiledConfig, setCompiledConfig] = useState<CompiledMapConfig | null>(null);
+
   // Hover state
-  const [hoveredFeature, setHoveredFeature] = useState<Record<string, unknown> | null>(null);
-  const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number } | null>(null);
+  const [hoverData, setHoverData] = useState<HoverData | null>(null);
   const [hoverLayerConfig, setHoverLayerConfig] = useState<LayerConfig | null>(null);
+  const hoveredFeatureRef = useRef<{ sourceId: string; featureId: number | string } | null>(null);
+
+  // Popup state
+  const [popupData, setPopupData] = useState<FeaturePopupData | null>(null);
 
   // Layer toggle state
   const [layerToggleItems, setLayerToggleItems] = useState<LayerToggleItem[]>([]);
 
   // Search features
-  const [searchFeatures, setSearchFeatures] = useState<MapLayoutResult['allFeatures']>([]);
+  const [searchFeatures, setSearchFeatures] = useState<SearchFeature[]>([]);
+
+  // Build layer configs from map data
+  const layerConfigs = useMemo(
+    () => (map.layers || []).map(buildLayerConfig),
+    [map.layers],
+  );
 
   // Behaviors from map config
-  const behaviors: BehaviorsConfig | undefined = map.config?.behaviors;
+  const mapConfigObj = map.config as Record<string, unknown> | null;
+  const behaviors = mapConfigObj?.behaviors as BehaviorsConfig | undefined;
   const hasLegend = !!behaviors?.legend;
-  const layerToggleControl = behaviors?.controls?.find(c => c.type === 'layer-toggle');
-  const searchControl = behaviors?.controls?.find(c => c.type === 'search');
+  const layerToggleControl = behaviors?.controls?.find((c) => c.type === 'layer-toggle');
+  const searchControl = behaviors?.controls?.find((c) => c.type === 'search');
+  const basemapKey = mapConfigObj?.basemap as string | undefined;
+
+  // ─── Fullscreen ─────────────────────────────
 
   const toggleFullscreen = useCallback(() => {
     const el = containerRef.current;
@@ -83,199 +232,412 @@ export function MapPreview({ map }: MapPreviewProps) {
   }, []);
 
   useEffect(() => {
-    const onFullscreenChange = () => {
-      const active = !!document.fullscreenElement;
-      setIsFullscreen(active);
-      if (mapInstanceRef.current) {
-        setTimeout(() => mapInstanceRef.current.invalidateSize(), 200);
-      }
-    };
+    const onFullscreenChange = () => setIsFullscreen(!!document.fullscreenElement);
     document.addEventListener('fullscreenchange', onFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
   }, []);
 
-  // Layer toggle handler
+  // ─── Fetch GeoJSON + Compile ────────────────
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadAndCompile() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const dataMap = new Map<string, FeatureCollection>();
+        const allFeatures: SearchFeature[] = [];
+        const searchField = searchControl?.field;
+
+        // Fetch all layer data in parallel
+        await Promise.all(layerConfigs.map(async (lc) => {
+          const key = lc.id || lc.name;
+          let geoData: FeatureCollection | null = lc.data ?? null;
+
+          if (!geoData) {
+            const url = resolveLayerSourceUrl(lc);
+            if (url) geoData = await fetchGeoJSON(url);
+          }
+
+          if (geoData) {
+            dataMap.set(key, geoData);
+
+            // Collect features for search
+            for (const feature of geoData.features) {
+              const props = (feature.properties ?? {}) as Record<string, unknown>;
+              const featureIdField = lc.feature_id || 'id';
+              const fid = (props[featureIdField] as string | undefined) ??
+                (feature.id != null ? String(feature.id) : `${key}-${allFeatures.length}`);
+              const label = searchField ? String(props[searchField] ?? '') : String(fid);
+              if (!label) continue;
+
+              const geom = feature.geometry;
+              const centroid = geom ? computeCentroid(geom) : [0, 0] as [number, number];
+              const bbox = geom ? computeBbox(geom) : undefined;
+
+              allFeatures.push({
+                id: fid,
+                label,
+                coordinates: centroid as [number, number],
+                bbox,
+              });
+            }
+          }
+        }));
+
+        if (cancelled) return;
+
+        // Build MapConfig for compiler
+        const tileConfig = resolveBasemapTile(
+          basemapKey,
+          mapConfigObj?.tile as Parameters<typeof resolveBasemapTile>[1],
+        );
+
+        const fullConfig: MapConfig & { basemap?: string } = {
+          tile: tileConfig,
+          zoom: (mapConfigObj?.zoom as number) || 6,
+          center: (mapConfigObj?.center as [number, number]) || [52.0, 20.0],
+          layers: layerConfigs,
+          customCSS: mapConfigObj?.customCSS as string | undefined,
+          behaviors,
+          basemap: basemapKey,
+        };
+
+        const compiled = compileMapConfig(fullConfig, dataMap);
+
+        if (cancelled) return;
+
+        setCompiledConfig(compiled);
+        setSearchFeatures(allFeatures);
+        setLayerToggleItems(
+          layerConfigs.map((l) => ({
+            slug: l.id || l.name,
+            name: l.name,
+            visible: l.visible,
+          })),
+        );
+        setLoading(false);
+      } catch (err) {
+        console.error('Error loading map data:', err);
+        if (!cancelled) {
+          setError('Failed to load map. Please try again later.');
+          setLoading(false);
+        }
+      }
+    }
+
+    loadAndCompile();
+    return () => { cancelled = true; };
+  }, [map, layerConfigs, basemapKey, mapConfigObj, behaviors, searchControl?.field]);
+
+  // ─── Interactive layer IDs ──────────────────
+
+  const interactiveLayerIds = useMemo(() => {
+    if (!compiledConfig) return [];
+    const ids: string[] = [];
+    for (const spec of compiledConfig.layerSpecs) {
+      for (const layer of spec.layers) {
+        if (layer.type === 'fill' || layer.type === 'circle') {
+          ids.push(layer.id);
+        }
+      }
+    }
+    return ids;
+  }, [compiledConfig]);
+
+  // ─── Layer config lookup by compiled layer ID ─
+
+  const layerConfigByCompiledId = useMemo(() => {
+    const lookup = new Map<string, LayerConfig>();
+    for (const lc of layerConfigs) {
+      const key = lc.id || lc.name;
+      lookup.set(`${key}-fill`, lc);
+      lookup.set(`${key}-line`, lc);
+      lookup.set(`${key}-circle`, lc);
+      lookup.set(`${key}-labels`, lc);
+    }
+    return lookup;
+  }, [layerConfigs]);
+
+  // ─── Clear hover helper ───────────────────────
+
+  const clearHover = useCallback(() => {
+    const mapInstance = mapRef.current?.getMap();
+    if (mapInstance && hoveredFeatureRef.current) {
+      mapInstance.setFeatureState(
+        { source: hoveredFeatureRef.current.sourceId, id: hoveredFeatureRef.current.featureId },
+        { hover: false },
+      );
+      hoveredFeatureRef.current = null;
+    }
+    setHoverData(null);
+    setHoverLayerConfig(null);
+  }, []);
+
+  // ─── Hover handler ────────────────────────────
+
+  const onMouseMove = useCallback(
+    (event: MapLayerMouseEvent) => {
+      const mapInstance = mapRef.current?.getMap();
+      if (!mapInstance) return;
+
+      const features = event.features;
+      if (!features || features.length === 0) {
+        clearHover();
+        return;
+      }
+
+      const topFeature = features[0];
+      const layerId = topFeature.layer?.id;
+      const lc = layerId ? layerConfigByCompiledId.get(layerId) : null;
+
+      if (!lc?.hover?.enable) {
+        clearHover();
+        return;
+      }
+
+      const layerKey = lc.id || lc.name;
+      const sourceId = `source-${layerKey}`;
+      const featureId = topFeature.id;
+
+      // Clear previous if different feature
+      if (hoveredFeatureRef.current && (
+        hoveredFeatureRef.current.sourceId !== sourceId ||
+        hoveredFeatureRef.current.featureId !== featureId
+      )) {
+        mapInstance.setFeatureState(
+          { source: hoveredFeatureRef.current.sourceId, id: hoveredFeatureRef.current.featureId },
+          { hover: false },
+        );
+      }
+
+      // Set new hover
+      if (featureId != null) {
+        mapInstance.setFeatureState(
+          { source: sourceId, id: featureId },
+          { hover: true },
+        );
+        hoveredFeatureRef.current = { sourceId, featureId };
+      }
+
+      setHoverData({
+        properties: (topFeature.properties ?? {}) as Record<string, string | number | boolean | null>,
+        position: { x: event.point.x, y: event.point.y },
+        layerName: lc.name,
+      });
+      setHoverLayerConfig(lc);
+    },
+    [layerConfigByCompiledId, clearHover],
+  );
+
+  const onMouseLeave = useCallback(() => {
+    clearHover();
+  }, [clearHover]);
+
+  // ─── Click (Popup) handler ────────────────────
+
+  const onClick = useCallback(
+    (event: MapLayerMouseEvent) => {
+      const features = event.features;
+      if (!features || features.length === 0) {
+        setPopupData(null);
+        return;
+      }
+
+      const topFeature = features[0];
+      const layerId = topFeature.layer?.id;
+      const lc = layerId ? layerConfigByCompiledId.get(layerId) : null;
+
+      if (!lc?.popup?.show) {
+        setPopupData(null);
+        return;
+      }
+
+      setPopupData({
+        longitude: event.lngLat.lng,
+        latitude: event.lngLat.lat,
+        properties: (topFeature.properties ?? {}) as Record<string, string | number | boolean | null>,
+        layerName: lc.name,
+        popupConfig: lc.popup,
+      });
+    },
+    [layerConfigByCompiledId],
+  );
+
+  // ─── Layer toggle ─────────────────────────────
+
   const handleLayerToggle = useCallback((slug: string) => {
-    setLayerToggleItems(prev => {
+    setLayerToggleItems((prev) => {
       const next = toggleLayerVisibility(prev, slug);
-      const item = next.find(l => l.slug === slug);
-      const leafletLayer = layerRefsRef.current[slug];
-      if (leafletLayer && mapInstanceRef.current) {
-        if (item?.visible) {
-          if (!mapInstanceRef.current.hasLayer(leafletLayer)) mapInstanceRef.current.addLayer(leafletLayer);
-        } else {
-          if (mapInstanceRef.current.hasLayer(leafletLayer)) mapInstanceRef.current.removeLayer(leafletLayer);
+      const item = next.find((l) => l.slug === slug);
+      const mapInstance = mapRef.current?.getMap();
+      if (!mapInstance) return next;
+
+      const visibility = item?.visible ? 'visible' : 'none';
+      const suffixes = ['-fill', '-line', '-circle', '-labels'];
+      for (const suffix of suffixes) {
+        try {
+          mapInstance.setLayoutProperty(`${slug}${suffix}`, 'visibility', visibility);
+        } catch {
+          // Layer may not exist for this type
         }
       }
       return next;
     });
   }, []);
 
-  // Search select handler
-  const handleSearchSelect = useCallback((featureId: string) => {
-    const feature = allFeaturesRef.current.find(f => f.id === featureId);
-    if (!feature?.geometry || !mapInstanceRef.current) return;
-    try {
-      const L = require('leaflet');
-      const geojson = L.geoJSON({ type: 'Feature', geometry: feature.geometry, properties: {} });
-      mapInstanceRef.current.fitBounds(geojson.getBounds(), { padding: [50, 50], maxZoom: 14 });
-    } catch (e) {
-      console.warn('Search fly-to failed:', e);
+  // ─── Search select ────────────────────────────
+
+  const handleSearchSelect = useCallback((feature: SearchFeature) => {
+    if (!mapRef.current) return;
+    if (feature.bbox) {
+      const [w, s, e, n] = feature.bbox;
+      mapRef.current.fitBounds([w, s, e, n], { padding: 50, maxZoom: 14, duration: 1500 });
+    } else {
+      mapRef.current.flyTo({
+        center: feature.coordinates,
+        zoom: 14,
+        duration: 1500,
+      });
     }
   }, []);
 
-  useEffect(() => {
-    let cancelled = false;
+  // ─── Cursor ───────────────────────────────────
 
-    const initMap = async () => {
-      if (!mapRef.current) return;
+  const cursor = hoveredFeatureRef.current ? 'pointer' : 'grab';
 
-      setLoading(true);
-      setError(null);
+  // ─── Hover display config ─────────────────────
 
-      if (mapInstanceRef.current) {
-        try { mapInstanceRef.current.remove(); } catch (e) { console.warn("Error removing map:", e); }
-        mapInstanceRef.current = null;
-      }
-
-      const container = mapRef.current;
-      if ((container as any)._leaflet_id) {
-        delete (container as any)._leaflet_id;
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 100));
-      if (!mapRef.current || cancelled) return;
-
-      try {
-        const { mapLayout } = await import('@/lib/mapUtils');
-        if (cancelled) return;
-
-        const layerConfigs = (map.layers || []).map(buildLayerConfig);
-
-        const mapConfig: MapConfig = {
-          tile: resolveBasemapTile(map.config?.basemap, map.config?.tile),
-          zoom: map.config?.zoom || 6,
-          center: map.config?.center || [52.0, 20.0],
-          layers: layerConfigs,
-          customCSS: map.config?.customCSS,
-          behaviors,
-        };
-
-        const mapContainerEl = mapRef.current;
-        const result = await mapLayout(mapContainerEl, mapConfig, {
-          onHover: (feature, position, _style, layerCfg) => {
-            const rect = mapContainerEl.getBoundingClientRect();
-            setHoveredFeature(feature);
-            setHoverPosition({ x: position.x - rect.left, y: position.y - rect.top });
-            setHoverLayerConfig(layerCfg);
-          },
-          onHoverEnd: () => {
-            setHoveredFeature(null);
-            setHoverPosition(null);
-            setHoverLayerConfig(null);
-          },
-        });
-
-        mapInstanceRef.current = result.map;
-        layerRefsRef.current = result.layerRefs;
-        allFeaturesRef.current = result.allFeatures;
-        setSearchFeatures(result.allFeatures);
-
-        // Initialize layer toggle items
-        setLayerToggleItems(layerConfigs.map(l => ({
-          slug: l.id || l.name,
-          name: l.name,
-          visible: l.visible,
-        })));
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error initializing map:", error);
-        setError("Failed to load map. Please try again later.");
-        setLoading(false);
-      }
-    };
-
-    initMap();
-
-    return () => {
-      cancelled = true;
-      if (mapInstanceRef.current) {
-        try { mapInstanceRef.current.remove(); } catch (e) { console.warn("Error in cleanup:", e); }
-        mapInstanceRef.current = null;
-      }
-    };
-  }, [map]);
-
-  // Determine hover display config from the hovered layer
-  const hoverDisplay = hoverLayerConfig?.hover?.display ?? 'floating';
   const hoverFields = hoverLayerConfig?.hover?.panel?.fields;
   const hoverTemplate = hoverLayerConfig?.hover?.panel?.template;
+  const hoverMode = hoverLayerConfig?.hover?.display ?? 'floating';
 
-  // Build legend layers from visible layer configs
-  const legendLayers = (map.layers || [])
-    .filter(l => l.isVisibleByDefault !== false)
-    .map(l => {
-      const cfg = buildLayerConfig(l);
-      return { name: cfg.name, style: cfg.style };
-    });
+  // ─── Legend layers ────────────────────────────
+
+  const legendLayers = useMemo<LegendLayerInput[]>(
+    () =>
+      (map.layers || [])
+        .filter((l) => l.isVisibleByDefault !== false)
+        .map((l) => {
+          const cfg = buildLayerConfig(l);
+          return { name: cfg.name, slug: cfg.id, style: cfg.style, type: cfg.type };
+        }),
+    [map.layers],
+  );
+
+  // ─── Render ───────────────────────────────────
 
   return (
     <div
       ref={containerRef}
-      className="w-full h-full min-h-[600px] rounded-lg border overflow-hidden relative bg-gray-100"
+      className="w-full rounded-lg border overflow-hidden relative bg-gray-100"
+      style={{ height: isFullscreen ? '100vh' : 600 }}
     >
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-700 mx-auto mb-4"></div>
-            <p className="text-gray-600">טוען מפה...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-700 mx-auto mb-4" />
+            <p className="text-gray-600">Loading map...</p>
           </div>
         </div>
       )}
+
       {error && (
         <div className="absolute inset-0 flex items-center justify-center bg-red-50 z-10">
           <div className="text-center text-red-700 p-6">
-            <p className="font-semibold mb-2">שגיאה בטעינת המפה</p>
+            <p className="font-semibold mb-2">Error loading map</p>
             <p className="text-sm">{error}</p>
           </div>
         </div>
       )}
 
+      {compiledConfig && (
+        <MapGL
+          ref={mapRef}
+          initialViewState={{
+            longitude: compiledConfig.center[1],
+            latitude: compiledConfig.center[0],
+            zoom: compiledConfig.zoom,
+          }}
+          style={{ width: '100%', height: isFullscreen ? '100vh' : '100%' }}
+          mapStyle={compiledConfig.mapStyle}
+          interactiveLayerIds={interactiveLayerIds}
+          onMouseMove={onMouseMove}
+          onMouseLeave={onMouseLeave}
+          onClick={onClick}
+          cursor={cursor}
+          attributionControl={false}
+        >
+          <NavigationControl position="top-left" showCompass={false} />
+          <ScaleControl position="bottom-left" />
+
+          {compiledConfig.layerSpecs.map((spec) => (
+            <Source
+              key={spec.sourceId}
+              id={spec.sourceId}
+              type="geojson"
+              data={spec.sourceData}
+              generateId
+            >
+              {spec.layers.map((compiledLayer) => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-map-gl Layer accepts dynamic paint/layout
+                const layerProps = {
+                  id: compiledLayer.id,
+                  type: compiledLayer.type,
+                  paint: compiledLayer.paint,
+                  layout: compiledLayer.layout,
+                  ...(compiledLayer.filter ? { filter: compiledLayer.filter } : {}),
+                  ...(compiledLayer.minzoom != null ? { minzoom: compiledLayer.minzoom } : {}),
+                  ...(compiledLayer.maxzoom != null ? { maxzoom: compiledLayer.maxzoom } : {}),
+                } as React.ComponentProps<typeof Layer>;
+                return <Layer key={compiledLayer.id} {...layerProps} />;
+              })}
+            </Source>
+          ))}
+
+          {popupData && (
+            <MapPopup data={popupData} onClose={() => setPopupData(null)} />
+          )}
+        </MapGL>
+      )}
+
+      {/* Fullscreen button */}
       <Button
         variant="outline"
         size="icon-sm"
         onClick={toggleFullscreen}
         className="absolute top-3 left-3 z-[1000] bg-white/90 backdrop-blur-sm shadow-md hover:bg-white"
-        title={isFullscreen ? 'צא ממסך מלא' : 'מסך מלא'}
+        title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
       >
         {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
       </Button>
 
-      <div ref={mapRef} className={`w-full ${isFullscreen ? 'h-screen' : 'h-full min-h-[600px]'}`} />
-
+      {/* Legend */}
       {!loading && hasLegend && (
         <Legend layers={legendLayers} config={behaviors!.legend!} />
       )}
 
+      {/* Layer toggle */}
       {!loading && layerToggleControl && layerToggleItems.length > 1 && (
-        <LayerToggle layers={layerToggleItems} onToggle={handleLayerToggle} />
+        <LayerToggle items={layerToggleItems} onToggle={handleLayerToggle} />
       )}
 
+      {/* Search */}
       {!loading && searchControl?.field && (
         <SearchControl
           features={searchFeatures}
-          searchField={searchControl.field}
           onSelect={handleSearchSelect}
         />
       )}
 
+      {/* Hover info panel */}
       <HoverInfoPanel
-        mode={hoverDisplay}
-        feature={hoveredFeature}
+        data={hoverData}
+        mode={hoverMode}
         fields={hoverFields}
         template={hoverTemplate}
-        position={hoverPosition ?? undefined}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import DatasetLandingPage from '@/app/components/pages_components/DatasetLandingPage';
-import { getMapBySlug } from '@/app/admin/actions/maps';
+import { getMapBySlug, getMapDeployments } from '@/app/admin/actions/maps';
 import { getSiteShellData } from '@/app/lib/get-navigation';
 import { SetEditUrl } from '@/components/ui/admin-toolbar';
 import { MapViewerClient } from '@/app/[locale]/maps/[slug]/MapViewerClient';
@@ -11,9 +11,10 @@ interface PageProps {
 
 export default async function DatasetPage({ params }: PageProps) {
   const { locale, slug } = await params;
-  const [apiDataset, shellData] = await Promise.all([
+  const [apiDataset, shellData, deployments] = await Promise.all([
     getMapBySlug(slug, { lang: locale, includeLayers: true, includeResources: true }),
     getSiteShellData(locale),
+    getMapDeployments(slug),
   ]);
 
   if (!apiDataset) {
@@ -23,7 +24,7 @@ export default async function DatasetPage({ params }: PageProps) {
   const hasLayers = Array.isArray(apiDataset.layers) && apiDataset.layers.length > 0;
 
   if (hasLayers) {
-    return <MapViewerClient map={apiDataset as any} shellData={shellData} locale={locale} />;
+    return <MapViewerClient map={apiDataset as any} shellData={shellData} deployments={deployments} locale={locale} />;
   }
 
   const viewDataset: any = {
@@ -53,7 +54,7 @@ export default async function DatasetPage({ params }: PageProps) {
   return (
     <>
       <SetEditUrl url={`/admin/datastudio/${apiDataset.id}`} />
-      <DatasetLandingPage dataset={viewDataset} shellData={shellData} locale={locale} />
+      <DatasetLandingPage dataset={viewDataset} shellData={shellData} locale={locale} deployments={deployments} />
     </>
   );
 }

@@ -16,14 +16,24 @@ import rehypeStringify from 'rehype-stringify';
 import { SiteShell } from '@/components/ui/site-shell';
 import type { SiteShellData } from '@/app/lib/get-navigation';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { VersionHistory } from '@/app/[locale]/maps/[slug]/components/VersionHistory';
 import { useLanguage } from '@/lib/i18n/language-provider';
 import { getDateLocale, getDir } from '@/lib/i18n/config';
 import type { Locale } from '@/lib/i18n/config';
+
+interface Deployment {
+  id: string
+  version: string
+  changeLog: string | null
+  gitSha: string | null
+  deployedAt: string | Date
+}
 
 interface DatasetLandingPageProps {
   dataset: Dataset;
   shellData: SiteShellData;
   locale?: string;
+  deployments?: Deployment[];
 }
 
 const formatFileSize = (bytes?: number): string => {
@@ -50,7 +60,7 @@ const getFileIcon = (format: string) => {
   }
 };
 
-export default function DatasetLandingPage({ dataset, shellData, locale: localeProp }: DatasetLandingPageProps) {
+export default function DatasetLandingPage({ dataset, shellData, locale: localeProp, deployments = [] }: DatasetLandingPageProps) {
   const { locale, t } = useLanguage();
   const dir = getDir(locale as Locale);
   const dateLocale = getDateLocale(locale as Locale);
@@ -175,10 +185,10 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
                     </dd>
                   </div>
 
-                  <div className="flex flex-col gap-1 pb-3 border-b border-border">
-                    <dt className="text-xs font-semibold text-body font-display">גרסה</dt>
-                    <dd className="text-sm text-foreground font-mono">{dataset.version}</dd>
-                  </div>
+                  <VersionHistory
+                    version={dataset.version}
+                    deployments={deployments}
+                  />
 
                   {dataset.license && (
                     <div className="flex flex-col gap-1">
@@ -193,39 +203,34 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
                 <h3 className="text-sm font-bold text-foreground mb-3 font-display">{t('public.datasets.resources', 'קבצי נתונים')}</h3>
                 <div className="space-y-3">
                   {dataset.resources.map((resource) => (
-                    <div
-                      key={resource.id}
-                      className="flex items-center gap-3 p-3 sm:p-4 bg-white border border-border-strong shadow-sm"
-                    >
-                      <div className="text-brand-primary">
-                        {getFileIcon(resource.format)}
-                      </div>
-                      <div className="flex-1 text-right min-w-0">
-                        <div className="text-xs sm:text-sm font-semibold text-foreground mb-1">{resource.name}</div>
-                        <div className="text-[11px] sm:text-xs text-muted-foreground font-mono truncate" dir="ltr">{resource.url.split('/').pop()?.replace(/^\d+_/, '')}</div>
-                        <div className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">
-                          {resource.format}{resource.size_bytes > 0 ? ` • ${formatFileSize(resource.size_bytes)}` : ""}
+                    <div key={resource.id} className="flex items-center gap-2">
+                      <a
+                        href={resource.url}
+                        download
+                        className="flex items-center gap-3 p-3 sm:p-4 flex-1 bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all cursor-pointer min-w-0"
+                        title={`הורד ${resource.name}`}
+                      >
+                        <div className="text-brand-primary shrink-0">
+                          {getFileIcon(resource.format)}
                         </div>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        {resource.format?.toUpperCase() === 'CSV' && (
-                          <button
-                            onClick={() => setCsvPreview({ url: resource.url, name: resource.name })}
-                            className="p-2 text-muted-foreground hover:text-brand-primary transition-colors"
-                            title="צפה בנתונים"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                        )}
-                        <a
-                          href={resource.url}
-                          download
-                          className="p-2 text-muted-foreground hover:text-brand-primary transition-colors"
-                          title="הורד"
+                        <div className="flex-1 text-right min-w-0">
+                          <div className="text-xs sm:text-sm font-semibold text-foreground mb-1">{resource.name}</div>
+                          <div className="text-[11px] sm:text-xs text-muted-foreground font-mono truncate" dir="ltr">{resource.url.split('/').pop()?.replace(/^\d+_/, '')}</div>
+                          <div className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">
+                            {resource.format}{resource.size_bytes > 0 ? ` • ${formatFileSize(resource.size_bytes)}` : ""}
+                          </div>
+                        </div>
+                        <Download className="h-4 w-4 text-brand-primary shrink-0" />
+                      </a>
+                      {resource.format?.toUpperCase() === 'CSV' && (
+                        <button
+                          onClick={() => setCsvPreview({ url: resource.url, name: resource.name })}
+                          className="p-3 sm:p-4 border border-border-strong shadow-sm bg-white hover:border-brand-primary hover:bg-brand-primary-light transition-all self-stretch flex items-center"
+                          title="צפה בנתונים"
                         >
-                          <Download className="w-4 h-4" />
-                        </a>
-                      </div>
+                          <Eye className="w-5 h-5 text-brand-primary" />
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>

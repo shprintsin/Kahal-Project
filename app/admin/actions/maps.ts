@@ -97,6 +97,7 @@ interface MapResourceItem {
   filename: string | null;
   mimeType: string | null;
   format: string | null;
+  sizeBytes: number | null;
   isMainFile: boolean;
   excerptI18n: unknown;
   createdAt: Date;
@@ -718,6 +719,7 @@ export async function getMapBySlug(
               filename: true,
               mimeType: true,
               format: true,
+              sizeBytes: true,
               isMainFile: true,
               excerptI18n: true,
               createdAt: true,
@@ -810,6 +812,7 @@ export async function getMapBySlug(
           filename: resource.filename,
           mimeType: resource.mimeType,
           format: resource.format,
+          sizeBytes: resource.sizeBytes,
           isMainFile: resource.isMainFile,
           excerpt: getLocalizedField(null, resource.excerptI18n, lang),
           createdAt: resource.createdAt.toISOString(),

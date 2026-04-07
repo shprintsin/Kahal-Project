@@ -3,9 +3,10 @@
   "configurations": [
     {
       "name": "next-dev",
-      "runtimeExecutable": "node",
-      "runtimeArgs": ["C:/cde/proje/kahal/unified/unified/node_modules/next/dist/bin/next", "dev"],
-      "port": 3000
+      "runtimeExecutable": "npx.cmd",
+      "runtimeArgs": ["next", "dev"],
+      "port": 3000,
+      "autoPort": true
     },
     {
       "name": "prisma-studio",

@@ -664,6 +664,94 @@ async function main() {
     },
   });
 
+  // --- Documents ---
+  const documents = await Promise.all([
+    prisma.document.create({
+      data: {
+        slug: "regulamin-kahalu-lwow-1789",
+        title: "Regulamin Kahału Lwowskiego z roku 1789",
+        titleEn: "Regulations of the Lviv Kahal, 1789",
+        description: "Regulamin wewnętrzny gminy żydowskiej we Lwowie, ustanowiony w 1789 roku przez starszych kahału. Dokument określa zasady administracji, podatków i sądownictwa kahałowego.",
+        descriptionEn: "Internal regulations of the Jewish community in Lviv, established in 1789 by the kahal elders. The document defines rules for administration, taxation, and kahal judiciary.",
+        category: "regulations",
+        year: 1789,
+        reference: "CDIAL, fond 52, op. 1, spr. 234",
+        lang: "PL",
+        status: "published",
+        license: "Public Domain",
+        volume: "I",
+        pages: {
+          create: [
+            {
+              index: 0,
+              content: "# Regulamin Kahału Lwowskiego\n\n## Rozdział I — O wyborze starszych\n\n**Art. 1.** Starsi Kahału wybierani będą corocznie w miesiącu Nisan, przez zgromadzenie pełnoprawnych członków gminy.\n\n**Art. 2.** Kandydaci na urząd starszego muszą mieć ukończone lat trzydzieści, być osiadłymi we Lwowie od lat pięciu i opłacać podatek kahałowy w pełnej wysokości.\n\n**Art. 3.** Wybory odbywają się w Bóżnicy Wielkiej, w obecności co najmniej trzydziestu członków gminy.",
+              contentHe: "# תקנות קהל לבוב\n\n## פרק א׳ — על בחירת הזקנים\n\n**סעיף א׳.** זקני הקהל ייבחרו מדי שנה בחודש ניסן, על ידי אסיפת חברי הקהילה בעלי זכות הצבעה.\n\n**סעיף ב׳.** מועמדים לתפקיד זקן חייבים להיות בני שלושים שנה לפחות, יושבי לבוב חמש שנים, ומשלמי מס קהל במלואו.\n\n**סעיף ג׳.** הבחירות מתקיימות בבית הכנסת הגדול, בנוכחות שלושים חברי קהילה לפחות.",
+              contentEn: "# Regulations of the Lviv Kahal\n\n## Chapter I — On the Election of Elders\n\n**Art. 1.** The Kahal Elders shall be elected annually in the month of Nisan, by the assembly of full-right community members.\n\n**Art. 2.** Candidates for the office of elder must be at least thirty years of age, have resided in Lviv for five years, and pay the kahal tax in full.\n\n**Art. 3.** Elections shall take place in the Great Synagogue, in the presence of at least thirty community members.",
+              filename: "001.md",
+              bookmark: "Rozdział I — O wyborze starszych",
+              highlights: [],
+            },
+            {
+              index: 1,
+              content: "## Rozdział II — O podatkach i dochodach kahału\n\n**Art. 4.** Każdy członek gminy żydowskiej we Lwowie zobowiązany jest do opłacania podatku kahałowego, którego wysokość ustalana jest corocznie przez radę starszych.\n\n**Art. 5.** Podatek składa się z trzech części:\n- Podatek od majątku nieruchomego\n- Podatek od handlu i rzemiosła\n- Podatek osobisty (pogłówne)\n\n**Art. 6.** Starsi kahału mianują poborców podatkowych, którzy zobowiązani są do prowadzenia ksiąg rachunkowych i składania sprawozdań co kwartał.\n\n**Art. 7.** Dochody kahału przeznaczane są na utrzymanie synagog, cmentarza, szpitala żydowskiego, szkoły i wynagrodzenie rabina oraz urzędników kahałowych.",
+              contentHe: "## פרק ב׳ — על מיסים והכנסות הקהל\n\n**סעיף ד׳.** כל חבר הקהילה היהודית בלבוב חייב בתשלום מס קהל, שגובהו נקבע מדי שנה על ידי מועצת הזקנים.\n\n**סעיף ה׳.** המס מורכב משלושה חלקים:\n- מס על נכסי דלא ניידי\n- מס על מסחר ומלאכה\n- מס אישי (גולגולת)\n\n**סעיף ו׳.** זקני הקהל ממנים גובי מיסים, המחויבים לנהל ספרי חשבונות ולהגיש דו\"חות כל רבעון.\n\n**סעיף ז׳.** הכנסות הקהל מיועדות לאחזקת בתי הכנסת, בית העלמין, בית החולים היהודי, בית הספר ותשלום משכורת הרב ופקידי הקהל.",
+              contentEn: "## Chapter II — On Taxes and Kahal Revenue\n\n**Art. 4.** Every member of the Jewish community in Lviv is obligated to pay the kahal tax, the amount of which is determined annually by the council of elders.\n\n**Art. 5.** The tax consists of three parts:\n- Tax on immovable property\n- Tax on trade and crafts\n- Personal tax (poll tax)\n\n**Art. 6.** The kahal elders appoint tax collectors, who are required to keep account books and submit reports quarterly.\n\n**Art. 7.** Kahal revenues are allocated for the maintenance of synagogues, the cemetery, the Jewish hospital, the school, and the salaries of the rabbi and kahal officials.",
+              filename: "002.md",
+              bookmark: "Rozdział II — O podatkach",
+              highlights: [],
+            },
+            {
+              index: 2,
+              content: "## Rozdział III — O sądownictwie kahałowym\n\n**Art. 8.** Spory między członkami gminy rozstrzygane będą w pierwszej instancji przez sąd kahałowy (*bet din*), złożony z trzech sędziów mianowanych przez starszych.\n\n**Art. 9.** Sąd kahałowy orzeka w sprawach:\n- Sporów handlowych między Żydami\n- Spraw dotyczących małżeństwa i rozwodu\n- Sporów o dziedziczenie\n- Naruszenia regulaminu kahałowego\n\n**Art. 10.** Każda ze stron ma prawo odwołania się od wyroku sądu kahałowego do rabina miasta w ciągu czternastu dni.\n\n**Art. 11.** Kto ominie sąd kahałowy i zwróci się bezpośrednio do sądu miejskiego lub grodzkiego w sprawie, która podlega jurysdykcji kahału, podlega karze grzywny w wysokości dziesięciu złotych polskich.",
+              contentHe: "## פרק ג׳ — על בית הדין של הקהל\n\n**סעיף ח׳.** סכסוכים בין חברי הקהילה יידונו בערכאה ראשונה בבית הדין של הקהל, המורכב משלושה דיינים הממונים על ידי הזקנים.\n\n**סעיף ט׳.** בית הדין דן בעניינים:\n- סכסוכי מסחר בין יהודים\n- ענייני נישואין וגירושין\n- סכסוכי ירושה\n- הפרת תקנות הקהל\n\n**סעיף י׳.** לכל צד הזכות לערער על פסק בית הדין בפני רב העיר תוך ארבעה עשר יום.\n\n**סעיף י״א.** מי שעוקף את בית דין הקהל ופונה ישירות לבית המשפט העירוני או המחוזי בעניין שבסמכות הקהל, יחויב בקנס של עשרה זהובים פולניים.",
+              contentEn: "## Chapter III — On Kahal Judiciary\n\n**Art. 8.** Disputes between community members shall be adjudicated in the first instance by the kahal court (*bet din*), composed of three judges appointed by the elders.\n\n**Art. 9.** The kahal court rules on matters of:\n- Commercial disputes between Jews\n- Matters of marriage and divorce\n- Inheritance disputes\n- Violations of kahal regulations\n\n**Art. 10.** Each party has the right to appeal the kahal court's verdict to the city rabbi within fourteen days.\n\n**Art. 11.** Anyone who bypasses the kahal court and turns directly to the municipal or district court in a matter under kahal jurisdiction shall be fined ten Polish zlotys.",
+              filename: "003.md",
+              bookmark: "Rozdział III — O sądownictwie",
+              highlights: [],
+            },
+          ],
+        },
+      },
+    }),
+    prisma.document.create({
+      data: {
+        slug: "pinkos-brody-1742",
+        title: "פנקס הקהילה ברודי — רשימת משפחות תש\"ב",
+        titleEn: "Brody Community Pinkas — Family Register, 1742",
+        description: "רשימת המשפחות היהודיות בברודי משנת 1742, כפי שנרשמו בפנקס הקהילה. כולל שמות ראשי משפחות, מספר נפשות ועיסוק.",
+        descriptionEn: "Registry of Jewish families in Brody from 1742, as recorded in the community pinkas. Includes names of household heads, number of souls, and occupation.",
+        category: "pinkas",
+        year: 1742,
+        reference: "AGAD, Archiwum Brodzkie, sygn. 45",
+        lang: "HE",
+        status: "published",
+        license: "Public Domain",
+        pages: {
+          create: [
+            {
+              index: 0,
+              content: "Rejestr familii żydowskich miasta Brody, roku 1742.\n\nNa rozkaz Jaśnie Wielmożnego Pana Potockiego, Starosty Brodzkiego, sporządzono niniejszy rejestr familii żydowskich w mieście Brody zamieszkałych.",
+              contentHe: "# פנקס משפחות יהודי ברודי — תק\"ב\n\nבפקודת האדון הנכבד פוטוצקי, סטארוסטא של ברודי, נערכה רשימה זו של המשפחות היהודיות היושבות בעיר ברודי.\n\n| # | שם ראש המשפחה | נפשות | עיסוק |\n|---|---|---|---|\n| 1 | הירש בן מאיר כהן | 7 | סוחר בדים |\n| 2 | אברהם ליב גולדשטיין | 5 | חייט |\n| 3 | משה בן יצחק הלוי | 9 | סוחר תבואה |\n| 4 | יעקב שמואל רוזנטל | 4 | רוכל |\n| 5 | שלמה זלמן קופרמן | 6 | נחושתר |",
+              contentEn: "# Brody Jewish Family Register — 1742\n\nBy order of the Honorable Lord Potocki, Starosta of Brody, the present registry of Jewish families residing in the town of Brody was compiled.\n\n| # | Head of Household | Souls | Occupation |\n|---|---|---|---|\n| 1 | Hirsh ben Meir Cohen | 7 | Cloth merchant |\n| 2 | Abraham Leib Goldstein | 5 | Tailor |\n| 3 | Moshe ben Yitzhak HaLevi | 9 | Grain merchant |\n| 4 | Yaakov Shmuel Rosenthal | 4 | Peddler |\n| 5 | Shlomo Zalman Kuperman | 6 | Coppersmith |",
+              filename: "001.md",
+              bookmark: "רשימת משפחות — דף א׳",
+              highlights: [],
+            },
+            {
+              index: 1,
+              content: "Kontynuacja rejestru familii żydowskich miasta Brody.",
+              contentHe: "| # | שם ראש המשפחה | נפשות | עיסוק |\n|---|---|---|---|\n| 6 | דוד בן נחמן פרלמוטר | 8 | סוחר עורות |\n| 7 | חיים יוסף שוורץ | 3 | מלמד |\n| 8 | בנימין וולף הורוביץ | 6 | חנווני |\n| 9 | אלעזר בן צבי פישמן | 5 | דייג |\n| 10 | נחום מנדל שטרנברג | 7 | זגג |\n\n---\n\n**סיכום:** עשר משפחות רשומות בדף זה, ובהן שישים נפשות סך הכל.",
+              contentEn: "| # | Head of Household | Souls | Occupation |\n|---|---|---|---|\n| 6 | David ben Nachman Perlmutter | 8 | Leather merchant |\n| 7 | Chaim Yosef Schwartz | 3 | Teacher (melamed) |\n| 8 | Benjamin Wolf Horowitz | 6 | Shopkeeper |\n| 9 | Elazar ben Tzvi Fishman | 5 | Fisherman |\n| 10 | Nachum Mendel Sternberg | 7 | Glazier |\n\n---\n\n**Summary:** Ten families recorded on this page, totaling sixty souls.",
+              filename: "002.md",
+              bookmark: "רשימת משפחות — דף ב׳",
+              highlights: [],
+            },
+          ],
+        },
+      },
+    }),
+  ]);
+
   console.log("Seed complete!");
   console.log(`  Admin: admin@kahal.org / admin123`);
   console.log(`  ${categories.length} categories`);
@@ -677,6 +765,7 @@ async function main() {
   console.log(`  ${layers.length} layers`);
   console.log(`  ${artifacts.length} artifacts`);
   console.log(`  ${siteLinks.length} site links`);
+  console.log(`  ${documents.length} documents`);
   console.log(`  1 collection, 1 series, 1 volume, 5 pages`);
   console.log(`  4 menus (header, hero_actions, hero_grid, hero_strip)`);
   console.log(`  2 footer columns`);

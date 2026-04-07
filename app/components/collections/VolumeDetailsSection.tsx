@@ -30,7 +30,7 @@ export default function VolumeDetailsSection({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 text-right">
           {/* Right Column (was Left) - Download Options */}
           <div className="lg:col-span-1">
-            <h2 className="text-lg font-bold text-brand-primary mb-4 flex items-center gap-2 font-['Rubik']">
+            <h2 className="text-lg font-bold text-brand-primary mb-4 flex items-center gap-2 font-display">
               <Download className="w-5 h-5" />
               אפשרויות הורדה
             </h2>
@@ -64,7 +64,7 @@ export default function VolumeDetailsSection({
 
           {/* Middle Column - Volume Information */}
           <div className="lg:col-span-1">
-            <h2 className="text-lg font-bold text-brand-primary mb-4 flex items-center gap-2 font-['Rubik']">
+            <h2 className="text-lg font-bold text-brand-primary mb-4 flex items-center gap-2 font-display">
               <Info className="w-5 h-5" />
               פרטי הכרך
             </h2>

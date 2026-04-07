@@ -1,4 +1,4 @@
-import type { MapConfig, LayerConfig, PolygonStyleConfig, PointStyleConfig, GraduatedStyleConfig } from '../types/map-config';
+import type { MapConfig, LayerConfig, PolygonStyleConfig, PointStyleConfig, GraduatedStyleConfig, HighlightConfig } from '../types/map-config';
 
 // ---------------------------------------------------------------------------
 // Color utilities
@@ -73,10 +73,43 @@ export function getGraduatedColor(value: number, config: GraduatedStyleConfig): 
 }
 
 // ---------------------------------------------------------------------------
+// Graduated radius + highlight utilities
+// ---------------------------------------------------------------------------
+
+export function resolveFeatureRadius(
+  properties: Record<string, unknown>,
+  style: PointStyleConfig,
+  dataRange?: { min: number; max: number },
+): number {
+  if (!style.graduatedRadius) return style.radius || 4;
+  const raw = Number(properties[style.graduatedRadius.field]);
+  if (isNaN(raw) || raw <= 0) return style.graduatedRadius.minRadius ?? 2;
+  const { method = 'sqrt', minRadius = 2, maxRadius = 20 } = style.graduatedRadius;
+  const min = dataRange?.min ?? 0;
+  const max = dataRange?.max ?? raw;
+  if (max <= min) return minRadius;
+  let ratio: number;
+  switch (method) {
+    case 'sqrt': ratio = Math.sqrt((raw - min) / (max - min)); break;
+    case 'log': ratio = Math.log1p(raw - min) / Math.log1p(max - min); break;
+    default: ratio = (raw - min) / (max - min);
+  }
+  return minRadius + ratio * (maxRadius - minRadius);
+}
+
+export function matchesHighlight(
+  properties: Record<string, unknown>,
+  highlight?: HighlightConfig,
+): boolean {
+  if (!highlight) return false;
+  return String(properties[highlight.condition.field]) === String(highlight.condition.value);
+}
+
+// ---------------------------------------------------------------------------
 // Style resolver (supports simple, category, graduated for both polygon+point)
 // ---------------------------------------------------------------------------
 
-export function getStyle(feature: any, layerConfig: LayerConfig): Record<string, unknown> {
+export function getStyle(feature: any, layerConfig: LayerConfig, dataRange?: { min: number; max: number }): Record<string, unknown> {
   if (layerConfig.type === 'polygon') {
     const styleConf = layerConfig.style as PolygonStyleConfig;
     let fillColor = styleConf.default_color;
@@ -95,11 +128,14 @@ export function getStyle(feature: any, layerConfig: LayerConfig): Record<string,
       }
     }
 
+    const isHighlighted = matchesHighlight(feature.properties, styleConf.highlight);
+    const hl = isHighlighted ? styleConf.highlight : undefined;
+
     return {
       fillColor,
-      color: styleConf.color || "white",
-      weight: styleConf.weight || 1,
-      fillOpacity: styleConf.opacity || 0.6
+      color: hl?.color ?? styleConf.color ?? "white",
+      weight: hl?.weight ?? styleConf.weight ?? 1,
+      fillOpacity: hl?.fillOpacity ?? styleConf.opacity ?? 0.6
     };
   }
 
@@ -121,12 +157,16 @@ export function getStyle(feature: any, layerConfig: LayerConfig): Record<string,
       }
     }
 
+    const radius = resolveFeatureRadius(feature.properties, styleConf, dataRange);
+    const isHighlighted = matchesHighlight(feature.properties, styleConf.highlight);
+    const hl = isHighlighted ? styleConf.highlight : undefined;
+
     return {
-      radius: styleConf.radius || 4,
+      radius: radius + (hl?.radiusBoost ?? 0),
       fillColor,
-      color: styleConf.color || "#000",
-      weight: styleConf.weight || 1,
-      fillOpacity: styleConf.fillOpacity || 0.8
+      color: hl?.color ?? styleConf.color ?? "#000",
+      weight: hl?.weight ?? styleConf.weight ?? 1,
+      fillOpacity: hl?.fillOpacity ?? styleConf.fillOpacity ?? 0.8
     };
   }
 
@@ -255,6 +295,22 @@ export async function mapLayout(
 
       const layerKey = layerConfig.id || layerConfig.name;
 
+      // Precompute data range for graduated radius
+      let layerDataRange: { min: number; max: number } | undefined;
+      if (layerConfig.type === 'point') {
+        const pointStyle = layerConfig.style as PointStyleConfig;
+        if (pointStyle.graduatedRadius) {
+          const field = pointStyle.graduatedRadius.field;
+          const features = (geoJsonData as any).features || [];
+          const values = features
+            .map((f: any) => Number(f.properties?.[field]))
+            .filter((v: number) => !isNaN(v) && v > 0);
+          if (values.length > 0) {
+            layerDataRange = { min: Math.min(...values), max: Math.max(...values) };
+          }
+        }
+      }
+
       const geoJsonLayer = L.geoJSON(geoJsonData as any, {
         filter: (feature: any) => {
           if (!layerConfig.filter) return true;
@@ -275,7 +331,7 @@ export async function mapLayout(
 
         pointToLayer: (feature: any, latlng: any) => {
           if (layerConfig.type === 'point') {
-            const resolvedStyle = getStyle(feature, layerConfig);
+            const resolvedStyle = getStyle(feature, layerConfig, layerDataRange);
             return L.circleMarker(latlng, resolvedStyle);
           }
           return L.marker(latlng);
@@ -361,7 +417,7 @@ export async function mapLayout(
             const hoverStyleOverrides = layerConfig.hover.style;
 
             layer.on('mouseover', (e: any) => {
-              const originalStyle = getStyle(feature, layerConfig);
+              const originalStyle = getStyle(feature, layerConfig, layerDataRange);
 
               const highlightStyle: Record<string, unknown> = { ...originalStyle };
               if (hoverStyleOverrides?.fillOpacity != null) {
@@ -392,7 +448,7 @@ export async function mapLayout(
             });
 
             layer.on('mouseout', () => {
-              const originalStyle = getStyle(feature, layerConfig);
+              const originalStyle = getStyle(feature, layerConfig, layerDataRange);
               layer.setStyle(originalStyle);
               callbacks.onHoverEnd?.();
             });
@@ -427,6 +483,42 @@ export async function mapLayout(
       }
 
       layerRefs[layerKey] = geoJsonLayer;
+
+      // Label collision detection
+      if (layerConfig.labels?.collision === 'hide') {
+        const priorityField = layerConfig.labels.priorityField;
+        const trackedLabels: Array<{ layer: any; priority: number }> = [];
+
+        geoJsonLayer.eachLayer((l: any) => {
+          const tooltip = l.getTooltip?.();
+          if (!tooltip) return;
+          const priority = priorityField
+            ? Number(l.feature?.properties?.[priorityField]) || 0
+            : 0;
+          trackedLabels.push({ layer: l, priority });
+        });
+
+        const updateCollisions = () => {
+          const sorted = [...trackedLabels].sort((a, b) => b.priority - a.priority);
+          const placed: DOMRect[] = [];
+          for (const { layer: tl } of sorted) {
+            const tooltip = tl.getTooltip?.();
+            if (!tooltip) continue;
+            const el = tooltip.getElement?.() as HTMLElement | null;
+            if (!el) continue;
+            const rect = el.getBoundingClientRect();
+            if (rect.width === 0 && rect.height === 0) { el.style.display = 'none'; continue; }
+            const overlaps = placed.some(
+              p => !(rect.right < p.left || rect.left > p.right || rect.bottom < p.top || rect.top > p.bottom),
+            );
+            if (overlaps) { el.style.display = 'none'; }
+            else { el.style.display = ''; placed.push(rect); }
+          }
+        };
+
+        setTimeout(updateCollisions, 500);
+        map.on('zoomend moveend', updateCollisions);
+      }
     } catch (error) {
       console.error(`Error loading layer "${layerConfig.name}":`, error);
     }

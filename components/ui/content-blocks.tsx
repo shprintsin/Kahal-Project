@@ -141,8 +141,8 @@ export function ContentBlocks({
 
   const statItems = [
     { icon: <Users className="w-5 h-5" />, label: t('public.stats.communities', 'קהילות'), value: stats.communities },
-    { icon: <Database className="w-5 h-5" />, label: t('public.stats.datasets', 'מערכי נתונים'), value: stats.datasets },
-    { icon: <Map className="w-5 h-5" />, label: t('public.stats.maps', 'מפות'), value: stats.maps },
+    { icon: <Database className="w-5 h-5" />, label: t('public.stats.datasets', 'נתונים'), value: stats.datasets },
+    { icon: <Map className="w-5 h-5" />, label: t('public.stats.maps', 'שכבות'), value: stats.maps },
     { icon: <Clock className="w-5 h-5" />, label: t('public.stats.years', 'שנות היסטוריה'), value: stats.years },
   ];
 
@@ -155,7 +155,7 @@ export function ContentBlocks({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-
+{/* Data */}
         <Section className="md:col-span-2 lg:col-span-4">
           <H3 className="flex items-center gap-2">
             <Database className="w-5 h-5" />
@@ -168,7 +168,7 @@ export function ContentBlocks({
           </div>
           <SeeMoreButton href="/data">{t('public.sections.allData', 'כל הנתונים')}</SeeMoreButton>
         </Section>
-
+{/* Links */}
         <Section className="lg:col-span-1">
           <H3 className="flex items-center gap-2">
             <Link2 className="w-5 h-5" />
@@ -188,7 +188,7 @@ export function ContentBlocks({
             ))}
           </ul>
         </Section>
-
+{/* Posts */}
         <Section className="lg:col-span-1">
           <H3 className="flex items-center gap-2">
             <FileText className="w-5 h-5" />
