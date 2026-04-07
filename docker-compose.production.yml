@@ -8,7 +8,8 @@ services:
     env_file:
       - .env.production
     environment:
-      DATABASE_URL: postgresql://shnyor:isteraBelagina@shtetl-postgres:5432/shtetl_db
+      # DATABASE_URL, AUTH_SECRET, NEXTAUTH_URL, AUTH_URL, SHT_API_KEY are
+      # sourced from .env.production. Only non-secret runtime knobs go here.
       AUTH_TRUST_HOST: "true"
       UPLOAD_DIR: /app/uploads
       UPLOAD_BASE_URL: /uploads
