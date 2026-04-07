@@ -1,14 +1,17 @@
 "use client"
 
+import { useState } from 'react'
 import { SiteShell, SiteMain } from '@/components/ui/site-shell'
 import { MapPreview } from './components/MapPreview'
 import { TagPill, TagPillList } from '@/components/ui/tag-pill'
 import { DlField, DlGroup } from '@/components/ui/dl-field'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PageTitle } from '@/components/ui/typography'
-import { Calendar, Tag as TagIcon, MapPin, Download, ExternalLink, Layers } from 'lucide-react'
+import { Calendar, Tag as TagIcon, MapPin, Download, ExternalLink, Layers, Eye, FileSpreadsheet, FileJson, FileText } from 'lucide-react'
 import { VersionHistory } from './components/VersionHistory'
 import { LayerDownloadButton } from './components/LayerDownloadButton'
+import { MaturityBadge, PublishStatusBadge } from '@/components/ui/status-badge'
+import { CsvViewerDialog } from '@/app/admin/components/content/csv-viewer-dialog'
 import ReactMarkdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
@@ -16,6 +19,37 @@ import type { MapDataset } from '@/types/api-types'
 import type { SiteShellData } from '@/app/lib/get-navigation'
 import { SetEditUrl } from '@/components/ui/admin-toolbar'
 import { useLanguage } from '@/lib/i18n/language-provider'
+import { getDateLocale, type Locale } from '@/lib/i18n/config'
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+function getResourceIcon(format: string) {
+  switch ((format || '').toUpperCase()) {
+    case 'XLSX':
+    case 'CSV':
+      return <FileSpreadsheet className="w-5 h-5" />
+    case 'JSON':
+    case 'GEOJSON':
+      return <FileJson className="w-5 h-5" />
+    case 'PDF':
+    case 'TXT':
+    case 'MD':
+      return <FileText className="w-5 h-5" />
+    default:
+      return <Download className="w-5 h-5" />
+  }
+}
+
+function normalizeMaturity(m?: string): string | undefined {
+  if (!m) return undefined
+  if (m === 'Validated') return 'verified'
+  if (m === 'Preliminary') return 'provisional'
+  return m.toLowerCase()
+}
 
 interface Deployment {
   id: string
@@ -34,6 +68,8 @@ interface MapViewerClientProps {
 
 export function MapViewerClient({ map, shellData, deployments = [], locale }: MapViewerClientProps) {
   const { t } = useLanguage()
+  const [csvPreview, setCsvPreview] = useState<{ url: string; name: string } | null>(null)
+  const dateLocale = getDateLocale(locale as Locale)
   return (
     <SiteShell {...shellData} locale={locale}>
       <SetEditUrl url={`/admin/maps/${map.id}`} />
@@ -99,6 +135,13 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
               <div className="bg-white p-4 sm:p-6 shadow-sm border border-border">
                 <h3 className="text-lg font-bold text-foreground mb-4 font-display">{t('public.map.details')}</h3>
                 <DlGroup>
+                  <DlField label={t('public.datasets.status', 'סטטוס')}>
+                    <span className="flex gap-2 flex-wrap">
+                      <PublishStatusBadge status={map.status} />
+                      {map.maturity && <MaturityBadge maturity={normalizeMaturity(map.maturity) as any} />}
+                    </span>
+                  </DlField>
+
                   {(map.year || map.period) && (
                     <DlField label={t('public.datasets.period', 'תקופה')}>
                       <span className="flex items-center gap-2 font-medium">
@@ -136,10 +179,24 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                     </DlField>
                   )}
 
+                  {map.updatedAt && (
+                    <DlField label={t('public.datasets.lastUpdated', 'עדכון אחרון')}>
+                      <span className="text-sm text-foreground">
+                        {new Date(map.updatedAt).toLocaleDateString(dateLocale)}
+                      </span>
+                    </DlField>
+                  )}
+
                   <VersionHistory
                     version={map.version}
                     deployments={deployments}
                   />
+
+                  {map.license && (
+                    <DlField label={t('public.datasets.license', 'רישיון')}>
+                      <span className="text-sm text-foreground font-mono">{map.license}</span>
+                    </DlField>
+                  )}
                 </DlGroup>
               </div>
 
@@ -160,9 +217,9 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                         }`}>
                           {layer.type === 'POINTS' ? t('public.map.points', 'נקודות') : t('public.map.polygons', 'גבולות')}
                         </span>
-                        <div className="flex-1 text-right">
+                        <div className="flex-1 text-right min-w-0">
                           <div className="text-sm font-semibold text-foreground mb-1">{layer.name}</div>
-                          <div className="text-xs text-muted-foreground" dir="ltr">{layer.filename || `${layer.slug}.geojson`}</div>
+                          <div className="text-xs text-muted-foreground truncate" dir="ltr">{layer.filename || `${layer.slug}.geojson`}</div>
                         </div>
                       </LayerDownloadButton>
                     ))}
@@ -175,22 +232,38 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                   <h3 className="text-lg font-bold text-foreground mb-4 font-display">{t('public.map.downloads')}</h3>
                   <div className="space-y-3">
                     {map.resources.map((resource) => (
-                      <a
-                        key={resource.id}
-                        href={resource.url}
-                        download
-                        className="flex items-center gap-3 p-3 sm:p-4 bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all group"
-                      >
-                        <div className="text-brand-primary">
-                          <Download className="w-5 h-5" />
-                        </div>
-                        <div className="flex-1 text-right">
-                          <div className="text-sm font-semibold text-foreground mb-1">{resource.name}</div>
-                          {resource.format && (
-                            <div className="text-xs text-muted-foreground">{resource.format}</div>
-                          )}
-                        </div>
-                      </a>
+                      <div key={resource.id} className="flex items-center gap-2">
+                        <a
+                          href={resource.url}
+                          download
+                          className="flex items-center gap-3 p-3 sm:p-4 flex-1 bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all cursor-pointer min-w-0"
+                          title={`${t('public.map.download', 'הורד')} ${resource.name}`}
+                        >
+                          <div className="text-brand-primary shrink-0">
+                            {getResourceIcon(resource.format)}
+                          </div>
+                          <div className="flex-1 text-right min-w-0">
+                            <div className="text-xs sm:text-sm font-semibold text-foreground mb-1">{resource.name}</div>
+                            {resource.filename && (
+                              <div className="text-[11px] sm:text-xs text-muted-foreground font-mono truncate" dir="ltr">{resource.filename}</div>
+                            )}
+                            <div className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">
+                              {resource.format}{resource.sizeBytes && resource.sizeBytes > 0 ? ` • ${formatFileSize(resource.sizeBytes)}` : ''}
+                            </div>
+                          </div>
+                          <Download className="h-4 w-4 text-brand-primary shrink-0" />
+                        </a>
+                        {(resource.format || '').toUpperCase() === 'CSV' && (
+                          <button
+                            type="button"
+                            onClick={() => setCsvPreview({ url: resource.url, name: resource.name })}
+                            className="p-3 sm:p-4 border border-border-strong shadow-sm bg-white hover:border-brand-primary hover:bg-brand-primary-light transition-all self-stretch flex items-center"
+                            title={t('public.datasets.preview', 'צפה בנתונים')}
+                          >
+                            <Eye className="w-5 h-5 text-brand-primary" />
+                          </button>
+                        )}
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -221,6 +294,14 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
           </div>
         </div>
       </main>
+      {csvPreview && (
+        <CsvViewerDialog
+          open={!!csvPreview}
+          onOpenChange={(open) => { if (!open) setCsvPreview(null); }}
+          url={csvPreview.url}
+          name={csvPreview.name}
+        />
+      )}
     </SiteShell>
   );
 }

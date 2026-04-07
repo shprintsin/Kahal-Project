@@ -80,6 +80,7 @@ export interface DatasetResource {
     mimeType: string;
     format: string;
     isMainFile: boolean;
+    sizeBytes?: number;
     excerpt?: string;
     createdAt: string;
 }
@@ -133,6 +134,8 @@ export interface MapDataset {
     title: string;
     description?: string;
     status: string;
+    maturity?: string;
+    license?: string;
     version?: string;
     year?: number;
     period?: string;
