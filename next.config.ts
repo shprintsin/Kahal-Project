@@ -29,13 +29,17 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // Constrain `:locale` to actual locale values — without this, Next.js
+      // matches the pattern against /api/maps (:locale=api) and redirects
+      // to /api/data which doesn't exist, silently breaking the entire
+      // /api/maps route tree.
       {
-        source: '/:locale/maps',
+        source: '/:locale(he|en)/maps',
         destination: '/:locale/data',
         permanent: true,
       },
       {
-        source: '/:locale/maps/:slug',
+        source: '/:locale(he|en)/maps/:slug',
         destination: '/:locale/data/:slug',
         permanent: true,
       },
