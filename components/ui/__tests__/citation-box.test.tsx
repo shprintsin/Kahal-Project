@@ -13,8 +13,9 @@ describe("CitationBox", () => {
     expect(screen.getByTitle("Citation text")).toBeInTheDocument()
   })
 
-  it("shows tooltip text", () => {
+  it("exposes Copy citation as the accessible name", () => {
     render(<CitationBox text="Citation" />)
-    expect(screen.getByText("Copy citation")).toBeInTheDocument()
+    // Icon-only button — no visible "Copy citation" text; a11y is exposed via aria-label.
+    expect(screen.getByLabelText("Copy citation")).toBeInTheDocument()
   })
 })

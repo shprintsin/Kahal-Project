@@ -30,6 +30,7 @@ export function CitationBox({ text, className }: CitationBoxProps) {
         onClick={handleCopy}
         className="flex-shrink-0 flex items-center justify-center w-8 h-8 text-muted-foreground hover:text-brand-primary transition-colors"
         aria-label="Copy citation"
+        title={text}
       >
         {copySuccess ? <Check size={16} /> : <Copy size={16} />}
       </button>
