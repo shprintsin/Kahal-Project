@@ -28,6 +28,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - /home/opc/uploads:/var/www/uploads:ro
+      - /home/opc/shtetlscience:/var/www/shtetlscience:ro
       - /home/opc/ssl:/etc/ssl:ro
     depends_on:
       - app
