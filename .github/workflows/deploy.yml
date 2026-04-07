@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 concurrency:
   group: deploy-production
   cancel-in-progress: false
@@ -14,16 +17,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af  # v4.1.0
         with:
           node-version: 22
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npx prisma generate
-      - name: Lint
+      - name: Lint (errors only — warnings allowed via --quiet)
         run: npm run lint
-        continue-on-error: true
       - run: npm run test:run
 
   deploy:
@@ -34,10 +36,28 @@ jobs:
     environment: production
     steps:
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@2ead5d36353fdd47d10ca9bd4259a2871b9d7c4c  # v1.2.0
         with:
           host: ${{ secrets.ORACLE_HOST }}
           username: opc
           key: ${{ secrets.ORACLE_SSH_KEY }}
           command_timeout: 15m
+          envs: GIT_SHA
           script: /home/opc/deploy.sh
+        env:
+          GIT_SHA: ${{ github.sha }}
+
+      - name: Health check
+        run: |
+          set -e
+          for i in 1 2 3 4 5 6; do
+            body=$(curl -fsSk --max-time 30 "https://shtetlatlas.org/api/health?cb=$RANDOM" || true)
+            echo "attempt $i: $body"
+            if echo "$body" | grep -q '"ok":true'; then
+              echo "Health check passed"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Health check failed after 6 attempts"
+          exit 1
