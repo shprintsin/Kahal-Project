@@ -1,4 +1,5 @@
 import type { MapConfig, LayerConfig, PolygonStyleConfig, PointStyleConfig, GraduatedStyleConfig, HighlightConfig } from '../types/map-config';
+import type { FeatureCollection, Feature } from 'geojson';
 
 // ---------------------------------------------------------------------------
 // Color utilities
@@ -177,17 +178,18 @@ export function getStyle(feature: any, layerConfig: LayerConfig, dataRange?: { m
 // GeoJSON cache
 // ---------------------------------------------------------------------------
 
-const geoJsonCache = new Map<string, any>();
+const geoJsonCache = new Map<string, FeatureCollection>();
 
-async function fetchGeoJSON(url: string): Promise<any> {
-  if (geoJsonCache.has(url)) {
-    return geoJsonCache.get(url);
+async function fetchGeoJSON(url: string): Promise<FeatureCollection> {
+  const cached = geoJsonCache.get(url);
+  if (cached) {
+    return cached;
   }
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Failed to fetch GeoJSON: ${response.statusText}`);
   }
-  const data = await response.json();
+  const data = (await response.json()) as FeatureCollection;
   geoJsonCache.set(url, data);
   return data;
 }
@@ -219,7 +221,10 @@ export async function mapLayout(
 ): Promise<MapLayoutResult> {
   const L = (await import('leaflet')).default;
 
-  delete (L.Icon.Default.prototype as any)._getIconUrl;
+  // Leaflet stores a private `_getIconUrl` method on the default icon prototype
+  // that interferes with bundler-resolved marker assets. Narrow the cast to the
+  // minimum shape we actually mutate so the escape hatch stays local.
+  delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
   L.Icon.Default.mergeOptions({
     iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
     iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
@@ -273,7 +278,7 @@ export async function mapLayout(
     if (!layerConfig.visible) continue;
 
     try {
-      let geoJsonData = layerConfig.data;
+      let geoJsonData: FeatureCollection | undefined = layerConfig.data as FeatureCollection | undefined;
 
       if (!geoJsonData) {
         let fetchUrl: string | null = null;
@@ -303,17 +308,17 @@ export async function mapLayout(
         const pointStyle = layerConfig.style as PointStyleConfig;
         if (pointStyle.graduatedRadius) {
           const field = pointStyle.graduatedRadius.field;
-          const features = (geoJsonData as any).features || [];
+          const features: Feature[] = geoJsonData.features ?? [];
           const values = features
-            .map((f: any) => Number(f.properties?.[field]))
-            .filter((v: number) => !isNaN(v) && v > 0);
+            .map((f) => Number((f.properties as Record<string, unknown> | null)?.[field]))
+            .filter((v) => !isNaN(v) && v > 0);
           if (values.length > 0) {
             layerDataRange = { min: Math.min(...values), max: Math.max(...values) };
           }
         }
       }
 
-      const geoJsonLayer = L.geoJSON(geoJsonData as any, {
+      const geoJsonLayer = L.geoJSON(geoJsonData, {
         filter: (feature: any) => {
           if (!layerConfig.filter) return true;
           const { field, exclude, include } = layerConfig.filter;

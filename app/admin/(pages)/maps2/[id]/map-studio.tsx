@@ -272,6 +272,11 @@ export function MapStudio({ mapData, layerLibrary, isNew, categories, tags, regi
           geoJsonData: geoJson as unknown as Record<string, unknown>,
         });
 
+        if ("ok" in result) {
+          toast.error(result.error || "Failed to create layer");
+          return;
+        }
+
         const features = geoJson.features || [];
         const props = features.length > 0
           ? Object.keys((features[0].properties as Record<string, unknown>) || {})

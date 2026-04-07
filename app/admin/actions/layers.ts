@@ -5,9 +5,57 @@
 
 "use server";
 
+import { z } from "zod";
+import type { Prisma } from "@prisma/client";
 import prisma from "@/lib/prisma";
+import { asJson } from "@/lib/prisma-json";
+import {
+  PolygonStyleConfigSchema,
+  PointStyleConfigSchema,
+  LabelConfigSchema,
+  PopupConfigSchema,
+  FilterConfigSchema,
+  HoverConfigSchema,
+} from "@/lib/shared-schemas";
 import { revalidatePath } from "next/cache";
 import { getLocalizedField } from "./utils";
+
+/**
+ * Schema for the JSON blob stored in `Layer.styleConfig`. Mirrors what the
+ * layer editor saves: a top-level object containing `style` plus optional
+ * sub-blocks for labels, popup, filter, and hover. Uses `.loose()` so
+ * UI-only fields like `previewSettings` survive a round-trip without being
+ * stripped.
+ */
+const StyleConfigBlobSchema = z
+  .object({
+    style: z.union([PolygonStyleConfigSchema, PointStyleConfigSchema]).optional(),
+    labels: LabelConfigSchema.optional(),
+    popup: PopupConfigSchema.optional(),
+    filter: FilterConfigSchema.optional(),
+    hover: HoverConfigSchema.optional(),
+  })
+  .loose();
+
+export type LayerActionFailure = {
+  ok: false;
+  error: string;
+  issues: z.core.$ZodIssue[];
+};
+
+function validateStyleConfig(
+  raw: unknown,
+): { ok: true; data: z.infer<typeof StyleConfigBlobSchema> } | LayerActionFailure {
+  const result = StyleConfigBlobSchema.safeParse(raw ?? {});
+  if (!result.success) {
+    return {
+      ok: false,
+      error: "styleConfig validation failed",
+      issues: result.error.issues,
+    };
+  }
+  return { ok: true, data: result.data };
+}
 
 // Types
 export interface LayerFormData {
@@ -75,6 +123,14 @@ export interface ListLayersOptions {
  * Create a new Layer
  */
 export async function createLayer(data: LayerFormData) {
+  // Validate styleConfig at the API boundary using shared Zod schemas.
+  // On failure, return a structured error instead of crashing inside Prisma.
+  const styleResult = validateStyleConfig(data.styleConfig);
+  if (!styleResult.ok) {
+    console.error("createLayer styleConfig validation failed", styleResult.issues);
+    return styleResult;
+  }
+
   try {
     let slug = data.slug;
     const existing = await prisma.layer.findUnique({ where: { slug }, select: { id: true } });
@@ -110,8 +166,8 @@ export async function createLayer(data: LayerFormData) {
         sourceUrl: data.sourceUrl,
         downloadUrl: data.downloadUrl,
         filename: data.filename,
-        geoJsonData: data.geoJsonData as any,
-        styleConfig: (data.styleConfig || {}) as any,
+        geoJsonData: asJson(data.geoJsonData ?? {}),
+        styleConfig: asJson(styleResult.data),
         ...(data.tagIds && {
           tags: {
             connect: data.tagIds.map((id) => ({ id })),
@@ -138,6 +194,17 @@ export async function createLayer(data: LayerFormData) {
  * Update an existing Layer
  */
 export async function updateLayer(id: string, data: Partial<LayerFormData>) {
+  // Validate styleConfig at the API boundary if it's part of this update.
+  let validatedStyle: z.infer<typeof StyleConfigBlobSchema> | undefined;
+  if (data.styleConfig !== undefined) {
+    const styleResult = validateStyleConfig(data.styleConfig);
+    if (!styleResult.ok) {
+      console.error("updateLayer styleConfig validation failed", styleResult.issues);
+      return styleResult;
+    }
+    validatedStyle = styleResult.data;
+  }
+
   try {
 
     // Check if layer is used in any datasets
@@ -149,7 +216,7 @@ export async function updateLayer(id: string, data: Partial<LayerFormData>) {
     if (layerWithDatasets && layerWithDatasets.datasets.length > 0) {
     }
 
-    const updateData: any = {
+    const updateData: Prisma.LayerUncheckedUpdateInput = {
         ...(data.slug && { slug: data.slug }),
         ...(data.name && { name: data.name }),
         ...(data.name_i18n && { nameI18n: data.name_i18n }),
@@ -176,17 +243,17 @@ export async function updateLayer(id: string, data: Partial<LayerFormData>) {
         ...(data.sourceUrl !== undefined && { sourceUrl: data.sourceUrl }),
         ...(data.downloadUrl !== undefined && { downloadUrl: data.downloadUrl }),
         ...(data.filename !== undefined && { filename: data.filename }),
-        ...(data.geoJsonData !== undefined && { geoJsonData: data.geoJsonData }),
-        ...(data.styleConfig !== undefined && { styleConfig: data.styleConfig }),
+        ...(data.geoJsonData !== undefined && { geoJsonData: asJson(data.geoJsonData) }),
+        ...(validatedStyle !== undefined && { styleConfig: asJson(validatedStyle) }),
         ...(data.thumbnail !== undefined && { thumbnail: data.thumbnail }),
         ...(data.tagIds && {
           tags: {
-            set: data.tagIds.map((id) => ({ id })),
+            set: data.tagIds.map((tagId) => ({ id: tagId })),
           },
         }),
         ...(data.regionIds && {
           regions: {
-            set: data.regionIds.map((id) => ({ id })),
+            set: data.regionIds.map((regionId) => ({ id: regionId })),
           },
         }),
     };

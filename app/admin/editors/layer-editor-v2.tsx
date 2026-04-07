@@ -164,17 +164,21 @@ export function LayerEditorV2({ layer, mode, categories = [] }: LayerEditorProps
       if (actualMode === "create") {
         toast.loading("Creating layer...", { id: "layer-save" });
         const result = await createLayer(submitData);
-        if (result?.id) {
+        if ("ok" in result) {
+          toast.error(result.error || "Failed to create layer", { id: "layer-save" });
+        } else {
           toast.success("Layer created successfully!", { id: "layer-save" });
           router.push(`/admin/layers/${result.id}`);
-        } else {
-          toast.error("Failed to create layer", { id: "layer-save" });
         }
       } else if (layer) {
         toast.loading("Updating layer...", { id: "layer-save" });
-        await updateLayer(layer.id, submitData);
-        toast.success("Layer updated successfully!", { id: "layer-save" });
-        router.refresh();
+        const updateResult = await updateLayer(layer.id, submitData);
+        if ("ok" in updateResult) {
+          toast.error(updateResult.error || "Failed to update layer", { id: "layer-save" });
+        } else {
+          toast.success("Layer updated successfully!", { id: "layer-save" });
+          router.refresh();
+        }
       }
     } catch (error) {
       console.error("Error saving layer:", error);
