@@ -30,8 +30,8 @@ function detectFormat(filename: string, mimeType: string): string {
 }
 
 export async function POST(req: NextRequest) {
-  const authError = authenticateCli(req);
-  if (authError) return authError;
+  const auth = await authenticateCli(req);
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const formData = await req.formData();

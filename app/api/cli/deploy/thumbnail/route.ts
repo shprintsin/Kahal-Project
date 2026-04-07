@@ -1,11 +1,15 @@
+// TODO(A-6): fold this into the unified /api/cli/deploy action endpoint once
+// uploads move to presigned URLs. Multipart form upload doesn't fit the JSON
+// {action, data} envelope cleanly, so it stays as its own route for now.
+
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authenticateCli } from '../../middleware';
 import { uploadBuffer } from '@/utils/storage';
 
 export async function POST(req: NextRequest) {
-  const authError = authenticateCli(req);
-  if (authError) return authError;
+  const auth = await authenticateCli(req);
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const formData = await req.formData();

@@ -6,8 +6,8 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> },
 ) {
-  const authError = authenticateCli(req);
-  if (authError) return authError;
+  const auth = await authenticateCli(req);
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const { slug } = await params;
