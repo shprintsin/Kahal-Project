@@ -652,8 +652,9 @@ export function compileMapConfig(
   layerDataMap?: Map<string, FeatureCollection>,
 ): CompiledMapConfig {
   const mapStyle = resolveGlStyle(
-    // config.tile is the Leaflet tile config — resolve basemap from its shape
-    (config as MapConfig & { basemap?: string }).basemap ?? guessBasemapKey(config.tile.src),
+    // basemap is the canonical key; fall back to guessing from the legacy
+    // Leaflet tile URL when only `tile` is provided.
+    config.basemap ?? (config.tile ? guessBasemapKey(config.tile.src) : undefined),
   );
 
   const layerSpecs: LayerSpec[] = [];

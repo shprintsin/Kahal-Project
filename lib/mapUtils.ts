@@ -238,11 +238,13 @@ export async function mapLayout(
     '<a href="/copyright" target="_blank">© ShtetlAtlas</a> | © <a href="https://carto.com">CARTO</a>'
   );
 
-  L.tileLayer(config.tile.src, {
-    attribution: '',
-    subdomains: config.tile.subdomains,
-    maxZoom: config.tile.maxZoom
-  }).addTo(map);
+  if (config.tile) {
+    L.tileLayer(config.tile.src, {
+      attribution: '',
+      subdomains: config.tile.subdomains,
+      maxZoom: config.tile.maxZoom
+    }).addTo(map);
+  }
 
   const mapStyles = document.createElement('style');
   mapStyles.textContent = `
