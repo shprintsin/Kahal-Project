@@ -7,7 +7,7 @@ import { deleteMap } from "@/app/admin/actions/maps";
 import { formatDateHe } from "@/app/admin/utils/date";
 import { getI18nText } from "@/app/admin/components/tables/table-utils";
 
-interface MapItem {
+export interface MapItem {
   id: string;
   titleI18n?: Record<string, string> | null;
   slug: string;

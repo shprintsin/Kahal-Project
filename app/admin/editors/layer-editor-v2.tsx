@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -69,7 +69,7 @@ export function LayerEditorV2({ layer, mode, categories = [] }: LayerEditorProps
   }, [allLayers]);
 
   const form = useForm<LayerFormValues>({
-    resolver: zodResolver(layerSchema),
+    resolver: zodResolver(layerSchema) as unknown as Resolver<LayerFormValues>,
     defaultValues: {
       slug: layer?.slug || "",
       name: layer?.name || "",
@@ -254,7 +254,7 @@ export function LayerEditorV2({ layer, mode, categories = [] }: LayerEditorProps
                 <Trash2 className="h-4 w-4" /><span className="hidden sm:inline">Delete</span>
               </Button>
             )}
-            <Button onClick={form.handleSubmit(onSubmit)} disabled={isSubmitting} size="sm" className="h-8 gap-1.5">
+            <Button onClick={form.handleSubmit(onSubmit as SubmitHandler<LayerFormValues>)} disabled={isSubmitting} size="sm" className="h-8 gap-1.5">
               <Save className="h-4 w-4" />{isSubmitting ? "Saving..." : "Save"}
             </Button>
           </div>
@@ -330,13 +330,13 @@ export function LayerEditorV2({ layer, mode, categories = [] }: LayerEditorProps
             />
 
             <UnifiedCanvasSeparator label="Citation" />
-            <textarea value={citationText} onChange={(e) => { form.setValue("citationText", e.target.value); autoResizeElement(e.target, 80); }} placeholder="Add citation information..." rows={3} className={canvasTextareaClass} />
+            <textarea value={citationText ?? ""} onChange={(e) => { form.setValue("citationText", e.target.value); autoResizeElement(e.target, 80); }} placeholder="Add citation information..." rows={3} className={canvasTextareaClass} />
 
             <UnifiedCanvasSeparator label="Codebook" />
-            <textarea value={codebookText} onChange={(e) => { form.setValue("codebookText", e.target.value); autoResizeElement(e.target, 80); }} placeholder="Add codebook details..." rows={3} className={canvasTextareaClass} />
+            <textarea value={codebookText ?? ""} onChange={(e) => { form.setValue("codebookText", e.target.value); autoResizeElement(e.target, 80); }} placeholder="Add codebook details..." rows={3} className={canvasTextareaClass} />
 
             <UnifiedCanvasSeparator label="Sources" />
-            <textarea value={sources} onChange={(e) => { form.setValue("sources", e.target.value); autoResizeElement(e.target, 80); }} placeholder="Add source information..." rows={3} className={cn(canvasTextareaClass, "border-b-0")} />
+            <textarea value={sources ?? ""} onChange={(e) => { form.setValue("sources", e.target.value); autoResizeElement(e.target, 80); }} placeholder="Add source information..." rows={3} className={cn(canvasTextareaClass, "border-b-0")} />
           </div>
         </div>
 

@@ -11,4 +11,4 @@ export const periodSchema = PeriodOptionalDefaultsSchema
     dateEnd: z.string().optional().nullable(),
   });
 
-export type PeriodFormValues = typeof periodSchema._type;
+export type PeriodFormValues = z.infer<typeof periodSchema>;

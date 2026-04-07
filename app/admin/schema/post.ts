@@ -11,4 +11,4 @@ export const postSchema = PostOptionalDefaultsSchema
     tagNames: z.array(z.string()).optional(),
   });
 
-export type PostFormValues = typeof postSchema._type;
+export type PostFormValues = z.infer<typeof postSchema>;

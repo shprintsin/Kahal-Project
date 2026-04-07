@@ -5,5 +5,5 @@ export default async function DocumentsPage() {
   const result = await getDocuments(1, 1000); // Get all documents for client-side filtering
   const documents = result.success && result.data ? result.data.documents : [];
   
-  return <DocumentsClientPage initialDocuments={documents} />;
+  return <DocumentsClientPage initialDocuments={documents as unknown as Parameters<typeof DocumentsClientPage>[0]["initialDocuments"]} />;
 }

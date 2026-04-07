@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -96,7 +96,7 @@ export function MapEditor({ map, mode }: MapEditorProps) {
   const fieldConfigs = createMapFieldConfigs();
 
   const form = useForm<MapFormValues>({
-    resolver: zodResolver(mapSchema),
+    resolver: zodResolver(mapSchema) as unknown as Resolver<MapFormValues>,
     defaultValues: {
       title_i18n: map?.titleI18n || map?.title_i18n || { en: "" },
       description_i18n: map?.descriptionI18n || map?.description_i18n || { en: "" },

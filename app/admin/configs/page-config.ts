@@ -31,7 +31,7 @@ export const createPageFormConfig = (parentPages: any[]) => ({
       label: "Show in Menu",
       type: "switch",
     },
-  ] as FieldConfig<PageFormValues>[],
+  ] as unknown as FieldConfig<PageFormValues>[],
 
   seo: [
     {
@@ -42,7 +42,7 @@ export const createPageFormConfig = (parentPages: any[]) => ({
       placeholder: "SEO description for search engines",
       description: "Character count shown below",
     },
-  ] as FieldConfig<PageFormValues>[],
+  ] as unknown as FieldConfig<PageFormValues>[],
 });
 
 export const createPageEditorLayout = (

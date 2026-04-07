@@ -40,7 +40,7 @@ export default async function MapsPage({ params }: { params: Promise<{ locale: s
 
   const categories = (categoriesData.categories || []).map((c) => ({
     name: c.title,
-    count: c.usageCount?.maps || 0,
+    count: c.usageCount?.datasets || 0,
     slug: `/categories/${c.slug}`,
   }));
 

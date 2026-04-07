@@ -41,7 +41,7 @@ function sanitizeGeoJson(data: FeatureCollection): FeatureCollection {
 function useDebouncedKey(parts: unknown[], delayMs: number): string {
   const serialized = JSON.stringify(parts);
   const [debouncedKey, setDebouncedKey] = useState(serialized);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     timerRef.current = setTimeout(() => setDebouncedKey(serialized), delayMs);

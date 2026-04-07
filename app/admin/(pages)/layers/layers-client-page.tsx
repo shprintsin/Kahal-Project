@@ -15,7 +15,7 @@ interface Layer {
   minYear?: number | null;
   maxYear?: number | null;
   category?: { title: string } | null;
-  _count: { maps: number };
+  _count: { datasets: number };
 }
 
 const columns: ContentTableColumn<Layer>[] = [

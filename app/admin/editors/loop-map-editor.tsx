@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { updateMap, createMap } from "../actions/maps";
@@ -111,7 +111,7 @@ export function LoopMapEditor({ map, categories = [], tags = [], regions = [] }:
   );
 
   const form = useForm<MapFormValues>({
-    resolver: zodResolver(mapSchema),
+    resolver: zodResolver(mapSchema) as unknown as Resolver<MapFormValues>,
     defaultValues: {
       title_i18n: map?.titleI18n || map?.title_i18n || { en: "", he: "" },
       description_i18n: map?.descriptionI18n || map?.description_i18n || { en: "", he: "" },

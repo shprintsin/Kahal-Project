@@ -115,8 +115,8 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
       <main className="flex-grow w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
           <div className="mb-6 sm:mb-10 text-right">
-            {dataset.categorySlug ? (
-              <a href={`/${localeProp}/categories/${dataset.categorySlug}`} className="text-brand-primary text-sm sm:text-base mb-2 sm:mb-3 font-semibold uppercase tracking-wide hover:underline inline-block">{dataset.category}</a>
+            {dataset.category ? (
+              <a href={`/${localeProp}/categories/${dataset.category.toLowerCase().replace(/\s+/g, '-')}`} className="text-brand-primary text-sm sm:text-base mb-2 sm:mb-3 font-semibold uppercase tracking-wide hover:underline inline-block">{dataset.category}</a>
             ) : (
               <p className="text-brand-primary text-sm sm:text-base mb-2 sm:mb-3 font-semibold uppercase tracking-wide">{dataset.category}</p>
             )}
@@ -217,7 +217,7 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
                           <div className="text-xs sm:text-sm font-semibold text-foreground mb-1">{resource.name}</div>
                           <div className="text-[11px] sm:text-xs text-muted-foreground font-mono truncate" dir="ltr">{resource.url.split('/').pop()?.replace(/^\d+_/, '')}</div>
                           <div className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">
-                            {resource.format}{resource.size_bytes > 0 ? ` • ${formatFileSize(resource.size_bytes)}` : ""}
+                            {resource.format}{(resource.size_bytes ?? 0) > 0 ? ` • ${formatFileSize(resource.size_bytes!)}` : ""}
                           </div>
                         </div>
                         <Download className="h-4 w-4 text-brand-primary shrink-0" />

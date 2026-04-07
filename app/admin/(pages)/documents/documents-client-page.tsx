@@ -5,7 +5,7 @@ import type { ContentTableColumn, ContentStatus } from "@/app/admin/types/conten
 import { Badge } from "@/components/ui/badge";
 import { deleteDocument, updateDocument } from "@/app/admin/actions/documents";
 
-interface Document extends ContentListItem {
+interface DocumentRow extends ContentListItem {
   titleEn?: string | null;
   category?: string | null;
   year?: number | null;
@@ -26,7 +26,7 @@ function formatDate(date: Date): string {
   });
 }
 
-const columns: ContentTableColumn<Document>[] = [
+const columns: ContentTableColumn<DocumentRow>[] = [
   {
     id: "title",
     header: "Title",
@@ -88,9 +88,9 @@ const columns: ContentTableColumn<Document>[] = [
   },
 ];
 
-export function DocumentsClientPage({ initialDocuments }: { initialDocuments: Document[] }) {
+export function DocumentsClientPage({ initialDocuments }: { initialDocuments: DocumentRow[] }) {
   return (
-    <ContentListPage<Document>
+    <ContentListPage<DocumentRow>
       config={{
         contentType: "documents",
         title: "Documents",

@@ -18,4 +18,4 @@ export const layerSchema = LayerOptionalDefaultsSchema
     regionIds: z.array(z.string()).optional(),
   });
 
-export type LayerFormValues = typeof layerSchema._type;
+export type LayerFormValues = z.infer<typeof layerSchema>;

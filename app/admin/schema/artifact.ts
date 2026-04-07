@@ -14,4 +14,4 @@ export const artifactSchema = ArtifactOptionalDefaultsSchema
     pageIds: z.array(z.string()).default([]),
   });
 
-export type ArtifactFormValues = typeof artifactSchema._type;
+export type ArtifactFormValues = z.infer<typeof artifactSchema>;

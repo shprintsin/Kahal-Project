@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { toISOStringSafe } from "@/lib/utils";
 import { revalidatePath } from "@/utils/safe-revalidate";
-import { Prisma, ContentStatus, DataMaturity } from "@prisma/client";
+import { Prisma, ContentStatus, DataMaturity, ResouceType } from "@prisma/client";
 import { uploadFile } from "@/utils/storage";
 
 // Datasets
@@ -202,7 +202,7 @@ export async function createDatasetResource(datasetId: string | null, resourceDa
             url: resourceData.url,
             filename: resourceData.filename,
             mimeType: resourceData.mimeType,
-            format: resourceData.format || 'UNKNOWN',
+            format: (resourceData.format || 'UNKNOWN') as ResouceType,
             sizeBytes: resourceData.sizeBytes || null,
             isMainFile: resourceData.isMainFile || false
         }
@@ -224,7 +224,7 @@ export async function updateDatasetResource(id: string, resourceData: Partial<Re
             url: resourceData.url,
             filename: resourceData.filename,
             mimeType: resourceData.mimeType,
-            format: resourceData.format,
+            format: resourceData.format as ResouceType | undefined,
             isMainFile: resourceData.isMainFile
         }
     });

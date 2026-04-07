@@ -27,7 +27,7 @@ interface LayerPanelProps {
 function getLayerColor(style: StudioLayer["style"]): string {
   if ("fillColor" in style) return style.fillColor;
   if ("default_color" in style) return style.default_color;
-  return style.color || "#3388ff";
+  return (style as { color?: string }).color || "#3388ff";
 }
 
 function detectGeometryType(geoJson: FeatureCollection): StudioLayer["type"] {

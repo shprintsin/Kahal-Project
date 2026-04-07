@@ -205,8 +205,8 @@ const ACTION_REGISTRY: Record<string, (data: any) => Promise<any>> = {
   "regions.delete": (data) => deleteRegion(data.id),
 
   "periods.list": () => getPeriods(),
-  "periods.create": (data) => createPeriod(normalizePeriodData(data)),
-  "periods.update": (data) => updatePeriod(data.id, normalizePeriodData(data)),
+  "periods.create": (data) => createPeriod(normalizePeriodData(data) as unknown as Parameters<typeof createPeriod>[0]),
+  "periods.update": (data) => updatePeriod(data.id, normalizePeriodData(data) as unknown as Parameters<typeof updatePeriod>[1]),
   "periods.delete": (data) => deletePeriod(data.id),
 };
 

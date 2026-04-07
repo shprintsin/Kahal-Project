@@ -16,7 +16,7 @@ import { LayerPanel } from "./components/layer-panel";
 import { StylePanel } from "./components/style-panel";
 import { DetailsPanel } from "./components/details-panel";
 import { StatusBar } from "./components/status-bar";
-import { createMap, updateMap } from "@/app/admin/actions/maps";
+import { createMap, updateMap, type MapInput } from "@/app/admin/actions/maps";
 import { createLayer } from "@/app/admin/actions/layers";
 import { DEFAULT_POLYGON_STYLE, DEFAULT_POINT_STYLE } from "@/components/map-components/default-styles";
 import type { FeatureCollection } from "geojson";
@@ -199,12 +199,12 @@ export function MapStudio({ mapData, layerLibrary, isNew, categories, tags, regi
       };
 
       if (isNew || !state.datasetId) {
-        const result = await createMap(mapPayload);
+        const result = await createMap(mapPayload as unknown as MapInput);
         dispatch({ type: "MARK_CLEAN" });
         toast.success("Map created");
         router.push(`/admin/maps2/${result.id}`);
       } else {
-        await updateMap(state.datasetId, mapPayload);
+        await updateMap(state.datasetId, mapPayload as unknown as MapInput);
         dispatch({ type: "MARK_CLEAN" });
         toast.success("Map saved");
       }
@@ -269,7 +269,7 @@ export function MapStudio({ mapData, layerLibrary, isNew, categories, tags, regi
           type,
           status: "draft",
           sourceType: "database",
-          geoJsonData: geoJson,
+          geoJsonData: geoJson as unknown as Record<string, unknown>,
         });
 
         const features = geoJson.features || [];

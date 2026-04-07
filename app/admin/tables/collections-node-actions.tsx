@@ -49,7 +49,10 @@ export default function NodeActions({ node }: { node: HierarchyNode }) {
       const name = formData.get("name") as string;
       const slug = formData.get("slug") as string;
       try {
-          await updateEntity(node.type, node.id, { name, slug });
+          await updateEntity(node.type, node.id, {
+            ...(name ? { nameI18n: { en: name }, titleI18n: { en: name } } : {}),
+            slug,
+          });
           toast.success("Updated successfully");
           setEditOpen(false);
       } catch (e) {

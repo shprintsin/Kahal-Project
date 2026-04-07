@@ -89,8 +89,8 @@ export async function POST(req: NextRequest) {
           version: nextVersion,
           license: license ?? existing.license,
           citationText: citationText ?? existing.citationText,
-          minYear: minYear ?? existing.minYear,
-          maxYear: maxYear ?? existing.maxYear,
+          yearMin: minYear ?? existing.yearMin,
+          yearMax: maxYear ?? existing.yearMax,
           isVisible: isVisible ?? existing.isVisible,
         },
       });
@@ -120,8 +120,8 @@ export async function POST(req: NextRequest) {
           version: nextVersion,
           license: license ?? null,
           citationText: citationText ?? null,
-          minYear: minYear ?? null,
-          maxYear: maxYear ?? null,
+          yearMin: minYear ?? null,
+          yearMax: maxYear ?? null,
           isVisible: isVisible ?? true,
         },
       });

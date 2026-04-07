@@ -25,4 +25,4 @@ export const mapSchema = DatasetOptionalDefaultsSchema
     referenceLinks: z.array(z.unknown()).optional().nullable(),
   });
 
-export type MapFormValues = typeof mapSchema._type;
+export type MapFormValues = z.infer<typeof mapSchema>;

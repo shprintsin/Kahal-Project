@@ -16,4 +16,4 @@ export const tagSchema = TagOptionalDefaultsSchema
     ),
   });
 
-export type TagFormValues = typeof tagSchema._type;
+export type TagFormValues = z.infer<typeof tagSchema>;

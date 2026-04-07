@@ -10,7 +10,7 @@ export const pageSchema = PageOptionalDefaultsSchema
     regionIds: z.array(z.string()).optional(),
   });
 
-export type PageFormValues = typeof pageSchema._type;
+export type PageFormValues = z.infer<typeof pageSchema>;
 
 export default function AdminSchemaPagePlaceholder() {
   return null;

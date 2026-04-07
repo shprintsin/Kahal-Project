@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { toISOStringSafe } from "@/lib/utils";
 import { revalidatePath } from "@/utils/safe-revalidate";
+import { ContentLanguage } from "@prisma/client";
 
 // --- Types ---
 
@@ -1145,7 +1146,7 @@ export async function updateEntity(
           yearMax: data.yearMax,
           indexNumber: data.indexNumber,
           volumeLabelFormat: data.volumeLabelFormat,
-          languages: data.languages,
+          languages: data.languages as ContentLanguage[] | undefined,
         }
       });
     } else if (type === "VOLUME") {
@@ -1160,7 +1161,7 @@ export async function updateEntity(
           yearMin: data.yearMin,
           yearMax: data.yearMax,
           languageOfContent: data.languageOfContent,
-          languages: data.languages,
+          languages: data.languages as ContentLanguage[] | undefined,
           editor: data.editor,
           author: data.author,
           license: data.license,
