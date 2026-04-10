@@ -5,7 +5,7 @@ import HomePageComponent from "@/app/components/pages_components/HomePage";
 import { getSiteShellData } from "@/app/lib/get-navigation";
 import type { Locale } from "@/lib/i18n/config";
 import { getContentTranslation } from "@/lib/i18n/content-translation";
-import { getTranslation, loadTranslations } from "@/lib/i18n/load-translations";
+import { getTranslations } from "next-intl/server";
 import { createPageMetadata } from "@/lib/i18n/metadata";
 import { getContentBlocksData } from "@/lib/get-content-blocks-data";
 
@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const t = loadTranslations(locale);
+  const t = await getTranslations({ locale });
 
   const [siteSettings, contentBlocksData, shellData] = await Promise.all([
     getAllSiteSettings(),
@@ -45,8 +45,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     href: item.url || "#",
   })) || [];
 
-  const heroTitle = getTranslation(t, "public.hero.title", "1000 שנות היסטוריה");
-  const heroSubtitle = getTranslation(t, "public.hero.subtitle", "פרויקט קהילות מזרח אירופה");
+  const heroTitle = t("public.hero.title");
+  const heroSubtitle = t("public.hero.subtitle");
 
   return (
     <HomePageComponent

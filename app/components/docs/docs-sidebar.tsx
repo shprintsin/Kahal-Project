@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { ChevronDown, ChevronLeft, Menu, X } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { useLanguage } from "@/lib/i18n/language-provider"
+import { useTranslations, useLocale } from "next-intl"
 import type { SidebarItem } from "@/lib/docs/types"
 
 function SidebarNode({
@@ -75,7 +75,8 @@ function SidebarNode({
 }
 
 export function DocsSidebar({ items }: { items: SidebarItem[] }) {
-  const { t, locale } = useLanguage()
+  const t = useTranslations()
+  const locale = useLocale()
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(() => {

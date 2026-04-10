@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 import { Search as SearchIcon, Globe, ChevronDown, Menu, X, Check } from 'lucide-react'
 import { NavItem } from '@/app/types'
 import { DynamicIcon as GetIcons } from '@/components/ui/dynamic-icon'
-import { useLanguage } from '@/lib/i18n/language-provider'
+import { useTranslations, useLocale } from 'next-intl'
+import { useRouter as useIntlRouter, usePathname as useIntlPathname } from '@/i18n/routing'
 import { locales, localeConfig } from '@/lib/i18n/config'
 import {
   DropdownMenu,
@@ -21,7 +22,13 @@ export default function Header({ navigation }: { navigation: NavItem[] }) {
   const [searchExpanded, setSearchExpanded] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
-  const { locale, setLanguage, t } = useLanguage()
+  const locale = useLocale()
+  const t = useTranslations()
+  const intlRouter = useIntlRouter()
+  const intlPathname = useIntlPathname()
+  const setLanguage = (newLocale: string) => {
+    intlRouter.replace(intlPathname, { locale: newLocale as any })
+  }
 
   const currentLocaleCode = locale.toUpperCase()
 
@@ -52,7 +59,7 @@ export default function Header({ navigation }: { navigation: NavItem[] }) {
     <header className="bg-white border-b border-gray-200 w-full relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
         <Link href={`/${locale}`} className="text-lg font-bold text-gray-900">
-          {t('public.site.name', 'ShtetlAtlas')}
+          {t('public.site.name')}
         </Link>
 
         <button
@@ -127,7 +134,7 @@ export default function Header({ navigation }: { navigation: NavItem[] }) {
             <input
               ref={inputRef}
               type="text"
-              placeholder={t('public.search.placeholder', 'לחיפוש באתר')}
+              placeholder={t('public.search.placeholder')}
               className="bg-transparent text-xs w-32 outline-none text-gray-700 placeholder:text-gray-400 ml-2"
               dir="rtl"
               value={query}

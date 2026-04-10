@@ -371,7 +371,6 @@ export function generateSchema(fields: FieldDefinition[]): z.ZodObject<any> {
         fieldSchema = z.object({
           he: z.string().optional(),
           en: z.string().optional(),
-          pl: z.string().optional(),
         }).optional();
         break;
       default:

@@ -4,7 +4,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useLanguage } from "@/lib/i18n/language-provider";
+import { useLocale } from "next-intl";
 
 /**
  * TablePagination - Footer pagination for content tables
@@ -32,7 +32,8 @@ export function TablePagination({
   pageSizeOptions = [10, 25, 50, 100],
   className,
 }: TablePaginationProps) {
-  const { isRtl } = useLanguage();
+  const locale = useLocale();
+  const isRtl = locale === 'he';
   const startItem = totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1;
   const endItem = Math.min(currentPage * pageSize, totalItems);
 

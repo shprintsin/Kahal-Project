@@ -81,8 +81,8 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
   // Initialize data
   React.useEffect(() => {
     if (document) {
-      // Set translations for PL (default/primary)
-      setTranslations('pl', {
+      // Set translations for HE (default/primary)
+      setTranslations('he', {
         title: document.title || "",
         slug: document.slug || "",
         description: document.description || ""
@@ -93,11 +93,7 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
         slug: document.slug || "",
         description: document.descriptionEn || ""
       });
-      // Set translations for HE (if any)
-      setTranslations('he', {
-         // Assuming fallback or separate fields if they existed, but for now just mirroring or empty
-         slug: document.slug || ""
-      });
+      // HE already set as primary above
     }
   }, [documentId]);
 
@@ -160,12 +156,10 @@ function EditorInner({ document, documents, isNew }: DocumentEditorClientProps) 
      const titleEn = translations['en']?.title as string | undefined;
      const descriptionEn = translations['en']?.description as string | undefined;
      
-     // Default (primary) values - prefer PL as it seems to be the primary language logic or whatever docLang is?
-     // Actually, let's assume 'pl' holds the primary title based on our Effect.
-     // If 'pl' title is empty, maybe fallback to current language title?
-     const titlePrimary = (translations['pl']?.title as string) || (translations['en']?.title as string) || ""; 
-     const descPrimary = (translations['pl']?.description as string) || (translations['en']?.description as string) || "";
-     const finalSlug = (translations['pl']?.slug as string) || (translations['en']?.slug as string) || "";
+     // Default (primary) values - use HE as primary
+     const titlePrimary = (translations['he']?.title as string) || (translations['en']?.title as string) || "";
+     const descPrimary = (translations['he']?.description as string) || (translations['en']?.description as string) || "";
+     const finalSlug = (translations['he']?.slug as string) || (translations['en']?.slug as string) || "";
 
      return {
         title: titlePrimary,

@@ -1,11 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useLanguage } from "@/lib/i18n/language-provider"
+import { useTranslations } from "next-intl"
 import type { TocHeading } from "@/lib/docs/types"
 
 export function DocsToc({ headings }: { headings: TocHeading[] }) {
-  const { t } = useLanguage()
+  const t = useTranslations()
   const [activeId, setActiveId] = useState<string>("")
 
   useEffect(() => {

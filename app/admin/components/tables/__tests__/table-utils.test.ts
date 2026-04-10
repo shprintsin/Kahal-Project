@@ -13,7 +13,7 @@ describe("getI18nText", () => {
   })
 
   it("falls back to next language", () => {
-    expect(getI18nText({ he: "שלום", pl: "Cześć" })).toBe("שלום")
+    expect(getI18nText({ he: "שלום" })).toBe("שלום")
   })
 
   it("falls back to first available value", () => {
@@ -37,7 +37,7 @@ describe("getI18nText", () => {
   })
 
   it("respects custom order", () => {
-    expect(getI18nText({ en: "English", pl: "Polish" }, "Untitled", ["pl", "en"])).toBe("Polish")
+    expect(getI18nText({ en: "English", he: "עברית" }, "Untitled", ["he", "en"])).toBe("עברית")
   })
 
   it("skips empty strings", () => {
@@ -48,17 +48,17 @@ describe("getI18nText", () => {
 describe("buildI18nColumns", () => {
   it("builds columns from language options", () => {
     const cols = buildI18nColumns(DEFAULT_LANGUAGES, "Name")
-    expect(cols).toHaveLength(3)
+    expect(cols).toHaveLength(2)
     expect(cols[0]).toEqual({
-      key: "en",
-      label: "Name (EN)",
+      key: "he",
+      label: "Name (HE)",
       width: "w-[20%]",
-      placeholder: "English",
-      dir: "ltr",
-      align: "left",
+      placeholder: "Hebrew",
+      dir: "rtl",
+      align: "right",
     })
-    expect(cols[1].dir).toBe("rtl")
-    expect(cols[1].align).toBe("right")
+    expect(cols[1].dir).toBe("ltr")
+    expect(cols[1].align).toBe("left")
   })
 
   it("uses custom width", () => {
@@ -69,11 +69,10 @@ describe("buildI18nColumns", () => {
 
 describe("flattenI18n", () => {
   it("flattens i18n object to flat keys", () => {
-    const item = { id: "1", nameI18n: { en: "Hello", he: "שלום", pl: "Cześć" } }
+    const item = { id: "1", nameI18n: { en: "Hello", he: "שלום" } }
     const result = flattenI18n(item, "nameI18n", DEFAULT_LANGUAGES)
     expect(result.en).toBe("Hello")
     expect(result.he).toBe("שלום")
-    expect(result.pl).toBe("Cześć")
     expect(result.id).toBe("1")
   })
 
@@ -86,9 +85,9 @@ describe("flattenI18n", () => {
 
 describe("unflattenI18n", () => {
   it("reconstructs i18n object from flat keys", () => {
-    const values = { en: "Hello", he: "שלום", pl: "Cześć", id: "1" }
+    const values = { en: "Hello", he: "שלום", id: "1" }
     const result = unflattenI18n(values, "nameI18n", DEFAULT_LANGUAGES)
-    expect(result.nameI18n).toEqual({ en: "Hello", he: "שלום", pl: "Cześć" })
+    expect(result.nameI18n).toEqual({ he: "שלום", en: "Hello" })
     expect(result.id).toBe("1")
   })
 })

@@ -11,7 +11,7 @@ import { SeeMoreButton } from '@/components/ui/nav-links';
 import { Section } from '@/components/ui/sections';
 import { StatCard } from '@/components/ui/stat-card';
 import { H3 } from '@/components/ui/typography';
-import { useLanguage } from '@/lib/i18n/language-provider';
+import { useTranslations } from 'next-intl';
 
 interface DatasetItem {
   title: string;
@@ -137,13 +137,13 @@ export function ContentBlocks({
   citation,
   stats,
 }: ContentBlocksProps) {
-  const { t } = useLanguage();
+  const t = useTranslations();
 
   const statItems = [
-    { icon: <Users className="w-5 h-5" />, label: t('public.stats.communities', 'קהילות'), value: stats.communities },
-    { icon: <Database className="w-5 h-5" />, label: t('public.stats.datasets', 'נתונים'), value: stats.datasets },
-    { icon: <Map className="w-5 h-5" />, label: t('public.stats.maps', 'שכבות'), value: stats.maps },
-    { icon: <Clock className="w-5 h-5" />, label: t('public.stats.years', 'שנות היסטוריה'), value: stats.years },
+    { icon: <Users className="w-5 h-5" />, label: t('public.stats.communities'), value: stats.communities },
+    { icon: <Database className="w-5 h-5" />, label: t('public.stats.datasets'), value: stats.datasets },
+    { icon: <Map className="w-5 h-5" />, label: t('public.stats.maps'), value: stats.maps },
+    { icon: <Clock className="w-5 h-5" />, label: t('public.stats.years'), value: stats.years },
   ];
 
   return (
@@ -159,20 +159,20 @@ export function ContentBlocks({
         <Section className="md:col-span-2 lg:col-span-4">
           <H3 className="flex items-center gap-2">
             <Database className="w-5 h-5" />
-            {t('public.sections.data', 'נתונים')}
+            {t('public.sections.data')}
           </H3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {datasets.map((d) => (
               <DataCard key={d.slug} item={d} />
             ))}
           </div>
-          <SeeMoreButton href="/data">{t('public.sections.allData', 'כל הנתונים')}</SeeMoreButton>
+          <SeeMoreButton href="/data">{t('public.sections.allData')}</SeeMoreButton>
         </Section>
 {/* Links */}
         <Section className="lg:col-span-1">
           <H3 className="flex items-center gap-2">
             <Link2 className="w-5 h-5" />
-            {t('public.sections.links', 'קישורים')}
+            {t('public.sections.links')}
           </H3>
           <ul className="space-y-3 flex-grow">
             {links.map((l) => (
@@ -192,7 +192,7 @@ export function ContentBlocks({
         <Section className="lg:col-span-1">
           <H3 className="flex items-center gap-2">
             <FileText className="w-5 h-5" />
-            {t('public.sections.posts', 'פוסטים')}
+            {t('public.sections.posts')}
           </H3>
           <ul className="space-y-3 flex-grow">
             {posts.map((p) => (
@@ -205,14 +205,14 @@ export function ContentBlocks({
               />
             ))}
           </ul>
-          <SeeMoreButton href="/posts">{t('public.sections.allPosts', 'כל הפוסטים')}</SeeMoreButton>
+          <SeeMoreButton href="/posts">{t('public.sections.allPosts')}</SeeMoreButton>
         </Section>
 
         <div className="flex flex-col gap-6 md:col-span-2 lg:col-span-2">
           <Section className="flex-grow">
             <H3 className="flex items-center gap-2">
               <Users className="w-5 h-5" />
-              {t('public.sections.team', 'צוות המחקר')}
+              {t('public.sections.team')}
             </H3>
             <div className="flex flex-col gap-4 flex-grow">
               {authors.map((a) => (

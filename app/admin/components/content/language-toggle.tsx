@@ -19,7 +19,6 @@ interface LanguageToggleProps {
 const defaultLanguages: LanguageConfig[] = [
   { code: "he", label: "HE", flag: "🇮🇱" },
   { code: "en", label: "EN", flag: "🇺🇸" },
-  { code: "pl", label: "PL", flag: "🇵🇱" },
 ];
 
 const sizeStyles = {

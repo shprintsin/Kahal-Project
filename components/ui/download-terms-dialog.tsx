@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { useLanguage } from "@/lib/i18n/language-provider"
+import { useTranslations, useLocale } from "next-intl"
 import { cn } from "@/lib/utils"
 
 interface DownloadTermsDialogProps {
@@ -20,7 +20,9 @@ interface DownloadTermsDialogProps {
 }
 
 export function DownloadTermsDialog({ open, onOpenChange, onAccept }: DownloadTermsDialogProps) {
-  const { t, isRtl } = useLanguage()
+  const t = useTranslations()
+  const locale = useLocale()
+  const isRtl = locale === 'he'
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

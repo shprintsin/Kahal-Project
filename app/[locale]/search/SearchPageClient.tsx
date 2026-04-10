@@ -9,7 +9,7 @@ import type { SiteShellData } from "@/app/lib/get-navigation"
 import { SiteShell, SiteMain } from "@/components/ui/site-shell"
 import Pagination from "@/app/components/views/Pagination"
 import { SearchResultCard, type SearchResultItem } from "@/app/components/views/content-cards"
-import { useLanguage } from "@/lib/i18n/language-provider"
+import { useTranslations, useLocale } from "next-intl"
 import { getDateLocale } from "@/lib/i18n/config"
 import type { Locale } from "@/lib/i18n/config"
 
@@ -43,7 +43,8 @@ export default function SearchPageClient({
   activeRegion,
   regions,
 }: Props) {
-  const { t, locale: ctxLocale } = useLanguage()
+  const t = useTranslations()
+  const ctxLocale = useLocale()
   const effectiveLocale = locale || ctxLocale
   const dateLocale = getDateLocale(effectiveLocale as Locale)
   const router = useRouter()
@@ -99,8 +100,8 @@ export default function SearchPageClient({
             <h1 className="font-display text-3xl md:text-4xl text-brand-primary mb-8 flex items-center gap-3">
               <SearchIcon className="w-8 h-8" />
               {query
-                ? `${t('search.resultsFor', 'תוצאות חיפוש עבור')} "${query}"`
-                : t('common.search', 'חיפוש')}
+                ? `${t('search.resultsFor')} "${query}"`
+                : t('common.search')}
             </h1>
 
             {/* Search input */}
@@ -110,7 +111,7 @@ export default function SearchPageClient({
                   type="text"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  placeholder={t('public.search.placeholder', 'לחיפוש באתר')}
+                  placeholder={t('public.search.placeholder')}
                   className="flex-1 border border-border rounded-none py-2.5 px-4 text-base bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition shadow-sm"
                   autoFocus
                 />
@@ -119,7 +120,7 @@ export default function SearchPageClient({
                   className="bg-brand-primary text-white px-5 py-2.5 rounded-none font-semibold hover:bg-brand-primary/90 transition shadow-sm flex items-center gap-2"
                 >
                   <SearchIcon className="w-4 h-4" />
-                  {t('public.search.submit', 'חפש')}
+                  {t('public.search.submit')}
                 </button>
               </div>
             </form>
@@ -135,7 +136,7 @@ export default function SearchPageClient({
                       : 'bg-white text-muted-foreground border-border hover:border-brand-primary/40'
                   }`}
                 >
-                  {t('search.type.all', 'הכל')} ({total})
+                  {t('search.type.all')} ({total})
                 </button>
                 {TYPE_ORDER.map(type => {
                   const count = counts[type]
@@ -182,10 +183,10 @@ export default function SearchPageClient({
                   <SearchIcon className="w-16 h-16 text-border" />
                 </div>
                 <p className="text-muted-foreground text-base sm:text-lg">
-                  {t('public.content.noResults', 'לא נמצאו תוצאות')}
+                  {t('public.content.noResults')}
                 </p>
                 <p className="text-sm text-muted-foreground/70 mt-2">
-                  {t('search.noResults.hint', 'נסו לחפש במילים אחרות או להסיר מסננים')}
+                  {t('search.noResults.hint')}
                 </p>
               </div>
             ) : null}
@@ -198,7 +199,7 @@ export default function SearchPageClient({
               {regions.length > 0 && (
                 <div>
                   <h3 className="font-display text-xl text-brand-primary mb-4">
-                    {t('search.filter.region', 'אזור')}
+                    {t('search.filter.region')}
                   </h3>
                   <ul className="space-y-3">
                     <li>
@@ -208,7 +209,7 @@ export default function SearchPageClient({
                           !activeRegion ? 'text-brand-primary font-semibold' : 'hover:text-brand-secondary'
                         }`}
                       >
-                        <span>{t('search.filter.allRegions', 'כל האזורים')}</span>
+                        <span>{t('search.filter.allRegions')}</span>
                       </button>
                     </li>
                     {regions.map((region) => (
@@ -231,7 +232,7 @@ export default function SearchPageClient({
               {query && total > 0 && (
                 <div>
                   <h3 className="font-display text-xl text-brand-primary mb-4">
-                    {t('search.filter.contentTypes', 'סוגי תוכן')}
+                    {t('search.filter.contentTypes')}
                   </h3>
                   <ul className="space-y-3">
                     {TYPE_ORDER.map(type => {

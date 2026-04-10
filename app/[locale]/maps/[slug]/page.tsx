@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { getMapBySlug, getMapDeployments } from '@/app/admin/actions/maps';
 import { getSiteShellData } from '@/app/lib/get-navigation';
-import { getTranslation, loadTranslations } from '@/lib/i18n/load-translations';
+import { getTranslations } from 'next-intl/server';
 import { createLocaleAlternates } from '@/lib/i18n/metadata';
 import { MapViewerClient } from './MapViewerClient';
 
@@ -14,8 +14,8 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale, slug } = await params;
   const map = await getMapBySlug(slug, { lang: locale });
-  const translations = loadTranslations(locale);
-  const siteName = getTranslation(translations, 'public.site.name');
+  const t = await getTranslations({ locale });
+  const siteName = t('public.site.name');
   const title = map ? `${map.title} | ${siteName}` : siteName;
   return {
     title,

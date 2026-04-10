@@ -7,15 +7,15 @@ import { getSiteShellData } from '@/app/lib/get-navigation';
 import { SiteShell } from '@/components/ui/site-shell';
 import { SetEditUrl } from '@/components/ui/admin-toolbar';
 import { getDateLocale, locales, type Locale } from '@/lib/i18n/config';
-import { loadTranslations, getTranslation } from '@/lib/i18n/load-translations';
+import { getTranslations } from 'next-intl/server';
 import { createLocaleAlternates } from '@/lib/i18n/metadata';
 import { serializeLexical } from '@/lib/lexical';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
   const post = await getPostBySlug(slug);
-  const translations = loadTranslations(locale);
-  const siteName = getTranslation(translations, 'public.site.name');
+  const t = await getTranslations({ locale });
+  const siteName = t('public.site.name');
   const title = post ? `${post.title} | ${siteName}` : siteName;
   return {
     title,

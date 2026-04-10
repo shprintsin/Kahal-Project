@@ -6,22 +6,22 @@ describe("LanguageToggle", () => {
   it("renders default languages", () => {
     render(<LanguageToggle value="en" onChange={() => {}} />)
     expect(screen.getByText("EN")).toBeInTheDocument()
-    expect(screen.getByText("PL")).toBeInTheDocument()
+    expect(screen.getByText("HE")).toBeInTheDocument()
   })
 
   it("marks active language with aria-checked", () => {
     render(<LanguageToggle value="en" onChange={() => {}} />)
     const enButton = screen.getByRole("radio", { name: /EN/ })
-    const plButton = screen.getByRole("radio", { name: /PL/ })
+    const heButton = screen.getByRole("radio", { name: /HE/ })
     expect(enButton).toHaveAttribute("aria-checked", "true")
-    expect(plButton).toHaveAttribute("aria-checked", "false")
+    expect(heButton).toHaveAttribute("aria-checked", "false")
   })
 
   it("calls onChange when language clicked", () => {
     const onChange = vi.fn()
     render(<LanguageToggle value="en" onChange={onChange} />)
-    fireEvent.click(screen.getByText("PL"))
-    expect(onChange).toHaveBeenCalledWith("pl")
+    fireEvent.click(screen.getByText("HE"))
+    expect(onChange).toHaveBeenCalledWith("he")
   })
 
   it("renders custom languages", () => {

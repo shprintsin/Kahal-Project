@@ -4,14 +4,15 @@ import { Search as SearchIcon } from "lucide-react";
 import React, { useRef, useState } from 'react'
 import styles from '../css/header.module.css'
 import { useRouter } from "next/navigation";
-import { useLanguage } from "@/lib/i18n/language-provider";
+import { useTranslations, useLocale } from "next-intl";
 
 export default function Search() {
   const [query, setQuery] = useState("");
   const [expanded, setExpanded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const { locale, t } = useLanguage();
+  const locale = useLocale();
+  const t = useTranslations();
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -51,7 +52,7 @@ export default function Search() {
         <input
           ref={inputRef}
           type="text"
-          placeholder={t('public.search.placeholder', 'לחיפוש באתר')}
+          placeholder={t('public.search.placeholder')}
           className={styles.searchInput}
           value={query}
           onChange={(e) => setQuery(e.target.value)}

@@ -4,7 +4,7 @@ import { ContactForm } from "@/app/components/contact/ContactForm";
 import { getSiteShellData } from "@/app/lib/get-navigation";
 import { SiteMain, SiteShell } from "@/components/ui/site-shell";
 import { locales } from "@/lib/i18n/config";
-import { getTranslation, loadTranslations } from "@/lib/i18n/load-translations";
+import { getTranslations } from "next-intl/server";
 import { createPageMetadata } from "@/lib/i18n/metadata";
 
 export const dynamic = "force-static";
@@ -28,13 +28,13 @@ export default async function ContactPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const [shellData, translations] = await Promise.all([
+  const [shellData, t] = await Promise.all([
     getSiteShellData(locale),
-    Promise.resolve(loadTranslations(locale)),
+    getTranslations({ locale }),
   ]);
 
-  const title = getTranslation(translations, "public.contact.title");
-  const intro = getTranslation(translations, "public.contact.intro");
+  const title = t("public.contact.title");
+  const intro = t("public.contact.intro");
 
   return (
     <SiteShell {...shellData} bg="bg-white" locale={locale}>
@@ -43,7 +43,7 @@ export default async function ContactPage({
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 font-display text-foreground border-b pb-4">
             {title}
           </h1>
-          {intro && intro !== "public.contact.intro" && (
+          {intro && (
             <p className="text-sm sm:text-base text-muted-foreground mb-8">
               {intro}
             </p>

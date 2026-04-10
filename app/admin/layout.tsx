@@ -3,8 +3,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { getUser, getUserProfile } from "./actions/auth";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { loadTranslations } from "@/lib/i18n/load-translations";
-import { LanguageProvider } from "@/lib/i18n/language-provider";
+import { NextIntlClientProvider } from "next-intl";
 
 export default async function AdminLayout({
   children,
@@ -13,7 +12,7 @@ export default async function AdminLayout({
 }) {
   // Check authentication
   const user = await getUser();
-  
+
   if (!user) {
     redirect("/login");
   }
@@ -24,19 +23,19 @@ export default async function AdminLayout({
   // Read the sidebar state from cookies - default to true (open)
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("sidebar:state")?.value !== "false";
-  
-  // Read language preference from cookies
-  const language = cookieStore.get("language")?.value || cookieStore.get("NEXT_LOCALE")?.value || "he";
-  const initialTranslations = loadTranslations(language);
+
+  // Load messages for the admin locale (admin always uses Hebrew)
+  const locale = cookieStore.get("NEXT_LOCALE")?.value || "he";
+  const messages = (await import(`../../messages/${locale === "en" ? "en" : "he"}.json`)).default;
 
   return (
-    <LanguageProvider initialLanguage={language} initialTranslations={initialTranslations}>
+    <NextIntlClientProvider messages={messages} locale={locale}>
       <SidebarProvider defaultOpen={defaultOpen}>
         <AppSidebar user={profile || { id: user.id || '', email: user.email || '', name: user.name || user.email || null }} />
         <SidebarInset>
           {children}
         </SidebarInset>
       </SidebarProvider>
-    </LanguageProvider>
+    </NextIntlClientProvider>
   );
 }

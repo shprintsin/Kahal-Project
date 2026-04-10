@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { getAllCollectionsWithSeries } from '@/app/actions/collections';
 import { getSiteShellData } from '@/app/lib/get-navigation';
 import { SiteShell } from '@/components/ui/site-shell';
-import { getTranslation, loadTranslations } from '@/lib/i18n/load-translations';
+import { getTranslations } from 'next-intl/server';
 import { createPageMetadata } from '@/lib/i18n/metadata';
 import { ArchiveLayout } from './ui/ArchiveLayout';
 import { EmptyState } from './ui/EmptyState';
@@ -16,8 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function ArchivePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const translations = loadTranslations(locale);
-  const t = (key: string) => getTranslation(translations, key);
+  const t = await getTranslations({ locale });
 
   let collections, shellData;
   let fetchError: unknown = null;

@@ -1,7 +1,7 @@
 "use client"
 
 import { ArrowLeft, ArrowRight } from "lucide-react"
-import { useLanguage } from "@/lib/i18n/language-provider"
+import { useTranslations, useLocale } from "next-intl"
 
 export interface PostCardProps {
   post: {
@@ -15,7 +15,9 @@ export interface PostCardProps {
 }
 
 export default function PostCard({ post }: PostCardProps) {
-  const { locale, t, isRtl } = useLanguage()
+  const locale = useLocale()
+  const t = useTranslations()
+  const isRtl = locale === 'he'
   const Arrow = isRtl ? ArrowLeft : ArrowRight
   const href = post.slug.startsWith('/') ? `/${locale}${post.slug}` : post.slug
 
@@ -37,7 +39,7 @@ export default function PostCard({ post }: PostCardProps) {
             href={href}
             className="flex justify-between items-center text-brand-secondary hover:text-brand-primary transition-colors duration-200"
           >
-            <span className="font-display font-bold">{t('public.content.readMore', 'קרא עוד')}</span>
+            <span className="font-display font-bold">{t('public.content.readMore')}</span>
             <Arrow className="h-5 w-5" />
           </a>
         </div>

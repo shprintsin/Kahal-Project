@@ -41,7 +41,6 @@ export function ContentLanguageProvider({
     Record<ContentLanguage, Record<string, unknown>>
   >({
     en: initialTranslations.en ?? {},
-    pl: initialTranslations.pl ?? {},
     he: initialTranslations.he ?? {},
   });
 

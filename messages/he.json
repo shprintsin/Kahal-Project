@@ -172,6 +172,26 @@
     "noData": "אין נתונים",
     "confirmDelete": "האם אתה בטוח שברצונך למחוק?"
   },
+  "search": {
+    "resultsFor": "תוצאות חיפוש עבור",
+    "type": {
+      "all": "הכל",
+      "page": "דפים",
+      "post": "מאמרים",
+      "dataset": "מפות",
+      "layer": "שכבות",
+      "artifact": "מסמכים",
+      "series": "סדרות"
+    },
+    "filter": {
+      "region": "אזור",
+      "allRegions": "כל האזורים",
+      "contentTypes": "סוגי תוכן"
+    },
+    "noResults": {
+      "hint": "נסו לחפש במילים אחרות או להסיר מסננים"
+    }
+  },
   "public": {
     "site": {
       "name": "ShtetlAtlas",
@@ -182,7 +202,8 @@
       "subtitle": "פרויקט קהילות מזרח אירופה"
     },
     "search": {
-      "placeholder": "לחיפוש באתר"
+      "placeholder": "לחיפוש באתר",
+      "submit": "חפש"
     },
     "stats": {
       "communities": "קהילות",
@@ -220,7 +241,12 @@
       "maturity": "בשלות נתונים",
       "verified": "מאומת",
       "provisional": "זמני",
-      "description": "תיאור"
+      "description": "תיאור",
+      "preview": "צפה בנתונים",
+      "license": "רישיון"
+    },
+    "layers": {
+      "title": "שכבות"
     },
     "maps": {
       "title": "מפות",
@@ -299,7 +325,10 @@
       "links": "קישורים",
       "citation": "ציטוט מומלץ",
       "dataSources": "מקורות הנתונים",
-      "codebook": "מילון נתונים (Codebook)"
+      "codebook": "מילון נתונים (Codebook)",
+      "download": "הורד",
+      "points": "נקודות",
+      "polygons": "גבולות"
     },
     "layer": {
       "description": "תיאור השכבה",

@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useLanguage } from '@/lib/i18n/language-provider';
+import { useTranslations, useLocale } from 'next-intl';
 import type { VolumeGridItem } from '@/types/collections';
 
 interface VolumeGridProps {
@@ -11,7 +11,8 @@ interface VolumeGridProps {
 }
 
 export default function VolumeGrid({ volumes, collectionId }: VolumeGridProps) {
-  const { t, locale } = useLanguage();
+  const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
 
   const handleVolumeClick = (volume: VolumeGridItem) => {

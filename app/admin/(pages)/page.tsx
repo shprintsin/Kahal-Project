@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getUser, getUserProfile } from "@/app/admin/actions/auth";
-import { loadTranslations, getTranslation } from "@/lib/i18n/load-translations";
+import { getTranslations } from "next-intl/server";
 import { cookies } from "next/headers";
 
 export default async function AdminPage() {
@@ -27,9 +27,8 @@ export default async function AdminPage() {
 
   // Load translations
   const cookieStore = await cookies();
-  const language = cookieStore.get("language")?.value || "he";
-  const translations = loadTranslations(language);
-  const t = (key: string, fallback?: string) => getTranslation(translations, key, fallback);
+  const locale = cookieStore.get("NEXT_LOCALE")?.value || "he";
+  const t = await getTranslations({ locale });
 
   const quickLinks = [
     { title: t('nav.posts'), description: t('pages.posts.description'), icon: FileText, href: "/admin/posts", color: "text-blue-500" },

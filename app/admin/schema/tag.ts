@@ -9,9 +9,8 @@ export const tagSchema = TagOptionalDefaultsSchema
     nameI18n: z.object({
       en: z.string().nullable().optional(),
       he: z.string().nullable().optional(),
-      pl: z.string().nullable().optional(),
     }).refine(
-      (val) => val.en || val.he || val.pl,
+      (val) => val.en || val.he,
       { message: "At least one name translation is required" }
     ),
   });

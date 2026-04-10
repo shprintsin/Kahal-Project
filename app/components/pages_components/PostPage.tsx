@@ -7,7 +7,7 @@ import { NoteCard, Section } from '@/components/ui/sections'
 import { Prose } from '@/components/ui/prose'
 import { TagPill, TagPillList } from '@/components/ui/tag-pill'
 import { SiteBreadcrumbs } from '@/components/ui/site-breadcrumbs'
-import { loadTranslations, getTranslation } from '@/lib/i18n/load-translations'
+import { getTranslations } from 'next-intl/server'
 import { defaultLocale } from '@/lib/i18n/config'
 
 // View-model for the rendered post page. Built from a Prisma Post plus
@@ -24,16 +24,15 @@ interface PostData extends Omit<PrismaPost, 'content' | 'createdAt' | 'updatedAt
   sources: { id: string; title: string; author: string; year: string }[]
 }
 
-export default function PostPage({ post, locale }: { post: PostData; locale?: string }) {
+export default async function PostPage({ post, locale }: { post: PostData; locale?: string }) {
   const loc = locale || defaultLocale
-  const translations = loadTranslations(loc)
-  const t = (key: string, fallback: string) => getTranslation(translations, key, fallback)
+  const t = await getTranslations({ locale: loc })
 
   return (
     <div className="min-h-screen bg-white">
       <SiteBreadcrumbs
         items={[
-          { label: t('public.site.name', 'ShtetlAtlas'), href: `/${loc}` },
+          { label: t('public.site.name'), href: `/${loc}` },
           { label: post.category || "", href: `/${loc}/categories/${post.category}` },
           { label: post.title },
         ]}
