@@ -36,11 +36,5 @@ export const createPeriodFormConfig = () => ({
       type: "text",
       placeholder: "אחרי מלחמת העולם הראשונה",
     },
-    {
-      name: "nameI18n.pl",
-      label: "🇵🇱 Polish (Polski)",
-      type: "text",
-      placeholder: "Okres międzywojenny",
-    },
   ] as FieldConfig<PeriodFormValues>[],
 });

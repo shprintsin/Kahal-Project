@@ -172,6 +172,26 @@
     "noData": "No data",
     "confirmDelete": "Are you sure you want to delete?"
   },
+  "search": {
+    "resultsFor": "Search results for",
+    "type": {
+      "all": "All",
+      "page": "Pages",
+      "post": "Posts",
+      "dataset": "Datasets",
+      "layer": "Layers",
+      "artifact": "Documents",
+      "series": "Series"
+    },
+    "filter": {
+      "region": "Region",
+      "allRegions": "All regions",
+      "contentTypes": "Content types"
+    },
+    "noResults": {
+      "hint": "Try different keywords or remove filters"
+    }
+  },
   "public": {
     "site": {
       "name": "Kahal",
@@ -182,7 +202,8 @@
       "subtitle": "Eastern European Jewish Communities Project"
     },
     "search": {
-      "placeholder": "Search the site"
+      "placeholder": "Search the site",
+      "submit": "Search"
     },
     "stats": {
       "communities": "Communities",
@@ -220,7 +241,12 @@
       "maturity": "Data Maturity",
       "verified": "Verified",
       "provisional": "Provisional",
-      "description": "Description"
+      "description": "Description",
+      "preview": "Preview data",
+      "license": "License"
+    },
+    "layers": {
+      "title": "Layers"
     },
     "maps": {
       "title": "Maps",
@@ -299,7 +325,10 @@
       "links": "Links",
       "citation": "Recommended Citation",
       "dataSources": "Data Sources",
-      "codebook": "Data Dictionary (Codebook)"
+      "codebook": "Data Dictionary (Codebook)",
+      "download": "Download",
+      "points": "Points",
+      "polygons": "Polygons"
     },
     "layer": {
       "description": "Layer Description",

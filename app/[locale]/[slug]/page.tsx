@@ -5,15 +5,15 @@ import { getPageBySlug, listPagesAPI } from '@/app/admin/actions/pages';
 import { getSiteShellData } from '@/app/lib/get-navigation';
 import { SiteMain, SiteShell } from '@/components/ui/site-shell';
 import { locales } from '@/lib/i18n/config';
-import { getTranslation, loadTranslations } from '@/lib/i18n/load-translations';
+import { getTranslations } from 'next-intl/server';
 import { createLocaleAlternates } from '@/lib/i18n/metadata';
 import { serializeLexical } from '@/lib/lexical';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
   const page = await getPageBySlug(slug);
-  const translations = loadTranslations(locale);
-  const siteName = getTranslation(translations, 'public.site.name');
+  const t = await getTranslations({ locale });
+  const siteName = t('public.site.name');
   const title = page ? `${page.title} | ${siteName}` : siteName;
   return {
     title,

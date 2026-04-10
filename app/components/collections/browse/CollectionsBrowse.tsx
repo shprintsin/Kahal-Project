@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getVolumesBySeriesId } from '@/app/actions/collections';
-import { useLanguage } from '@/lib/i18n/language-provider';
+import { useTranslations } from 'next-intl';
 import { SiteShell } from '@/components/ui/site-shell';
 import type { SiteShellData } from '@/app/lib/get-navigation';
 import VolumeGrid from './VolumeGrid';
@@ -26,7 +26,7 @@ type SortMode = 'name-asc' | 'name-desc' | 'date-asc' | 'date-desc';
 type BrowseTab = 'collections' | 'series';
 
 export default function CollectionsBrowse({ collections, allSeries, siteShellData }: CollectionsBrowseProps) {
-  const { t } = useLanguage();
+  const t = useTranslations();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();

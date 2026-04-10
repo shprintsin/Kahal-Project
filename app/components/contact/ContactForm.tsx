@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useLanguage } from "@/lib/i18n/language-provider";
+import { useTranslations } from "next-intl";
 
 interface CaptchaState {
   question: string;
@@ -17,7 +17,7 @@ interface CaptchaState {
 type Status = "idle" | "submitting" | "success" | "error";
 
 export function ContactForm() {
-  const { t } = useLanguage();
+  const t = useTranslations();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

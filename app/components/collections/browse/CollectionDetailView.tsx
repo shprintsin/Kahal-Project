@@ -6,7 +6,7 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useLanguage } from '@/lib/i18n/language-provider';
+import { useTranslations, useLocale } from 'next-intl';
 import { SiteShell } from '@/components/ui/site-shell';
 import type { SiteShellData } from '@/app/lib/get-navigation';
 import DetailsView from './DetailsView';
@@ -24,7 +24,8 @@ type ViewMode = 'details' | 'blocks' | 'thumbs';
 type SortMode = 'name-asc' | 'name-desc';
 
 export default function CollectionDetailView({ collection, siteShellData }: CollectionDetailViewProps) {
-  const { t, locale } = useLanguage();
+  const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();

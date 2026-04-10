@@ -7,15 +7,14 @@ export interface LanguageOption {
 }
 
 export const DEFAULT_LANGUAGES: LanguageOption[] = [
-  { code: "en", label: "English", flag: "EN" },
   { code: "he", label: "Hebrew", flag: "HE" },
-  { code: "pl", label: "Polish", flag: "PL" },
+  { code: "en", label: "English", flag: "EN" },
 ];
 
 export function getI18nText(
   value: unknown,
   fallbackText = "Untitled",
-  order: string[] = ["en", "he", "pl"]
+  order: string[] = ["en", "he"]
 ): string {
   if (typeof value === "object" && value !== null) {
     const obj = value as Record<string, unknown>;

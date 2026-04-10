@@ -1,7 +1,7 @@
 "use client"
 
 import { ArrowLeft, Calendar, Database, FileText, Layers, Map as MapIcon, Eye, Newspaper, ScrollText, Library } from "lucide-react"
-import { useLanguage } from "@/lib/i18n/language-provider"
+import { useTranslations, useLocale } from "next-intl"
 import type { SearchContentType } from "@/app/admin/actions/search"
 
 interface MetaBadgeProps {
@@ -115,7 +115,8 @@ export interface LayerItem extends ContentItem {
 }
 
 export function PostCard({ item }: { item: PostItem }) {
-  const { locale, t } = useLanguage()
+  const locale = useLocale()
+  const t = useTranslations()
   return (
     <CardWrapper>
       <CardImage src={item.thumbnail} alt={item.title} />
@@ -131,14 +132,15 @@ export function PostCard({ item }: { item: PostItem }) {
         </MetaRow>
         <CardTitle href={`/${locale}/posts/${item.slug}`}>{item.title}</CardTitle>
         <CardExcerpt text={item.excerpt} />
-        <CardLink href={`/${locale}/posts/${item.slug}`} label={t('public.content.readMore', 'ראה עוד')} />
+        <CardLink href={`/${locale}/posts/${item.slug}`} label={t('public.content.readMore')} />
       </div>
     </CardWrapper>
   )
 }
 
 export function DatasetCard({ item }: { item: DatasetItem }) {
-  const { locale, t } = useLanguage()
+  const locale = useLocale()
+  const t = useTranslations()
   return (
     <CardWrapper>
       <CardImage src={item.thumbnail} alt={item.title} />
@@ -154,20 +156,21 @@ export function DatasetCard({ item }: { item: DatasetItem }) {
           {item.resourceCount !== undefined && (
             <span className="flex items-center gap-1 font-medium text-brand-primary">
               <FileText className="w-3.5 h-3.5" />
-              {item.resourceCount} {t('public.datasets.resources', 'קבצים')}
+              {item.resourceCount} {t('public.datasets.resources')}
             </span>
           )}
         </MetaRow>
         <CardTitle href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug}>{item.title}</CardTitle>
         <CardExcerpt text={item.excerpt} />
-        <CardLink href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug} label={t('public.content.readMore', 'ראה עוד')} />
+        <CardLink href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug} label={t('public.content.readMore')} />
       </div>
     </CardWrapper>
   )
 }
 
 export function MapCard({ item }: { item: MapItem }) {
-  const { locale, t } = useLanguage()
+  const locale = useLocale()
+  const t = useTranslations()
   return (
     <CardWrapper>
       <CardImage src={item.thumbnail} alt={item.title} />
@@ -184,7 +187,7 @@ export function MapCard({ item }: { item: MapItem }) {
           {item.layerCount !== undefined && (
             <span className="flex items-center gap-1 font-medium text-brand-primary">
               <Layers className="w-3.5 h-3.5" />
-              {item.layerCount} {t('public.layers.title', 'שכבות')}
+              {item.layerCount} {t('public.layers.title')}
             </span>
           )}
           {item.layerTypes?.map((type) => (
@@ -195,14 +198,15 @@ export function MapCard({ item }: { item: MapItem }) {
         </MetaRow>
         <CardTitle href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug}>{item.title}</CardTitle>
         <CardExcerpt text={item.excerpt} />
-        <CardLink href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug} label={t('public.content.readMore', 'ראה עוד')} />
+        <CardLink href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug} label={t('public.content.readMore')} />
       </div>
     </CardWrapper>
   )
 }
 
 export function LayerCard({ item }: { item: LayerItem }) {
-  const { locale, t } = useLanguage()
+  const locale = useLocale()
+  const t = useTranslations()
   return (
     <CardWrapper>
       <CardImage src={item.thumbnail} alt={item.name} />
@@ -219,13 +223,13 @@ export function LayerCard({ item }: { item: LayerItem }) {
           {item.mapCount !== undefined && item.mapCount > 0 && (
             <span className="flex items-center gap-1 font-medium text-brand-primary">
               <Eye className="w-3.5 h-3.5" />
-              {item.mapCount} {t('public.maps.title', 'מפות')}
+              {item.mapCount} {t('public.maps.title')}
             </span>
           )}
         </MetaRow>
         <CardTitle href={`/${locale}/layers/${item.slug}`}>{item.name}</CardTitle>
         <CardExcerpt text={item.excerpt} />
-        <CardLink href={`/${locale}/layers/${item.slug}`} label={t('public.content.readMore', 'ראה עוד')} />
+        <CardLink href={`/${locale}/layers/${item.slug}`} label={t('public.content.readMore')} />
       </div>
     </CardWrapper>
   )
@@ -245,7 +249,8 @@ export interface SearchResultItem extends ContentItem {
 }
 
 export function SearchResultCard({ item }: { item: SearchResultItem }) {
-  const { locale, t } = useLanguage()
+  const locale = useLocale()
+  const t = useTranslations()
   const cfg = SEARCH_TYPE_CONFIG[item.type]
   const Icon = cfg.icon
   const href = item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug
@@ -269,7 +274,7 @@ export function SearchResultCard({ item }: { item: SearchResultItem }) {
         </MetaRow>
         <CardTitle href={href}>{item.title}</CardTitle>
         <CardExcerpt text={item.excerpt} />
-        <CardLink href={href} label={t('public.content.readMore', 'ראה עוד')} />
+        <CardLink href={href} label={t('public.content.readMore')} />
       </div>
     </CardWrapper>
   )

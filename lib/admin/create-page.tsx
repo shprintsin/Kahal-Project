@@ -2,7 +2,7 @@ import { AdminPageBlock } from "@/components/admin/admin-page-block";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { loadTranslations, getTranslation } from "@/lib/i18n/load-translations";
+import { getTranslations } from "next-intl/server";
 import { cookies } from "next/headers";
 
 interface CreateAdminPageConfig<T = any> {
@@ -31,8 +31,8 @@ export function createAdminPage<T = any>(config: CreateAdminPageConfig<T>) {
 
     // Load translations
     const cookieStore = await cookies();
-    const language = cookieStore.get("language")?.value || "he";
-    const translations = loadTranslations(language);
+    const locale = cookieStore.get("NEXT_LOCALE")?.value || "he";
+    const t = await getTranslations({ locale });
 
     // Create props object with custom data prop name
     const props = {
@@ -44,15 +44,15 @@ export function createAdminPage<T = any>(config: CreateAdminPageConfig<T>) {
       <Link href={createNewLink}>
         <Button>
           <Plus className="mr-2 h-4 w-4" />
-          {getTranslation(translations, 'buttons.new', 'New')}
+          {t('buttons.new')}
         </Button>
       </Link>
     ) : undefined);
 
     return (
       <AdminPageBlock
-        title={getTranslation(translations, titleKey, titleKey)}
-        description={descriptionKey ? getTranslation(translations, descriptionKey) : undefined}
+        title={t(titleKey as any)}
+        description={descriptionKey ? t(descriptionKey as any) : undefined}
         action={action}
       >
         <Component {...props} />
@@ -60,4 +60,3 @@ export function createAdminPage<T = any>(config: CreateAdminPageConfig<T>) {
     );
   };
 }
-

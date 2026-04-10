@@ -23,7 +23,7 @@ export function generateSlug(text: string, includeUnicode = false): string {
  */
 export function extractI18nName(nameI18n: any, fallback = ""): string {
   if (typeof nameI18n === "object" && nameI18n !== null) {
-    return nameI18n.en || nameI18n.he || nameI18n.pl || Object.values(nameI18n)[0] || fallback;
+    return nameI18n.en || nameI18n.he || Object.values(nameI18n)[0] || fallback;
   }
   return fallback;
 }

@@ -5,7 +5,7 @@ import type { SidebarCategory } from "@/app/components/views/Sidebar"
 import { ContentListLayout } from "@/app/components/views/ContentListLayout"
 import { DatasetCard, type DatasetItem } from "@/app/components/views/content-cards"
 import { Database } from "lucide-react"
-import { useLanguage } from "@/lib/i18n/language-provider"
+import { useTranslations } from "next-intl"
 
 export function DatasetsPageClient({
   initialDatasets,
@@ -16,18 +16,18 @@ export function DatasetsPageClient({
   categories: SidebarCategory[]
   shellData: SiteShellData
 }) {
-  const { t } = useLanguage()
+  const t = useTranslations()
   return (
     <ContentListLayout
       shellData={shellData}
-      title={t('public.datasets.title', 'מאגרי מידע ומחקר')}
+      title={t('public.datasets.title')}
       icon={<Database className="w-8 h-8" />}
       items={initialDatasets}
       renderCard={(item) => <DatasetCard item={item} />}
       getItemKey={(item) => item.id}
       categories={categories}
       emptyIcon={<Database className="w-16 h-16 text-border" />}
-      emptyText={t('public.datasets.empty', 'לא נמצאו מאגרי מידע כרגע.')}
+      emptyText={t('public.datasets.empty')}
     />
   )
 }

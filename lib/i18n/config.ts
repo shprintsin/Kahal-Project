@@ -1,13 +1,12 @@
-export const locales = ["he", "en", "pl"] as const;
+export const locales = ["he", "en"] as const;
 export type Locale = (typeof locales)[number];
 
 export const defaultLocale: Locale = "he";
 export const fallbackLocale: Locale = "en";
 
 export const localeConfig: Record<Locale, { name: string; nativeName: string; dir: "rtl" | "ltr"; dateLocale: string }> = {
-  he: { name: "Hebrew", nativeName: "עברית", dir: "rtl", dateLocale: "he-IL" },
+  he: { name: "Hebrew", nativeName: "\u05E2\u05D1\u05E8\u05D9\u05EA", dir: "rtl", dateLocale: "he-IL" },
   en: { name: "English", nativeName: "English", dir: "ltr", dateLocale: "en-US" },
-  pl: { name: "Polish", nativeName: "Polski", dir: "ltr", dateLocale: "pl-PL" },
 };
 
 export function isValidLocale(value: string): value is Locale {

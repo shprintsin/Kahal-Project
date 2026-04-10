@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useViewer } from '@/contexts/ViewerContext';
 import { ChevronLeft, ChevronRight, Download } from 'lucide-react';
-import { useLanguage } from '@/lib/i18n/language-provider';
+import { useTranslations } from 'next-intl';
 import type { IVolumeEntry, ViewMode } from '@/types/collections';
 
 interface LSidebarProps {
@@ -12,7 +12,7 @@ interface LSidebarProps {
 }
 
 export default function LSidebar({ volume }: LSidebarProps) {
-  const { t } = useLanguage();
+  const t = useTranslations();
   const metadata = volume.metadata;
   const [isExpanded, setIsExpanded] = useState(true);
 

@@ -7,14 +7,14 @@ import { StatusBadgeLarge } from "@/components/ui/status-badge"
 import { ContentCard, SidebarInfoCard } from "@/components/ui/sections"
 import { SiteShell, SiteMain } from "@/components/ui/site-shell"
 import { SetEditUrl } from "@/components/ui/admin-toolbar"
-import { useLanguage } from "@/lib/i18n/language-provider"
+import { useTranslations } from "next-intl"
 import { resolveBasemapTile } from "@/lib/basemaps"
 import { useDownloadTerms } from "@/components/ui/download-terms-provider"
 import { triggerBrowserDownload } from "@/lib/downloadGeoJson"
 import { cn } from "@/lib/utils"
 
 export function LayerDetailClient({ layer, shellData, locale }: { layer: any; shellData: SiteShellData; locale?: string }) {
-  const { t } = useLanguage()
+  const t = useTranslations()
   const { requestDownload } = useDownloadTerms()
   const previewSettings = layer?.styleConfig?.previewSettings || {
     zoom: 6,

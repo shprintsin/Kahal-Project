@@ -13,7 +13,7 @@
 export type ContentStatus = "draft" | "published" | "archived" | "changes_requested";
 
 /** Supported i18n language codes */
-export type ContentLanguage = "en" | "pl" | "he";
+export type ContentLanguage = "en" | "he";
 
 /** Language display configuration */
 export interface LanguageConfig {
@@ -24,9 +24,8 @@ export interface LanguageConfig {
 
 /** Default language configurations */
 export const CONTENT_LANGUAGES: LanguageConfig[] = [
-  { code: "en", label: "English", flag: "🇺🇸" },
-  { code: "pl", label: "Polish", flag: "🇵🇱" },
   { code: "he", label: "Hebrew", flag: "🇮🇱" },
+  { code: "en", label: "English", flag: "🇺🇸" },
 ];
 
 // ============================================================================

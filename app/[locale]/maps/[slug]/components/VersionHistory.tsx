@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
-import { useLanguage } from "@/lib/i18n/language-provider"
+import { useLocale } from "next-intl"
 import { getDateLocale } from "@/lib/i18n/config"
 import type { Locale } from "@/lib/i18n/config"
 
@@ -60,7 +60,7 @@ function DeploymentEntry({ d, dateLocale }: { d: Deployment; dateLocale?: string
 }
 
 export function VersionHistory({ version, deployments }: VersionHistoryProps) {
-  const { locale } = useLanguage()
+  const locale = useLocale()
   const dateLocale = getDateLocale(locale as Locale)
   const [expanded, setExpanded] = useState(false)
 

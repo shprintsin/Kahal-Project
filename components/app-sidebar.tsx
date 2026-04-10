@@ -15,7 +15,7 @@ import {
 } from "lucide-react"
 import { ModeToggle } from "@/components/mode-toggle"
 import { LanguageSwitcher } from "@/components/language-switcher"
-import { useLanguage } from "@/lib/i18n/language-provider"
+import { useTranslations, useLocale } from "next-intl"
 
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
@@ -38,7 +38,9 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 }
 
 export function AppSidebar({ user, ...props }: AppSidebarProps) {
-  const { t, isRtl } = useLanguage();
+  const t = useTranslations();
+  const locale = useLocale();
+  const isRtl = locale === 'he';
   const safeUser = user ?? { id: "guest", email: "", name: "Guest" };
 
   const userData = {

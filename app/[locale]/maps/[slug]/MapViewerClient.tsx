@@ -20,7 +20,7 @@ import remarkGfm from 'remark-gfm'
 import type { MapDataset } from '@/lib/view-types'
 import type { SiteShellData } from '@/app/lib/get-navigation'
 import { SetEditUrl } from '@/components/ui/admin-toolbar'
-import { useLanguage } from '@/lib/i18n/language-provider'
+import { useTranslations } from 'next-intl'
 import { getDateLocale, type Locale } from '@/lib/i18n/config'
 
 function formatFileSize(bytes: number): string {
@@ -69,7 +69,7 @@ interface MapViewerClientProps {
 }
 
 export function MapViewerClient({ map, shellData, deployments = [], locale }: MapViewerClientProps) {
-  const { t } = useLanguage()
+  const t = useTranslations()
   const [csvPreview, setCsvPreview] = useState<{ url: string; name: string } | null>(null)
   const { requestDownload } = useDownloadTerms()
   const dateLocale = getDateLocale(locale as Locale)
@@ -81,7 +81,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
           <div className="mb-10 text-right">
             <div className="flex items-center gap-2 mb-3 text-sm" dir="rtl">
               <a href={`/${locale}/maps`} className="text-muted-foreground hover:text-brand-primary transition-colors">
-                {t('public.maps.title', 'מפות')}
+                {t('public.maps.title')}
               </a>
               {map.category && (
                 <>
@@ -106,8 +106,8 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                   {map.description && map.codebookText ? (
                     <Tabs defaultValue="description">
                       <TabsList>
-                        <TabsTrigger value="description">{t('public.datasets.description', 'תיאור')}</TabsTrigger>
-                        <TabsTrigger value="codebook">{t('public.map.codebook', 'מילון נתונים (Codebook)')}</TabsTrigger>
+                        <TabsTrigger value="description">{t('public.datasets.description')}</TabsTrigger>
+                        <TabsTrigger value="codebook">{t('public.map.codebook')}</TabsTrigger>
                       </TabsList>
                       <TabsContent value="description">
                         <div className="markdown-content pt-4" dir="rtl">
@@ -123,7 +123,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                   ) : (
                     <>
                       <h3 className="text-xl font-bold text-foreground mb-5 font-display">
-                        {map.description ? t('public.datasets.description', 'תיאור') : t('public.map.codebook', 'מילון נתונים (Codebook)')}
+                        {map.description ? t('public.datasets.description') : t('public.map.codebook')}
                       </h3>
                       <div className="markdown-content" dir="rtl">
                         <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{(map.description || map.codebookText)!}</ReactMarkdown>
@@ -138,7 +138,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
               <div className="bg-white p-4 sm:p-6 shadow-sm border border-border">
                 <h3 className="text-lg font-bold text-foreground mb-4 font-display">{t('public.map.details')}</h3>
                 <DlGroup>
-                  <DlField label={t('public.datasets.status', 'סטטוס')}>
+                  <DlField label={t('public.datasets.status')}>
                     <span className="flex gap-2 flex-wrap">
                       <PublishStatusBadge status={map.status} />
                       {map.maturity && <MaturityBadge maturity={normalizeMaturity(map.maturity) as any} />}
@@ -146,7 +146,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                   </DlField>
 
                   {(map.year || map.period) && (
-                    <DlField label={t('public.datasets.period', 'תקופה')}>
+                    <DlField label={t('public.datasets.period')}>
                       <span className="flex items-center gap-2 font-medium">
                         <Calendar className="w-4 h-4" />
                         {map.year && <span>{map.year}</span>}
@@ -159,7 +159,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                   )}
 
                   {map.regions && map.regions.length > 0 && (
-                    <DlField label={t('pages.regions.title', 'אזורים')}>
+                    <DlField label={t('pages.regions.title')}>
                       <TagPillList>
                         {map.regions.map((region) => (
                           <TagPill key={region.id} variant="region" icon={<MapPin className="w-3 h-3" />}>
@@ -171,7 +171,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                   )}
 
                   {map.tags && map.tags.length > 0 && (
-                    <DlField label={t('nav.tags', 'תגיות')}>
+                    <DlField label={t('nav.tags')}>
                       <TagPillList>
                         {map.tags.map((tag) => (
                           <TagPill key={tag.id} variant="tag" icon={<TagIcon className="w-3 h-3" />}>
@@ -183,7 +183,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                   )}
 
                   {map.updatedAt && (
-                    <DlField label={t('public.datasets.lastUpdated', 'עדכון אחרון')}>
+                    <DlField label={t('public.datasets.lastUpdated')}>
                       <span className="text-sm text-foreground">
                         {new Date(map.updatedAt).toLocaleDateString(dateLocale)}
                       </span>
@@ -196,7 +196,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                   />
 
                   {map.license && (
-                    <DlField label={t('public.datasets.license', 'רישיון')}>
+                    <DlField label={t('public.datasets.license')}>
                       <span className="text-sm text-foreground font-mono">{map.license}</span>
                     </DlField>
                   )}
@@ -218,7 +218,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                             ? 'bg-blue-100 text-blue-700'
                             : 'bg-amber-100 text-amber-700'
                         }`}>
-                          {layer.type === 'POINTS' ? t('public.map.points', 'נקודות') : t('public.map.polygons', 'גבולות')}
+                          {layer.type === 'POINTS' ? t('public.map.points') : t('public.map.polygons')}
                         </span>
                         <div className="flex-1 text-right min-w-0">
                           <div className="text-sm font-semibold text-foreground mb-1">{layer.name}</div>
@@ -240,7 +240,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                           type="button"
                           onClick={() => requestDownload(() => triggerBrowserDownload(resource.url, resource.filename || resource.name))}
                           className="flex items-center gap-3 p-3 sm:p-4 flex-1 bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all cursor-pointer min-w-0 text-right"
-                          title={`${t('public.map.download', 'הורד')} ${resource.name}`}
+                          title={`${t('public.map.download')} ${resource.name}`}
                         >
                           <div className="text-brand-primary shrink-0">
                             {getResourceIcon(resource.format)}
@@ -261,7 +261,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                             type="button"
                             onClick={() => setCsvPreview({ url: resource.url, name: resource.name })}
                             className="p-3 sm:p-4 border border-border-strong shadow-sm bg-white hover:border-brand-primary hover:bg-brand-primary-light transition-all self-stretch flex items-center"
-                            title={t('public.datasets.preview', 'צפה בנתונים')}
+                            title={t('public.datasets.preview')}
                           >
                             <Eye className="w-5 h-5 text-brand-primary" />
                           </button>

@@ -6,7 +6,7 @@ import type { SiteShellData } from "@/app/lib/get-navigation"
 import { SiteShell, SiteMain } from "@/components/ui/site-shell"
 import Pagination from "@/app/components/views/Pagination"
 import Sidebar, { type SidebarCategory, type SidebarRecentPost } from "@/app/components/views/Sidebar"
-import { useLanguage } from "@/lib/i18n/language-provider"
+import { useLocale } from "next-intl"
 
 interface ContentListLayoutProps<T> {
   shellData: SiteShellData
@@ -39,7 +39,7 @@ export function ContentListLayout<T>({
   highlightCard,
   contentCardClassName,
 }: ContentListLayoutProps<T>) {
-  const { locale } = useLanguage()
+  const locale = useLocale()
   const router = useRouter()
   const searchParams = useSearchParams()
   const currentPage = Math.max(1, Number(searchParams.get("page")) || 1)

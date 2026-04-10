@@ -34,7 +34,6 @@ export function PeriodEditor({ period }: PeriodEditorProps) {
       nameI18n: {
         en: period?.nameI18n?.en || period?.name_i18n?.en || "",
         he: period?.nameI18n?.he || period?.name_i18n?.he || "",
-        pl: period?.nameI18n?.pl || period?.name_i18n?.pl || "",
       },
       dateStart: period?.dateStart
         ? new Date(period.dateStart).toISOString().split("T")[0]

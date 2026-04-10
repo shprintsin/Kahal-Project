@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react';
-import { useLanguage } from '@/lib/i18n/language-provider';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface FooterLink {
   label: string;
@@ -14,7 +14,8 @@ interface GlobalFooterProps {
 }
 
 export default function GlobalFooter({ links, copyrightText }: GlobalFooterProps) {
-  const { t, locale } = useLanguage();
+  const t = useTranslations();
+  const locale = useLocale();
   return (
     <footer className="bg-brand-primary-dark text-white py-6 sm:py-8">
       <div className="container mx-auto px-4 sm:px-6">

@@ -111,7 +111,7 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
     };
     setTranslations("he", heData);
 
-    for (const lang of ["en", "pl"] as ContentLanguage[]) {
+    for (const lang of ["en"] as ContentLanguage[]) {
       const langData: Record<string, unknown> = {};
       if (titleI18n[lang]) langData.title = titleI18n[lang];
       if (descI18n[lang]) langData.content = descI18n[lang];
