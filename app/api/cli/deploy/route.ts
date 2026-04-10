@@ -16,11 +16,9 @@ export const dynamic = 'force-dynamic';
  *   - "layer.deploy"   -> deployLayer(data)
  *   - "dataset.deploy" -> deployData(data)
  *
- * Mirrors the /api/cms action envelope so the field-deployed CLI can talk to
- * a single endpoint instead of one URL per content type. The legacy per-type
- * routes (deploy/map, deploy/layer, deploy/data) still work — they're thin
- * wrappers that call the same handlers — and will be removed once all CLIs
- * have moved to this endpoint.
+ * Separate routes still exist for multipart uploads:
+ *   - /api/cli/deploy/thumbnail (image upload)
+ *   - /api/cli/deploy/data/upload (dataset resource upload)
  */
 export async function POST(req: NextRequest) {
   const auth = await authenticateCli(req);
