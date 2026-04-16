@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function MapPage({ params }: PageProps) {
   const { locale, slug } = await params;
   const [apiMap, shellData, deployments] = await Promise.all([
-    getMapBySlug(slug, { lang: locale, includeResources: true }),
+    getMapBySlug(slug, { lang: locale, includeLayers: true, includeResources: true }),
     getSiteShellData(locale),
     getMapDeployments(slug),
   ]);

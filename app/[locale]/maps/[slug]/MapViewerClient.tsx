@@ -7,7 +7,7 @@ import { TagPill, TagPillList } from '@/components/ui/tag-pill'
 import { DlField, DlGroup } from '@/components/ui/dl-field'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PageTitle } from '@/components/ui/typography'
-import { Calendar, Tag as TagIcon, MapPin, Download, ExternalLink, Layers, Eye, FileSpreadsheet, FileJson, FileText } from 'lucide-react'
+import { Calendar, Tag as TagIcon, MapPin, Download, ExternalLink, Layers, Eye, FileSpreadsheet, FileJson, FileText, AlertCircle } from 'lucide-react'
 import { VersionHistory } from './components/VersionHistory'
 import { LayerDownloadButton } from './components/LayerDownloadButton'
 import { MaturityBadge, PublishStatusBadge } from '@/components/ui/status-badge'
@@ -80,9 +80,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="mb-10 text-right">
             <div className="flex items-center gap-2 mb-3 text-sm" dir="rtl">
-              <a href={`/${locale}/maps`} className="text-muted-foreground hover:text-brand-primary transition-colors">
-                {t('public.maps.title')}
-              </a>
+              <a href={`/${locale}/maps`} className="text-muted-foreground hover:text-brand-primary transition-colors"> {t('public.maps.title')} </a>
               {map.category && (
                 <>
                   <span className="text-muted-foreground">/</span>
@@ -200,6 +198,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                       <span className="text-sm text-foreground font-mono">{map.license}</span>
                     </DlField>
                   )}
+                  
                 </DlGroup>
               </div>
 
@@ -235,11 +234,11 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                   <h3 className="text-lg font-bold text-foreground mb-4 font-display">{t('public.map.downloads')}</h3>
                   <div className="space-y-3">
                     {map.resources.map((resource) => (
-                      <div key={resource.id} className="flex items-center gap-2">
+                      <div key={resource.id} className="flex items-stretch border border-border-strong shadow-sm bg-white hover:border-brand-primary transition-all">
                         <button
                           type="button"
                           onClick={() => requestDownload(() => triggerBrowserDownload(resource.url, resource.filename || resource.name))}
-                          className="flex items-center gap-3 p-3 sm:p-4 flex-1 bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all cursor-pointer min-w-0 text-right"
+                          className="flex items-center gap-3 p-3 sm:p-4 flex-1 hover:bg-brand-primary-light transition-colors cursor-pointer min-w-0 text-right"
                           title={`${t('public.map.download')} ${resource.name}`}
                         >
                           <div className="text-brand-primary shrink-0">
@@ -257,14 +256,17 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                           <Download className="h-4 w-4 text-brand-primary shrink-0" />
                         </button>
                         {(resource.format || '').toUpperCase() === 'CSV' && (
-                          <button
-                            type="button"
-                            onClick={() => setCsvPreview({ url: resource.url, name: resource.name })}
-                            className="p-3 sm:p-4 border border-border-strong shadow-sm bg-white hover:border-brand-primary hover:bg-brand-primary-light transition-all self-stretch flex items-center"
-                            title={t('public.datasets.preview')}
-                          >
-                            <Eye className="w-5 h-5 text-brand-primary" />
-                          </button>
+                          <>
+                            <div className="w-px bg-border-strong self-stretch" />
+                            <button
+                              type="button"
+                              onClick={() => setCsvPreview({ url: resource.url, name: resource.name })}
+                              className="px-3 sm:px-4 hover:bg-brand-primary-light transition-colors flex items-center"
+                              title={t('public.datasets.preview')}
+                            >
+                              <Eye className="w-5 h-5 text-brand-primary" />
+                            </button>
+                          </>
                         )}
                       </div>
                     ))}
@@ -293,7 +295,18 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                   </div>
                 </div>
               )}
+
+              <div className="bg-white p-4 border border-border shadow-sm">
+                <a
+                  href="#"
+                  className="flex items-center gap-2 text-xs text-body-secondary hover:text-brand-primary transition-colors justify-center py-1"
+                >
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  <span>מצאת טעות? דווח לנו</span>
+                </a>
+              </div>
             </div>
+
           </div>
         </div>
       </main>
