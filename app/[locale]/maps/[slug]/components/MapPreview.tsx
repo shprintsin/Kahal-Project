@@ -608,7 +608,7 @@ export function MapPreview({ map }: MapPreviewProps) {
         variant="outline"
         size="icon-sm"
         onClick={toggleFullscreen}
-        className="absolute top-3 left-3 z-[1000] bg-white/90 backdrop-blur-sm shadow-md hover:bg-white"
+        className="absolute top-3 right-3 z-[1000] bg-white/90 backdrop-blur-sm shadow-md hover:bg-white"
         title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
       >
         {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}

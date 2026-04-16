@@ -207,11 +207,11 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
                 <h3 className="text-sm font-bold text-foreground mb-3 font-display">{t('public.datasets.resources')}</h3>
                 <div className="space-y-3">
                   {dataset.resources.map((resource) => (
-                    <div key={resource.id} className="flex items-center gap-2">
+                    <div key={resource.id} className="flex items-stretch border border-border-strong shadow-sm bg-white hover:border-brand-primary transition-all">
                       <button
                         type="button"
                         onClick={() => requestDownload(() => triggerBrowserDownload(resource.url, resource.name))}
-                        className="flex items-center gap-3 p-3 sm:p-4 flex-1 bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all cursor-pointer min-w-0 text-right"
+                        className="flex items-center gap-3 p-3 sm:p-4 flex-1 hover:bg-brand-primary-light transition-colors cursor-pointer min-w-0 text-right"
                         title={`הורד ${resource.name}`}
                       >
                         <div className="text-brand-primary shrink-0">
@@ -227,13 +227,17 @@ export default function DatasetLandingPage({ dataset, shellData, locale: localeP
                         <Download className="h-4 w-4 text-brand-primary shrink-0" />
                       </button>
                       {resource.format?.toUpperCase() === 'CSV' && (
-                        <button
-                          onClick={() => setCsvPreview({ url: resource.url, name: resource.name })}
-                          className="p-3 sm:p-4 border border-border-strong shadow-sm bg-white hover:border-brand-primary hover:bg-brand-primary-light transition-all self-stretch flex items-center"
-                          title="צפה בנתונים"
-                        >
-                          <Eye className="w-5 h-5 text-brand-primary" />
-                        </button>
+                        <>
+                          <div className="w-px bg-border-strong self-stretch" />
+                          <button
+                            type="button"
+                            onClick={() => setCsvPreview({ url: resource.url, name: resource.name })}
+                            className="px-3 sm:px-4 hover:bg-brand-primary-light transition-colors flex items-center"
+                            title="צפה בנתונים"
+                          >
+                            <Eye className="w-5 h-5 text-brand-primary" />
+                          </button>
+                        </>
                       )}
                     </div>
                   ))}
