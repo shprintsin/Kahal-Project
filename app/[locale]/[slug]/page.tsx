@@ -1,10 +1,9 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { getPageBySlug, listPagesAPI } from '@/app/admin/actions/pages';
+import { getPageBySlug } from '@/app/admin/actions/pages';
 import { getSiteShellData } from '@/app/lib/get-navigation';
 import { SiteMain, SiteShell } from '@/components/ui/site-shell';
-import { locales } from '@/lib/i18n/config';
 import { getTranslations } from 'next-intl/server';
 import { createLocaleAlternates } from '@/lib/i18n/metadata';
 import { serializeLexical } from '@/lib/lexical';
@@ -19,20 +18,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     title,
     alternates: createLocaleAlternates(`/${slug}`),
   };
-}
-
-export async function generateStaticParams() {
-    try {
-        const { pages } = await listPagesAPI({ limit: 1000, status: 'published' });
-        return locales.flatMap((locale) =>
-            pages.map((page) => ({
-                locale,
-                slug: page.slug,
-            }))
-        );
-    } catch {
-        return [];
-    }
 }
 
 export default async function Page({ params }: { params: Promise<{ locale: string; slug: string }> }) {

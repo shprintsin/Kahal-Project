@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { getPostBySlug, listPostsAPI } from '@/app/admin/actions/posts';
+import { getPostBySlug } from '@/app/admin/actions/posts';
 import PostPage from '@/app/components/pages_components/PostPage';
 import { getSiteShellData } from '@/app/lib/get-navigation';
 import { SiteShell } from '@/components/ui/site-shell';
 import { SetEditUrl } from '@/components/ui/admin-toolbar';
-import { getDateLocale, locales, type Locale } from '@/lib/i18n/config';
+import { getDateLocale, type Locale } from '@/lib/i18n/config';
 import { getTranslations } from 'next-intl/server';
 import { createLocaleAlternates } from '@/lib/i18n/metadata';
 import { serializeLexical } from '@/lib/lexical';
@@ -21,21 +21,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     title,
     alternates: createLocaleAlternates(`/posts/${slug}`),
   };
-}
-
-export async function generateStaticParams() {
-    try {
-        const { posts } = await listPostsAPI({ limit: 1000, status: 'published' });
-        const params = [];
-        for (const locale of locales) {
-            for (const post of posts) {
-                params.push({ locale, slug: post.slug });
-            }
-        }
-        return params;
-    } catch {
-        return [];
-    }
 }
 
 export default async function Page({ params }: { params: Promise<{ locale: string; slug: string }> }) {
