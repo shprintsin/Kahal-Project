@@ -29,7 +29,7 @@ export const LayerDeployV2Schema = z.object({
   slug: z
     .string()
     .min(1)
-    .regex(/^[a-z0-9-]+$/, 'slug must be lowercase alphanumeric with hyphens'),
+    .regex(/^[a-z0-9_-]+$/, 'slug must be lowercase alphanumeric with hyphens or underscores'),
   name: z.string().min(1),
   description: z.string().default(''),
   summary: z.string().optional(),
