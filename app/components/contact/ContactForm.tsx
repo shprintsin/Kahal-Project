@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { Loader2, RefreshCw } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,10 +9,26 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useTranslations } from "next-intl";
 
-interface CaptchaState {
-  question: string;
-  token: string;
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (
+        container: HTMLElement,
+        options: {
+          sitekey: string;
+          callback: (token: string) => void;
+          "expired-callback"?: () => void;
+          "error-callback"?: () => void;
+          theme?: "light" | "dark" | "auto";
+        }
+      ) => string;
+      reset: (widgetId: string) => void;
+      remove: (widgetId: string) => void;
+    };
+  }
 }
+
+const TURNSTILE_SITEKEY = "0x4AAAAAAC-d2seHpwP8sGzQ";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -24,35 +40,63 @@ export function ContactForm() {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [website, setWebsite] = useState(""); // honeypot
-  const [captchaAnswer, setCaptchaAnswer] = useState("");
-  const [captcha, setCaptcha] = useState<CaptchaState | null>(null);
-  const [captchaLoading, setCaptchaLoading] = useState(false);
+
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const widgetIdRef = useRef<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const [status, setStatus] = useState<Status>("idle");
   const [errorKey, setErrorKey] = useState<string | null>(null);
 
-  const loadCaptcha = useCallback(async () => {
-    setCaptchaLoading(true);
-    setCaptchaAnswer("");
-    try {
-      const res = await fetch("/api/contact/captcha", { cache: "no-store" });
-      if (!res.ok) throw new Error("captcha_fetch_failed");
-      const data = (await res.json()) as CaptchaState;
-      setCaptcha(data);
-    } catch {
-      setCaptcha(null);
-    } finally {
-      setCaptchaLoading(false);
+  // Load the Turnstile script once and render the widget explicitly.
+  useEffect(() => {
+    const SCRIPT_ID = "cf-turnstile-script";
+
+    function renderWidget() {
+      if (!containerRef.current || !window.turnstile) return;
+      // Avoid double-rendering if already rendered.
+      if (widgetIdRef.current !== null) return;
+      widgetIdRef.current = window.turnstile.render(containerRef.current, {
+        sitekey: TURNSTILE_SITEKEY,
+        callback: (token) => setTurnstileToken(token),
+        "expired-callback": () => setTurnstileToken(null),
+        "error-callback": () => setTurnstileToken(null),
+        theme: "light",
+      });
     }
+
+    if (!document.getElementById(SCRIPT_ID)) {
+      const script = document.createElement("script");
+      script.id = SCRIPT_ID;
+      script.src =
+        "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      script.async = true;
+      script.defer = true;
+      script.onload = renderWidget;
+      document.head.appendChild(script);
+    } else if (window.turnstile) {
+      // Script already loaded (e.g. hot reload).
+      renderWidget();
+    }
+
+    return () => {
+      if (widgetIdRef.current !== null && window.turnstile) {
+        window.turnstile.remove(widgetIdRef.current);
+        widgetIdRef.current = null;
+      }
+    };
   }, []);
 
-  useEffect(() => {
-    void loadCaptcha();
-  }, [loadCaptcha]);
+  function resetWidget() {
+    setTurnstileToken(null);
+    if (widgetIdRef.current !== null && window.turnstile) {
+      window.turnstile.reset(widgetIdRef.current);
+    }
+  }
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!captcha) return;
+    if (!turnstileToken) return;
     setStatus("submitting");
     setErrorKey(null);
     try {
@@ -65,8 +109,7 @@ export function ContactForm() {
           subject,
           message,
           website,
-          captchaToken: captcha.token,
-          captchaAnswer,
+          cfTurnstileToken: turnstileToken,
         }),
       });
       if (!res.ok) {
@@ -74,7 +117,7 @@ export function ContactForm() {
         const code = body.error || "send_failed";
         setStatus("error");
         setErrorKey(code);
-        if (code === "captcha_failed") void loadCaptcha();
+        resetWidget();
         return;
       }
       setStatus("success");
@@ -82,11 +125,11 @@ export function ContactForm() {
       setEmail("");
       setSubject("");
       setMessage("");
-      setCaptchaAnswer("");
-      void loadCaptcha();
+      resetWidget();
     } catch {
       setStatus("error");
       setErrorKey("network_error");
+      resetWidget();
     }
   };
 
@@ -197,37 +240,8 @@ export function ContactForm() {
         />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="contact-captcha">
-          {t("public.contact.captchaLabel", "Anti-spam check")}
-        </Label>
-        <div className="flex items-center gap-3">
-          <span
-            className="inline-flex min-w-[120px] items-center justify-center rounded-md border bg-muted px-3 py-2 font-mono text-sm"
-            aria-live="polite"
-          >
-            {captchaLoading || !captcha ? "…" : captcha.question}
-          </span>
-          <Input
-            id="contact-captcha"
-            inputMode="numeric"
-            value={captchaAnswer}
-            onChange={(e) => setCaptchaAnswer(e.target.value)}
-            required
-            className="max-w-[120px]"
-            autoComplete="off"
-          />
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={() => void loadCaptcha()}
-            aria-label={t("public.contact.captchaRefresh", "Refresh challenge")}
-          >
-            <RefreshCw className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+      {/* Cloudflare Turnstile widget — rendered explicitly via JS */}
+      <div ref={containerRef} />
 
       {status === "error" && errorKey && (
         <div
@@ -241,7 +255,7 @@ export function ContactForm() {
       <div className="pt-2">
         <Button
           type="submit"
-          disabled={status === "submitting" || !captcha}
+          disabled={status === "submitting" || !turnstileToken}
           className="min-w-[140px]"
         >
           {status === "submitting" ? (

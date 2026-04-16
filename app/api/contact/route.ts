@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { z } from 'zod';
-import { verifyChallenge } from '@/lib/contact-captcha';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -13,11 +12,32 @@ const ContactSchema = z.object({
   email: z.string().trim().email().max(200),
   subject: z.string().trim().max(200).optional().default(''),
   message: z.string().trim().min(10).max(5000),
-  captchaToken: z.string().min(1),
-  captchaAnswer: z.string().min(1),
+  cfTurnstileToken: z.string().min(1),
   // Honeypot — must stay empty. Real users never see it.
   website: z.string().max(0).optional().default(''),
 });
+
+async function verifyTurnstile(token: string, ip: string | null): Promise<boolean> {
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+  if (!secret) {
+    console.error('[contact] TURNSTILE_SECRET_KEY is not set');
+    return false;
+  }
+  const body = new URLSearchParams({ secret, response: token });
+  if (ip) body.set('remoteip', ip);
+
+  try {
+    const res = await fetch(
+      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+      { method: 'POST', body }
+    );
+    const data = (await res.json()) as { success: boolean };
+    return data.success === true;
+  } catch (err) {
+    console.error('[contact] Turnstile verification error:', err);
+    return false;
+  }
+}
 
 function getTransport() {
   const host = process.env.SMTP_HOST;
@@ -71,7 +91,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  if (!verifyChallenge(data.captchaToken, data.captchaAnswer)) {
+  const ip =
+    request.headers.get('cf-connecting-ip') ??
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    null;
+
+  const turnstileOk = await verifyTurnstile(data.cfTurnstileToken, ip);
+  if (!turnstileOk) {
     return NextResponse.json({ error: 'captcha_failed' }, { status: 400 });
   }
 
