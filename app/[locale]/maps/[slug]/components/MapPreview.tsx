@@ -639,6 +639,13 @@ export function MapPreview({ map }: MapPreviewProps) {
         fields={hoverFields}
         template={hoverTemplate}
       />
+
+      {/* OSM attribution */}
+      <div className="absolute bottom-1 right-1 z-[1000] text-[10px] text-gray-700 bg-white/80 px-1 rounded pointer-events-auto">
+        <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" className="hover:underline">
+          © OpenStreetMap contributors
+        </a>
+      </div>
     </div>
   );
 }

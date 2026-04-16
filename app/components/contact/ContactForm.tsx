@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -34,10 +35,11 @@ type Status = "idle" | "submitting" | "success" | "error";
 
 export function ContactForm() {
   const t = useTranslations();
+  const searchParams = useSearchParams();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [subject, setSubject] = useState("");
+  const [subject, setSubject] = useState(() => searchParams.get("subject") ?? "");
   const [message, setMessage] = useState("");
   const [website, setWebsite] = useState(""); // honeypot
 
@@ -47,6 +49,7 @@ export function ContactForm() {
 
   const [status, setStatus] = useState<Status>("idle");
   const [errorKey, setErrorKey] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState("");
 
   // Load the Turnstile script once and render the widget explicitly.
   useEffect(() => {
@@ -94,8 +97,16 @@ export function ContactForm() {
     }
   }
 
+  const validateEmail = (value: string) => {
+    if (!value) return t("public.contact.errors.email_required");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return t("public.contact.errors.email_invalid");
+    return "";
+  };
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const emailErr = validateEmail(email);
+    if (emailErr) { setEmailError(emailErr); return; }
     if (!turnstileToken) return;
     setStatus("submitting");
     setErrorKey(null);
@@ -182,11 +193,15 @@ export function ContactForm() {
             id="contact-email"
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => { setEmail(e.target.value); if (emailError) setEmailError(""); }}
+            onBlur={() => setEmailError(validateEmail(email))}
             required
             maxLength={200}
             autoComplete="email"
+            aria-invalid={!!emailError}
+            className={emailError ? "border-red-400 focus-visible:ring-red-400" : ""}
           />
+          {emailError && <p className="text-xs text-red-600">{emailError}</p>}
         </div>
       </div>
 
@@ -213,7 +228,8 @@ export function ContactForm() {
           required
           minLength={10}
           maxLength={5000}
-          rows={7}
+          rows={12}
+          className="field-sizing-fixed"
         />
       </div>
 

@@ -7,9 +7,11 @@ import { TagPill, TagPillList } from '@/components/ui/tag-pill'
 import { DlField, DlGroup } from '@/components/ui/dl-field'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PageTitle } from '@/components/ui/typography'
-import { Calendar, Tag as TagIcon, MapPin, Download, ExternalLink, Layers, Eye, FileSpreadsheet, FileJson, FileText, AlertCircle } from 'lucide-react'
+import { Calendar, Tag as TagIcon, MapPin, Download, ExternalLink, Eye, FileSpreadsheet, FileJson, FileText, AlertCircle } from 'lucide-react'
 import { VersionHistory } from './components/VersionHistory'
 import { LayerDownloadButton } from './components/LayerDownloadButton'
+import { SidebarCard } from './components/SidebarCard'
+import { InteractiveRow } from './components/InteractiveRow'
 import { MaturityBadge, PublishStatusBadge } from '@/components/ui/status-badge'
 import { CsvViewerDialog } from '@/app/admin/components/content/csv-viewer-dialog'
 import { useDownloadTerms } from '@/components/ui/download-terms-provider'
@@ -133,8 +135,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
             </div>
 
             <div className="flex flex-col gap-4">
-              <div className="bg-white p-4 sm:p-6 shadow-sm border border-border">
-                <h3 className="text-lg font-bold text-foreground mb-4 font-display">{t('public.map.details')}</h3>
+              <SidebarCard title={t('public.map.details')}>
                 <DlGroup>
                   <DlField label={t('public.datasets.status')}>
                     <span className="flex gap-2 flex-wrap">
@@ -200,17 +201,15 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                   )}
                   
                 </DlGroup>
-              </div>
+              </SidebarCard>
 
               {map.layers && map.layers.length > 0 && (
-                <div className="bg-white p-4 sm:p-6 shadow-sm border border-border">
-                  <h3 className="text-lg font-bold text-foreground mb-4 font-display">{t('public.map.dataLayers')}</h3>
+                <SidebarCard title={t('public.map.dataLayers')}>
                   <div className="space-y-3">
                     {map.layers.map((layer) => (
                       <LayerDownloadButton
                         key={layer.id}
                         layer={layer}
-                        className="flex items-center gap-3 p-3 sm:p-4 w-full bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all cursor-pointer"
                       >
                         <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 ${
                           layer.type === 'POINTS'
@@ -226,12 +225,11 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                       </LayerDownloadButton>
                     ))}
                   </div>
-                </div>
+                </SidebarCard>
               )}
 
               {map.resources && map.resources.length > 0 && (
-                <div className="bg-white p-4 sm:p-6 shadow-sm border border-border">
-                  <h3 className="text-lg font-bold text-foreground mb-4 font-display">{t('public.map.downloads')}</h3>
+                <SidebarCard title={t('public.map.downloads')}>
                   <div className="space-y-3">
                     {map.resources.map((resource) => (
                       <div key={resource.id} className="flex items-stretch border border-border-strong shadow-sm bg-white hover:border-brand-primary transition-all">
@@ -271,38 +269,37 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                       </div>
                     ))}
                   </div>
-                </div>
+                </SidebarCard>
               )}
 
               {map.referenceLinks && Array.isArray(map.referenceLinks) && map.referenceLinks.length > 0 && (
-                <div className="bg-white p-4 sm:p-6 shadow-sm border border-border">
-                  <h3 className="text-lg font-bold text-foreground mb-4 font-display">{t('public.map.links')}</h3>
+                <SidebarCard title={t('public.map.links')}>
                   <div className="space-y-3">
                     {map.referenceLinks.map((link: any, index: number) => (
-                      <a
+                      <InteractiveRow
                         key={index}
+                        as="a"
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-3 p-3 sm:p-4 bg-white border border-border-strong shadow-sm hover:border-brand-primary hover:bg-brand-primary-light transition-all"
                       >
                         <div className="text-brand-primary">
                           <ExternalLink className="w-5 h-5" />
                         </div>
                         <span className="text-sm font-semibold text-foreground">{link.title}</span>
-                      </a>
+                      </InteractiveRow>
                     ))}
                   </div>
-                </div>
+                </SidebarCard>
               )}
 
               <div className="bg-white p-4 border border-border shadow-sm">
                 <a
-                  href="#"
+                  href={`/${locale}/contact?subject=${encodeURIComponent(`דיווח על שגיאה: ${map.title}`)}`}
                   className="flex items-center gap-2 text-xs text-body-secondary hover:text-brand-primary transition-colors justify-center py-1"
                 >
                   <AlertCircle className="w-3.5 h-3.5" />
-                  <span>מצאת טעות? דווח לנו</span>
+                  <span>{t('public.map.reportError')}</span>
                 </a>
               </div>
             </div>

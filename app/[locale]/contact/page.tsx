@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import { ContactForm } from "@/app/components/contact/ContactForm";
 import { getSiteShellData } from "@/app/lib/get-navigation";
@@ -6,8 +7,6 @@ import { SiteMain, SiteShell } from "@/components/ui/site-shell";
 import { locales } from "@/lib/i18n/config";
 import { getTranslations } from "next-intl/server";
 import { createPageMetadata } from "@/lib/i18n/metadata";
-
-export const dynamic = "force-static";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -48,7 +47,9 @@ export default async function ContactPage({
               {intro}
             </p>
           )}
-          <ContactForm />
+          <Suspense>
+            <ContactForm />
+          </Suspense>
         </div>
       </SiteMain>
     </SiteShell>

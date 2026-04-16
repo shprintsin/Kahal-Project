@@ -92,6 +92,7 @@ export const GraduatedRadiusConfigSchema = z.object({
   method: RadiusScaleSchema.default('sqrt'),
   minRadius: z.number().default(2),
   maxRadius: z.number().default(20),
+  defaultRadius: z.number().optional(),
 });
 export type GraduatedRadiusConfig = z.infer<typeof GraduatedRadiusConfigSchema>;
 

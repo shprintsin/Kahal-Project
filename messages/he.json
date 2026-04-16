@@ -243,7 +243,8 @@
       "provisional": "זמני",
       "description": "תיאור",
       "preview": "צפה בנתונים",
-      "license": "רישיון"
+      "license": "רישיון",
+      "reportIssue": "דווח על בעיה"
     },
     "layers": {
       "title": "שכבות"
@@ -328,7 +329,8 @@
       "codebook": "מילון נתונים (Codebook)",
       "download": "הורד",
       "points": "נקודות",
-      "polygons": "גבולות"
+      "polygons": "גבולות",
+      "reportError": "מצאת טעות? דווח לנו"
     },
     "layer": {
       "description": "תיאור השכבה",
@@ -376,7 +378,9 @@
         "captcha_failed": "התשובה לבדיקת האנטי-ספאם שגויה. נסו שוב.",
         "mail_not_configured": "שירות הדוא\"ל אינו מוגדר בשרת.",
         "send_failed": "לא הצלחנו לשלוח את ההודעה. נסו שוב מאוחר יותר.",
-        "network_error": "שגיאת רשת. בדקו את החיבור ונסו שוב."
+        "network_error": "שגיאת רשת. בדקו את החיבור ונסו שוב.",
+        "email_required": "אנא הזינו כתובת אימייל.",
+        "email_invalid": "אנא הזינו כתובת אימייל תקינה."
       }
     },
     "downloadTerms": {

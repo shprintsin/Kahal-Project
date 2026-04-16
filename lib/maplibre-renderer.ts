@@ -233,7 +233,7 @@ export function compileCircleRadius(
     return style.radius || 6;
   }
 
-  const { field, method = 'sqrt', minRadius = 2, maxRadius = 20 } = style.graduatedRadius;
+  const { field, method = 'sqrt', minRadius = 2, maxRadius = 20, defaultRadius } = style.graduatedRadius;
 
   // Compute data range from geoData
   let dataMin = 0;
@@ -255,36 +255,37 @@ export function compileCircleRadius(
 
   if (dataMax <= dataMin) return minRadius;
 
-  // For MapLibre, we build an interpolation expression
-  // For sqrt/log, we need to use maplibre expressions
+  let graduatedExpr: MLExpression;
   if (method === 'sqrt') {
-    return [
+    graduatedExpr = [
       'interpolate',
       ['linear'],
       ['sqrt', ['max', ['-', ['get', field], dataMin], 0]],
       0, minRadius,
       Math.sqrt(dataMax - dataMin), maxRadius,
     ];
-  }
-
-  if (method === 'log') {
-    return [
+  } else if (method === 'log') {
+    graduatedExpr = [
       'interpolate',
       ['linear'],
       ['ln', ['+', ['max', ['-', ['get', field], dataMin], 0], 1]],
       0, minRadius,
       Math.log(dataMax - dataMin + 1), maxRadius,
     ];
+  } else {
+    graduatedExpr = [
+      'interpolate',
+      ['linear'],
+      ['get', field],
+      dataMin, minRadius,
+      dataMax, maxRadius,
+    ];
   }
 
-  // linear
-  return [
-    'interpolate',
-    ['linear'],
-    ['get', field],
-    dataMin, minRadius,
-    dataMax, maxRadius,
-  ];
+  if (defaultRadius != null) {
+    return ['case', ['==', ['typeof', ['get', field]], 'number'], graduatedExpr, defaultRadius];
+  }
+  return graduatedExpr;
 }
 
 // ─── Filter Compilation ─────────────────────────

@@ -5,14 +5,14 @@ import { Download, Loader2 } from 'lucide-react'
 import { fetchAndDownloadGeoJson } from '@/lib/downloadGeoJson'
 import { useDownloadTerms } from '@/components/ui/download-terms-provider'
 import type { MapLayer } from '@/lib/view-types'
+import { InteractiveRow } from './InteractiveRow'
 
 interface LayerDownloadButtonProps {
   layer: MapLayer
-  className?: string
   children?: ReactNode
 }
 
-export function LayerDownloadButton({ layer, className, children }: LayerDownloadButtonProps) {
+export function LayerDownloadButton({ layer, children }: LayerDownloadButtonProps) {
   const [downloading, setDownloading] = useState(false)
   const { requestDownload } = useDownloadTerms()
 
@@ -35,10 +35,11 @@ export function LayerDownloadButton({ layer, className, children }: LayerDownloa
   }
 
   return (
-    <button
+    <InteractiveRow
+      as="button"
       onClick={handleClick}
       disabled={downloading}
-      className={className}
+      className="w-full cursor-pointer"
       title={`הורד ${layer.name} כ-GeoJSON`}
     >
       {children}
@@ -47,6 +48,6 @@ export function LayerDownloadButton({ layer, className, children }: LayerDownloa
       ) : (
         <Download className="h-4 w-4 text-brand-primary" />
       )}
-    </button>
+    </InteractiveRow>
   )
 }

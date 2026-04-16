@@ -328,7 +328,8 @@
       "codebook": "Data Dictionary (Codebook)",
       "download": "Download",
       "points": "Points",
-      "polygons": "Polygons"
+      "polygons": "Polygons",
+      "reportError": "Found an error? Let us know"
     },
     "layer": {
       "description": "Layer Description",
@@ -376,7 +377,9 @@
         "captcha_failed": "The anti-spam answer was incorrect. Please try again.",
         "mail_not_configured": "Email service is not configured on the server.",
         "send_failed": "We couldn't send your message. Please try again later.",
-        "network_error": "Network error. Please check your connection and try again."
+        "network_error": "Network error. Please check your connection and try again.",
+        "email_required": "Please enter an email address.",
+        "email_invalid": "Please enter a valid email address."
       }
     },
     "downloadTerms": {
