@@ -147,6 +147,35 @@ function computeCentroid(geometry: GeoJSON.Geometry): [number, number] {
   return [lngSum / count, latSum / count];
 }
 
+function computeOverallBbox(collections: FeatureCollection[]): [number, number, number, number] | null {
+  let minLng = Infinity, minLat = Infinity, maxLng = -Infinity, maxLat = -Infinity;
+
+  function check(lng: number, lat: number) {
+    if (lng < minLng) minLng = lng;
+    if (lat < minLat) minLat = lat;
+    if (lng > maxLng) maxLng = lng;
+    if (lat > maxLat) maxLat = lat;
+  }
+
+  for (const fc of collections) {
+    for (const feature of fc.features) {
+      const geom = feature.geometry;
+      if (!geom) continue;
+      if (geom.type === 'Point') {
+        check(geom.coordinates[0], geom.coordinates[1]);
+      } else if (geom.type === 'MultiPoint' || geom.type === 'LineString') {
+        for (const c of geom.coordinates) check(c[0], c[1]);
+      } else if (geom.type === 'MultiLineString' || geom.type === 'Polygon') {
+        for (const ring of geom.coordinates) for (const c of ring) check(c[0], c[1]);
+      } else if (geom.type === 'MultiPolygon') {
+        for (const poly of geom.coordinates) for (const ring of poly) for (const c of ring) check(c[0], c[1]);
+      }
+    }
+  }
+
+  return minLng === Infinity ? null : [minLng, minLat, maxLng, maxLat];
+}
+
 function computeBbox(geometry: GeoJSON.Geometry): [number, number, number, number] | undefined {
   if (geometry.type === 'Point') return undefined;
   let minLng = Infinity, minLat = Infinity, maxLng = -Infinity, maxLat = -Infinity;
@@ -190,6 +219,7 @@ export function MapPreview({ map }: MapPreviewProps) {
 
   // Compiled config
   const [compiledConfig, setCompiledConfig] = useState<CompiledMapConfig | null>(null);
+  const [autoBounds, setAutoBounds] = useState<[number, number, number, number] | null>(null);
 
   // Hover state
   const [hoverData, setHoverData] = useState<HoverData | null>(null);
@@ -294,6 +324,14 @@ export function MapPreview({ map }: MapPreviewProps) {
           basemapKey,
           mapConfigObj?.tile as Parameters<typeof resolveBasemapTile>[1],
         );
+
+        // Auto-fit: if no explicit center in config, compute the overall bbox of all loaded data.
+        if (!mapConfigObj?.center) {
+          const bbox = computeOverallBbox([...dataMap.values()]);
+          setAutoBounds(bbox);
+        } else {
+          setAutoBounds(null);
+        }
 
         const fullConfig: MapConfig & { basemap?: string } = {
           tile: tileConfig,
@@ -556,11 +594,18 @@ export function MapPreview({ map }: MapPreviewProps) {
       {compiledConfig && (
         <MapGL
           ref={mapRef}
-          initialViewState={{
-            longitude: compiledConfig.center[1],
-            latitude: compiledConfig.center[0],
-            zoom: compiledConfig.zoom,
-          }}
+          initialViewState={
+            !mapConfigObj?.center && autoBounds
+              ? {
+                  bounds: autoBounds,
+                  fitBoundsOptions: { padding: 40, maxZoom: 12 },
+                }
+              : {
+                  longitude: compiledConfig.center[1],
+                  latitude: compiledConfig.center[0],
+                  zoom: compiledConfig.zoom,
+                }
+          }
           style={{ width: '100%', height: isFullscreen ? '100vh' : '100%' }}
           mapStyle={compiledConfig.mapStyle}
           interactiveLayerIds={interactiveLayerIds}
