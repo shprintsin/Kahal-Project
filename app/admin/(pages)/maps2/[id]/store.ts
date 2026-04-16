@@ -6,6 +6,7 @@ import type {
   LabelConfig,
   PopupConfig,
   FilterConfig,
+  HoverConfig,
 } from "@/types/map-config";
 
 export interface StudioLayer {
@@ -23,6 +24,7 @@ export interface StudioLayer {
   labels: LabelConfig | null;
   popup: PopupConfig | null;
   filter: FilterConfig | null;
+  hover: HoverConfig | null;
   featureCount: number;
   properties: string[];
 }
@@ -83,6 +85,7 @@ export type DataStudioAction =
   | { type: "SET_LAYER_STYLE"; layerId: string; style: PolygonStyleConfig | PointStyleConfig }
   | { type: "SET_LAYER_LABELS"; layerId: string; labels: LabelConfig | null }
   | { type: "SET_LAYER_FILTER"; layerId: string; filter: FilterConfig | null }
+  | { type: "SET_LAYER_HOVER"; layerId: string; hover: HoverConfig | null }
   | { type: "SET_RIGHT_PANEL_MODE"; mode: "style" | "details" }
   | { type: "SET_YEAR"; year: number | null }
   | { type: "SET_YEAR_RANGE"; yearMin: number | null; yearMax: number | null }
@@ -202,6 +205,14 @@ export function dataStudioReducer(
         ...state,
         layers: state.layers.map((l) =>
           l.id === action.layerId ? { ...l, filter: action.filter } : l
+        ),
+        isDirty: true,
+      };
+    case "SET_LAYER_HOVER":
+      return {
+        ...state,
+        layers: state.layers.map((l) =>
+          l.id === action.layerId ? { ...l, hover: action.hover } : l
         ),
         isDirty: true,
       };

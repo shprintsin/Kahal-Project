@@ -68,7 +68,7 @@ export type StyleType = z.infer<typeof StyleTypeSchema>;
 export const GraduatedMethodSchema = z.enum(['equal_interval', 'quantile', 'custom']);
 export type GraduatedMethod = z.infer<typeof GraduatedMethodSchema>;
 
-export const RadiusScaleSchema = z.enum(['sqrt', 'log', 'linear']);
+export const RadiusScaleSchema = z.enum(['sqrt', 'log', 'linear', 'stepped']);
 export type RadiusScale = z.infer<typeof RadiusScaleSchema>;
 
 export const LabelCollisionSchema = z.enum(['none', 'hide']);

@@ -253,6 +253,24 @@ export function compileCircleRadius(
     }
   }
 
+  // Stepped: threshold-based sizing — doesn't need min/max, works with URL sources too
+  if (method === 'stepped') {
+    const breaks = style.graduatedRadius.breaks ?? [];
+    const sizes = style.graduatedRadius.sizes ?? [];
+    if (breaks.length > 0 && sizes.length === breaks.length + 1) {
+      const stepExpr: MLExpression = ['step', ['get', field], sizes[0]];
+      for (let i = 0; i < breaks.length; i++) {
+        (stepExpr as MLExpression[]).push(breaks[i], sizes[i + 1]);
+      }
+      if (defaultRadius != null) {
+        return ['case', ['==', ['typeof', ['get', field]], 'number'], stepExpr, defaultRadius];
+      }
+      return stepExpr;
+    }
+    // Fallback if breaks/sizes not configured
+    return minRadius;
+  }
+
   if (dataMax <= dataMin) return minRadius;
 
   let graduatedExpr: MLExpression;

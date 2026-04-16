@@ -93,6 +93,10 @@ export const GraduatedRadiusConfigSchema = z.object({
   minRadius: z.number().default(2),
   maxRadius: z.number().default(20),
   defaultRadius: z.number().optional(),
+  // For method: 'stepped' — threshold values (ascending) and corresponding radii.
+  // sizes must have exactly breaks.length + 1 entries.
+  breaks: z.array(z.number()).optional(),
+  sizes: z.array(z.number()).optional(),
 });
 export type GraduatedRadiusConfig = z.infer<typeof GraduatedRadiusConfigSchema>;
 

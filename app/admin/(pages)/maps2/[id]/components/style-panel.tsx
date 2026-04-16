@@ -20,8 +20,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
-import { Circle, Hexagon, Paintbrush, Tag, Type, X } from "lucide-react";
-import type { PolygonStyleConfig, PointStyleConfig, LabelConfig } from "@/types/map-config";
+import { Circle, Hexagon, MousePointerClick, Paintbrush, Tag, Type, X } from "lucide-react";
+import type { PolygonStyleConfig, PointStyleConfig, LabelConfig, HoverConfig } from "@/types/map-config";
 
 function isPolygonStyle(style: PolygonStyleConfig | PointStyleConfig): style is PolygonStyleConfig {
   return "default_color" in style;
@@ -362,6 +362,120 @@ function StyleSection({ layer }: { layer: StudioLayer }) {
   );
 }
 
+function HoverSection({ layer }: { layer: StudioLayer }) {
+  const { dispatch } = useDataStudio();
+  const hover: HoverConfig = layer.hover ?? { enable: false };
+
+  const update = (updates: Partial<HoverConfig>) => {
+    dispatch({
+      type: "SET_LAYER_HOVER",
+      layerId: layer.id,
+      hover: { ...hover, ...updates },
+    });
+  };
+
+  const updateStyle = (updates: Partial<NonNullable<HoverConfig["style"]>>) => {
+    update({ style: { ...hover.style, ...updates } });
+  };
+
+  const toggleField = (field: string) => {
+    const current = hover.panel?.fields ?? [];
+    const next = current.includes(field)
+      ? current.filter((f) => f !== field)
+      : [...current, field];
+    update({ panel: { ...hover.panel, fields: next } });
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <Label className="text-xs font-medium">Enable Hover</Label>
+        <Switch
+          checked={hover.enable}
+          onCheckedChange={(enable) => update({ enable })}
+        />
+      </div>
+
+      {hover.enable && (
+        <>
+          <div className="space-y-2">
+            <Label className="text-xs font-medium">Display</Label>
+            <Select
+              value={hover.display ?? "floating"}
+              onValueChange={(v) => update({ display: v as HoverConfig["display"] })}
+            >
+              <SelectTrigger className="h-8 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="floating" className="text-xs">Floating tooltip</SelectItem>
+                <SelectItem value="sidebar" className="text-xs">Sidebar</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-xs font-medium">Highlight Color</Label>
+            <div className="flex items-center gap-2">
+              <input
+                type="color"
+                value={hover.style?.color ?? "#1A1A2E"}
+                onChange={(e) => updateStyle({ color: e.target.value })}
+                className="w-8 h-8 rounded border border-border cursor-pointer"
+              />
+              <Input
+                value={hover.style?.color ?? ""}
+                onChange={(e) => updateStyle({ color: e.target.value })}
+                className="h-8 text-xs font-mono flex-1"
+                placeholder="#1A1A2E"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-xs font-medium">Hover Opacity</Label>
+            <Slider
+              value={[hover.style?.fillOpacity ?? 0.9]}
+              min={0}
+              max={1}
+              step={0.05}
+              onValueChange={([v]) => updateStyle({ fillOpacity: v })}
+            />
+            <span className="text-[10px] text-muted-foreground">
+              {Math.round((hover.style?.fillOpacity ?? 0.9) * 100)}%
+            </span>
+          </div>
+
+          {layer.properties.length > 0 && (
+            <div className="space-y-2">
+              <Label className="text-xs font-medium">Tooltip Fields</Label>
+              <div className="space-y-1 max-h-[160px] overflow-y-auto">
+                {layer.properties.map((prop) => {
+                  const selected = hover.panel?.fields?.includes(prop) ?? false;
+                  return (
+                    <button
+                      key={prop}
+                      onClick={() => toggleField(prop)}
+                      className={cn(
+                        "w-full text-left px-2 py-1 rounded text-[11px] font-mono transition-colors",
+                        selected
+                          ? "bg-primary/10 text-primary border border-primary/30"
+                          : "bg-muted/40 text-muted-foreground hover:bg-muted"
+                      )}
+                    >
+                      {prop}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
 function LabelsSection({ layer }: { layer: StudioLayer }) {
   const { dispatch } = useDataStudio();
   const labels: LabelConfig = layer.labels || {
@@ -480,7 +594,7 @@ export function StylePanel() {
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <Accordion type="multiple" defaultValue={["style", "labels"]} className="px-3">
+        <Accordion type="multiple" defaultValue={["style", "labels", "hover"]} className="px-3">
           <AccordionItem value="style">
             <AccordionTrigger className="text-xs font-semibold py-3">
               <div className="flex items-center gap-2">
@@ -502,6 +616,18 @@ export function StylePanel() {
             </AccordionTrigger>
             <AccordionContent>
               <LabelsSection layer={selectedLayer} />
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="hover">
+            <AccordionTrigger className="text-xs font-semibold py-3">
+              <div className="flex items-center gap-2">
+                <MousePointerClick className="w-3.5 h-3.5" />
+                Hover
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <HoverSection layer={selectedLayer} />
             </AccordionContent>
           </AccordionItem>
 

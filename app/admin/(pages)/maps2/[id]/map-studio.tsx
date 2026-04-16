@@ -87,6 +87,7 @@ function buildInitialState(mapData: Record<string, unknown> | null): DataStudioS
     const savedLabels = (styleOverrideObj.labels as StudioLayer["labels"]) || null;
     const savedPopup = (styleOverrideObj.popup as StudioLayer["popup"]) || null;
     const savedFilter = (styleOverrideObj.filter as StudioLayer["filter"]) || null;
+    const savedHover = (styleOverrideObj.hover as StudioLayer["hover"]) || null;
 
     return {
       id: (assoc.associationId as string) || (assoc.id as string) || `assoc_${i}`,
@@ -103,6 +104,7 @@ function buildInitialState(mapData: Record<string, unknown> | null): DataStudioS
       labels: savedLabels,
       popup: savedPopup,
       filter: savedFilter,
+      hover: savedHover,
       featureCount: features.length,
       properties: props,
     };
@@ -159,6 +161,7 @@ export function MapStudio({ mapData, layerLibrary, isNew, categories, tags, regi
         labels: l.labels,
         popup: l.popup,
         filter: l.filter,
+        hover: l.hover,
         data: l.geoJsonData,
         sourceType: l.sourceType,
         url: l.sourceUrl || undefined,
@@ -248,6 +251,7 @@ export function MapStudio({ mapData, layerLibrary, isNew, categories, tags, regi
           labels: null,
           popup: null,
           filter: null,
+          hover: null,
           featureCount: features.length,
           properties: props,
         };
@@ -298,6 +302,7 @@ export function MapStudio({ mapData, layerLibrary, isNew, categories, tags, regi
           labels: null,
           popup: null,
           filter: null,
+          hover: null,
           featureCount: features.length,
           properties: props,
         };
