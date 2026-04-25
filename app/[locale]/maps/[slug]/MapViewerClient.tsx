@@ -96,7 +96,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
           </div>
 
           <div className="mb-8">
-            <MapPreview map={map} />
+            <MapPreview map={map} locale={locale} />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

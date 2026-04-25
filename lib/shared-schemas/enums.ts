@@ -83,7 +83,7 @@ export type HoverDisplay = z.infer<typeof HoverDisplaySchema>;
 export const LegendPositionSchema = z.enum(['topright', 'bottomright', 'bottomleft', 'topleft']);
 export type LegendPosition = z.infer<typeof LegendPositionSchema>;
 
-export const ControlTypeSchema = z.enum(['layer-toggle', 'search']);
+export const ControlTypeSchema = z.enum(['layer-toggle', 'search', 'attribute-filter']);
 export type ControlType = z.infer<typeof ControlTypeSchema>;
 
 export const MaturitySchema = z.enum(['Provisional', 'Verified', 'Authoritative']);

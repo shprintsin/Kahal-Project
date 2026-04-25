@@ -232,6 +232,7 @@ export const ControlConfigSchema = z.object({
   layers: z.array(z.string()).optional(),
   layer: z.string().optional(),
   field: z.string().optional(),
+  label: z.record(z.string(), z.string()).optional(),
 });
 export type ControlConfig = z.infer<typeof ControlConfigSchema>;
 

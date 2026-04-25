@@ -30,6 +30,8 @@ import { Legend } from './Legend';
 import type { LegendLayerInput } from './Legend';
 import { LayerToggle, toggleLayerVisibility } from './LayerToggle';
 import type { LayerToggleItem } from './LayerToggle';
+import { AttributeFilterToggle } from './AttributeFilterToggle';
+import type { AttributeFilterItem } from './AttributeFilterToggle';
 import { SearchControl } from './SearchControl';
 import type { SearchFeature } from './SearchControl';
 import { HoverInfoPanel } from './HoverInfoPanel';
@@ -40,6 +42,7 @@ import { MapPopup, type FeaturePopupData } from './MapPopup';
 
 interface MapPreviewProps {
   map: MapType;
+  locale?: string;
 }
 
 // ─── GeoJSON cache ──────────────────────────────
@@ -209,7 +212,7 @@ function computeBbox(geometry: GeoJSON.Geometry): [number, number, number, numbe
 
 // ─── Component ──────────────────────────────────
 
-export function MapPreview({ map }: MapPreviewProps) {
+export function MapPreview({ map, locale }: MapPreviewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapRef | null>(null);
 
@@ -232,6 +235,11 @@ export function MapPreview({ map }: MapPreviewProps) {
   // Layer toggle state
   const [layerToggleItems, setLayerToggleItems] = useState<LayerToggleItem[]>([]);
 
+  // Attribute filter state — keyed by `${layerKey}::${field}`
+  const [attributeFilterActive, setAttributeFilterActive] = useState<Record<string, boolean>>({});
+  // Maps compiled layer ID → original filter expression (or undefined if none)
+  const originalFiltersRef = useRef<Map<string, unknown>>(new Map());
+
   // Search features
   const [searchFeatures, setSearchFeatures] = useState<SearchFeature[]>([]);
 
@@ -247,6 +255,10 @@ export function MapPreview({ map }: MapPreviewProps) {
   const hasLegend = !!behaviors?.legend;
   const layerToggleControl = behaviors?.controls?.find((c) => c.type === 'layer-toggle');
   const searchControl = behaviors?.controls?.find((c) => c.type === 'search');
+  const attributeFilterControls = useMemo(
+    () => (behaviors?.controls || []).filter((c) => c.type === 'attribute-filter' && c.field),
+    [behaviors?.controls],
+  );
   const basemapKey = mapConfigObj?.basemap as string | undefined;
 
   // ─── Fullscreen ─────────────────────────────
@@ -346,6 +358,16 @@ export function MapPreview({ map }: MapPreviewProps) {
         const compiled = compileMapConfig(fullConfig, dataMap);
 
         if (cancelled) return;
+
+        // Capture original filters per compiled sub-layer ID so attribute
+        // filters can be AND-merged without clobbering layer-level filters.
+        const origFilters = new Map<string, unknown>();
+        for (const spec of compiled.layerSpecs) {
+          for (const sub of spec.layers) {
+            origFilters.set(sub.id, sub.filter);
+          }
+        }
+        originalFiltersRef.current = origFilters;
 
         setCompiledConfig(compiled);
         setSearchFeatures(allFeatures);
@@ -526,6 +548,89 @@ export function MapPreview({ map }: MapPreviewProps) {
     });
   }, []);
 
+  // ─── Attribute filter ─────────────────────────
+
+  // Resolve each control's `layer` (slug/name) → underlying compiled key
+  const attributeFilterEntries = useMemo(() => {
+    const layers = map.layers || [];
+    return attributeFilterControls.flatMap((ctrl) => {
+      if (!ctrl.field) return [];
+      const target = layers.find((l) =>
+        l.slug === ctrl.layer || l.id === ctrl.layer || l.name === ctrl.layer,
+      );
+      if (!target) return [];
+      const layerKey = target.id || target.name;
+      const key = `${layerKey}::${ctrl.field}`;
+      const fallback = ctrl.field;
+      const labelMap = ctrl.label;
+      const label = labelMap
+        ? (locale && labelMap[locale]) || labelMap.en || labelMap.he || fallback
+        : fallback;
+      return [{ key, layerKey, field: ctrl.field, label }];
+    });
+  }, [attributeFilterControls, map.layers, locale]);
+
+  const attributeFilterItems = useMemo<AttributeFilterItem[]>(
+    () => attributeFilterEntries.map((e) => ({
+      key: e.key,
+      label: e.label,
+      active: !!attributeFilterActive[e.key],
+    })),
+    [attributeFilterEntries, attributeFilterActive],
+  );
+
+  const applyAttributeFilters = useCallback((nextActive: Record<string, boolean>) => {
+    const mapInstance = mapRef.current?.getMap();
+    if (!mapInstance) return;
+
+    const byLayerKey = new Map<string, string[]>();
+    for (const entry of attributeFilterEntries) {
+      if (!nextActive[entry.key]) continue;
+      const list = byLayerKey.get(entry.layerKey) ?? [];
+      list.push(entry.field);
+      byLayerKey.set(entry.layerKey, list);
+    }
+
+    const suffixes = ['-fill', '-line', '-circle', '-labels'] as const;
+    const allLayerKeys = new Set(attributeFilterEntries.map((e) => e.layerKey));
+
+    for (const layerKey of allLayerKeys) {
+      const activeFields = byLayerKey.get(layerKey) ?? [];
+      for (const suffix of suffixes) {
+        const compiledId = `${layerKey}${suffix}`;
+        const original = originalFiltersRef.current.get(compiledId);
+        const fieldExprs = activeFields.map((f) => ['==', ['get', f], true]);
+        const parts: unknown[] = [];
+        if (original !== undefined && original !== null) parts.push(original);
+        parts.push(...fieldExprs);
+        const merged: unknown =
+          parts.length === 0 ? null :
+          parts.length === 1 ? parts[0] :
+          ['all', ...parts];
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- maplibre filter expression typing
+          mapInstance.setFilter(compiledId, merged as any);
+        } catch {
+          // Sub-layer may not exist for this layer type
+        }
+      }
+    }
+  }, [attributeFilterEntries]);
+
+  const handleAttributeFilterToggle = useCallback((key: string) => {
+    setAttributeFilterActive((prev) => {
+      const next = { ...prev, [key]: !prev[key] };
+      applyAttributeFilters(next);
+      return next;
+    });
+  }, [applyAttributeFilters]);
+
+  // Re-apply when the compiled config changes (e.g. on initial load)
+  useEffect(() => {
+    if (compiledConfig) applyAttributeFilters(attributeFilterActive);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [compiledConfig]);
+
   // ─── Search select ────────────────────────────
 
   const handleSearchSelect = useCallback((feature: SearchFeature) => {
@@ -544,7 +649,7 @@ export function MapPreview({ map }: MapPreviewProps) {
 
   // ─── Cursor ───────────────────────────────────
 
-  const cursor = hoveredFeatureRef.current ? 'pointer' : 'grab';
+  const cursor = hoveredFeatureRef.current ? 'pointer' : 'pointer';
 
   // ─── Hover display config ─────────────────────
 
@@ -667,6 +772,14 @@ export function MapPreview({ map }: MapPreviewProps) {
       {/* Layer toggle */}
       {!loading && layerToggleControl && layerToggleItems.length > 1 && (
         <LayerToggle items={layerToggleItems} onToggle={handleLayerToggle} />
+      )}
+
+      {/* Attribute filter */}
+      {!loading && attributeFilterItems.length > 0 && (
+        <AttributeFilterToggle
+          items={attributeFilterItems}
+          onToggle={handleAttributeFilterToggle}
+        />
       )}
 
       {/* Search */}
