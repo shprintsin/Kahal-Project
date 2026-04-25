@@ -599,7 +599,7 @@ export function MapPreview({ map, locale }: MapPreviewProps) {
       for (const suffix of suffixes) {
         const compiledId = `${layerKey}${suffix}`;
         const original = originalFiltersRef.current.get(compiledId);
-        const fieldExprs = activeFields.map((f) => ['==', ['get', f], true]);
+        const fieldExprs = activeFields.map((f) => ['to-boolean', ['get', f]]);
         const parts: unknown[] = [];
         if (original !== undefined && original !== null) parts.push(original);
         parts.push(...fieldExprs);
