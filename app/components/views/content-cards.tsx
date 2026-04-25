@@ -1,16 +1,22 @@
 "use client"
 
-import { ArrowLeft, Calendar, Database, FileText, Layers, Map as MapIcon, Eye, Newspaper, ScrollText, Library } from "lucide-react"
-import { useTranslations, useLocale } from "next-intl"
+import { ArrowLeft } from "lucide-react"
+import { useLocale } from "next-intl"
+import type { LucideIcon } from "lucide-react"
 import type { SearchContentType } from "@/app/admin/actions/search"
 
-interface MetaBadgeProps {
-  children: React.ReactNode
+export function MetaBadge({ children, className }: { children: React.ReactNode; className?: string }) {
+  return (
+    <span className={`MetaBadge bg-surface-brand-light text-brand-primary-dark px-2 py-0.5 rounded-none text-xs font-semibold ${className ?? ''}`}>
+      {children}
+    </span>
+  )
 }
 
-function MetaBadge({ children }: MetaBadgeProps) {
+export function MetaIconText({ icon: Icon, accent, children }: { icon: LucideIcon; accent?: boolean; children: React.ReactNode }) {
   return (
-    <span className="bg-surface-brand-light text-brand-primary-dark px-2 py-0.5 rounded-none text-xs font-semibold">
+    <span className={`MetaIconText flex items-center gap-1 ${accent ? 'font-medium text-brand-primary' : ''}`}>
+      <Icon className="w-3.5 h-3.5" />
       {children}
     </span>
   )
@@ -18,7 +24,7 @@ function MetaBadge({ children }: MetaBadgeProps) {
 
 function MetaRow({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2 flex-wrap">
+    <div className="MetaRow flex items-center gap-4 text-sm text-muted-foreground mb-2 flex-wrap">
       {children}
     </div>
   )
@@ -26,7 +32,7 @@ function MetaRow({ children }: { children: React.ReactNode }) {
 
 function CardTitle({ href, children }: { href: string; children: React.ReactNode }) {
   return (
-    <h2 className="font-display text-xl sm:text-2xl text-brand-primary mb-3 group transition-colors">
+    <h2 className="CardTitle font-display text-xl sm:text-2xl text-brand-primary mb-3 group transition-colors">
       <a href={href} className="hover:text-brand-primary">{children}</a>
     </h2>
   )
@@ -34,12 +40,12 @@ function CardTitle({ href, children }: { href: string; children: React.ReactNode
 
 function CardExcerpt({ text }: { text?: string | null }) {
   if (!text) return null
-  return <p className="text-body-secondary line-clamp-3 mb-4 leading-relaxed">{text}</p>
+  return <p className="CardExcerpt text-body-secondary line-clamp-3 mb-4 leading-relaxed">{text}</p>
 }
 
-function CardLink({ href, label }: { href: string; label: string; icon?: React.ReactNode }) {
+function CardLink({ href, label }: { href: string; label: string }) {
   return (
-    <div className="mt-auto flex justify-end">
+    <div className="CardLink mt-auto flex justify-end">
       <a
         href={href}
         className="inline-flex items-center gap-2 text-brand-primary font-semibold hover:gap-3 transition-all duration-200"
@@ -53,7 +59,7 @@ function CardLink({ href, label }: { href: string; label: string; icon?: React.R
 
 function PlaceholderImage() {
   return (
-    <div className="w-full h-full bg-gradient-to-br from-brand-primary-light via-surface-brand-light to-stone-100 flex items-center justify-center">
+    <div className="PlaceholderImage w-full h-full bg-gradient-to-br from-brand-primary-light via-surface-brand-light to-stone-100 flex items-center justify-center">
       <svg width="64" height="64" viewBox="0 0 64 64" fill="none" className="text-brand-primary opacity-60">
         <rect x="8" y="16" width="48" height="32" rx="1" stroke="currentColor" strokeWidth="1.5" />
         <circle cx="22" cy="28" r="4" stroke="currentColor" strokeWidth="1.5" />
@@ -63,11 +69,13 @@ function PlaceholderImage() {
   )
 }
 
-function CardImage({ src, alt }: { src?: string | null; alt: string }) {
+function CardImage({ src, alt, href }: { src?: string | null; alt: string; href: string }) {
   return (
-    <div className="w-full md:w-1/3 h-48 md:h-auto flex-shrink-0">
+    <div className="CardImage w-full md:w-1/3 h-48 md:h-auto flex-shrink-0">
       {src ? (
-        <img src={src} alt={alt} className="w-full h-full object-cover rounded-none shadow-sm" />
+        <a href={href}>
+          <img src={src} alt={alt} className="CardImage-img w-full h-full object-cover rounded-none shadow-sm" />
+        </a>
       ) : (
         <PlaceholderImage />
       )}
@@ -77,7 +85,7 @@ function CardImage({ src, alt }: { src?: string | null; alt: string }) {
 
 function CardWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col md:flex-row gap-6 pb-8 border-b border-border">
+    <div className="CardWrapper flex flex-col md:flex-row gap-6 pb-8 border-b border-border">
       {children}
     </div>
   )
@@ -114,168 +122,46 @@ export interface LayerItem extends ContentItem {
   mapCount?: number
 }
 
-export function PostCard({ item }: { item: PostItem }) {
-  const locale = useLocale()
-  const t = useTranslations()
-  return (
-    <CardWrapper>
-      <CardImage src={item.thumbnail} alt={item.title} />
-      <div className="w-full md:w-2/3 flex flex-col">
-        <MetaRow>
-          {item.category && <MetaBadge>{item.category}</MetaBadge>}
-          {item.date && (
-            <span className="flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5" />
-              {item.date}
-            </span>
-          )}
-        </MetaRow>
-        <CardTitle href={`/${locale}/posts/${item.slug}`}>{item.title}</CardTitle>
-        <CardExcerpt text={item.excerpt} />
-        <CardLink href={`/${locale}/posts/${item.slug}`} label={t('public.content.readMore')} />
-      </div>
-    </CardWrapper>
-  )
-}
-
-export function DatasetCard({ item }: { item: DatasetItem }) {
-  const locale = useLocale()
-  const t = useTranslations()
-  return (
-    <CardWrapper>
-      <CardImage src={item.thumbnail} alt={item.title} />
-      <div className="w-full md:w-2/3 flex flex-col">
-        <MetaRow>
-          {item.category && <MetaBadge>{item.category}</MetaBadge>}
-          {item.date && (
-            <span className="flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5" />
-              {item.date}
-            </span>
-          )}
-          {item.resourceCount !== undefined && (
-            <span className="flex items-center gap-1 font-medium text-brand-primary">
-              <FileText className="w-3.5 h-3.5" />
-              {item.resourceCount} {t('public.datasets.resources')}
-            </span>
-          )}
-        </MetaRow>
-        <CardTitle href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug}>{item.title}</CardTitle>
-        <CardExcerpt text={item.excerpt} />
-        <CardLink href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug} label={t('public.content.readMore')} />
-      </div>
-    </CardWrapper>
-  )
-}
-
-export function MapCard({ item }: { item: MapItem }) {
-  const locale = useLocale()
-  const t = useTranslations()
-  return (
-    <CardWrapper>
-      <CardImage src={item.thumbnail} alt={item.title} />
-      <div className="w-full md:w-2/3 flex flex-col">
-        <MetaRow>
-          {item.category && <MetaBadge>{item.category}</MetaBadge>}
-          {item.year && (
-            <span className="flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5" />
-              {item.year}
-            </span>
-          )}
-          {item.period && <span className="text-body-secondary font-medium">{item.period}</span>}
-          {item.layerCount !== undefined && (
-            <span className="flex items-center gap-1 font-medium text-brand-primary">
-              <Layers className="w-3.5 h-3.5" />
-              {item.layerCount} {t('public.layers.title')}
-            </span>
-          )}
-          {item.layerTypes?.map((type) => (
-            <span key={type} className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-stone-100 text-stone-600">
-              {type === 'POINTS' ? 'נקודות' : type === 'POLYGONS' ? 'גבולות' : type === 'POLYLINES' ? 'קווים' : type === 'MULTI_POLYGONS' ? 'גבולות' : type.toLowerCase()}
-            </span>
-          ))}
-        </MetaRow>
-        <CardTitle href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug}>{item.title}</CardTitle>
-        <CardExcerpt text={item.excerpt} />
-        <CardLink href={item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug} label={t('public.content.readMore')} />
-      </div>
-    </CardWrapper>
-  )
-}
-
-export function LayerCard({ item }: { item: LayerItem }) {
-  const locale = useLocale()
-  const t = useTranslations()
-  return (
-    <CardWrapper>
-      <CardImage src={item.thumbnail} alt={item.name} />
-      <div className="w-full flex flex-col">
-        <MetaRow>
-          <MetaBadge>{item.type}</MetaBadge>
-          {item.category && <MetaBadge>{item.category}</MetaBadge>}
-          {(item.minYear || item.maxYear) && (
-            <span className="flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5" />
-              {item.minYear || '?'} - {item.maxYear || '?'}
-            </span>
-          )}
-          {item.mapCount !== undefined && item.mapCount > 0 && (
-            <span className="flex items-center gap-1 font-medium text-brand-primary">
-              <Eye className="w-3.5 h-3.5" />
-              {item.mapCount} {t('public.maps.title')}
-            </span>
-          )}
-        </MetaRow>
-        <CardTitle href={`/${locale}/layers/${item.slug}`}>{item.name}</CardTitle>
-        <CardExcerpt text={item.excerpt} />
-        <CardLink href={`/${locale}/layers/${item.slug}`} label={t('public.content.readMore')} />
-      </div>
-    </CardWrapper>
-  )
-}
-
-const SEARCH_TYPE_CONFIG: Record<SearchContentType, { icon: typeof FileText; labelKey: string; fallback: string; color: string }> = {
-  page:     { icon: FileText,   labelKey: 'search.type.page',     fallback: 'דפים',     color: 'bg-blue-100 text-blue-800' },
-  post:     { icon: Newspaper,  labelKey: 'search.type.post',     fallback: 'מאמרים',   color: 'bg-green-100 text-green-800' },
-  layer:    { icon: MapIcon,    labelKey: 'search.type.layer',    fallback: 'שכבות',    color: 'bg-amber-100 text-amber-800' },
-  dataset:  { icon: Database,   labelKey: 'search.type.dataset',  fallback: 'מפות',     color: 'bg-purple-100 text-purple-800' },
-  artifact: { icon: ScrollText, labelKey: 'search.type.artifact', fallback: 'מסמכים',   color: 'bg-rose-100 text-rose-800' },
-  series:   { icon: Library,    labelKey: 'search.type.series',   fallback: 'סדרות',    color: 'bg-teal-100 text-teal-800' },
-}
-
 export interface SearchResultItem extends ContentItem {
   type: SearchContentType
 }
 
-export function SearchResultCard({ item }: { item: SearchResultItem }) {
-  const locale = useLocale()
-  const t = useTranslations()
-  const cfg = SEARCH_TYPE_CONFIG[item.type]
-  const Icon = cfg.icon
-  const href = item.slug.startsWith('/') ? `/${locale}${item.slug}` : item.slug
+export interface ContentCardProps {
+  href: string
+  title: string
+  alt?: string
+  excerpt?: string | null
+  thumbnail?: string | null
+  meta?: React.ReactNode
+  linkLabel: string
+  fullWidthBody?: boolean
+}
 
+export function ContentCard({
+  href,
+  title,
+  alt,
+  excerpt,
+  thumbnail,
+  meta,
+  linkLabel,
+  fullWidthBody = false,
+}: ContentCardProps) {
+  const bodyClass = fullWidthBody ? "w-full flex flex-col" : "w-full md:w-2/3 flex flex-col"
   return (
     <CardWrapper>
-      <CardImage src={item.thumbnail} alt={item.title} />
-      <div className="w-full md:w-2/3 flex flex-col">
-        <MetaRow>
-          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-xs font-semibold ${cfg.color}`}>
-            <Icon className="w-3 h-3" />
-            {t(cfg.labelKey, cfg.fallback)}
-          </span>
-          {item.date && (
-            <span className="flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5" />
-              {item.date}
-            </span>
-          )}
-          {item.category && <MetaBadge>{item.category}</MetaBadge>}
-        </MetaRow>
-        <CardTitle href={href}>{item.title}</CardTitle>
-        <CardExcerpt text={item.excerpt} />
-        <CardLink href={href} label={t('public.content.readMore')} />
+      <CardImage src={thumbnail} alt={alt ?? title} href={href} />
+      <div className={`ContentCard-body ${bodyClass}`}>
+        {meta && <MetaRow>{meta}</MetaRow>}
+        <CardTitle href={href}>{title}</CardTitle>
+        <CardExcerpt text={excerpt} />
+        <CardLink href={href} label={linkLabel} />
       </div>
     </CardWrapper>
   )
+}
+
+export function useLocalizedHref(slug: string) {
+  const locale = useLocale()
+  return slug.startsWith('/') ? `/${locale}${slug}` : slug
 }

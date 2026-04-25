@@ -1,7 +1,29 @@
 "use client"
 
 import { useState } from "react"
-import PostCard from "@/app/components/views/PostCard"
+import { ContentCard, MetaBadge, MetaIconText, useLocalizedHref, type PostItem } from "@/app/components/views/content-cards"
+import { Calendar } from "lucide-react"
+import { useTranslations } from "next-intl"
+
+function PostCardItem({ item }: { item: PostItem }) {
+  const t = useTranslations()
+  const href = useLocalizedHref(item.slug)
+  return (
+    <ContentCard
+      href={href}
+      title={item.title}
+      excerpt={item.excerpt}
+      thumbnail={item.thumbnail}
+      linkLabel={t('public.content.readMore')}
+      meta={
+        <>
+          {item.category && <MetaBadge>{item.category}</MetaBadge>}
+          {item.date && <MetaIconText icon={Calendar}>{item.date}</MetaIconText>}
+        </>
+      }
+    />
+  )
+}
 import type { SiteShellData } from "@/app/lib/get-navigation"
 import Pagination from "@/app/components/views/Pagination"
 import Sidebar, {
@@ -10,14 +32,7 @@ import Sidebar, {
 } from "@/app/components/views/Sidebar"
 import { SiteShell, SiteMain } from "@/components/ui/site-shell"
 
-interface PostSummary {
-  id: string | number
-  title: string
-  excerpt?: string
-  thumbnail?: string | null
-  slug: string
-  date?: string | null
-}
+type PostSummary = PostItem
 
 interface ApiCategory {
   id: string
@@ -66,7 +81,7 @@ export function CategoryPageClient({
               <>
                 <div className="space-y-6 sm:space-y-8">
                   {currentPosts.map((post) => (
-                    <PostCard key={post.id} post={post} />
+                    <PostCardItem key={post.id} item={post} />
                   ))}
                 </div>
                 {totalPages > 1 && (

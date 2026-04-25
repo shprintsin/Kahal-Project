@@ -3,8 +3,42 @@
 import type { SiteShellData } from "@/app/lib/get-navigation"
 import type { SidebarCategory } from "@/app/components/views/Sidebar"
 import { ContentListLayout } from "@/app/components/views/ContentListLayout"
-import { LayerCard, type LayerItem } from "@/app/components/views/content-cards"
-import { Layers } from "lucide-react"
+import { ContentCard, MetaBadge, MetaIconText, type LayerItem } from "@/app/components/views/content-cards"
+import { Calendar, Eye, Layers } from "lucide-react"
+import { useTranslations, useLocale } from "next-intl"
+
+function LayerCardItem({ item }: { item: LayerItem }) {
+  const t = useTranslations()
+  const locale = useLocale()
+  const href = `/${locale}/layers/${item.slug}`
+  return (
+    <ContentCard
+      href={href}
+      title={item.name}
+      alt={item.name}
+      excerpt={item.excerpt}
+      thumbnail={item.thumbnail}
+      linkLabel={t('public.content.readMore')}
+      fullWidthBody
+      meta={
+        <>
+          <MetaBadge>{item.type}</MetaBadge>
+          {item.category && <MetaBadge>{item.category}</MetaBadge>}
+          {(item.minYear || item.maxYear) && (
+            <MetaIconText icon={Calendar}>
+              {item.minYear || '?'} - {item.maxYear || '?'}
+            </MetaIconText>
+          )}
+          {item.mapCount !== undefined && item.mapCount > 0 && (
+            <MetaIconText icon={Eye} accent>
+              {item.mapCount} {t('public.maps.title')}
+            </MetaIconText>
+          )}
+        </>
+      }
+    />
+  )
+}
 
 export function LayersPageClient({
   initialLayers,
@@ -21,7 +55,7 @@ export function LayersPageClient({
       title="שכבות מידע גיאוגרפי"
       icon={<Layers className="w-8 h-8" />}
       items={initialLayers}
-      renderCard={(item) => <LayerCard item={item} />}
+      renderCard={(item) => <LayerCardItem item={item} />}
       getItemKey={(item) => item.id}
       itemsPerPage={10}
       categories={categories}

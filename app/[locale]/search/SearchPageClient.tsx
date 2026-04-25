@@ -8,18 +8,45 @@ import type { SearchContentType, SearchResponse } from "@/app/admin/actions/sear
 import type { SiteShellData } from "@/app/lib/get-navigation"
 import { SiteShell, SiteMain } from "@/components/ui/site-shell"
 import Pagination from "@/app/components/views/Pagination"
-import { SearchResultCard, type SearchResultItem } from "@/app/components/views/content-cards"
+import { ContentCard, MetaBadge, MetaIconText, useLocalizedHref, type SearchResultItem } from "@/app/components/views/content-cards"
+import { Calendar } from "lucide-react"
 import { useTranslations, useLocale } from "next-intl"
 import { getDateLocale } from "@/lib/i18n/config"
 import type { Locale } from "@/lib/i18n/config"
 
-const TYPE_META: Record<SearchContentType, { icon: typeof FileText; labelKey: string; fallback: string }> = {
-  page:     { icon: FileText,   labelKey: 'search.type.page',     fallback: 'דפים' },
-  post:     { icon: Newspaper,  labelKey: 'search.type.post',     fallback: 'מאמרים' },
-  dataset:  { icon: Database,   labelKey: 'search.type.dataset',  fallback: 'מפות' },
-  layer:    { icon: MapIcon,    labelKey: 'search.type.layer',    fallback: 'שכבות' },
-  artifact: { icon: ScrollText, labelKey: 'search.type.artifact', fallback: 'מסמכים' },
-  series:   { icon: Library,    labelKey: 'search.type.series',   fallback: 'סדרות' },
+const TYPE_META: Record<SearchContentType, { icon: typeof FileText; labelKey: string; fallback: string; color: string }> = {
+  page:     { icon: FileText,   labelKey: 'search.type.page',     fallback: 'דפים',   color: 'bg-blue-100 text-blue-800' },
+  post:     { icon: Newspaper,  labelKey: 'search.type.post',     fallback: 'מאמרים', color: 'bg-green-100 text-green-800' },
+  dataset:  { icon: Database,   labelKey: 'search.type.dataset',  fallback: 'מפות',   color: 'bg-purple-100 text-purple-800' },
+  layer:    { icon: MapIcon,    labelKey: 'search.type.layer',    fallback: 'שכבות',  color: 'bg-amber-100 text-amber-800' },
+  artifact: { icon: ScrollText, labelKey: 'search.type.artifact', fallback: 'מסמכים', color: 'bg-rose-100 text-rose-800' },
+  series:   { icon: Library,    labelKey: 'search.type.series',   fallback: 'סדרות',  color: 'bg-teal-100 text-teal-800' },
+}
+
+function SearchCardItem({ item }: { item: SearchResultItem }) {
+  const t = useTranslations()
+  const cfg = TYPE_META[item.type]
+  const Icon = cfg.icon
+  const href = useLocalizedHref(item.slug)
+  return (
+    <ContentCard
+      href={href}
+      title={item.title}
+      excerpt={item.excerpt}
+      thumbnail={item.thumbnail}
+      linkLabel={t('public.content.readMore')}
+      meta={
+        <>
+          <span className={`SearchTypeBadge inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-xs font-semibold ${cfg.color}`}>
+            <Icon className="w-3 h-3" />
+            {t(cfg.labelKey, cfg.fallback)}
+          </span>
+          {item.date && <MetaIconText icon={Calendar}>{item.date}</MetaIconText>}
+          {item.category && <MetaBadge>{item.category}</MetaBadge>}
+        </>
+      }
+    />
+  )
 }
 
 const TYPE_ORDER: SearchContentType[] = ['page', 'post', 'dataset', 'layer', 'artifact', 'series']
@@ -167,7 +194,7 @@ export default function SearchPageClient({
                 <div className="space-y-10 bg-white p-6 md:p-8 rounded-none shadow-sm">
                   {cardItems.map((item) => (
                     <div key={`${item.type}-${item.id}`}>
-                      <SearchResultCard item={item} />
+                      <SearchCardItem item={item} />
                     </div>
                   ))}
                 </div>
