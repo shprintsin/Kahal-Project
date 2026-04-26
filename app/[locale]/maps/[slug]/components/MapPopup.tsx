@@ -109,7 +109,7 @@ export function MapPopup({ data, onClose }: MapPopupProps) {
           maxWidth: 300,
         }}
       >
-        <div
+        {/* <div
           style={{
             fontSize: 13,
             fontWeight: 700,
@@ -120,7 +120,7 @@ export function MapPopup({ data, onClose }: MapPopupProps) {
           }}
         >
           {layerName}
-        </div>
+        </div> */}
         {content}
       </div>
     </Popup>

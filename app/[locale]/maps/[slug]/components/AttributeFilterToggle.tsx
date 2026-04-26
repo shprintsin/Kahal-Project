@@ -62,12 +62,12 @@ export function AttributeFilterToggle({ items, onToggle }: AttributeFilterToggle
       style={{
         ...GLASS,
         position: 'absolute',
-        bottom: 16,
-        left: 16,
+        bottom: 30,
+        right: 16,
         zIndex: 800,
         padding: '12px 16px',
         fontSize: 13,
-        minWidth: 200,
+        
         display: 'flex',
         flexDirection: 'column',
         gap: 8,

@@ -1,5 +1,8 @@
+"use client"
+
 import { cn } from '@/lib/utils'
 import { ReactNode } from "react"
+import { useTranslations } from "next-intl"
 
 interface StatusBadgeProps {
   children: ReactNode
@@ -40,33 +43,35 @@ export function StatusBadgeLarge({ children, variant = 'blue', className }: Stat
   )
 }
 
-const maturityMap = {
-  verified: { label: 'מאומת', variant: 'green' as const },
-  provisional: { label: 'זמני', variant: 'yellow' as const },
-  raw: { label: 'גולמי', variant: 'gray' as const },
-  experimental: { label: 'ניסיוני', variant: 'orange' as const },
-}
+const maturityVariants = {
+  verified: 'green',
+  provisional: 'yellow',
+  raw: 'gray',
+  experimental: 'orange',
+} as const
 
 export function MaturityBadge({ maturity }: { maturity: string }) {
-  const config = maturityMap[maturity as keyof typeof maturityMap] || maturityMap.raw
+  const t = useTranslations('public.datasets')
+  const key = (maturity in maturityVariants ? maturity : 'raw') as keyof typeof maturityVariants
   return (
-    <span className={cn("px-3 py-1.5 text-sm font-semibold border-2", variantStyles[config.variant])}>
-      {config.label}
+    <span className={cn("px-3 py-1.5 text-sm font-semibold border-2", variantStyles[maturityVariants[key]])}>
+      {t(key)}
     </span>
   )
 }
 
-const statusMap = {
-  published: { label: 'פורסם', variant: 'green' as const },
-  draft: { label: 'טיוטה', variant: 'gray' as const },
-  archived: { label: 'מאורכב', variant: 'blue' as const },
-}
+const statusVariants = {
+  published: 'green',
+  draft: 'gray',
+  archived: 'blue',
+} as const
 
 export function PublishStatusBadge({ status }: { status: string }) {
-  const config = statusMap[status as keyof typeof statusMap] || statusMap.draft
+  const t = useTranslations('public.datasets')
+  const key = (status in statusVariants ? status : 'draft') as keyof typeof statusVariants
   return (
-    <span className={cn("px-3 py-1.5 text-sm font-semibold border-2", variantStyles[config.variant])}>
-      {config.label}
+    <span className={cn("px-3 py-1.5 text-sm font-semibold border-2", variantStyles[statusVariants[key]])}>
+      {t(key)}
     </span>
   )
 }

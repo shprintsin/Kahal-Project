@@ -241,6 +241,12 @@
       "maturity": "Data Maturity",
       "verified": "Verified",
       "provisional": "Provisional",
+      "raw": "Raw",
+      "experimental": "Experimental",
+      "draft": "Draft",
+      "archived": "Archived",
+      "published": "Published",
+      "version": "Version",
       "description": "Description",
       "preview": "Preview data",
       "license": "License"
@@ -320,8 +326,8 @@
     },
     "map": {
       "details": "Details",
-      "dataLayers": "Data Layers",
-      "downloads": "Downloads",
+      "dataLayers": "Geographic Layers",
+      "downloads": "Datasets",
       "links": "Links",
       "citation": "Recommended Citation",
       "dataSources": "Data Sources",
@@ -329,6 +335,8 @@
       "download": "Download",
       "points": "Points",
       "polygons": "Polygons",
+      "polylines": "Polylines",
+      "raster": "Raster",
       "reportError": "Found an error? Let us know"
     },
     "layer": {

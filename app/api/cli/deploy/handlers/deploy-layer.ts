@@ -31,7 +31,9 @@ export const LayerDeployV2Schema = z.object({
     .min(1)
     .regex(/^[a-z0-9_-]+$/, 'slug must be lowercase alphanumeric with hyphens or underscores'),
   name: z.string().min(1),
+  nameI18n: z.record(z.string(), z.string()).optional(),
   description: z.string().default(''),
+  descriptionI18n: z.record(z.string(), z.string()).optional(),
   summary: z.string().optional(),
   summaryI18n: z.record(z.string(), z.string()).optional(),
   type: LayerTypeInput.default(LayerType.POINTS),
@@ -91,7 +93,13 @@ export async function deployLayer(
       where: { id: existing.id },
       data: {
         name: input.name,
+        ...(input.nameI18n
+          ? { nameI18n: input.nameI18n as Prisma.InputJsonValue }
+          : {}),
         description: input.description || existing.description,
+        ...(input.descriptionI18n
+          ? { descriptionI18n: input.descriptionI18n as Prisma.InputJsonValue }
+          : {}),
         summary: input.summary ?? existing.summary,
         ...(input.summaryI18n
           ? { summaryI18n: input.summaryI18n as Prisma.InputJsonValue }
@@ -113,7 +121,13 @@ export async function deployLayer(
       data: {
         slug: input.slug,
         name: input.name,
+        ...(input.nameI18n
+          ? { nameI18n: input.nameI18n as Prisma.InputJsonValue }
+          : {}),
         description: input.description,
+        ...(input.descriptionI18n
+          ? { descriptionI18n: input.descriptionI18n as Prisma.InputJsonValue }
+          : {}),
         summary: input.summary ?? '',
         ...(input.summaryI18n
           ? { summaryI18n: input.summaryI18n as Prisma.InputJsonValue }

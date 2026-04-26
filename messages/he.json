@@ -241,6 +241,12 @@
       "maturity": "בשלות נתונים",
       "verified": "מאומת",
       "provisional": "זמני",
+      "raw": "גולמי",
+      "experimental": "ניסיוני",
+      "draft": "טיוטה",
+      "archived": "מאורכב",
+      "published": "פורסם",
+      "version": "גרסה",
       "description": "תיאור",
       "preview": "צפה בנתונים",
       "license": "רישיון",
@@ -321,8 +327,8 @@
     },
     "map": {
       "details": "פרטים",
-      "dataLayers": "שכבות נתונים",
-      "downloads": "הורדות",
+      "dataLayers": "שכבות גיאוגרפיות",
+      "downloads": "נתונים",
       "links": "קישורים",
       "citation": "ציטוט מומלץ",
       "dataSources": "מקורות הנתונים",
@@ -330,6 +336,8 @@
       "download": "הורד",
       "points": "נקודות",
       "polygons": "גבולות",
+      "polylines": "מסלולים",
+      "raster": "רסטר",
       "reportError": "מצאת טעות? דווח לנו"
     },
     "layer": {

@@ -13,9 +13,9 @@ interface ActionButtonProps {
 export function ActionButton({ children, href, className, icon, iconPosition = 'start', onClick }: ActionButtonProps) {
   const content = (
     <>
-      {icon && iconPosition === 'start' && <span className="ml-2">{icon}</span>}
+      {icon && iconPosition === 'start' && <span className="me-2">{icon}</span>}
       {children}
-      {icon && iconPosition === 'end' && <span className="mr-3">{icon}</span>}
+      {icon && iconPosition === 'end' && <span className="ms-3">{icon}</span>}
     </>
   )
 

@@ -20,7 +20,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   const [siteSettings, contentBlocksData, shellData] = await Promise.all([
     getAllSiteSettings(),
-    getContentBlocksData().catch(() => undefined),
+    getContentBlocksData(locale as Locale).catch(() => undefined),
     getSiteShellData(locale),
   ]);
 

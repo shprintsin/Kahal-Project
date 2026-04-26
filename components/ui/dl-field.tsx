@@ -24,7 +24,7 @@ interface DlGroupProps {
 
 export function DlGroup({ children, className }: DlGroupProps) {
   return (
-    <dl className={cn("space-y-4 text-right", className)}>
+    <dl className={cn("space-y-4 text-start", className)}>
       {children}
     </dl>
   )

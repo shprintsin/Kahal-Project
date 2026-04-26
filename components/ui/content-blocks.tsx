@@ -57,23 +57,24 @@ export interface ContentBlocksProps {
   stats: Stats;
 }
 
-const BADGE_CONFIG: Record<string, { label: string; icon: typeof MapPin }> = {
-  POINTS: { label: 'נקודות', icon: MapPin },
-  POLYGONS: { label: 'גבולות', icon: Scan },
-  MULTI_POLYGONS: { label: 'גבולות', icon: Scan },
-  POLYLINES: { label: 'מסלולים', icon: Route },
-  RASTER: { label: 'רסטר', icon: Grid3X3 },
-  CSV: { label: 'CSV', icon: FileSpreadsheet },
+const BADGE_CONFIG: Record<string, { labelKey: string | null; icon: typeof MapPin }> = {
+  POINTS: { labelKey: 'public.map.points', icon: MapPin },
+  POLYGONS: { labelKey: 'public.map.polygons', icon: Scan },
+  MULTI_POLYGONS: { labelKey: 'public.map.polygons', icon: Scan },
+  POLYLINES: { labelKey: 'public.map.polylines', icon: Route },
+  RASTER: { labelKey: 'public.map.raster', icon: Grid3X3 },
+  CSV: { labelKey: null, icon: FileSpreadsheet },
 };
 
 function TypeBadge({ type }: { type: string }) {
   const config = BADGE_CONFIG[type];
+  const t = useTranslations();
   if (!config) return null;
   const Icon = config.icon;
   return (
     <span className="inline-flex items-center gap-1 text-muted-foreground text-xs">
       <Icon className="w-3.5 h-3.5" />
-      {config.label}
+      {config.labelKey ? t(config.labelKey as Parameters<typeof t>[0]) : 'CSV'}
     </span>
   );
 }

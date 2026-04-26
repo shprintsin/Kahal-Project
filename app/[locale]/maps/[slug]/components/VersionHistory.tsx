@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
-import { useLocale } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { getDateLocale } from "@/lib/i18n/config"
 import type { Locale } from "@/lib/i18n/config"
 
@@ -62,13 +62,15 @@ function DeploymentEntry({ d, dateLocale }: { d: Deployment; dateLocale?: string
 export function VersionHistory({ version, deployments }: VersionHistoryProps) {
   const locale = useLocale()
   const dateLocale = getDateLocale(locale as Locale)
+  const t = useTranslations('public.datasets')
+  const versionLabel = t('version')
   const [expanded, setExpanded] = useState(false)
 
   if (!version && deployments.length === 0) return null
 
   if (deployments.length === 0) {
     return (
-      <DlField label="גרסה" border={false}>
+      <DlField label={versionLabel} border={false}>
         <span className="font-mono">{version}</span>
       </DlField>
     )
@@ -78,8 +80,8 @@ export function VersionHistory({ version, deployments }: VersionHistoryProps) {
   const hasMore = deployments.length > PREVIEW_LIMIT
 
   return (
-    <div className="flex flex-col gap-2 text-right">
-      <dt className="text-sm font-semibold text-body font-display">גרסה</dt>
+    <div className="flex flex-col gap-2 text-start">
+      <dt className="text-sm font-semibold text-body font-display">{versionLabel}</dt>
       <dd>
         <button
           onClick={() => setExpanded(!expanded)}
@@ -112,7 +114,7 @@ export function VersionHistory({ version, deployments }: VersionHistoryProps) {
                 </DialogTrigger>
                 <DialogContent className="max-h-[80vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle className="text-right">היסטוריית גרסאות</DialogTitle>
+                    <DialogTitle className="text-end">היסטוריית גרסאות</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 mt-2">
                     {deployments.map((d) => (

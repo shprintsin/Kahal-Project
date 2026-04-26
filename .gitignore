@@ -57,3 +57,6 @@ next-env.d.ts
 
 .vercel
 docker-compose.yml
+#claude
+CLAUDE.md
+*.CLAUDE.md

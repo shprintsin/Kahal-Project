@@ -39,15 +39,15 @@ export function FooterLink({ href, icon, label, onClick }: { href: string; icon:
   if (onClick) {
     return (
       <button onClick={onClick} className="flex items-center transition-opacity duration-200 hover:opacity-80 cursor-pointer">
-        <span className="text-sm sm:text-base ml-2">{label}</span>
         {icon}
+        <span className="text-sm sm:text-base ms-2">{label}</span>
       </button>
     )
   }
   return (
     <a href={href} className="flex items-center transition-opacity duration-200 hover:opacity-80">
-      <span className="text-sm sm:text-base ml-2">{label}</span>
       {icon}
+      <span className="text-sm sm:text-base ms-2">{label}</span>
     </a>
   )
 }

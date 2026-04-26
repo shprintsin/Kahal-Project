@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Heebo, Secular_One } from "next/font/google";
 import { auth } from "@/auth";
 import { AdminToolbarProvider } from "@/components/ui/admin-toolbar";
-import { cookies } from "next/headers";
+import { getLocale } from "next-intl/server";
 import { isValidLocale, defaultLocale, getDir } from "@/lib/i18n/config";
 import type { Locale } from "@/lib/i18n/config";
 import "./globals.css";
@@ -29,9 +29,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get("NEXT_LOCALE")?.value;
-  const locale: Locale = localeCookie && isValidLocale(localeCookie) ? localeCookie : defaultLocale;
+  const detected = await getLocale();
+  const locale: Locale = isValidLocale(detected) ? detected : defaultLocale;
   const dir = getDir(locale);
 
   return (

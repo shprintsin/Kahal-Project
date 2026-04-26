@@ -18,8 +18,8 @@ export default async function DatasetsPage({ params }: { params: Promise<{ local
   const { locale } = await params;
 
   const [datasetsData, categoriesData, shellData] = await Promise.all([
-    listDatasetsAPI({ status: 'published', limit: 100 }),
-    listCategoriesAPI({}),
+    listDatasetsAPI({ status: 'published', limit: 100, lang: locale }),
+    listCategoriesAPI({ lang: locale }),
     getSiteShellData(locale),
   ]);
 

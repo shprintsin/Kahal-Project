@@ -80,8 +80,8 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
       <SetEditUrl url={`/admin/maps/${map.id}`} />
       <main className="flex-grow w-full">
         <div className="max-w-7xl mx-auto px-6 py-12">
-          <div className="mb-10 text-right">
-            <div className="flex items-center gap-2 mb-3 text-sm" dir="rtl">
+          <div className="mb-10 text-start">
+            <div className="flex items-center gap-2 mb-3 text-sm">
               <a href={`/${locale}/maps`} className="text-muted-foreground hover:text-brand-primary transition-colors"> {t('public.maps.title')} </a>
               {map.category && (
                 <>
@@ -110,12 +110,12 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                         <TabsTrigger value="codebook">{t('public.map.codebook')}</TabsTrigger>
                       </TabsList>
                       <TabsContent value="description">
-                        <div className="markdown-content pt-4" dir="rtl">
+                        <div className="markdown-content pt-4">
                           <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{map.description}</ReactMarkdown>
                         </div>
                       </TabsContent>
                       <TabsContent value="codebook">
-                        <div className="markdown-content pt-4" dir="rtl">
+                        <div className="markdown-content pt-4">
                           <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{map.codebookText}</ReactMarkdown>
                         </div>
                       </TabsContent>
@@ -125,7 +125,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                       <h3 className="text-xl font-bold text-foreground mb-5 font-display">
                         {map.description ? t('public.datasets.description') : t('public.map.codebook')}
                       </h3>
-                      <div className="markdown-content" dir="rtl">
+                      <div className="markdown-content">
                         <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{(map.description || map.codebookText)!}</ReactMarkdown>
                       </div>
                     </>
@@ -218,7 +218,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                         }`}>
                           {layer.type === 'POINTS' ? t('public.map.points') : t('public.map.polygons')}
                         </span>
-                        <div className="flex-1 text-right min-w-0">
+                        <div className="flex-1 text-start min-w-0">
                           <div className="text-sm font-semibold text-foreground mb-1">{layer.name}</div>
                           <div className="text-xs text-muted-foreground truncate" dir="ltr">{layer.filename || `${layer.slug}.geojson`}</div>
                         </div>
@@ -236,13 +236,13 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                         <button
                           type="button"
                           onClick={() => requestDownload(() => triggerBrowserDownload(resource.url, resource.filename || resource.name))}
-                          className="flex items-center gap-3 p-3 sm:p-4 flex-1 hover:bg-brand-primary-light transition-colors cursor-pointer min-w-0 text-right"
+                          className="flex items-center gap-3 p-3 sm:p-4 flex-1 hover:bg-brand-primary-light transition-colors cursor-pointer min-w-0 text-start"
                           title={`${t('public.map.download')} ${resource.name}`}
                         >
                           <div className="text-brand-primary shrink-0">
                             {getResourceIcon(resource.format)}
                           </div>
-                          <div className="flex-1 text-right min-w-0">
+                          <div className="flex-1 text-start min-w-0">
                             <div className="text-xs sm:text-sm font-semibold text-foreground mb-1">{resource.name}</div>
                             {resource.filename && (
                               <div className="text-[11px] sm:text-xs text-muted-foreground font-mono truncate" dir="ltr">{resource.filename}</div>

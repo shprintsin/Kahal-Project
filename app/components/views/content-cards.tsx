@@ -1,7 +1,8 @@
 "use client"
 
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, ArrowRight } from "lucide-react"
 import { useLocale } from "next-intl"
+import { isRtl, isValidLocale, defaultLocale } from "@/lib/i18n/config"
 import type { LucideIcon } from "lucide-react"
 import type { SearchContentType } from "@/app/admin/actions/search"
 
@@ -44,6 +45,9 @@ function CardExcerpt({ text }: { text?: string | null }) {
 }
 
 function CardLink({ href, label }: { href: string; label: string }) {
+  const locale = useLocale()
+  const rtl = isRtl(isValidLocale(locale) ? locale : defaultLocale)
+  const Arrow = rtl ? ArrowLeft : ArrowRight
   return (
     <div className="CardLink mt-auto flex justify-end">
       <a
@@ -51,7 +55,7 @@ function CardLink({ href, label }: { href: string; label: string }) {
         className="inline-flex items-center gap-2 text-brand-primary font-semibold hover:gap-3 transition-all duration-200"
       >
         {label}
-        <ArrowLeft className="h-4 w-4" />
+        <Arrow className="h-4 w-4" />
       </a>
     </div>
   )
