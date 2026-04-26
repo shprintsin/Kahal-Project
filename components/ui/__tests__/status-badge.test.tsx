@@ -1,6 +1,17 @@
 import { describe, it, expect } from "vitest"
 import { render, screen } from "@testing-library/react"
+import { NextIntlClientProvider } from "next-intl"
+import type { ReactElement } from "react"
+import messages from "@/messages/he.json"
 import { StatusBadge, StatusBadgeLarge, MaturityBadge, PublishStatusBadge } from "../status-badge"
+
+function renderIntl(ui: ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="he" messages={messages}>
+      {ui}
+    </NextIntlClientProvider>
+  )
+}
 
 describe("StatusBadge", () => {
   it("renders children", () => {
@@ -33,34 +44,34 @@ describe("StatusBadgeLarge", () => {
 
 describe("MaturityBadge", () => {
   it("renders verified label in Hebrew", () => {
-    render(<MaturityBadge maturity="verified" />)
+    renderIntl(<MaturityBadge maturity="verified" />)
     expect(screen.getByText("מאומת")).toBeInTheDocument()
   })
 
   it("renders provisional label", () => {
-    render(<MaturityBadge maturity="provisional" />)
+    renderIntl(<MaturityBadge maturity="provisional" />)
     expect(screen.getByText("זמני")).toBeInTheDocument()
   })
 
   it("falls back to raw for unknown maturity", () => {
-    render(<MaturityBadge maturity="unknown" />)
+    renderIntl(<MaturityBadge maturity="unknown" />)
     expect(screen.getByText("גולמי")).toBeInTheDocument()
   })
 })
 
 describe("PublishStatusBadge", () => {
   it("renders published label", () => {
-    render(<PublishStatusBadge status="published" />)
+    renderIntl(<PublishStatusBadge status="published" />)
     expect(screen.getByText("פורסם")).toBeInTheDocument()
   })
 
   it("renders draft label", () => {
-    render(<PublishStatusBadge status="draft" />)
+    renderIntl(<PublishStatusBadge status="draft" />)
     expect(screen.getByText("טיוטה")).toBeInTheDocument()
   })
 
   it("falls back to draft for unknown status", () => {
-    render(<PublishStatusBadge status="unknown" />)
+    renderIntl(<PublishStatusBadge status="unknown" />)
     expect(screen.getByText("טיוטה")).toBeInTheDocument()
   })
 })
