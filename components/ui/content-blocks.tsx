@@ -20,6 +20,7 @@ interface DatasetItem {
   thumbnail: string | null;
   layerTypes: string[];
   resourceCount: number;
+  year?: string | null;
 }
 
 interface PostItem {
@@ -72,7 +73,7 @@ function TypeBadge({ type }: { type: string }) {
   if (!config) return null;
   const Icon = config.icon;
   return (
-    <span className="inline-flex items-center gap-1 text-muted-foreground text-xs">
+    <span className="TypeBadge inline-flex items-center gap-1.5 text-muted-foreground text-xs">
       <Icon className="w-3.5 h-3.5" />
       {config.labelKey ? t(config.labelKey as Parameters<typeof t>[0]) : 'CSV'}
     </span>
@@ -92,7 +93,7 @@ function BadgeRow({ layerTypes, resourceCount }: { layerTypes: string[]; resourc
   if (resourceCount > 0) badges.push('CSV');
   if (badges.length === 0) return null;
   return (
-    <div className="flex items-center gap-3">
+    <div className="BadgeRow flex items-center flex-wrap gap-3">
       {badges.map((b) => <TypeBadge key={b} type={b} />)}
     </div>
   );
@@ -100,7 +101,7 @@ function BadgeRow({ layerTypes, resourceCount }: { layerTypes: string[]; resourc
 
 function PlaceholderThumb({ className }: { className?: string }) {
   return (
-    <div className={`bg-gradient-to-br from-brand-primary-light via-surface-brand-light to-stone-100 flex items-center justify-center ${className || ''}`}>
+    <div className={`PlaceholderThumb bg-gradient-to-br from-brand-primary-light via-surface-brand-light to-stone-100 flex items-center justify-center ${className || ''}`}>
       <svg width="32" height="32" viewBox="0 0 64 64" fill="none" className="text-brand-primary opacity-30">
         <rect x="8" y="16" width="48" height="32" rx="1" stroke="currentColor" strokeWidth="1.5" />
         <circle cx="22" cy="28" r="4" stroke="currentColor" strokeWidth="1.5" />
@@ -114,17 +115,27 @@ function DataCard({ item }: { item: DatasetItem }) {
   return (
     <Link
       href={`/data/${item.slug}`}
-      className="bg-surface-light border border-border overflow-hidden flex flex-col hover:shadow-md transition-shadow group"
+      className="DataCard bg-surface-light border border-border overflow-hidden flex flex-col hover:shadow-sm transition-shadow duration-100 group"
     >
-      {item.thumbnail ? (
-        <img src={item.thumbnail} alt={item.title} className="w-full aspect-[3/1] object-cover" />
-      ) : (
-        <PlaceholderThumb className="w-full aspect-[3/1]" />
-      )}
-      <div className="p-3 flex flex-col gap-1.5">
+      <div className="relative w-full aspect-[16/9] overflow-hidden">
+        {item.thumbnail ? (
+          <img
+            src={item.thumbnail}
+            alt={item.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <PlaceholderThumb className="w-full h-full" />
+        )}
+        {/* {item.year && (
+          <span className="absolute top-3 end-3 px-2.5 py-1 bg-white/90 backdrop-blur-sm text-foreground text-xs font-semibold shadow-sm">
+            {item.year}
+          </span>
+        )} */}
+      </div>
+      <div className="p-4 pb-6 flex flex-col gap-2 flex-grow">
         <BadgeRow layerTypes={item.layerTypes} resourceCount={item.resourceCount} />
-        <h4 className="font-bold text-foreground text-sm leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">{item.title}</h4>
-        <p className="text-muted-foreground text-xs leading-relaxed line-clamp-2">{item.description}</p>
+        <h4 className="py-1 font-bold text-foreground text-base leading-snug break-words group-hover:text-brand-primary transition-colors">{item.title}</h4>
       </div>
     </Link>
   );
@@ -162,7 +173,7 @@ export function ContentBlocks({
             <Database className="w-5 h-5" />
             {t('public.sections.data')}
           </H3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="DataCardgrid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-3">
             {datasets.map((d) => (
               <DataCard key={d.slug} item={d} />
             ))}

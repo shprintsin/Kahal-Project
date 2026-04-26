@@ -12,6 +12,14 @@ function pick(json: unknown, locale: Locale, fallback: string): string {
   return resolveI18nField<string>(json as Record<string, string> | null | undefined, locale, fallback) ?? fallback;
 }
 
+const MEDIA_BASE_URL = process.env.MEDIA_BASE_URL || 'https://shtetlatlas.org';
+
+function resolveMediaUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (/^(https?:)?\/\//i.test(url) || url.startsWith('data:')) return url;
+  return `${MEDIA_BASE_URL.replace(/\/$/, '')}/${url.replace(/^\//, '')}`;
+}
+
 const AUTHORS_I18N: Record<Locale, { name: string; role: string; affiliation: string }[]> = {
   he: [
     { name: 'ד"ר יניי שפיצר', role: 'חוקר ראשי', affiliation: 'האוניברסיטה העברית בירושלים' },
@@ -56,13 +64,19 @@ export async function getContentBlocksData(locale: Locale = "he"): Promise<Conte
       const title = pick(d.titleI18n, locale, d.title);
       const summary = pick(d.summaryI18n, locale, d.summary ?? "");
       const description = pick(d.descriptionI18n, locale, d.description ?? "");
+      const yearLabel = d.year
+        ? String(d.year)
+        : d.yearMin && d.yearMax && d.yearMin !== d.yearMax
+          ? `${d.yearMin}–${d.yearMax}`
+          : (d.yearMin ?? d.yearMax)?.toString() ?? null;
       return {
         title,
         description: summary || truncate(description),
         slug: d.slug,
-        thumbnail: d.thumbnail?.url || null,
+        thumbnail: resolveMediaUrl(d.thumbnail?.url),
         layerTypes,
         resourceCount: d._count.resources,
+        year: yearLabel,
       };
     }),
     posts: posts.map((p) => ({
@@ -79,7 +93,7 @@ export async function getContentBlocksData(locale: Locale = "he"): Promise<Conte
     authors: AUTHORS_I18N[locale] ?? AUTHORS_I18N.he,
     citation: CITATION,
     stats: {
-      communities: placeCount > 0 ? placeCount.toLocaleString() : "3,200",
+      communities: placeCount > 0 ? placeCount.toLocaleString() : "1,300",
       datasets: datasetCount > 0 ? datasetCount.toLocaleString() : "0",
       maps: (datasetCount + layerCount).toString(),
       years: "1000+",
