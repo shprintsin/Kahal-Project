@@ -30,8 +30,8 @@ describe("DlGroup", () => {
     expect(container.querySelector("dl")).toBeInTheDocument()
   })
 
-  it("applies text-right for RTL", () => {
+  it("applies logical text-start (resolves to RTL/LTR via dir)", () => {
     const { container } = render(<DlGroup>content</DlGroup>)
-    expect(container.firstChild).toHaveClass("text-right")
+    expect(container.firstChild).toHaveClass("text-start")
   })
 })
