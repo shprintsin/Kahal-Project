@@ -194,7 +194,7 @@
   },
   "public": {
     "site": {
-      "name": "Kahal",
+      "name": "ShtetlAtlas",
       "copyright": "© 2024 The Kahal Project. All rights reserved."
     },
     "hero": {
@@ -225,7 +225,9 @@
     },
     "posts": {
       "title": "Posts",
-      "empty": "No posts to display"
+      "empty": "No posts to display",
+      "anonymousAuthor": "ShtetlAtlas Team",
+      "sources": "Sources"
     },
     "datasets": {
       "title": "Datasets",
@@ -357,7 +359,7 @@
       "privacy": "Privacy Policy",
       "terms": "Terms of Use",
       "accessibility": "Accessibility",
-      "copyright": "© 2024 The Kahal Project. All rights reserved."
+      "copyright": "© 2024 The ShtetlAtlas Project. All rights reserved."
     },
     "viewer": {
       "title": "Viewer"
@@ -398,6 +400,72 @@
       "paragraph3": "By clicking 'Download', you confirm that you have read and understood these terms, and that all copyrights are reserved to the researchers.",
       "cancel": "Cancel",
       "accept": "Download"
+    }
+  },
+  "documentsV2": {
+    "library": "Library",
+    "libraryTitle": "Documents",
+    "libraryHint": "Single-file research documents — open one to read with synchronized scans.",
+    "pages": "pages",
+    "headings": "headings",
+    "unsourced": "Unsourced",
+    "contents": "Contents",
+    "page": "Page",
+    "archive": "Archive",
+    "license": "License",
+    "year": "Year",
+    "viewSource": "View source",
+    "searchPlaceholder": "Search documents…",
+    "searchEmpty": "No documents match.",
+    "searchInDocument": "Search…",
+    "searchInDocumentEmpty": "No matches",
+    "searchPrev": "Previous match",
+    "searchNext": "Next match",
+    "searchClear": "Clear search",
+    "searchSubmit": "Search",
+    "searchScopeDoc": "this doc",
+    "searchScopeAll": "all docs",
+    "searchResultsCount": "{n} results",
+    "searchResultsTitle": "Results",
+    "searchResultsEmpty": "No matches for “{q}”.",
+    "toolbarLanguage": "Language",
+    "toolbarLanguageOriginalWith": "Original ({lang})",
+    "toolbarPage": "Page",
+    "toolbarOf": "of",
+    "toolbarPrevPage": "Previous page",
+    "toolbarNextPage": "Next page",
+    "toolbarZoomIn": "Zoom in",
+    "toolbarZoomOut": "Zoom out",
+    "downloads": "Downloads",
+    "downloadMarkdown": "Download {lang} (.md)",
+    "downloadOriginalLabel": "Original ({lang})",
+    "topbarLibrary": "Library",
+    "topbarSearchPlaceholder": "Search across documents…",
+    "topbarSearchHint": "⌘K",
+    "inspectorContents": "Contents",
+    "inspectorDetails": "Details",
+    "inspectorNotes": "Notes",
+    "inspectorNotesEmpty": "Notes coming soon",
+    "inspectorSectionsCount": "{n} sections",
+    "librarySectionLabel": "Library · {n}",
+    "libraryCollapse": "Collapse library",
+    "toolbarSearchInDoc": "Search in document",
+    "toolbarLanguageOriginalShort": "Original ({lang})",
+    "highlightSelection": "Highlight selection",
+    "highlightRemove": "Remove highlight",
+    "highlightAddNote": "Add note…",
+    "highlightCopy": "Copy",
+    "highlightLabel": "Highlight",
+    "noteLabel": "Note",
+    "notePagePrefix": "P. {n}",
+    "noteEditPlaceholder": "Add a note…",
+    "noteCount": "{n} highlights",
+    "lang": {
+      "he": "Hebrew",
+      "en": "English",
+      "pl": "Polish",
+      "yi": "Yiddish",
+      "ru": "Russian"
     }
   }
 }

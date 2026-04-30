@@ -92,6 +92,9 @@ export function ContentListLayout<T>({
           </div>
 
           <div className="w-full lg:w-1/3">
+            <div className="hidden lg:flex font-display text-3xl md:text-4xl mb-8 invisible items-center gap-3" aria-hidden="true">
+              &nbsp;
+            </div>
             <Sidebar categories={categories} tags={[]} recentPosts={recentPosts} />
             {highlightCard}
           </div>

@@ -34,6 +34,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
         notFound();
     }
 
+    const t = await getTranslations({ locale });
     const serializedContent = serializeLexical(post.content);
 
     const viewPost = {
@@ -41,12 +42,12 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
         content: serializedContent,
         subtitle: '',
         excerpt: post.excerpt || '',
-        author: post.author?.name || "Unknown",
-        category: post.categories && post.categories.length > 0 ? post.categories[0].title : "כללי",
+        author: post.author?.name?.trim() || t('public.posts.anonymousAuthor'),
+        category: post.categories && post.categories.length > 0 ? post.categories[0].title : t('public.content.defaultCategory'),
         date: post.createdAt ? new Date(post.createdAt).toLocaleDateString(getDateLocale(locale as Locale)) : "",
         imageUrl: post.thumbnail?.url || "",
         tags: post.tags?.map(t => t.name) || [],
-        sources: [],
+        sources: post.sources ?? null,
         status: post.status as any,
         thumbnail: (post.thumbnail || undefined) as any,
     };

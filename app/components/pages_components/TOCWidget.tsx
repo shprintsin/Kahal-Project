@@ -1,33 +1,35 @@
-import { SidebarWidget } from './SidebarWidget'
-import { SidebarCard } from './SidebarCard'
-import Link from 'next/link'
+import type { TocHeading } from '@/lib/toc'
+import { cn } from '@/lib/utils'
 
-export function TOCWidget({ post }: { post: any }) {
+export function TOCWidget({
+  headings,
+  title = 'תוכן עניינים',
+}: {
+  headings: TocHeading[]
+  title?: string
+}) {
+  if (!headings.length) return null
+
   return (
-    <SidebarWidget title="תוכן עניינים">
-      <SidebarCard>
-        <ul className="space-y-2">
-          {post.headings && post.headings.length > 0 ? post.headings.map((heading: any) => (
-            <li key={heading.id}>
-              <Link
-                href={`#${heading.id}`}
-                className="block p-2 hover:bg-gray-50 text-brand-primary-dark hover:text-brand-primary-darker"
-                onClick={e => {
-                  e.preventDefault()
-                  const element = document.getElementById(heading.id)
-                  if (element) {
-                    element.scrollIntoView({ behavior: 'smooth' })
-                  }
-                }}
-              >
-                {heading.title}
-              </Link>
-            </li>
-          )) : (
-            <li className="text-gray-500 p-2">אין תוכן עניינים</li>
-          )}
-        </ul>
-      </SidebarCard>
-    </SidebarWidget>
+    <nav aria-label={title} className="text-sm">
+      <h2 className="font-display text-base font-semibold text-brand-primary mb-3 uppercase tracking-wide">
+        {title}
+      </h2>
+      <ul className="space-y-1.5 border-s border-gray-200 ps-4">
+        {headings.map((h) => (
+          <li key={h.id}>
+            <a
+              href={`#${h.id}`}
+              className={cn(
+                'block py-1 text-body-secondary hover:text-brand-primary transition-colors leading-snug',
+                h.level === 3 && 'ps-3 text-[0.8125rem]',
+              )}
+            >
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
   )
-} 
+}

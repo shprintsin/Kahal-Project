@@ -3,6 +3,7 @@ import { authenticateCli } from '../middleware';
 import { deployMap } from './handlers/deploy-map';
 import { deployLayer } from './handlers/deploy-layer';
 import { deployData } from './handlers/deploy-data';
+import { deployDocument } from './handlers/deploy-document';
 
 export const dynamic = 'force-dynamic';
 
@@ -56,6 +57,10 @@ export async function POST(req: NextRequest) {
       }
       case 'dataset.deploy': {
         const result = await deployData(data);
+        return NextResponse.json(result, { status: result.ok ? 200 : 400 });
+      }
+      case 'document.deploy': {
+        const result = await deployDocument(data);
         return NextResponse.json(result, { status: result.ok ? 200 : 400 });
       }
       default:

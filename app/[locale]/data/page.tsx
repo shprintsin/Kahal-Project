@@ -26,7 +26,7 @@ export default async function DatasetsPage({ params }: { params: Promise<{ local
   const datasets = (datasetsData.datasets || []).map((d) => ({
     id: d.id,
     title: d.title,
-    excerpt: d.description || undefined,
+    excerpt: d.summary || d.description || undefined,
     thumbnail: d.thumbnail?.url,
     slug: `/data/${d.slug}`,
     date: d.createdAt ? new Date(d.createdAt).toLocaleDateString(getDateLocale(locale as Locale)) : null,

@@ -30,7 +30,7 @@ interface MetaItemProps {
 export const MetaItem = ({ icon: Icon, children, href }: MetaItemProps) => {
   const content = (
     <div className="flex items-center">
-      {Icon && <Icon className="h-4 w-4 ml-1" />}
+      {Icon && <Icon className="h-4 w-4 me-1.5" />}
       <span>{children}</span>
     </div>
   )

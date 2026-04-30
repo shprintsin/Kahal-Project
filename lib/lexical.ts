@@ -2,6 +2,15 @@ import escapeHTML from 'escape-html';
 import { remark } from 'remark';
 import html from 'remark-html';
 
+function normalizeParagraphBreaks(md: string): string {
+    // Outside fenced code blocks, turn a single newline into a blank line so
+    // remark treats each line as its own paragraph.
+    const parts = md.split(/(```[\s\S]*?```)/g);
+    return parts
+        .map((part, i) => (i % 2 === 1 ? part : part.replace(/(?<!\n)\n(?!\n)/g, '\n\n')))
+        .join('');
+}
+
 export function serializeLexical(node: any): string {
     if (!node) return '';
 
@@ -9,7 +18,7 @@ export function serializeLexical(node: any): string {
     if (typeof node === 'string') {
         // Try to convert markdown to HTML
         try {
-            const result = remark().use(html).processSync(node);
+            const result = remark().use(html).processSync(normalizeParagraphBreaks(node));
             return String(result);
         } catch {
             // If markdown processing fails, return as-is (might be HTML already)

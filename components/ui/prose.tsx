@@ -7,21 +7,23 @@ interface ProseProps {
 }
 
 const proseClasses = [
-  "prose prose-lg max-w-none p-4 sm:p-8 md:p-12",
-  "leading-relaxed text-foreground",
-  "[&>h1]:text-3xl [&>h1]:sm:text-4xl [&>h1]:font-bold [&>h1]:text-brand-dark [&>h1]:mb-6 [&>h1]:mt-8 [&>h1]:font-display",
-  "[&>h2]:text-2xl [&>h2]:sm:text-3xl [&>h2]:font-bold [&>h2]:text-brand-primary [&>h2]:mb-4 [&>h2]:mt-6 [&>h2]:font-display",
-  "[&>h3]:text-xl [&>h3]:sm:text-2xl [&>h3]:font-semibold [&>h3]:text-brand-primary [&>h3]:mb-3 [&>h3]:mt-5",
-  "[&>p]:mb-4 [&>p]:leading-8 [&>p]:text-body",
-  "[&>ul]:mb-4 [&>ul]:mr-6 [&>ul]:list-disc",
-  "[&>ol]:mb-4 [&>ol]:mr-6 [&>ol]:list-decimal",
-  "[&>li]:mb-2 [&>li]:text-body",
-  "[&>blockquote]:border-r-4 [&>blockquote]:border-brand-primary [&>blockquote]:pr-4 [&>blockquote]:py-2 [&>blockquote]:my-4 [&>blockquote]:bg-surface-light [&>blockquote]:italic [&>blockquote]:text-body-secondary",
-  "[&>a]:text-brand-secondary [&>a]:underline [&>a]:hover:text-brand-primary [&>a]:transition-colors",
-  "[&>code]:bg-muted [&>code]:px-2 [&>code]:py-1 [&>code]:rounded [&>code]:text-sm [&>code]:text-foreground",
-  "[&>pre]:bg-code-bg [&>pre]:text-code-fg [&>pre]:p-4 [&>pre]:rounded-md [&>pre]:overflow-x-auto [&>pre]:my-4",
-  "[&>img]:rounded-md [&>img]:shadow-sm [&>img]:my-6",
-  "text-right",
+  "prose prose-lg max-w-none",
+  "leading-[1.7] text-foreground",
+  "[&_h1]:text-2xl [&_h1]:sm:text-3xl [&_h1]:font-bold [&_h1]:text-foreground [&_h1]:mb-4 [&_h1]:mt-8 [&_h1]:font-display [&_h1]:tracking-tight",
+  "[&_h2]:text-xl [&_h2]:sm:text-2xl [&_h2]:font-bold [&_h2]:text-foreground [&_h2]:mb-3 [&_h2]:mt-8 [&_h2]:font-display [&_h2]:tracking-tight [&_h2]:border-b [&_h2]:border-gray-200 [&_h2]:pb-2",
+  "[&_h3]:text-lg [&_h3]:sm:text-xl [&_h3]:font-semibold [&_h3]:text-foreground [&_h3]:mb-2 [&_h3]:mt-6 [&_h3]:font-display",
+  "[&_h4]:text-base [&_h4]:sm:text-lg [&_h4]:font-semibold [&_h4]:text-foreground [&_h4]:mb-2 [&_h4]:mt-5",
+  "[&_p]:mb-4 [&_p]:leading-[1.7] [&_p]:text-body",
+  "[&_ul]:mb-4 [&_ul]:ms-6 [&_ul]:list-disc [&_ul]:space-y-1",
+  "[&_ol]:mb-4 [&_ol]:ms-6 [&_ol]:list-decimal [&_ol]:space-y-1",
+  "[&_li]:text-body [&_li]:leading-[1.7]",
+  "[&_blockquote]:border-s-4 [&_blockquote]:border-brand-primary [&_blockquote]:ps-5 [&_blockquote]:py-2 [&_blockquote]:my-6 [&_blockquote]:bg-surface-light/60 [&_blockquote]:italic [&_blockquote]:text-body-secondary [&_blockquote]:rounded-e-md",
+  "[&_a]:text-blue-600 [&_a]:underline [&_a]:underline-offset-2 [&_a]:decoration-blue-300 hover:[&_a]:text-blue-800 hover:[&_a]:decoration-blue-600 [&_a]:transition-colors",
+  "[&_code]:bg-muted [&_code]:px-2 [&_code]:py-1 [&_code]:rounded [&_code]:text-sm [&_code]:text-foreground",
+  "[&_pre]:bg-code-bg [&_pre]:text-code-fg [&_pre]:p-4 [&_pre]:rounded-md [&_pre]:overflow-x-auto [&_pre]:my-6",
+  "[&_img]:rounded-lg [&_img]:shadow-sm [&_img]:my-8 [&_img]:mx-auto",
+  "[&_hr]:my-10 [&_hr]:border-gray-200",
+  "text-start",
 ].join(" ")
 
 export function Prose({ html, className, dir = "rtl" }: ProseProps) {

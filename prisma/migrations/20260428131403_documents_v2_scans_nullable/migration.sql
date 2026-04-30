@@ -1,0 +1,1 @@
+ALTER TABLE "documents_v2" ALTER COLUMN "scans" DROP NOT NULL;

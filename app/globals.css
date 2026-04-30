@@ -183,8 +183,15 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+  }
   body {
     @apply bg-background text-foreground;
+  }
+  :target {
+    scroll-margin-top: 6rem;
   }
 }
 
@@ -333,3 +340,124 @@
 }
 
 
+
+.page-marker {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  vertical-align: top;
+  overflow: hidden;
+}
+
+.page-marker-num {
+  position: absolute;
+  inset-inline-start: 1rem;
+  top: 0;
+  font-family: var(--font-geist-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 11px;
+  line-height: 1;
+  color: rgb(156 163 175);
+  text-decoration: none;
+  user-select: none;
+  white-space: nowrap;
+  transition: color 120ms ease;
+}
+
+.page-marker-num:hover,
+.page-marker-num:focus-visible {
+  color: var(--foreground);
+  text-decoration: none;
+}
+
+@media (max-width: 767px) {
+  .page-marker-num { display: none; }
+}
+
+/* =========================================================================
+ * documents-v2 — scoped design tokens (WF-01 "Balanced Reading Room")
+ * Reuses brand tokens where they're close to the design palette; only
+ * adds new variables for the warm-paper neutrals and the design's
+ * mid-tone accent that the global theme doesn't carry.
+ * ======================================================================= */
+[data-design="docs-v2"] {
+  --docs-accent: #2d5a3d;
+  --docs-accent-2: #3d7a52;
+  --docs-paper: #fbf8ee;
+  --docs-cream: #f5f1e8;
+  --docs-cream-2: #ebe5d3;
+  --docs-cream-3: #ddd5be;
+  --docs-ink-4: #a8a8a8;
+}
+
+/* Scrollbar variants — webkit + firefox. Cream variant for sidebars,
+   paper variant for the document body. */
+[data-design="docs-v2"] .docs-scroll-y {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--docs-accent) var(--docs-cream-2);
+}
+[data-design="docs-v2"] .docs-scroll-y::-webkit-scrollbar { width: 10px; }
+[data-design="docs-v2"] .docs-scroll-y::-webkit-scrollbar-track { background: var(--docs-cream-2); }
+[data-design="docs-v2"] .docs-scroll-y::-webkit-scrollbar-thumb {
+  background: var(--docs-accent);
+  border: 2px solid var(--docs-cream-2);
+}
+[data-design="docs-v2"] .docs-scroll-y::-webkit-scrollbar-thumb:hover { background: var(--brand-primary); }
+
+[data-design="docs-v2"] .docs-scroll-y--paper {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--docs-cream-3) var(--docs-paper);
+}
+[data-design="docs-v2"] .docs-scroll-y--paper::-webkit-scrollbar { width: 10px; }
+[data-design="docs-v2"] .docs-scroll-y--paper::-webkit-scrollbar-track { background: var(--docs-paper); }
+[data-design="docs-v2"] .docs-scroll-y--paper::-webkit-scrollbar-thumb {
+  background: var(--docs-cream-3);
+  border: 2px solid var(--docs-paper);
+}
+[data-design="docs-v2"] .docs-scroll-y--paper::-webkit-scrollbar-thumb:hover { background: var(--docs-accent); }
+
+/* Loading-state placeholder bars — directly port the WF-01 .placeholder-line
+   visual into runtime CSS, with a subtle shimmer so navigation between
+   documents reads as "loading" instead of "blank canvas". */
+[data-design="docs-v2"] .docs-placeholder-line {
+  height: 8px;
+  background: var(--docs-cream-2);
+  margin: 6px 0;
+  width: 95%;
+  position: relative;
+  overflow: hidden;
+}
+[data-design="docs-v2"] .docs-placeholder-line.is-short { width: 50%; }
+[data-design="docs-v2"] .docs-placeholder-line.is-med { width: 75%; }
+[data-design="docs-v2"] .docs-placeholder-line.is-long { width: 95%; }
+[data-design="docs-v2"] .docs-placeholder-line.is-dark { background: var(--docs-cream-3); }
+[data-design="docs-v2"] .docs-placeholder-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 100%
+  );
+  animation: docs-shimmer 1.6s linear infinite;
+}
+[data-design="docs-v2"][dir="rtl"] .docs-placeholder-line::after,
+[dir="rtl"] [data-design="docs-v2"] .docs-placeholder-line::after {
+  animation-direction: reverse;
+}
+@keyframes docs-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-design="docs-v2"] .docs-placeholder-line::after { animation: none; }
+}
+
+/* User-highlight overlay rule lives in
+   `app/[locale]/documents-v2/components/SearchHighlightStyles.tsx` (alongside
+   the search overlay rules). Lightning CSS doesn't yet recognise the
+   `::highlight()` pseudo-element, so it's injected via a `<style>` tag at
+   runtime instead of being parsed at build time. */
