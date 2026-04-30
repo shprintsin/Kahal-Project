@@ -11,9 +11,15 @@ import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 import { rehypePageMarkers } from '../lib/rehype-page-markers';
 import { cn } from '@/lib/utils';
+import type { DocumentV2PageRender } from '@/types/document-v2';
 
 interface ReadingCanvasProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Source markdown for the active language. Used as a fallback when the
+   *  per-page HTML hasn't been backfilled (legacy rows pre-Step 1). */
   markdown: string;
+  /** Server-rendered per-page HTML, in source order. When non-empty the
+   *  reader stops parsing markdown on the client and just inlines these. */
+  pages: DocumentV2PageRender[];
   isRtl: boolean;
   /** Zoom percentage (e.g. 100, 120). Scales font-size; prose styles are em-based so headings/lists scale too. */
   zoom?: number;
@@ -28,9 +34,14 @@ const READING_FONT =
 
 export const ReadingCanvas = forwardRef<HTMLDivElement, ReadingCanvasProps>(
   function ReadingCanvas(
-    { markdown, isRtl, zoom = 100, className, style, ...rest },
+    { markdown, pages, isRtl, zoom = 100, className, style, ...rest },
     ref,
   ) {
+    // Hot path: server-rendered HTML chunks. The reader keeps the client-side
+    // ReactMarkdown branch as a fallback for any legacy row that didn't pass
+    // through the Step 1 backfill (html column null) — once GC removes those,
+    // the fallback can be deleted along with the markdown plugins import.
+    const useServerHtml = pages.length > 0;
     return (
       <div
         ref={ref}
@@ -90,23 +101,38 @@ export const ReadingCanvas = forwardRef<HTMLDivElement, ReadingCanvasProps>(
             fontSize: `${(BASE_FONT_PX * zoom) / 100}px`,
           }}
         >
-          <ReactMarkdown
-            // `remarkBreaks` converts single `\n` into hard line breaks so the
-            // reader respects the line layout of historical transcriptions
-            // verbatim, instead of the CommonMark default of collapsing
-            // single newlines into spaces.
-            remarkPlugins={[remarkGfm, remarkBreaks, remarkMath]}
-            rehypePlugins={[rehypeRaw, rehypeSlug, rehypePageMarkers, rehypeKatex]}
-            components={{
-              table: ({ node, ...props }) => (
-                <div className="my-6 overflow-x-auto border border-border">
-                  <table {...props} className="w-full border-collapse" />
-                </div>
-              ),
-            }}
-          >
-            {markdown}
-          </ReactMarkdown>
+          {useServerHtml ? (
+            // Each page is rendered as its own block with `data-doc-page` so
+            // the highlight + active-page hooks can find page boundaries
+            // without re-parsing the markdown source. Order is guaranteed
+            // (sorted by `pageNumber` upstream).
+            pages.map((p) => (
+              <div
+                key={`${p.pageNumber}-${p.filename}`}
+                data-doc-page={p.pageNumber}
+                data-doc-filename={p.filename}
+                dangerouslySetInnerHTML={{ __html: p.html }}
+              />
+            ))
+          ) : (
+            <ReactMarkdown
+              // `remarkBreaks` converts single `\n` into hard line breaks so the
+              // reader respects the line layout of historical transcriptions
+              // verbatim, instead of the CommonMark default of collapsing
+              // single newlines into spaces.
+              remarkPlugins={[remarkGfm, remarkBreaks, remarkMath]}
+              rehypePlugins={[rehypeRaw, rehypeSlug, rehypePageMarkers, rehypeKatex]}
+              components={{
+                table: ({ node, ...props }) => (
+                  <div className="my-6 overflow-x-auto border border-border">
+                    <table {...props} className="w-full border-collapse" />
+                  </div>
+                ),
+              }}
+            >
+              {markdown}
+            </ReactMarkdown>
+          )}
         </article>
       </div>
     );

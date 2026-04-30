@@ -12,6 +12,9 @@ import remarkRehype from 'remark-rehype';
 import rehypeRaw from 'rehype-raw';
 import rehypeSlug from 'rehype-slug';
 import rehypeStringify from 'rehype-stringify';
+import type { Plugin } from 'unified';
+import type { Element, Root } from 'hast';
+import { visit, SKIP } from 'unist-util-visit';
 import { rehypePageMarkers } from './rehype-page-markers';
 import { PAGE_MARKER_REGEX } from './parse-document';
 
@@ -142,6 +145,37 @@ function computeHeadingPaths(markdown: string, pages: RawPage[]): string[][] {
   });
 }
 
+/** Wrap every `<table>` in a scrollable div, matching the client's
+ *  ReactMarkdown `components.table` override exactly so visual parity is
+ *  preserved when we read precomputed HTML instead of re-parsing on the fly. */
+const rehypeWrapTables: Plugin<[], Root> = () => (tree) => {
+  visit(tree, 'element', (node: Element, index, parent) => {
+    if (node.tagName !== 'table' || !parent || typeof index !== 'number') return;
+    const wrapper: Element = {
+      type: 'element',
+      tagName: 'div',
+      properties: {
+        className: ['my-6', 'overflow-x-auto', 'border', 'border-border'],
+      },
+      children: [
+        {
+          ...node,
+          properties: {
+            ...(node.properties ?? {}),
+            className: [
+              ...(((node.properties?.className as string[] | undefined) ?? []) || []),
+              'w-full',
+              'border-collapse',
+            ],
+          },
+        },
+      ],
+    };
+    parent.children[index] = wrapper;
+    return [SKIP, index + 1];
+  });
+};
+
 /** Build the unified processor once; reuse across pages. */
 function makeMarkdownProcessor() {
   return unified()
@@ -154,6 +188,7 @@ function makeMarkdownProcessor() {
     .use(rehypeRaw)
     .use(rehypeSlug)
     .use(rehypePageMarkers)
+    .use(rehypeWrapTables)
     .use(rehypeStringify, { allowDangerousHtml: true });
 }
 

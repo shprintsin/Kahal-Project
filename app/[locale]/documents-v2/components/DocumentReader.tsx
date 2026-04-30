@@ -75,12 +75,22 @@ export function DocumentReader({ doc }: DocumentReaderProps) {
   // live in `doc.translations`. Search/scroll/active-page all key off the active variant.
   const activeView = useMemo(() => {
     if (selectedLang === doc.meta.lang) {
-      return { markdown: doc.markdown, toc: doc.toc, markers: doc.markers };
+      return {
+        markdown: doc.markdown,
+        toc: doc.toc,
+        markers: doc.markers,
+        pages: doc.pages,
+      };
     }
     const tr = doc.translations.find((t) => t.lang === selectedLang);
     return tr
-      ? { markdown: tr.markdown, toc: tr.toc, markers: tr.markers }
-      : { markdown: doc.markdown, toc: doc.toc, markers: doc.markers };
+      ? { markdown: tr.markdown, toc: tr.toc, markers: tr.markers, pages: tr.pages }
+      : {
+          markdown: doc.markdown,
+          toc: doc.toc,
+          markers: doc.markers,
+          pages: doc.pages,
+        };
   }, [selectedLang, doc]);
 
   const totalPages = Math.max(1, activeView.markers.length);
@@ -381,6 +391,7 @@ export function DocumentReader({ doc }: DocumentReaderProps) {
             <ReadingCanvas
               ref={canvasRef}
               markdown={activeView.markdown}
+              pages={activeView.pages}
               isRtl={isRtl}
               zoom={zoom}
             />

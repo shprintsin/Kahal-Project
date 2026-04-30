@@ -53,18 +53,37 @@ export interface TocEntry {
   level: 1 | 2 | 3;
 }
 
+/** Precomputed render artifact for a single page within a translation.
+ *  The reader feeds `html` directly into `dangerouslySetInnerHTML`; the
+ *  char offsets and content hash anchor highlights against the rendered DOM. */
+export interface DocumentV2PageRender {
+  pageNumber: number;
+  filename: string;
+  html: string;
+  charStart: number;
+  charEnd: number;
+  contentHash: string;
+  headingPath: string[];
+}
+
 export interface DocumentV2Translation {
   lang: DocumentV2Locale;
   markdown: string;
   toc: TocEntry[];
   markers: PageMarker[];
+  /** Server-rendered per-page HTML pulled from `document_v2_page_text`. */
+  pages: DocumentV2PageRender[];
 }
 
 export interface ParsedDocumentV2 {
   meta: DocumentV2Meta;
+  /** Source markdown for the primary language. Kept on the wire as a fallback
+   *  while the reader is mid-migration to consuming `pages` only. */
   markdown: string;
   toc: TocEntry[];
   markers: PageMarker[];
+  /** Server-rendered pages for the primary language. */
+  pages: DocumentV2PageRender[];
   translations: DocumentV2Translation[];
 }
 

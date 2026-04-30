@@ -6,6 +6,7 @@ import {
   type DocumentV2LibraryMeta,
   type DocumentV2Locale,
   type DocumentV2Meta,
+  type DocumentV2PageRender,
   type DocumentV2Scans,
   type DocumentV2Translation,
   type I18nString,
@@ -97,7 +98,26 @@ export async function getDocumentMetas(): Promise<DocumentV2LibraryMeta[]> {
 export async function getDocumentBySlug(slug: string): Promise<ParsedDocumentV2 | null> {
   const row = await prisma.documentV2.findUnique({
     where: { slug },
-    include: { translations: true },
+    include: {
+      translations: true,
+      // Pull only rows that match the doc's current_version — old versions
+      // hang around briefly for rollback + drifted-anchor recovery and must
+      // never reach the reader.
+      pageText: {
+        where: {}, // filtered in JS below; Prisma filters on numeric col are awkward
+        select: {
+          lang: true,
+          version: true,
+          pageNumber: true,
+          filename: true,
+          html: true,
+          charStart: true,
+          charEnd: true,
+          contentHash: true,
+          headingPath: true,
+        },
+      },
+    },
   });
   if (!row) return null;
   if (row.status !== 'published') return null;
@@ -108,20 +128,48 @@ export async function getDocumentBySlug(slug: string): Promise<ParsedDocumentV2 
     throw new Error(`Document ${slug} is missing its primary-language translation (${row.primaryLang}).`);
   }
 
+  const pagesByLang = new Map<DocumentV2Locale, DocumentV2PageRender[]>();
+  for (const pt of row.pageText) {
+    if (pt.version !== row.currentVersion) continue;
+    if (!isLocale(pt.lang)) continue;
+    if (pt.html == null || pt.charStart == null || pt.charEnd == null || pt.contentHash == null) {
+      // Pre-backfill row; skip — the reader's markdown fallback covers this case.
+      continue;
+    }
+    const list = pagesByLang.get(pt.lang) ?? [];
+    list.push({
+      pageNumber: pt.pageNumber,
+      filename: pt.filename,
+      html: pt.html,
+      charStart: pt.charStart,
+      charEnd: pt.charEnd,
+      contentHash: pt.contentHash,
+      headingPath: Array.isArray(pt.headingPath) ? (pt.headingPath as string[]) : [],
+    });
+    pagesByLang.set(pt.lang, list);
+  }
+  for (const list of pagesByLang.values()) list.sort((a, b) => a.pageNumber - b.pageNumber);
+
+  const primaryLocale = row.primaryLang as DocumentV2Locale;
   const others: DocumentV2Translation[] = row.translations
     .filter((t) => t.lang !== row.primaryLang && isLocale(t.lang))
-    .map((t) => ({
-      lang: t.lang as DocumentV2Locale,
-      markdown: t.markdown,
-      toc: (t.toc ?? []) as unknown as TocEntry[],
-      markers: (t.markers ?? []) as unknown as PageMarker[],
-    }));
+    .map((t) => {
+      const lang = t.lang as DocumentV2Locale;
+      return {
+        lang,
+        markdown: t.markdown,
+        toc: (t.toc ?? []) as unknown as TocEntry[],
+        markers: (t.markers ?? []) as unknown as PageMarker[],
+        pages: pagesByLang.get(lang) ?? [],
+      };
+    });
 
   return {
     meta,
     markdown: primary.markdown,
     toc: (primary.toc ?? []) as unknown as TocEntry[],
     markers: (primary.markers ?? []) as unknown as PageMarker[],
+    pages: pagesByLang.get(primaryLocale) ?? [],
     translations: others,
   };
 }
