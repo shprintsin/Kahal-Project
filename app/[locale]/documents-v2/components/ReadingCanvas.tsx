@@ -11,37 +11,97 @@ import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 import { rehypePageMarkers } from '../lib/rehype-page-markers';
 import { cn } from '@/lib/utils';
-import type { DocumentV2PageRender } from '@/types/document-v2';
+import {
+  type ChapterFull,
+  type DocumentV2Locale,
+  chapterDomId,
+  resolveI18nString,
+} from '@/types/document-v2';
 
 interface ReadingCanvasProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Source markdown for the active language. Used as a fallback when the
-   *  per-page HTML hasn't been backfilled (legacy rows pre-Step 1). */
-  markdown: string;
-  /** Server-rendered per-page HTML, in source order. When non-empty the
-   *  reader stops parsing markdown on the client and just inlines these. */
-  pages: DocumentV2PageRender[];
+  chapters: ChapterFull[];
+  /** Source language of the parent document — its body lives on `chapter.text`. */
+  sourceLang: DocumentV2Locale;
+  /** Translation language to display alongside the source body. When equal to
+   *  `sourceLang` only the source pane is rendered. */
+  translationLang: DocumentV2Locale;
+  /** Reader-display locale, used to pick title/excerpt strings. */
+  displayLocale: DocumentV2Locale;
+  fallbackLocale: DocumentV2Locale;
   isRtl: boolean;
-  /** Zoom percentage (e.g. 100, 120). Scales font-size; prose styles are em-based so headings/lists scale too. */
   zoom?: number;
+  labels: {
+    chapter: string;
+    mentionsJews: string;
+    noTranslation: string;
+  };
 }
 
 const BASE_FONT_PX = 16;
-
-// Use Frank Ruhl Libre (loaded by the route layout) as the editorial face for
-// historical documents, with system Hebrew/Latin serifs as a fallback chain.
 const READING_FONT =
   "var(--font-frl), 'Frank Ruhl Libre', 'Georgia', 'Noto Serif Hebrew', serif";
 
+const PROSE = cn(
+  '[&_h1]:font-serif [&_h1]:font-semibold [&_h1]:text-[1.4em] [&_h1]:leading-[1.25] [&_h1]:my-[0.6em]',
+  '[&_h2]:font-serif [&_h2]:font-semibold [&_h2]:text-[1.2em] [&_h2]:leading-[1.3] [&_h2]:mt-[1.3em] [&_h2]:mb-[0.45em]',
+  '[&_h3]:font-serif [&_h3]:font-semibold [&_h3]:text-[1.08em] [&_h3]:leading-[1.35] [&_h3]:mt-[1.2em] [&_h3]:mb-[0.4em]',
+  '[&_p]:my-[1em]',
+  '[&_strong]:font-semibold [&_strong]:text-foreground',
+  '[&_em]:italic',
+  '[&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:opacity-80',
+  '[&_ul]:my-[1em] [&_ul]:ps-[1.6em] [&_ul]:list-disc',
+  '[&_ol]:my-[1em] [&_ol]:ps-[1.6em] [&_ol]:list-decimal',
+  '[&_li]:my-[0.4em] [&_li]:ps-[0.25em]',
+  '[&_blockquote]:my-[1.2em] [&_blockquote]:ps-[1em] [&_blockquote]:border-s-4 [&_blockquote]:border-border [&_blockquote]:italic [&_blockquote]:text-muted-foreground',
+  '[&_code]:font-mono [&_code]:text-[0.9em] [&_code]:px-[0.35em] [&_code]:py-[0.1em] [&_code]:rounded [&_code]:bg-muted',
+  '[&_table]:font-mono [&_table]:text-[14px] [&_table]:my-0 [&_table]:border [&_table]:border-border',
+  '[&_th]:bg-muted [&_th]:text-foreground [&_th]:font-semibold [&_th]:p-2 [&_th]:border [&_th]:border-border',
+  '[&_td]:align-top [&_td]:p-2 [&_td]:border [&_td]:border-border',
+);
+
+function isRtlLocale(loc: DocumentV2Locale): boolean {
+  return loc === 'he' || loc === 'yi';
+}
+
+function ChapterBody({ markdown }: { markdown: string }) {
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm, remarkBreaks, remarkMath]}
+      rehypePlugins={[rehypeRaw, rehypeSlug, rehypePageMarkers, rehypeKatex]}
+      components={{
+        table: ({ ...props }) => (
+          <div className="my-6 overflow-x-auto border border-border">
+            <table {...props} className="w-full border-collapse" />
+          </div>
+        ),
+      }}
+    >
+      {markdown}
+    </ReactMarkdown>
+  );
+}
+
 export const ReadingCanvas = forwardRef<HTMLDivElement, ReadingCanvasProps>(
   function ReadingCanvas(
-    { markdown, pages, isRtl, zoom = 100, className, style, ...rest },
+    {
+      chapters,
+      sourceLang,
+      translationLang,
+      displayLocale,
+      fallbackLocale,
+      isRtl,
+      zoom = 100,
+      className,
+      style,
+      labels,
+      ...rest
+    },
     ref,
   ) {
-    // Hot path: server-rendered HTML chunks. The reader keeps the client-side
-    // ReactMarkdown branch as a fallback for any legacy row that didn't pass
-    // through the Step 1 backfill (html column null) — once GC removes those,
-    // the fallback can be deleted along with the markdown plugins import.
-    const useServerHtml = pages.length > 0;
+    const showSplit = translationLang !== sourceLang;
+    const sourceIsRtl = isRtlLocale(sourceLang);
+    const translationIsRtl = isRtlLocale(translationLang);
+
     return (
       <div
         ref={ref}
@@ -51,88 +111,92 @@ export const ReadingCanvas = forwardRef<HTMLDivElement, ReadingCanvasProps>(
       >
         <article
           dir={isRtl ? 'rtl' : 'ltr'}
-          className={cn(
-            'relative mx-auto px-4 py-8 sm:px-8 sm:py-12 md:px-16 md:py-16 leading-[1.75]',
-            // Fixed pixel max-width (not `ch`), so zooming the font scales only the text:
-            // shrinking the font lets more characters fit per line instead of also
-            // shrinking the column the same amount.
-            'max-w-[760px] text-foreground',
-            // Headings
-            // Each non-first H1 gets a light-gray top border that acts as a section divider
-            // between top-level chapters. `first:` resets it for the document's opening H1.
-            '[&_h1]:font-serif [&_h1]:font-semibold [&_h1]:tracking-tight [&_h1]:text-[1.4em] [&_h1]:leading-[1.25] [&_h1]:mt-[2em] [&_h1]:pt-[1.2em] [&_h1]:mb-[0.5em] [&_h1]:border-t [&_h1]:border-[lightgray] [&_h1]:first:mt-0 [&_h1]:first:pt-0 [&_h1]:first:border-t-0',
-            '[&_h2]:font-serif [&_h2]:font-semibold [&_h2]:tracking-tight [&_h2]:text-[1.2em] [&_h2]:leading-[1.3] [&_h2]:mt-[1.3em] [&_h2]:mb-[0.45em]',
-            '[&_h3]:font-serif [&_h3]:font-semibold [&_h3]:tracking-tight [&_h3]:text-[1.08em] [&_h3]:leading-[1.35] [&_h3]:mt-[1.2em] [&_h3]:mb-[0.4em]',
-            '[&_h4]:font-serif [&_h4]:font-semibold [&_h4]:text-[1em] [&_h4]:mt-[1.1em] [&_h4]:mb-[0.35em]',
-            '[&_h5]:font-serif [&_h5]:font-semibold [&_h5]:text-[0.95em] [&_h5]:uppercase [&_h5]:tracking-wide [&_h5]:mt-[1.1em] [&_h5]:mb-[0.35em]',
-            '[&_h6]:font-serif [&_h6]:font-semibold [&_h6]:text-[0.85em] [&_h6]:uppercase [&_h6]:tracking-wide [&_h6]:text-muted-foreground [&_h6]:mt-[1em] [&_h6]:mb-[0.3em]',
-            // Strip any inherited heading decoration
-            '[&_h2]:border-0 [&_h3]:border-0 [&_h4]:border-0 [&_h5]:border-0 [&_h6]:border-0',
-            '[&_h1]:shadow-none [&_h2]:shadow-none [&_h3]:shadow-none [&_h4]:shadow-none [&_h5]:shadow-none [&_h6]:shadow-none',
-            '[&_h1]:[text-shadow:none] [&_h2]:[text-shadow:none] [&_h3]:[text-shadow:none] [&_h4]:[text-shadow:none] [&_h5]:[text-shadow:none] [&_h6]:[text-shadow:none]',
-            // Paragraphs and inline text
-            '[&_p]:my-[1em]',
-            '[&_strong]:font-semibold [&_strong]:text-foreground',
-            '[&_em]:italic',
-            '[&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:opacity-80',
-            // Lists
-            '[&_ul]:my-[1em] [&_ul]:ps-[1.6em] [&_ul]:list-disc',
-            '[&_ol]:my-[1em] [&_ol]:ps-[1.6em] [&_ol]:list-decimal',
-            '[&_li]:my-[0.4em] [&_li]:ps-[0.25em]',
-            '[&_li>p]:my-[0.4em]',
-            // Blockquote
-            '[&_blockquote]:my-[1.2em] [&_blockquote]:ps-[1em] [&_blockquote]:border-s-4 [&_blockquote]:border-border [&_blockquote]:italic [&_blockquote]:text-muted-foreground',
-            // Code
-            '[&_code]:font-mono [&_code]:text-[0.9em] [&_code]:px-[0.35em] [&_code]:py-[0.1em] [&_code]:rounded [&_code]:bg-muted',
-            '[&_pre]:my-[1.2em] [&_pre]:p-4 [&_pre]:rounded [&_pre]:bg-muted [&_pre]:overflow-x-auto',
-            '[&_pre_code]:bg-transparent [&_pre_code]:p-0',
-            // Horizontal rule
-            '[&_hr]:hidden',
-            // Tables
-            '[&_table]:font-mono [&_table]:text-[14px] [&_table]:my-0 [&_table]:border [&_table]:border-border',
-            '[&_th]:bg-muted [&_th]:text-foreground [&_th]:font-semibold [&_th]:p-2 [&_th]:border [&_th]:border-border',
-            '[&_td]:align-top [&_td]:p-2 [&_td]:border [&_td]:border-border',
-            // Images
-            '[&_img]:my-[1.2em] [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded',
-            isRtl ? 'text-right' : 'text-left',
-          )}
+          className={cn('mx-auto max-w-[1200px] px-4 py-8 sm:px-8 sm:py-10 text-foreground')}
           style={{
             fontFamily: READING_FONT,
             fontSize: `${(BASE_FONT_PX * zoom) / 100}px`,
           }}
         >
-          {useServerHtml ? (
-            // Each page is rendered as its own block with `data-doc-page` so
-            // the highlight + active-page hooks can find page boundaries
-            // without re-parsing the markdown source. Order is guaranteed
-            // (sorted by `pageNumber` upstream).
-            pages.map((p) => (
-              <div
-                key={`${p.pageNumber}-${p.filename}`}
-                data-doc-page={p.pageNumber}
-                data-doc-filename={p.filename}
-                dangerouslySetInnerHTML={{ __html: p.html }}
-              />
-            ))
-          ) : (
-            <ReactMarkdown
-              // `remarkBreaks` converts single `\n` into hard line breaks so the
-              // reader respects the line layout of historical transcriptions
-              // verbatim, instead of the CommonMark default of collapsing
-              // single newlines into spaces.
-              remarkPlugins={[remarkGfm, remarkBreaks, remarkMath]}
-              rehypePlugins={[rehypeRaw, rehypeSlug, rehypePageMarkers, rehypeKatex]}
-              components={{
-                table: ({ node, ...props }) => (
-                  <div className="my-6 overflow-x-auto border border-border">
-                    <table {...props} className="w-full border-collapse" />
+          {chapters.map((ch) => {
+            const title = resolveI18nString(ch.titleI18n, displayLocale, fallbackLocale);
+            const excerpt = resolveI18nString(ch.excerptI18n, displayLocale, fallbackLocale);
+            const translationBody =
+              translationLang === sourceLang ? ch.text : ch.translations[translationLang];
+            return (
+              <section
+                key={ch.slug}
+                id={chapterDomId(ch.slug)}
+                data-chapter-slug={ch.slug}
+                data-chapter-index={ch.index}
+                className={cn(
+                  'border-t border-[var(--docs-cream-3)] pt-10 first:border-t-0 first:pt-0',
+                  'mb-12',
+                )}
+              >
+                <header className="mb-6">
+                  <div
+                    className="flex items-center gap-3 text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
+                    style={{ fontFamily: 'var(--font-docs-mono)' }}
+                  >
+                    <span>
+                      {labels.chapter} {ch.index}
+                    </span>
+                    {ch.date && <span>· {ch.date}</span>}
+                    {ch.mentionJews && (
+                      <span className="border border-[var(--docs-accent)] px-1.5 py-px text-[var(--docs-accent)]">
+                        {labels.mentionsJews}
+                      </span>
+                    )}
                   </div>
-                ),
-              }}
-            >
-              {markdown}
-            </ReactMarkdown>
-          )}
+                  <h2
+                    className="mt-2 font-serif text-2xl font-semibold leading-snug"
+                    dir={isRtl ? 'rtl' : 'ltr'}
+                  >
+                    {title || ch.slug}
+                  </h2>
+                  {excerpt && (
+                    <p
+                      className="mt-2 text-sm italic text-muted-foreground"
+                      dir={isRtl ? 'rtl' : 'ltr'}
+                    >
+                      {excerpt}
+                    </p>
+                  )}
+                </header>
+
+                <div
+                  className={cn(
+                    showSplit ? 'grid gap-8 md:grid-cols-2' : '',
+                    'leading-[1.75]',
+                  )}
+                >
+                  <div
+                    dir={sourceIsRtl ? 'rtl' : 'ltr'}
+                    className={cn(PROSE, sourceIsRtl ? 'text-right' : 'text-left')}
+                  >
+                    <ChapterBody markdown={ch.text} />
+                  </div>
+
+                  {showSplit && (
+                    <div
+                      dir={translationIsRtl ? 'rtl' : 'ltr'}
+                      className={cn(
+                        PROSE,
+                        translationIsRtl ? 'text-right' : 'text-left',
+                        'border-s ps-8 border-[var(--docs-cream-3)]',
+                      )}
+                    >
+                      {translationBody ? (
+                        <ChapterBody markdown={translationBody} />
+                      ) : (
+                        <p className="italic text-muted-foreground">{labels.noTranslation}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </section>
+            );
+          })}
         </article>
       </div>
     );

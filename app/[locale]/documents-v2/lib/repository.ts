@@ -2,56 +2,61 @@ import 'server-only';
 import { prisma } from '@/lib/prisma';
 import {
   DOCUMENT_V2_LOCALES,
-  type DocumentV2Archive,
-  type DocumentV2LibraryMeta,
+  type ChapterFull,
+  type DocumentLibraryMeta,
+  type DocumentMeta,
   type DocumentV2Locale,
-  type DocumentV2Meta,
-  type DocumentV2PageRender,
-  type DocumentV2Scans,
-  type DocumentV2Translation,
   type I18nString,
-  type PageMarker,
-  type ParsedDocumentV2,
-  type TocEntry,
+  type ParsedDocument,
+  isLocale,
 } from '@/types/document-v2';
 
-function isLocale(value: string): value is DocumentV2Locale {
-  return (DOCUMENT_V2_LOCALES as readonly string[]).includes(value);
+function statusLabel(s: string): DocumentMeta['status'] {
+  if (s === 'published' || s === 'archived') return s;
+  return 'draft';
 }
 
 function asMeta(row: {
   id: string;
+  fileId: string | null;
   slug: string;
-  primaryLang: string;
-  titleI18n: unknown;
-  descriptionI18n: unknown;
-  year: number | null;
-  archive: unknown;
-  scans: unknown;
-  license: string | null;
+  sourceLang: string;
+  nameI18n: unknown;
+  excerptI18n: unknown;
+  citation: string | null;
+  url: string | null;
+  dateStart: string | null;
+  dateEnd: string | null;
+  tocModel: string | null;
+  translateModel: string | null;
+  status: string;
   updatedAt: Date;
-}): DocumentV2Meta {
-  if (!isLocale(row.primaryLang)) {
-    throw new Error(`Document ${row.slug} has invalid primary_lang "${row.primaryLang}"`);
+  _count?: { chapters: number };
+}): DocumentMeta {
+  if (!isLocale(row.sourceLang)) {
+    throw new Error(`Document ${row.slug} has invalid source_lang "${row.sourceLang}"`);
   }
   return {
     id: row.id,
+    fileId: row.fileId,
     slug: row.slug,
-    lang: row.primaryLang,
-    title: (row.titleI18n ?? {}) as I18nString,
-    description: (row.descriptionI18n ?? undefined) as I18nString | undefined,
-    year: row.year ?? undefined,
-    archive: (row.archive ?? undefined) as DocumentV2Archive | undefined,
-    scans: (row.scans ?? undefined) as DocumentV2Scans | undefined,
-    license: row.license ?? undefined,
+    sourceLang: row.sourceLang,
+    nameI18n: (row.nameI18n ?? {}) as I18nString,
+    excerptI18n: (row.excerptI18n ?? undefined) as I18nString | undefined,
+    citation: row.citation ?? undefined,
+    url: row.url ?? undefined,
+    dateStart: row.dateStart ?? undefined,
+    dateEnd: row.dateEnd ?? undefined,
+    tocModel: row.tocModel ?? undefined,
+    translateModel: row.translateModel ?? undefined,
+    status: statusLabel(row.status),
+    chapterCount: row._count?.chapters ?? 0,
     updatedAt: row.updatedAt.toISOString(),
   };
 }
 
 export interface DocumentListItem {
-  meta: DocumentV2LibraryMeta;
-  pageCount: number;
-  headingCount: number;
+  meta: DocumentLibraryMeta;
 }
 
 export async function getDocumentList(): Promise<DocumentListItem[]> {
@@ -60,61 +65,57 @@ export async function getDocumentList(): Promise<DocumentListItem[]> {
     orderBy: { updatedAt: 'desc' },
     select: {
       id: true,
+      fileId: true,
       slug: true,
-      primaryLang: true,
-      titleI18n: true,
-      descriptionI18n: true,
-      year: true,
-      archive: true,
-      scans: true,
-      license: true,
-      pageCount: true,
-      headingCount: true,
+      sourceLang: true,
+      nameI18n: true,
+      excerptI18n: true,
+      citation: true,
+      url: true,
+      dateStart: true,
+      dateEnd: true,
+      tocModel: true,
+      translateModel: true,
+      status: true,
       updatedAt: true,
-      // Pull only the `lang` column from each translation row so the library
-      // can render language-availability chips without loading markdown bodies.
-      translations: { select: { lang: true } },
+      _count: { select: { chapters: true } },
+      // Pull just the langs available across this doc's chapters so library
+      // cards can render language-availability chips without a second fetch.
+      chapters: {
+        select: {
+          translations: { select: { lang: true } },
+        },
+      },
     },
   });
   return rows.map((r) => {
     const base = asMeta(r);
-    const translationLangs = r.translations
-      .map((t) => t.lang)
-      .filter((l): l is DocumentV2Locale => isLocale(l));
-    const availableLangs = Array.from(new Set([base.lang, ...translationLangs]));
+    const langs = new Set<DocumentV2Locale>([base.sourceLang]);
+    for (const ch of r.chapters) {
+      for (const t of ch.translations) {
+        if (isLocale(t.lang)) langs.add(t.lang);
+      }
+    }
     return {
-      meta: { ...base, availableLangs },
-      pageCount: r.pageCount,
-      headingCount: r.headingCount,
+      meta: { ...base, availableLangs: [...langs] },
     };
   });
 }
 
-export async function getDocumentMetas(): Promise<DocumentV2LibraryMeta[]> {
+export async function getDocumentMetas(): Promise<DocumentLibraryMeta[]> {
   const items = await getDocumentList();
   return items.map((i) => i.meta);
 }
 
-export async function getDocumentBySlug(slug: string): Promise<ParsedDocumentV2 | null> {
+export async function getDocumentBySlug(slug: string): Promise<ParsedDocument | null> {
   const row = await prisma.documentV2.findUnique({
     where: { slug },
     include: {
-      translations: true,
-      // Pull only rows that match the doc's current_version — old versions
-      // hang around briefly for rollback + drifted-anchor recovery and must
-      // never reach the reader.
-      pageText: {
-        where: {}, // filtered in JS below; Prisma filters on numeric col are awkward
-        select: {
-          lang: true,
-          version: true,
-          pageNumber: true,
-          filename: true,
-          html: true,
-          charStart: true,
-          charEnd: true,
-          contentHash: true,
-          headingPath: true,
+      _count: { select: { chapters: true } },
+      chapters: {
+        orderBy: { index: 'asc' },
+        include: {
+          translations: { select: { lang: true, text: true } },
         },
       },
     },
@@ -123,55 +124,26 @@ export async function getDocumentBySlug(slug: string): Promise<ParsedDocumentV2 
   if (row.status !== 'published') return null;
 
   const meta = asMeta(row);
-  const primary = row.translations.find((t) => t.lang === row.primaryLang);
-  if (!primary) {
-    throw new Error(`Document ${slug} is missing its primary-language translation (${row.primaryLang}).`);
-  }
 
-  const pagesByLang = new Map<DocumentV2Locale, DocumentV2PageRender[]>();
-  for (const pt of row.pageText) {
-    if (pt.version !== row.currentVersion) continue;
-    if (!isLocale(pt.lang)) continue;
-    if (pt.html == null || pt.charStart == null || pt.charEnd == null || pt.contentHash == null) {
-      // Pre-backfill row; skip — the reader's markdown fallback covers this case.
-      continue;
+  const chapters: ChapterFull[] = row.chapters.map((ch) => {
+    const translations: Partial<Record<DocumentV2Locale, string>> = {};
+    for (const t of ch.translations) {
+      if (isLocale(t.lang)) translations[t.lang] = t.text;
     }
-    const list = pagesByLang.get(pt.lang) ?? [];
-    list.push({
-      pageNumber: pt.pageNumber,
-      filename: pt.filename,
-      html: pt.html,
-      charStart: pt.charStart,
-      charEnd: pt.charEnd,
-      contentHash: pt.contentHash,
-      headingPath: Array.isArray(pt.headingPath) ? (pt.headingPath as string[]) : [],
-    });
-    pagesByLang.set(pt.lang, list);
-  }
-  for (const list of pagesByLang.values()) list.sort((a, b) => a.pageNumber - b.pageNumber);
+    return {
+      id: ch.id,
+      slug: ch.slug,
+      index: ch.index,
+      titleI18n: (ch.titleI18n ?? {}) as I18nString,
+      excerptI18n: (ch.excerptI18n ?? undefined) as I18nString | undefined,
+      date: ch.date ?? undefined,
+      mentionJews: ch.mentionJews,
+      text: ch.text,
+      translations,
+    };
+  });
 
-  const primaryLocale = row.primaryLang as DocumentV2Locale;
-  const others: DocumentV2Translation[] = row.translations
-    .filter((t) => t.lang !== row.primaryLang && isLocale(t.lang))
-    .map((t) => {
-      const lang = t.lang as DocumentV2Locale;
-      return {
-        lang,
-        markdown: t.markdown,
-        toc: (t.toc ?? []) as unknown as TocEntry[],
-        markers: (t.markers ?? []) as unknown as PageMarker[],
-        pages: pagesByLang.get(lang) ?? [],
-      };
-    });
-
-  return {
-    meta,
-    markdown: primary.markdown,
-    toc: (primary.toc ?? []) as unknown as TocEntry[],
-    markers: (primary.markers ?? []) as unknown as PageMarker[],
-    pages: pagesByLang.get(primaryLocale) ?? [],
-    translations: others,
-  };
+  return { meta, chapters };
 }
 
 export async function getPublishedSlugs(): Promise<string[]> {
@@ -181,3 +153,5 @@ export async function getPublishedSlugs(): Promise<string[]> {
   });
   return rows.map((r) => r.slug);
 }
+
+export const DOCUMENT_LOCALES = DOCUMENT_V2_LOCALES;

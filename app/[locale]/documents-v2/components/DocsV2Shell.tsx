@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { fallbackLocale, type Locale } from '@/lib/i18n/config';
 import {
   resolveI18nString,
-  type DocumentV2LibraryMeta,
+  type DocumentLibraryMeta,
   type DocumentV2Locale,
 } from '@/types/document-v2';
 import { DocsV2LibraryProvider } from './DocsV2LibraryContext';
@@ -15,7 +15,7 @@ import { DocumentTopBar } from './DocumentTopBar';
 import { LibraryRail } from './LibraryRail';
 
 interface DocsV2ShellProps {
-  library: DocumentV2LibraryMeta[];
+  library: DocumentLibraryMeta[];
   children: React.ReactNode;
 }
 
@@ -42,7 +42,7 @@ export function DocsV2Shell({ library, children }: DocsV2ShellProps) {
   const docLocale = routeLocale as unknown as DocumentV2Locale;
   const docFallback = fallbackLocale as unknown as DocumentV2Locale;
   const activeTitle = activeMeta
-    ? resolveI18nString(activeMeta.title, docLocale, docFallback) || activeMeta.slug
+    ? resolveI18nString(activeMeta.nameI18n, docLocale, docFallback) || activeMeta.slug
     : '';
 
   // The index route (`/documents-v2`) is itself a catalog view, so showing
@@ -56,7 +56,7 @@ export function DocsV2Shell({ library, children }: DocsV2ShellProps) {
       <div className="flex h-[calc(100vh-64px)] w-full flex-col overflow-hidden bg-background">
         <DocumentTopBar
           title={activeTitle}
-          archiveName={activeMeta?.archive?.name}
+          archiveName={activeMeta?.citation ?? undefined}
           routeLocale={routeLocale}
           labels={{
             library: t('topbarLibrary'),

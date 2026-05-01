@@ -9,9 +9,10 @@ import { cn } from '@/lib/utils';
 export interface SearchResult {
   slug: string;
   title: Record<string, string> | null;
+  chapterSlug: string;
+  chapterIndex: number;
+  chapterTitle: Record<string, string> | null;
   lang: string;
-  pageNumber: number;
-  filename: string;
   snippet: string;
   rank: number;
 }
@@ -24,11 +25,11 @@ interface Props {
   routeLocale: Locale;
   markOpen: string;
   markClose: string;
-  onJumpToPage: (page: number, lang: string) => void;
+  onJumpToChapter: (chapterSlug: string, lang: string) => void;
   labels: {
     title: string;
     empty: (q: string) => string;
-    page: string;
+    chapter: string;
   };
 }
 
@@ -42,8 +43,6 @@ function escapeHtml(s: string): string {
 }
 
 function snippetHtml(snippet: string, markOpen: string, markClose: string): string {
-  // The DB injected literal sentinel strings around matches; HTML-escape the surrounding
-  // text so user content can never break out of the <mark> tags.
   const safe = escapeHtml(snippet);
   const openEsc = escapeHtml(markOpen);
   const closeEsc = escapeHtml(markClose);
@@ -58,7 +57,7 @@ export function SearchResultsPanel({
   routeLocale,
   markOpen,
   markClose,
-  onJumpToPage,
+  onJumpToChapter,
   labels,
 }: Props) {
   const docLocale = routeLocale as unknown as DocumentV2Locale;
@@ -70,7 +69,7 @@ export function SearchResultsPanel({
         <header className="mb-4 flex items-baseline gap-3">
           <h2 className="font-serif text-lg tracking-tight">{labels.title}</h2>
           <span className="font-mono text-[11px] text-muted-foreground">
-            “{query}” · {scope === 'doc' ? 'doc' : 'all'} · {results.length}
+            "{query}" · {scope === 'doc' ? 'doc' : 'all'} · {results.length}
           </span>
         </header>
 
@@ -79,10 +78,13 @@ export function SearchResultsPanel({
         ) : (
           <ul className="divide-y divide-border border-y border-border">
             {results.map((r, i) => {
-              const title =
+              const docTitle =
                 resolveI18nString(r.title ?? undefined, docLocale, docFallback) || r.slug;
+              const chTitle =
+                resolveI18nString(r.chapterTitle ?? undefined, docLocale, docFallback) ||
+                r.chapterSlug;
               const sameDoc = r.slug === currentSlug;
-              const meta = `${title} · ${r.lang} · ${labels.page} ${r.pageNumber}`;
+              const meta = `${docTitle} · ${r.lang} · ${labels.chapter} ${r.chapterIndex}: ${chTitle}`;
               const html = snippetHtml(r.snippet, markOpen, markClose);
 
               const Body = (
@@ -102,18 +104,18 @@ export function SearchResultsPanel({
               );
 
               return (
-                <li key={`${r.slug}-${r.lang}-${r.pageNumber}-${i}`}>
+                <li key={`${r.slug}-${r.chapterSlug}-${r.lang}-${i}`}>
                   {sameDoc ? (
                     <button
                       type="button"
-                      onClick={() => onJumpToPage(r.pageNumber, r.lang)}
+                      onClick={() => onJumpToChapter(r.chapterSlug, r.lang)}
                       className="block w-full text-start px-3 py-3 transition-colors hover:bg-muted/40"
                     >
                       {Body}
                     </button>
                   ) : (
                     <Link
-                      href={`/${routeLocale}/documents-v2/${r.slug}?page=${r.pageNumber}${r.lang ? `&lang=${r.lang}` : ''}`}
+                      href={`/${routeLocale}/documents-v2/${r.slug}?chapter=${encodeURIComponent(r.chapterSlug)}${r.lang ? `&lang=${r.lang}` : ''}`}
                       className="block px-3 py-3 transition-colors hover:bg-muted/40"
                     >
                       {Body}

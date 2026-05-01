@@ -1,90 +1,58 @@
 export const DOCUMENT_V2_LOCALES = ['he', 'en', 'pl', 'yi', 'ru'] as const;
 export type DocumentV2Locale = (typeof DOCUMENT_V2_LOCALES)[number];
 
-export type I18nString = Partial<Record<DocumentV2Locale, string>>;
+/** I18n maps for short metadata fields. The `source` slot carries the
+ *  original-language string (e.g. the Polish title from the source archive)
+ *  so we can display it next to the curated en/he versions. */
+export type I18nString = Partial<Record<DocumentV2Locale | 'source', string>>;
 
-export interface DocumentV2Archive {
-  name: string;
-  reference?: string;
-  url?: string;
-}
-
-export interface DocumentV2Scans {
-  baseUrl: string;
-  extension?: string;
-  placeholder?: string;
-}
-
-export interface DocumentV2Frontmatter {
-  slug: string;
-  title: I18nString;
-  description?: I18nString;
-  lang: DocumentV2Locale;
-  year?: number;
-  archive?: DocumentV2Archive;
-  scans?: DocumentV2Scans;
-  license?: string;
-}
-
-export interface DocumentV2Meta extends DocumentV2Frontmatter {
+export interface DocumentMeta {
   id: string;
+  fileId: string | null;
+  slug: string;
+  sourceLang: DocumentV2Locale;
+  nameI18n: I18nString;
+  excerptI18n?: I18nString;
+  citation?: string;
+  url?: string;
+  dateStart?: string;
+  dateEnd?: string;
+  tocModel?: string;
+  translateModel?: string;
+  status: 'draft' | 'published' | 'archived';
+  chapterCount: number;
   updatedAt: string;
 }
 
-/** Library-listing variant that carries the set of languages this document
- *  actually has content for (source + every translation row). Used to render
+/** Library-listing variant — surfaces the set of languages the document has
+ *  *any* chapter content for (source + every translation lang seen). Used for
  *  language-availability chips on `LibraryRail` cards without a second fetch. */
-export interface DocumentV2LibraryMeta extends DocumentV2Meta {
+export interface DocumentLibraryMeta extends DocumentMeta {
   availableLangs: DocumentV2Locale[];
 }
 
-export interface PageMarker {
-  /** Source-order page number, 1-based. */
-  pageNumber: number;
-  /** Identifier from the `@@@ File: NAME @@@` separator (may repeat across the document). */
-  filename: string;
-  imageUrl: string;
-  domId: string;
-}
-
-export interface TocEntry {
+export interface ChapterMeta {
   id: string;
+  slug: string;
+  index: number;
+  titleI18n: I18nString;
+  excerptI18n?: I18nString;
+  date?: string;
+  mentionJews: boolean;
+}
+
+export interface ChapterFull extends ChapterMeta {
+  /** Source-language body. `@@@ File: X @@@` markers are preserved as inline
+   *  scan-page anchors and rendered by `rehype-page-markers`. */
   text: string;
-  level: 1 | 2 | 3;
+  /** Body translations keyed by locale (excluding the document's `sourceLang`,
+   *  whose body lives in `text`). */
+  translations: Partial<Record<DocumentV2Locale, string>>;
 }
 
-/** Precomputed render artifact for a single page within a translation.
- *  The reader feeds `html` directly into `dangerouslySetInnerHTML`; the
- *  char offsets and content hash anchor highlights against the rendered DOM. */
-export interface DocumentV2PageRender {
-  pageNumber: number;
-  filename: string;
-  html: string;
-  charStart: number;
-  charEnd: number;
-  contentHash: string;
-  headingPath: string[];
-}
-
-export interface DocumentV2Translation {
-  lang: DocumentV2Locale;
-  markdown: string;
-  toc: TocEntry[];
-  markers: PageMarker[];
-  /** Server-rendered per-page HTML pulled from `document_v2_page_text`. */
-  pages: DocumentV2PageRender[];
-}
-
-export interface ParsedDocumentV2 {
-  meta: DocumentV2Meta;
-  /** Source markdown for the primary language. Kept on the wire as a fallback
-   *  while the reader is mid-migration to consuming `pages` only. */
-  markdown: string;
-  toc: TocEntry[];
-  markers: PageMarker[];
-  /** Server-rendered pages for the primary language. */
-  pages: DocumentV2PageRender[];
-  translations: DocumentV2Translation[];
+export interface ParsedDocument {
+  meta: DocumentMeta;
+  chapters: ChapterFull[];
 }
 
 export function resolveI18nString(
@@ -93,22 +61,20 @@ export function resolveI18nString(
   fallback: DocumentV2Locale,
 ): string {
   if (!value) return '';
-  return value[locale] ?? value[fallback] ?? Object.values(value).find(Boolean) ?? '';
+  return value[locale] ?? value[fallback] ?? value.source ?? Object.values(value).find(Boolean) ?? '';
 }
 
-export function markerDomId(filename: string, pageNumber: number): string {
+/** Stable DOM id for an inline scan-page marker. Matches the rehype plugin. */
+export function markerDomId(filename: string, occurrence: number): string {
   const stem = filename.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '-');
-  return `tripwire-${pageNumber}-${stem}`;
+  return `tripwire-${occurrence}-${stem}`;
 }
 
-export function resolveMarkerImageUrl(
-  scans: DocumentV2Scans | undefined,
-  filename: string,
-): string {
-  if (!scans?.baseUrl) return '';
-  const base = scans.baseUrl.endsWith('/') ? scans.baseUrl : `${scans.baseUrl}/`;
-  const stem = filename.replace(/\.md$/i, '');
-  const ext = scans.extension ?? 'jpg';
-  const cleanExt = ext.startsWith('.') ? ext.slice(1) : ext;
-  return `${base}${stem}.${cleanExt}`;
+/** Stable DOM id for a chapter section in the reader. */
+export function chapterDomId(slug: string): string {
+  return `chapter-${slug.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
+}
+
+export function isLocale(value: unknown): value is DocumentV2Locale {
+  return typeof value === 'string' && (DOCUMENT_V2_LOCALES as readonly string[]).includes(value);
 }

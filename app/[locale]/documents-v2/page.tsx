@@ -27,9 +27,11 @@ export default async function DocumentsV2IndexPage({ params }: PageProps) {
       </header>
 
       <ul className="grid gap-4 sm:grid-cols-2">
-        {docs.map(({ meta, pageCount, headingCount }) => {
-          const title = resolveI18nString(meta.title, docLocale, docFallback) || meta.slug;
-          const description = resolveI18nString(meta.description, docLocale, docFallback);
+        {docs.map(({ meta }) => {
+          const title = resolveI18nString(meta.nameI18n, docLocale, docFallback) || meta.slug;
+          const description = resolveI18nString(meta.excerptI18n, docLocale, docFallback);
+          const year = meta.dateStart?.slice(0, 4);
+          const isRtl = meta.sourceLang === 'he' || meta.sourceLang === 'yi';
           return (
             <li key={meta.id}>
               <Link
@@ -37,11 +39,11 @@ export default async function DocumentsV2IndexPage({ params }: PageProps) {
                 className="group flex h-full flex-col border border-border bg-background p-5 transition-colors hover:bg-muted/40"
               >
                 <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono">
-                  {meta.year ?? '—'} · {meta.archive?.name ?? t('unsourced')}
+                  {year ?? '—'} · {meta.citation ?? t('unsourced')}
                 </div>
                 <div
                   className="mt-3 font-serif text-xl leading-snug"
-                  dir={meta.lang === 'he' || meta.lang === 'yi' ? 'rtl' : 'ltr'}
+                  dir={isRtl ? 'rtl' : 'ltr'}
                 >
                   {title}
                 </div>
@@ -49,7 +51,7 @@ export default async function DocumentsV2IndexPage({ params }: PageProps) {
                   <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{description}</p>
                 )}
                 <div className="mt-auto pt-4 font-mono text-[11px] text-muted-foreground">
-                  {pageCount} {t('pages')} · {headingCount} {t('headings')}
+                  {meta.chapterCount} {t('chapters')}
                 </div>
               </Link>
             </li>

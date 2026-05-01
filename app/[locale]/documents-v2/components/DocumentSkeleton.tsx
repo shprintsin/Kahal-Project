@@ -49,9 +49,9 @@ export function DocumentReaderSkeleton() {
   const docLocale = routeLocale as unknown as DocumentV2Locale;
   const docFallback = fallbackLocale as unknown as DocumentV2Locale;
   const meta = ctx?.activeMeta ?? null;
-  const title = meta ? resolveI18nString(meta.title, docLocale, docFallback) || meta.slug : '';
+  const title = meta ? resolveI18nString(meta.nameI18n, docLocale, docFallback) || meta.slug : '';
   const isRtl =
-    meta && (meta.lang === 'he' || meta.lang === 'yi') ? true : false;
+    meta && (meta.sourceLang === 'he' || meta.sourceLang === 'yi') ? true : false;
 
   return (
     <>
@@ -111,8 +111,8 @@ export function DocumentReaderSkeleton() {
                 className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted-foreground)]"
                 style={{ fontFamily: 'var(--font-docs-mono)' }}
               >
-                {meta.year ?? '—'}
-                {meta.archive?.name ? ` · ${meta.archive.name}` : ''}
+                {meta.dateStart?.slice(0, 4) ?? '—'}
+                {meta.citation ? ` · ${meta.citation.slice(0, 60)}` : ''}
               </div>
               <h2
                 className="mt-1.5 text-[16px] font-medium leading-snug text-[var(--brand-primary)]"

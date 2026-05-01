@@ -753,79 +753,72 @@ model DocumentPage {
   @@map("document_pages")
 }
 
+// One archival unit (e.g. an AGAD fond folder, a printed book). Holds the
+// metadata produced by the docstudio LLM pipeline; chapters live in `Chapter`.
 model DocumentV2 {
-  id              String                  @id @default(uuid()) @db.Uuid
-  slug            String                  @unique
-  primaryLang     String                  @map("primary_lang")
-  titleI18n       Json                    @map("title_i18n")
-  descriptionI18n Json?                   @map("description_i18n")
-  year            Int?
-  archive         Json?
-  scans           Json?
-  license         String?
-  pageCount       Int                     @default(0) @map("page_count")
-  headingCount    Int                     @default(0) @map("heading_count")
-  // Monotonically-increasing version stamped onto every derived row at deploy
-  // time; bumped in the same transaction that writes the new pages. Annotations
-  // anchor against (document_id, lang, version, page_number, char_start, char_end).
-  currentVersion  Int                     @default(1) @map("current_version")
-  status          ContentStatus           @default(draft)
-  createdAt       DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime                @updatedAt @map("updated_at") @db.Timestamptz(6)
-  translations    DocumentV2Translation[]
-  pageText        DocumentV2PageText[]
+  id             String        @id @default(uuid()) @db.Uuid
+  // file_id from the docstudio JSON — the upstream source's stable identifier.
+  fileId         String?       @map("file_id")
+  slug           String        @unique
+  sourceLang     String        @map("source_lang")
+  // { en, he, source } — `source` carries the original-language title.
+  nameI18n       Json          @map("name_i18n")
+  // { en, he } — parent-level summary; nullable until enrichment runs.
+  excerptI18n    Json?         @map("excerpt_i18n")
+  citation       String?
+  url            String?
+  dateStart      String?       @map("date_start")
+  dateEnd        String?       @map("date_end")
+  tocModel       String?       @map("toc_model")
+  translateModel String?       @map("translate_model")
+  status         ContentStatus @default(draft)
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+  chapters       Chapter[]
 
   @@index([slug])
   @@index([status])
   @@map("documents_v2")
 }
 
-model DocumentV2PageText {
-  id           String     @id @default(uuid()) @db.Uuid
-  documentId   String     @map("document_id") @db.Uuid
-  lang         String
-  pageNumber   Int        @map("page_number")
-  // Version of the parent doc this row was derived from; old versions are kept
-  // briefly for rollback + drifted-anchor recovery. The reader filters to the
-  // doc's current_version.
-  version      Int        @default(1)
-  filename     String
+// One LLM-segmented chapter of a Document. The unit of navigation, search,
+// translation, and highlight anchoring. `text` is in the parent doc's
+// sourceLang; non-source languages live in `ChapterTranslation`.
+model Chapter {
+  id           String               @id @default(uuid()) @db.Uuid
+  documentId   String               @map("document_id") @db.Uuid
+  document     DocumentV2           @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  slug         String
+  index        Int
+  // { en, he }
+  titleI18n    Json                 @map("title_i18n")
+  // { en, he }
+  excerptI18n  Json?                @map("excerpt_i18n")
+  date         String?
+  mentionJews  Boolean              @default(false) @map("mention_jews")
+  // Source-language body; `@@@ File: X @@@` markers preserved as scan anchors.
   text         String
-  // Precomputed sanitized HTML so the reader can stop running react-markdown.
-  // Nullable until backfill completes; deploys after the migration always set it.
-  html         String?
-  // Heading breadcrumb at the start of this page, e.g. ["Chapter II", "Section 3"].
-  headingPath  Json?      @map("heading_path")
-  // Char offsets within the (lang) concat, used by the highlight anchor system
-  // so it doesn't need to walk the live DOM.
-  charStart    Int?       @map("char_start")
-  charEnd      Int?       @map("char_end")
-  // sha1(text) — annotation drift detection across re-deploys.
-  contentHash  String?    @map("content_hash")
-  // search_tsv is a generated TSVECTOR column maintained in SQL; not exposed via Prisma client.
-  document     DocumentV2 @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  createdAt    DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
+  translations ChapterTranslation[]
 
-  @@unique([documentId, lang, version, pageNumber])
-  @@index([documentId, lang])
-  @@index([documentId, lang, version])
-  @@map("document_v2_page_text")
+  @@unique([documentId, slug])
+  @@unique([documentId, index])
+  @@index([documentId, mentionJews])
+  @@map("chapters")
 }
 
-model DocumentV2Translation {
-  id         String     @id @default(uuid()) @db.Uuid
-  documentId String     @map("document_id") @db.Uuid
-  lang       String
-  // Version stamp (matches DocumentV2.currentVersion at the time of deploy).
-  version    Int        @default(1)
-  markdown   String
-  toc        Json
-  markers    Json
-  updatedAt  DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
-  document   DocumentV2 @relation(fields: [documentId], references: [id], onDelete: Cascade)
+model ChapterTranslation {
+  id        String   @id @default(uuid()) @db.Uuid
+  chapterId String   @map("chapter_id") @db.Uuid
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  lang      String
+  text      String
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  @@unique([documentId, lang])
-  @@index([documentId])
-  @@map("document_v2_translations")
+  @@unique([chapterId, lang])
+  @@index([chapterId])
+  @@map("chapter_translations")
 }
 
 enum UserRole {

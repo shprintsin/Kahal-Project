@@ -6,13 +6,13 @@ import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
 import {
-  DocumentV2LibraryMeta,
+  DocumentLibraryMeta,
   DocumentV2Locale,
   resolveI18nString,
 } from '@/types/document-v2';
 
 interface LibraryRailProps {
-  documents: DocumentV2LibraryMeta[];
+  documents: DocumentLibraryMeta[];
   locale: DocumentV2Locale;
   fallback: DocumentV2Locale;
   activeSlug?: string;
@@ -106,12 +106,13 @@ export function LibraryRail({
 
   const items = useMemo(() => {
     return documents.map((meta) => {
-      const sourceTitle = (meta.title?.[meta.lang] ?? '').trim();
-      const userTitleRaw = (meta.title?.[locale] ?? meta.title?.[fallback] ?? '').trim();
-      const fallbackAny = resolveI18nString(meta.title, locale, fallback) || meta.slug;
-      const primary = sourceTitle || fallbackAny;
-      const secondary = userTitleRaw && userTitleRaw !== primary ? userTitleRaw : null;
-      return { meta, primary, secondary };
+      const sourceTitle = (meta.nameI18n?.source ?? meta.nameI18n?.[meta.sourceLang] ?? '').trim();
+      const userTitleRaw = (meta.nameI18n?.[locale] ?? meta.nameI18n?.[fallback] ?? '').trim();
+      const fallbackAny = resolveI18nString(meta.nameI18n, locale, fallback) || meta.slug;
+      const primary = userTitleRaw || fallbackAny;
+      const secondary = sourceTitle && sourceTitle !== primary ? sourceTitle : null;
+      const year = meta.dateStart ? meta.dateStart.slice(0, 4) : null;
+      return { meta, primary, secondary, year };
     });
   }, [documents, locale, fallback]);
 
@@ -183,9 +184,9 @@ export function LibraryRail({
           </div>
         ) : (
           <ul className="space-y-2.5">
-            {filtered.map(({ meta, primary, secondary }) => {
+            {filtered.map(({ meta, primary, secondary, year }) => {
               const isActive = meta.slug === activeSlug;
-              const docDir = meta.lang === 'he' || meta.lang === 'yi' ? 'rtl' : 'ltr';
+              const docDir = meta.sourceLang === 'he' || meta.sourceLang === 'yi' ? 'rtl' : 'ltr';
               return (
                 <li key={meta.id}>
                   <Link
@@ -208,12 +209,11 @@ export function LibraryRail({
                         )}
                         style={{ fontFamily: 'var(--font-docs-mono)' }}
                       >
-                        {meta.year ?? '—'}
-                        {meta.archive?.name ? ` · ${meta.archive.name}` : ''}
+                        {year ?? '—'} · {meta.chapterCount} ch
                       </span>
                       <LangAvailChips
-                        sourceLang={meta.lang}
-                        availableLangs={meta.availableLangs ?? [meta.lang]}
+                        sourceLang={meta.sourceLang}
+                        availableLangs={meta.availableLangs ?? [meta.sourceLang]}
                         onActive={isActive}
                       />
                     </div>

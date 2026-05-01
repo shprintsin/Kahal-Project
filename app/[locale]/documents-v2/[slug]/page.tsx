@@ -21,8 +21,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!doc) return {};
   const docLocale = locale as unknown as DocumentV2Locale;
   const docFallback = fallbackLocale as unknown as DocumentV2Locale;
-  const title = resolveI18nString(doc.meta.title, docLocale, docFallback) || doc.meta.slug;
-  const description = resolveI18nString(doc.meta.description, docLocale, docFallback) || undefined;
+  const title = resolveI18nString(doc.meta.nameI18n, docLocale, docFallback) || doc.meta.slug;
+  const description = resolveI18nString(doc.meta.excerptI18n, docLocale, docFallback) || undefined;
   return { title, description };
 }
 

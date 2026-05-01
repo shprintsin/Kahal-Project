@@ -12,16 +12,25 @@ export async function GET(req: NextRequest) {
     orderBy: { updatedAt: 'desc' },
     select: {
       slug: true,
-      primaryLang: true,
-      titleI18n: true,
-      year: true,
-      pageCount: true,
-      headingCount: true,
+      sourceLang: true,
+      nameI18n: true,
+      dateStart: true,
       status: true,
       updatedAt: true,
-      _count: { select: { translations: true } },
+      _count: { select: { chapters: true } },
     },
   });
 
-  return NextResponse.json({ ok: true, result: rows });
+  return NextResponse.json({
+    ok: true,
+    result: rows.map((r) => ({
+      slug: r.slug,
+      sourceLang: r.sourceLang,
+      nameI18n: r.nameI18n,
+      dateStart: r.dateStart,
+      status: r.status,
+      updatedAt: r.updatedAt,
+      chapterCount: r._count.chapters,
+    })),
+  });
 }

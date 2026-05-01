@@ -1,13 +1,13 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import type { DocumentV2LibraryMeta } from '@/types/document-v2';
+import type { DocumentLibraryMeta } from '@/types/document-v2';
 
 interface DocsV2LibraryContextValue {
-  library: DocumentV2LibraryMeta[];
+  library: DocumentLibraryMeta[];
   /** The library entry for the active route segment (the current `[slug]`),
    *  or null when we're on the index route or the slug isn't in the list. */
-  activeMeta: DocumentV2LibraryMeta | null;
+  activeMeta: DocumentLibraryMeta | null;
 }
 
 const DocsV2LibraryContext = createContext<DocsV2LibraryContextValue | null>(null);

@@ -15,14 +15,21 @@ const MARK_CLOSE = '«/MARK»';
 
 interface SearchRow {
   slug: string;
-  title_i18n: Record<string, string> | null;
+  name_i18n: Record<string, string> | null;
+  chapter_slug: string;
+  chapter_index: number;
+  chapter_title_i18n: Record<string, string> | null;
   lang: string;
-  page_number: number;
-  filename: string;
   snippet: string;
   rank: number;
 }
 
+/**
+ * First-cut chapter search. Uses ILIKE for the WHERE clause (cheap, no index)
+ * and `ts_headline` for the snippet. A proper per-language tsvector index on
+ * Chapter.text + ChapterTranslation.text is a follow-up; this is enough for
+ * the dev-scale corpus (a handful of archival units).
+ */
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
   const q = (url.searchParams.get('q') ?? '').trim();
@@ -66,71 +73,79 @@ export async function GET(req: NextRequest) {
   }
 
   const headlineOpts = `StartSel=${MARK_OPEN},StopSel=${MARK_CLOSE},MaxWords=30,MinWords=15,MaxFragments=2,FragmentDelimiter= … `;
+  // Naive ranking: occurrence count of the literal query in the body. Cheap;
+  // fine for the current corpus size.
+  const ilikePattern = `%${q.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
 
-  // The query has to use the same analyser the row was indexed with — running
-  // `to_tsquery('english', …)` against a Hebrew-indexed row matches nothing.
-  // Both the row's `search_tsv_lang` and the query's tsquery dispatch on the
-  // same `lang`-keyed CASE so they stay in lockstep with the migration.
-  //
-  // For `scope=all` (no lang filter) the per-language vectors still match the
-  // per-row tsquery because each row's `search_tsv_lang` was built with the
-  // analyser for *its own* `lang`, and the CASE below recomputes the tsquery
-  // with the same analyser when joined against that row.
   const rows = await prisma.$queryRaw<SearchRow[]>(Prisma.sql`
+    WITH source_hits AS (
+      SELECT
+        d.slug,
+        d.name_i18n,
+        c.slug AS chapter_slug,
+        c.index AS chapter_index,
+        c.title_i18n AS chapter_title_i18n,
+        d.source_lang AS lang,
+        c.text AS body
+      FROM chapters c
+      JOIN documents_v2 d ON d.id = c.document_id
+      WHERE c.text ILIKE ${ilikePattern}
+        AND d.status = 'published'
+        AND (${documentId}::uuid IS NULL OR c.document_id = ${documentId}::uuid)
+        AND (${lang}::text IS NULL OR d.source_lang = ${lang}::text)
+    ),
+    translation_hits AS (
+      SELECT
+        d.slug,
+        d.name_i18n,
+        c.slug AS chapter_slug,
+        c.index AS chapter_index,
+        c.title_i18n AS chapter_title_i18n,
+        ct.lang,
+        ct.text AS body
+      FROM chapter_translations ct
+      JOIN chapters c ON c.id = ct.chapter_id
+      JOIN documents_v2 d ON d.id = c.document_id
+      WHERE ct.text ILIKE ${ilikePattern}
+        AND d.status = 'published'
+        AND (${documentId}::uuid IS NULL OR c.document_id = ${documentId}::uuid)
+        AND (${lang}::text IS NULL OR ct.lang = ${lang}::text)
+    ),
+    all_hits AS (
+      SELECT * FROM source_hits
+      UNION ALL
+      SELECT * FROM translation_hits
+    )
     SELECT
-      d.slug,
-      d.title_i18n,
-      pt.lang,
-      pt.page_number,
-      pt.filename,
+      slug,
+      name_i18n,
+      chapter_slug,
+      chapter_index,
+      chapter_title_i18n,
+      lang,
       ts_headline(
-        CASE pt.lang WHEN 'en' THEN 'english' ELSE 'simple' END::regconfig,
-        CASE
-          WHEN pt.lang IN ('he', 'yi') THEN hebrew_normalize(pt.text)
-          WHEN pt.lang IN ('en', 'pl', 'ru') THEN immutable_unaccent(pt.text)
-          ELSE pt.text
-        END,
-        CASE
-          WHEN pt.lang = 'en' THEN websearch_to_tsquery('english', immutable_unaccent(${q}))
-          WHEN pt.lang IN ('he', 'yi') THEN websearch_to_tsquery('simple', hebrew_normalize(${q}))
-          WHEN pt.lang IN ('pl', 'ru') THEN websearch_to_tsquery('simple', immutable_unaccent(${q}))
-          ELSE websearch_to_tsquery('simple', ${q})
-        END,
+        CASE lang WHEN 'en' THEN 'english' ELSE 'simple' END::regconfig,
+        body,
+        websearch_to_tsquery(
+          CASE lang WHEN 'en' THEN 'english' ELSE 'simple' END::regconfig,
+          ${q}
+        ),
         ${headlineOpts}
       ) AS snippet,
-      ts_rank(
-        pt.search_tsv_lang,
-        CASE
-          WHEN pt.lang = 'en' THEN websearch_to_tsquery('english', immutable_unaccent(${q}))
-          WHEN pt.lang IN ('he', 'yi') THEN websearch_to_tsquery('simple', hebrew_normalize(${q}))
-          WHEN pt.lang IN ('pl', 'ru') THEN websearch_to_tsquery('simple', immutable_unaccent(${q}))
-          ELSE websearch_to_tsquery('simple', ${q})
-        END
-      ) AS rank
-    FROM document_v2_page_text pt
-    JOIN documents_v2 d ON d.id = pt.document_id
-    WHERE pt.version = d.current_version
-      AND pt.search_tsv_lang @@ (
-        CASE
-          WHEN pt.lang = 'en' THEN websearch_to_tsquery('english', immutable_unaccent(${q}))
-          WHEN pt.lang IN ('he', 'yi') THEN websearch_to_tsquery('simple', hebrew_normalize(${q}))
-          WHEN pt.lang IN ('pl', 'ru') THEN websearch_to_tsquery('simple', immutable_unaccent(${q}))
-          ELSE websearch_to_tsquery('simple', ${q})
-        END
-      )
-      AND d.status = 'published'
-      AND (${documentId}::uuid IS NULL OR pt.document_id = ${documentId}::uuid)
-      AND (${lang}::text IS NULL OR pt.lang = ${lang}::text)
-    ORDER BY rank DESC, d.slug, pt.lang, pt.page_number
+      (LENGTH(body) - LENGTH(REPLACE(LOWER(body), LOWER(${q}), '')))::float
+        / GREATEST(LENGTH(${q}), 1) AS rank
+    FROM all_hits
+    ORDER BY rank DESC, slug, chapter_index, lang
     LIMIT ${limit}
   `);
 
   const results = rows.map((r) => ({
     slug: r.slug,
-    title: r.title_i18n,
+    title: r.name_i18n,
+    chapterSlug: r.chapter_slug,
+    chapterIndex: r.chapter_index,
+    chapterTitle: r.chapter_title_i18n,
     lang: r.lang,
-    pageNumber: r.page_number,
-    filename: r.filename,
     snippet: r.snippet,
     rank: r.rank,
   }));

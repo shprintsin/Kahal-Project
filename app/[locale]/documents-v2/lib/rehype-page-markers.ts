@@ -1,8 +1,11 @@
 import type { Plugin } from 'unified';
 import type { Root, Element, Text } from 'hast';
 import { visit, SKIP } from 'unist-util-visit';
-import { PAGE_MARKER_REGEX } from './parse-document';
 import { markerDomId } from '@/types/document-v2';
+
+// Accepts both `@@@ File: NAME.md @@@` (with closing fence) and `@@@ File: NAME.md`
+// terminated by a newline. The `m` flag lets `$` match end-of-line.
+export const PAGE_MARKER_REGEX = /@@@\s*File:\s*([^\s@]+?)\s*(?:@@@|$)/gm;
 
 function buildPageMarker(filename: string, pageNumber: number): Element {
   const id = markerDomId(filename, pageNumber);
