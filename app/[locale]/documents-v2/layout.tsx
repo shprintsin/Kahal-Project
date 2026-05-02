@@ -1,5 +1,5 @@
 import React from 'react';
-import { Frank_Ruhl_Libre, JetBrains_Mono } from 'next/font/google';
+import { Frank_Ruhl_Libre } from 'next/font/google';
 import { getDocumentMetas } from './lib/repository';
 import { DocsV2Shell } from './components/DocsV2Shell';
 
@@ -10,13 +10,6 @@ const frankRuhlLibre = Frank_Ruhl_Libre({
   subsets: ['latin', 'hebrew'],
   weight: ['400', '500', '700'],
   variable: '--font-frl',
-  display: 'swap',
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-docs-mono',
   display: 'swap',
 });
 
@@ -36,7 +29,7 @@ export default async function DocumentsV2Layout({
   return (
     <div
       data-design="docs-v2"
-      className={`${frankRuhlLibre.variable} ${jetbrainsMono.variable} w-full`}
+      className={`${frankRuhlLibre.variable} w-full`}
     >
       <DocsV2Shell library={library}>{children}</DocsV2Shell>
     </div>

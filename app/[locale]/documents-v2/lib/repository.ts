@@ -146,6 +146,57 @@ export async function getDocumentBySlug(slug: string): Promise<ParsedDocument | 
   return { meta, chapters };
 }
 
+export interface ChapterCatalogItem {
+  documentSlug: string;
+  documentTitleI18n: I18nString;
+  documentCitation?: string;
+  sourceLang: DocumentV2Locale;
+  chapterSlug: string;
+  chapterIndex: number;
+  titleI18n: I18nString;
+  excerptI18n?: I18nString;
+  date?: string;
+  mentionJews: boolean;
+}
+
+export async function getChapterCatalog(): Promise<ChapterCatalogItem[]> {
+  const rows = await prisma.chapter.findMany({
+    where: { document: { status: 'published' } },
+    orderBy: [{ document: { updatedAt: 'desc' } }, { index: 'asc' }],
+    select: {
+      slug: true,
+      index: true,
+      titleI18n: true,
+      excerptI18n: true,
+      date: true,
+      mentionJews: true,
+      document: {
+        select: {
+          slug: true,
+          sourceLang: true,
+          nameI18n: true,
+          citation: true,
+        },
+      },
+    },
+  });
+  return rows.flatMap((r) => {
+    if (!isLocale(r.document.sourceLang)) return [];
+    return [{
+      documentSlug: r.document.slug,
+      documentTitleI18n: (r.document.nameI18n ?? {}) as I18nString,
+      documentCitation: r.document.citation ?? undefined,
+      sourceLang: r.document.sourceLang,
+      chapterSlug: r.slug,
+      chapterIndex: r.index,
+      titleI18n: (r.titleI18n ?? {}) as I18nString,
+      excerptI18n: (r.excerptI18n ?? undefined) as I18nString | undefined,
+      date: r.date ?? undefined,
+      mentionJews: r.mentionJews,
+    }];
+  });
+}
+
 export async function getPublishedSlugs(): Promise<string[]> {
   const rows = await prisma.documentV2.findMany({
     where: { status: 'published' },

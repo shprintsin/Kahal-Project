@@ -46,7 +46,7 @@ export function InspectorTabs({
 
   return (
     <aside
-      className="flex h-full min-h-0 flex-col overflow-hidden border-s"
+      className="chapters-sidebar flex h-full min-h-0 flex-col overflow-hidden border-s"
       style={{
         background: 'var(--docs-cream)',
         borderColor: 'var(--docs-cream-3)',
@@ -66,20 +66,16 @@ export function InspectorTabs({
               tab === key
                 ? 'border-[var(--docs-accent)] bg-[var(--docs-paper)]'
                 : 'border-transparent text-muted-foreground',
-            )}
-            style={{ fontFamily: 'var(--font-docs-mono)' }}
-          >
+            )}          >
             {key === 'contents' ? labels.contents : labels.details}
           </button>
         ))}
       </div>
 
       {tab === 'contents' ? (
-        <div className="docs-scroll-y flex-1 px-3 py-3">
+        <div className="chapter-list docs-scroll-y flex-1 px-3 py-3">
           <div
-            className="mb-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
-            style={{ fontFamily: 'var(--font-docs-mono)' }}
-          >
+            className="mb-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground"          >
             {labels.chaptersCount(chapters.length)}
           </div>
           <ol className="space-y-1">
@@ -94,25 +90,21 @@ export function InspectorTabs({
                     onClick={() => onJumpToChapter(ch.slug)}
                     dir={isRtl ? 'rtl' : 'ltr'}
                     className={cn(
-                      'flex w-full items-start gap-2 border px-2 py-1.5 text-left text-[12px] leading-snug',
+                      'flex w-full items-start gap-2 border px-2 py-1.5 text-start text-[12px] leading-snug',
                       isActive
                         ? 'border-[var(--docs-accent)] bg-[var(--docs-paper)]'
                         : 'border-transparent hover:bg-[var(--docs-cream-2)]',
                     )}
                   >
                     <span
-                      className="shrink-0 tabular-nums text-muted-foreground"
-                      style={{ fontFamily: 'var(--font-docs-mono)' }}
-                    >
+                      className="shrink-0 tabular-nums text-muted-foreground"                    >
                       {ch.index}.
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block">{chTitle}</span>
                       {ch.date && (
                         <span
-                          className="mt-0.5 block text-[10px] uppercase tracking-[0.15em] text-muted-foreground"
-                          style={{ fontFamily: 'var(--font-docs-mono)' }}
-                        >
+                          className="mt-0.5 block text-[10px] uppercase tracking-[0.15em] text-muted-foreground"                        >
                           {ch.date}
                         </span>
                       )}
@@ -134,12 +126,10 @@ export function InspectorTabs({
       ) : (
         <div className="docs-scroll-y flex-1 px-4 py-3 text-[12px] leading-relaxed">
           <div
-            className="mb-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
-            style={{ fontFamily: 'var(--font-docs-mono)' }}
-          >
+            className="mb-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground"          >
             {labels.details}
           </div>
-          <h2 className="mb-2 font-serif text-base leading-snug">{title}</h2>
+          <h2 className="mb-2 text-base leading-snug">{title}</h2>
           {(meta.dateStart || meta.dateEnd) && (
             <Detail label={labels.dateRange}>
               {[meta.dateStart, meta.dateEnd].filter(Boolean).join(' — ')}
@@ -179,10 +169,7 @@ export function InspectorTabs({
 function Detail({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="mb-2">
-      <div
-        className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
-        style={{ fontFamily: 'var(--font-docs-mono)' }}
-      >
+      <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
         {label}
       </div>
       <div className="mt-0.5 break-words">{children}</div>

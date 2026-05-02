@@ -107,16 +107,13 @@ export function DocumentReaderSkeleton() {
         >
           {meta ? (
             <>
-              <div
-                className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted-foreground)]"
-                style={{ fontFamily: 'var(--font-docs-mono)' }}
-              >
+              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted-foreground)]">
                 {meta.dateStart?.slice(0, 4) ?? '—'}
                 {meta.citation ? ` · ${meta.citation.slice(0, 60)}` : ''}
               </div>
               <h2
                 className="mt-1.5 text-[16px] font-medium leading-snug text-[var(--brand-primary)]"
-                style={{ fontFamily: 'var(--font-frl)' }}
+                style={{ fontFamily: 'var(--docs-font-serif)' }}
               >
                 {title}
               </h2>
@@ -147,7 +144,6 @@ export function DocumentReaderSkeleton() {
                     : 'border-b-2 border-transparent text-[var(--muted-foreground)]',
                 )}
                 style={{
-                  fontFamily: 'var(--font-docs-mono)',
                   borderBottomColor: i === 0 ? 'var(--docs-accent)' : undefined,
                 }}
               >

@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Search } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 
 interface DocumentTopBarProps {
   /** Resolved title in the user's locale; falls back to slug upstream. */
@@ -30,15 +31,20 @@ export function DocumentTopBar({
   routeLocale,
   labels,
 }: DocumentTopBarProps) {
+  const searchParams = useSearchParams();
+  const catalogQuery = searchParams.get('q') ?? '';
+  const libraryHref = `/${routeLocale}/documents-v2${catalogQuery ? `?q=${encodeURIComponent(catalogQuery)}` : ''}`;
+  const isRtl = routeLocale === 'he';
+  const BackIcon = isRtl ? ChevronRight : ChevronLeft;
   return (
     <header
       className="flex shrink-0 flex-wrap items-center gap-x-6 gap-y-2 px-6 py-3 text-[#c8c0a8]"
       style={{ background: 'var(--brand-dark)', minHeight: 52 }}
     >
       <Link
-        href={`/${routeLocale}/documents-v2`}
+        href={libraryHref}
         className="text-[18px] font-medium tracking-tight text-[var(--docs-paper)] no-underline"
-        style={{ fontFamily: 'var(--font-frl)' }}
+        style={{ fontFamily: 'var(--docs-font-serif)' }}
       >
         archivum
       </Link>
@@ -46,12 +52,12 @@ export function DocumentTopBar({
       <nav
         aria-label="breadcrumb"
         className="flex min-w-0 items-center gap-2 text-[11px] uppercase tracking-[0.08em]"
-        style={{ fontFamily: 'var(--font-docs-mono)' }}
       >
         <Link
-          href={`/${routeLocale}/documents-v2`}
-          className="text-[#c8c0a8] no-underline hover:text-[var(--docs-paper)]"
+          href={libraryHref}
+          className="inline-flex items-center gap-1 text-[#c8c0a8] no-underline hover:text-[var(--docs-paper)]"
         >
+          <BackIcon className="h-3.5 w-3.5" aria-hidden />
           {labels.library}
         </Link>
         {archiveName && (
@@ -72,7 +78,6 @@ export function DocumentTopBar({
       <div className="flex flex-1 items-center justify-end gap-2">
         <label
           className="flex w-full max-w-[320px] items-center gap-2 border border-[#2a2a2a] bg-[#1a1a1a] px-3 py-1.5 text-xs text-[#a8a298]"
-          style={{ fontFamily: 'var(--font-docs-mono)' }}
         >
           <Search className="h-3.5 w-3.5 shrink-0" aria-hidden />
           <input

@@ -1,17 +1,14 @@
 'use client';
 
 import React, { useMemo } from 'react';
+import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { useSelectedLayoutSegment } from 'next/navigation';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { fallbackLocale, type Locale } from '@/lib/i18n/config';
-import {
-  resolveI18nString,
-  type DocumentLibraryMeta,
-  type DocumentV2Locale,
-} from '@/types/document-v2';
+import type { DocumentLibraryMeta, DocumentV2Locale } from '@/types/document-v2';
 import { DocsV2LibraryProvider } from './DocsV2LibraryContext';
-import { DocumentTopBar } from './DocumentTopBar';
 import { LibraryRail } from './LibraryRail';
 
 interface DocsV2ShellProps {
@@ -29,6 +26,7 @@ interface DocsV2ShellProps {
 export function DocsV2Shell({ library, children }: DocsV2ShellProps) {
   const routeLocale = useLocale() as Locale;
   const t = useTranslations('documentsV2');
+  const tSite = useTranslations('public.site');
   // The active doc's slug is the next segment under this layout, e.g. for
   // `/[locale]/documents-v2/foo` this returns `'foo'`. On the index route
   // (`/[locale]/documents-v2`) it returns null and we render with no active
@@ -41,59 +39,63 @@ export function DocsV2Shell({ library, children }: DocsV2ShellProps) {
 
   const docLocale = routeLocale as unknown as DocumentV2Locale;
   const docFallback = fallbackLocale as unknown as DocumentV2Locale;
-  const activeTitle = activeMeta
-    ? resolveI18nString(activeMeta.nameI18n, docLocale, docFallback) || activeMeta.slug
-    : '';
 
-  // The index route (`/documents-v2`) is itself a catalog view, so showing
-  // the library rail beside it is redundant and squeezes the catalog into a
-  // narrow column. When there's no active slug we drop the rail and collapse
-  // the grid to a single full-width column for the index page's children.
+  // Same shell on both routes. On the index there is no active document, so
+  // we omit the right-hand inspector column and let the centre catalog pane
+  // expand to fill its slot. The library rail stays in place across both
+  // routes so the chrome doesn't shift between catalog and reader views.
   const isIndex = activeSlug === null;
+  const shellIsRtl = routeLocale === 'he';
+  const BackArrow = shellIsRtl ? ArrowRight : ArrowLeft;
 
   return (
     <DocsV2LibraryProvider value={{ library, activeMeta }}>
-      <div className="flex h-[calc(100vh-64px)] w-full flex-col overflow-hidden bg-background">
-        <DocumentTopBar
-          title={activeTitle}
-          archiveName={activeMeta?.citation ?? undefined}
-          routeLocale={routeLocale}
-          labels={{
-            library: t('topbarLibrary'),
-            searchPlaceholder: t('topbarSearchPlaceholder'),
-            searchHint: t('topbarSearchHint'),
-          }}
-        />
+      <div className="flex h-screen w-full flex-col overflow-hidden bg-background">
         <div
+          dir={shellIsRtl ? 'rtl' : 'ltr'}
+          className="flex shrink-0 items-center border-b px-3 py-1.5 text-[12px]"
+          style={{
+            background: 'var(--brand-dark)',
+            borderColor: 'var(--docs-cream-3)',
+            color: 'var(--docs-paper)',
+          }}
+        >
+          <Link
+            href={`/${routeLocale}`}
+            className="inline-flex items-center gap-1.5 text-[var(--docs-paper)] no-underline opacity-80 hover:opacity-100"
+          >
+            <BackArrow className="h-3.5 w-3.5" aria-hidden />
+            <span className="tracking-tight">{tSite('name')}</span>
+          </Link>
+        </div>
+        <div
+          dir={shellIsRtl ? 'rtl' : 'ltr'}
           className={cn(
-            'min-h-0 flex-1 w-full overflow-hidden',
+            'min-h-0 flex-1 w-full overflow-hidden grid grid-cols-1',
             isIndex
-              ? 'block overflow-y-auto'
+              ? 'xl:grid-cols-[280px_minmax(0,1fr)]'
               : cn(
-                  'grid grid-cols-1',
                   'md:grid-cols-[minmax(0,1fr)_320px]',
                   'xl:grid-cols-[280px_minmax(0,1fr)_320px]',
                 ),
           )}
         >
-          {!isIndex && (
-            <div className="hidden xl:contents">
-              <LibraryRail
-                documents={library}
-                locale={docLocale}
-                fallback={docFallback}
-                activeSlug={activeSlug ?? undefined}
-                routeLocale={routeLocale}
-                labels={{
-                  library: t('library'),
-                  librarySectionLabel: (n: number) => t('librarySectionLabel', { n }),
-                  searchPlaceholder: t('searchPlaceholder'),
-                  empty: t('searchEmpty'),
-                  collapse: t('libraryCollapse'),
-                }}
-              />
-            </div>
-          )}
+          <div className="hidden xl:contents">
+            <LibraryRail
+              documents={library}
+              locale={docLocale}
+              fallback={docFallback}
+              activeSlug={activeSlug ?? undefined}
+              routeLocale={routeLocale}
+              labels={{
+                library: t('library'),
+                librarySectionLabel: (n: number) => t('librarySectionLabel', { n }),
+                searchPlaceholder: t('searchPlaceholder'),
+                empty: t('searchEmpty'),
+                collapse: t('libraryCollapse'),
+              }}
+            />
+          </div>
           {children}
         </div>
       </div>

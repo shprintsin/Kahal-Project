@@ -25,10 +25,14 @@ interface ReadingCanvasProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Translation language to display alongside the source body. When equal to
    *  `sourceLang` only the source pane is rendered. */
   translationLang: DocumentV2Locale;
+  /** When true, render the source body and translation side-by-side. When
+   *  false (default), render only the translation body — and fall back to the
+   *  source if no translation is available. */
+  splitView: boolean;
   /** Reader-display locale, used to pick title/excerpt strings. */
   displayLocale: DocumentV2Locale;
   fallbackLocale: DocumentV2Locale;
-  isRtl: boolean;
+  displayIsRtl: boolean;
   zoom?: number;
   labels: {
     chapter: string;
@@ -37,14 +41,12 @@ interface ReadingCanvasProps extends React.HTMLAttributes<HTMLDivElement> {
   };
 }
 
-const BASE_FONT_PX = 16;
-const READING_FONT =
-  "var(--font-frl), 'Frank Ruhl Libre', 'Georgia', 'Noto Serif Hebrew', serif";
+const READING_FONT = 'var(--docs-font-serif)';
 
 const PROSE = cn(
-  '[&_h1]:font-serif [&_h1]:font-semibold [&_h1]:text-[1.4em] [&_h1]:leading-[1.25] [&_h1]:my-[0.6em]',
-  '[&_h2]:font-serif [&_h2]:font-semibold [&_h2]:text-[1.2em] [&_h2]:leading-[1.3] [&_h2]:mt-[1.3em] [&_h2]:mb-[0.45em]',
-  '[&_h3]:font-serif [&_h3]:font-semibold [&_h3]:text-[1.08em] [&_h3]:leading-[1.35] [&_h3]:mt-[1.2em] [&_h3]:mb-[0.4em]',
+  '[&_h1]:font-semibold [&_h1]:text-[1.4em] [&_h1]:leading-[1.25] [&_h1]:my-[0.6em]',
+  '[&_h2]:font-semibold [&_h2]:text-[1.2em] [&_h2]:leading-[1.3] [&_h2]:mt-[1.3em] [&_h2]:mb-[0.45em]',
+  '[&_h3]:font-semibold [&_h3]:text-[1.08em] [&_h3]:leading-[1.35] [&_h3]:mt-[1.2em] [&_h3]:mb-[0.4em]',
   '[&_p]:my-[1em]',
   '[&_strong]:font-semibold [&_strong]:text-foreground',
   '[&_em]:italic',
@@ -63,6 +65,15 @@ function isRtlLocale(loc: DocumentV2Locale): boolean {
   return loc === 'he' || loc === 'yi';
 }
 
+/** Strip lines that start with `@@@` (page-scan markers, e.g. `@@@ File: X @@@`).
+ *  These are useful as anchors during enrichment but visual noise in the reader. */
+function stripMarkerLines(md: string): string {
+  return md
+    .split('\n')
+    .filter((line) => !/^\s*@@@/.test(line))
+    .join('\n');
+}
+
 function ChapterBody({ markdown }: { markdown: string }) {
   return (
     <ReactMarkdown
@@ -76,7 +87,7 @@ function ChapterBody({ markdown }: { markdown: string }) {
         ),
       }}
     >
-      {markdown}
+      {stripMarkerLines(markdown)}
     </ReactMarkdown>
   );
 }
@@ -87,9 +98,10 @@ export const ReadingCanvas = forwardRef<HTMLDivElement, ReadingCanvasProps>(
       chapters,
       sourceLang,
       translationLang,
+      splitView,
       displayLocale,
       fallbackLocale,
-      isRtl,
+      displayIsRtl,
       zoom = 100,
       className,
       style,
@@ -98,9 +110,10 @@ export const ReadingCanvas = forwardRef<HTMLDivElement, ReadingCanvasProps>(
     },
     ref,
   ) {
-    const showSplit = translationLang !== sourceLang;
+    const showSplit = splitView && translationLang !== sourceLang;
     const sourceIsRtl = isRtlLocale(sourceLang);
     const translationIsRtl = isRtlLocale(translationLang);
+    const baseFontPx = showSplit ? 16 : 18;
 
     return (
       <div
@@ -110,11 +123,14 @@ export const ReadingCanvas = forwardRef<HTMLDivElement, ReadingCanvasProps>(
         style={{ background: 'var(--docs-paper)', ...style }}
       >
         <article
-          dir={isRtl ? 'rtl' : 'ltr'}
-          className={cn('mx-auto max-w-[1200px] px-4 py-8 sm:px-8 sm:py-10 text-foreground')}
+          dir={displayIsRtl ? 'rtl' : 'ltr'}
+          className={cn(
+            'mx-auto px-4 py-8 sm:px-8 sm:py-10 text-foreground',
+            showSplit ? 'max-w-[1200px]' : 'max-w-[72ch]',
+          )}
           style={{
             fontFamily: READING_FONT,
-            fontSize: `${(BASE_FONT_PX * zoom) / 100}px`,
+            fontSize: `${(baseFontPx * zoom) / 100}px`,
           }}
         >
           {chapters.map((ch) => {
@@ -134,50 +150,41 @@ export const ReadingCanvas = forwardRef<HTMLDivElement, ReadingCanvasProps>(
                 )}
               >
                 <header className="mb-6">
-                  <div
-                    className="flex items-center gap-3 text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
-                    style={{ fontFamily: 'var(--font-docs-mono)' }}
-                  >
+                  <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
                     <span>
                       {labels.chapter} {ch.index}
                     </span>
                     {ch.date && <span>· {ch.date}</span>}
-                    {ch.mentionJews && (
+                    {/* {ch.mentionJews && (
                       <span className="border border-[var(--docs-accent)] px-1.5 py-px text-[var(--docs-accent)]">
                         {labels.mentionsJews}
                       </span>
-                    )}
+                    )} */}
                   </div>
                   <h2
-                    className="mt-2 font-serif text-2xl font-semibold leading-snug"
-                    dir={isRtl ? 'rtl' : 'ltr'}
+                    className="mt-2 text-2xl font-semibold leading-snug"
+                    dir={displayIsRtl ? 'rtl' : 'ltr'}
                   >
                     {title || ch.slug}
                   </h2>
                   {excerpt && (
                     <p
                       className="mt-2 text-sm italic text-muted-foreground"
-                      dir={isRtl ? 'rtl' : 'ltr'}
+                      dir={displayIsRtl ? 'rtl' : 'ltr'}
                     >
                       {excerpt}
                     </p>
                   )}
                 </header>
 
-                <div
-                  className={cn(
-                    showSplit ? 'grid gap-8 md:grid-cols-2' : '',
-                    'leading-[1.75]',
-                  )}
-                >
-                  <div
-                    dir={sourceIsRtl ? 'rtl' : 'ltr'}
-                    className={cn(PROSE, sourceIsRtl ? 'text-right' : 'text-left')}
-                  >
-                    <ChapterBody markdown={ch.text} />
-                  </div>
-
-                  {showSplit && (
+                {showSplit ? (
+                  <div className="grid gap-8 md:grid-cols-2 leading-[1.75]">
+                    <div
+                      dir={sourceIsRtl ? 'rtl' : 'ltr'}
+                      className={cn(PROSE, sourceIsRtl ? 'text-right' : 'text-left')}
+                    >
+                      <ChapterBody markdown={ch.text} />
+                    </div>
                     <div
                       dir={translationIsRtl ? 'rtl' : 'ltr'}
                       className={cn(
@@ -192,8 +199,30 @@ export const ReadingCanvas = forwardRef<HTMLDivElement, ReadingCanvasProps>(
                         <p className="italic text-muted-foreground">{labels.noTranslation}</p>
                       )}
                     </div>
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  (() => {
+                    const single = translationBody ?? ch.text;
+                    const singleIsRtl =
+                      translationBody ? translationIsRtl : sourceIsRtl;
+                    return (
+                      <div
+                        dir={singleIsRtl ? 'rtl' : 'ltr'}
+                        className={cn(
+                          PROSE,
+                          singleIsRtl ? 'text-right' : 'text-left',
+                          'leading-[1.75]',
+                        )}
+                      >
+                        {translationBody || translationLang === sourceLang ? (
+                          <ChapterBody markdown={single} />
+                        ) : (
+                          <p className="italic text-muted-foreground">{labels.noTranslation}</p>
+                        )}
+                      </div>
+                    );
+                  })()
+                )}
               </section>
             );
           })}

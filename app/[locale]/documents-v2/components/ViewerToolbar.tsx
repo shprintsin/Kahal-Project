@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Filter } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Filter, Columns2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLocale } from 'next-intl';
 import type { DocumentV2Locale } from '@/types/document-v2';
@@ -24,6 +24,9 @@ interface ViewerToolbarProps {
   onLanguageChange: (lang: DocumentV2Locale) => void;
   mentionJewsActive: boolean;
   onToggleMentionJews: () => void;
+  splitViewActive: boolean;
+  splitViewDisabled: boolean;
+  onToggleSplitView: () => void;
   labels: {
     chapter: string;
     of: string;
@@ -33,6 +36,7 @@ interface ViewerToolbarProps {
     zoomOut: string;
     language: string;
     mentionJews: string;
+    splitView: string;
   };
 }
 
@@ -49,6 +53,9 @@ export function ViewerToolbar(props: ViewerToolbarProps) {
     onLanguageChange,
     mentionJewsActive,
     onToggleMentionJews,
+    splitViewActive,
+    splitViewDisabled,
+    onToggleSplitView,
     labels,
   } = props;
   const uiLocale = useLocale();
@@ -58,11 +65,11 @@ export function ViewerToolbar(props: ViewerToolbarProps) {
 
   return (
     <div
+      dir={uiIsRtl ? 'rtl' : 'ltr'}
       className="flex flex-wrap items-center gap-3 border-b px-4 py-2 text-[12px]"
       style={{
         background: 'var(--docs-cream)',
         borderColor: 'var(--docs-cream-3)',
-        fontFamily: 'var(--font-docs-mono)',
       }}
     >
       <div className="flex items-center gap-1">
@@ -113,7 +120,7 @@ export function ViewerToolbar(props: ViewerToolbarProps) {
         </button>
       </div>
 
-      <label className="flex items-center gap-2">
+      <label className="select-lang flex items-center gap-2">
         <span className="uppercase text-[10px] tracking-[0.18em] text-muted-foreground">
           {labels.language}
         </span>
@@ -133,6 +140,24 @@ export function ViewerToolbar(props: ViewerToolbarProps) {
 
       <button
         type="button"
+        onClick={onToggleSplitView}
+        disabled={splitViewDisabled}
+        className={cn(
+          'split-view inline-flex items-center gap-1 border px-2 py-1 disabled:opacity-40',
+          splitViewActive
+            ? 'bg-[var(--docs-accent)] text-[var(--docs-paper)] border-[var(--docs-accent)]'
+            : 'bg-transparent',
+        )}
+        style={{
+          borderColor: splitViewActive ? 'var(--docs-accent)' : 'var(--docs-cream-3)',
+        }}
+      >
+        <Columns2 className="h-3.5 w-3.5" />
+        {/* <span className='splitview-label'>{labels.splitView}</span> */}
+      </button>
+
+      {/* <button
+        type="button"
         onClick={onToggleMentionJews}
         className={cn(
           'inline-flex items-center gap-1 border px-2 py-1',
@@ -146,7 +171,7 @@ export function ViewerToolbar(props: ViewerToolbarProps) {
       >
         <Filter className="h-3.5 w-3.5" />
         <span>{labels.mentionJews}</span>
-      </button>
+      </button> */}
     </div>
   );
 }

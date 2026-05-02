@@ -387,6 +387,9 @@
   --docs-cream-2: #ebe5d3;
   --docs-cream-3: #ddd5be;
   --docs-ink-4: #a8a8a8;
+  --docs-font-serif: var(--font-frl), "Frank Ruhl Libre", "David Libre", "Noto Serif Hebrew", Georgia, serif;
+  --docs-font-ui: var(--font-heebo), "Heebo", "Noto Sans Hebrew", system-ui, sans-serif;
+  font-family: var(--docs-font-ui);
 }
 
 /* Scrollbar variants — webkit + firefox. Cream variant for sidebars,

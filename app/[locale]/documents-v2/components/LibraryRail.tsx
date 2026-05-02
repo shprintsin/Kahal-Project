@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
@@ -10,6 +11,7 @@ import {
   DocumentV2Locale,
   resolveI18nString,
 } from '@/types/document-v2';
+import { LangAvailChips } from './LangAvailChips';
 
 interface LibraryRailProps {
   documents: DocumentLibraryMeta[];
@@ -26,69 +28,6 @@ interface LibraryRailProps {
   };
 }
 
-/** Two-letter codes shown inside the language-availability chip strip. */
-const LANG_CODE: Record<DocumentV2Locale, string> = {
-  he: 'HE',
-  en: 'EN',
-  pl: 'PL',
-  ru: 'RU',
-  yi: 'YI',
-};
-
-const KNOWN_CHIP_LANGS: DocumentV2Locale[] = ['pl', 'en', 'he', 'ru', 'yi'];
-
-/**
- * Chip strip showing which languages a document is available in. The source
- * language renders as a filled green chip, present translations as outlined
- * green chips, and missing translations as dim chips — matching the visual
- * vocabulary in WF-01.
- */
-function LangAvailChips({
-  sourceLang,
-  availableLangs,
-  onActive,
-}: {
-  sourceLang: DocumentV2Locale;
-  availableLangs: DocumentV2Locale[];
-  onActive: boolean;
-}) {
-  // Order: source first, then any other available langs in declaration order,
-  // then any missing-but-known langs (capped) so the strip width stays stable.
-  const ordered: { lang: DocumentV2Locale; state: 'src' | 'has' | 'missing' }[] = [];
-  ordered.push({ lang: sourceLang, state: 'src' });
-  for (const lang of availableLangs) {
-    if (lang === sourceLang) continue;
-    ordered.push({ lang, state: 'has' });
-  }
-
-  return (
-    <span className="inline-flex gap-1" aria-hidden>
-      {ordered.map(({ lang, state }) => (
-        <span
-          key={`${lang}-${state}`}
-          dir="ltr"
-          className={cn(
-            'border px-1 py-px text-[9px] font-medium leading-none tracking-wider',
-            state === 'src' && !onActive && 'border-[var(--docs-accent)] bg-[var(--docs-accent)] text-[var(--docs-paper)]',
-            state === 'src' && onActive && 'border-[var(--docs-paper)] bg-[var(--docs-paper)] text-[var(--brand-primary)]',
-            state === 'has' && !onActive && 'border-[var(--docs-accent)] bg-transparent text-[var(--docs-accent)]',
-            state === 'has' && onActive && 'border-[var(--docs-paper)] bg-transparent text-[var(--docs-paper)]',
-            state === 'missing' && !onActive && 'border-[var(--docs-cream-3)] text-[var(--docs-ink-4)]',
-            state === 'missing' && onActive && 'border-[#ffffff44] text-[#ffffff66]',
-          )}
-          style={{ fontFamily: 'var(--font-docs-mono)' }}
-        >
-          {LANG_CODE[lang]}
-        </span>
-      ))}
-    </span>
-  );
-}
-// Suppresses noise: KNOWN_CHIP_LANGS is reserved for a future "missing" pass
-// (e.g. always show EN/HE as dim placeholders even when unavailable). Keeping
-// the constant exported by the module keeps the symbol around without lint flak.
-void KNOWN_CHIP_LANGS;
-
 export function LibraryRail({
   documents,
   locale,
@@ -98,6 +37,8 @@ export function LibraryRail({
   labels,
 }: LibraryRailProps) {
   const [query, setQuery] = useState('');
+  const searchParams = useSearchParams();
+  const catalogQuery = searchParams.get('q') ?? '';
   const uiLocale = useLocale();
   const uiIsRtl = uiLocale === 'he';
   // Collapse-arrow direction follows the start edge (the rail is on the start
@@ -112,7 +53,7 @@ export function LibraryRail({
       const primary = userTitleRaw || fallbackAny;
       const secondary = sourceTitle && sourceTitle !== primary ? sourceTitle : null;
       const year = meta.dateStart ? meta.dateStart.slice(0, 4) : null;
-      return { meta, primary, secondary, year };
+      return { meta, primary, secondary, year, userTitleRaw };
     });
   }, [documents, locale, fallback]);
 
@@ -129,7 +70,7 @@ export function LibraryRail({
 
   return (
     <aside
-      className="flex h-full min-h-0 flex-col overflow-hidden border-e"
+      className="chapters-sidebar flex h-full min-h-0 flex-col overflow-hidden border-e"
       style={{
         background: 'var(--docs-cream)',
         borderColor: 'var(--docs-cream-3)',
@@ -141,10 +82,7 @@ export function LibraryRail({
       >
         <span
           className="text-[11px] uppercase tracking-[0.18em]"
-          style={{
-            fontFamily: 'var(--font-docs-mono)',
-            color: 'var(--muted-foreground)',
-          }}
+          style={{ color: 'var(--muted-foreground)' }}
         >
           {labels.librarySectionLabel(documents.length)}
         </span>
@@ -184,13 +122,17 @@ export function LibraryRail({
           </div>
         ) : (
           <ul className="space-y-2.5">
-            {filtered.map(({ meta, primary, secondary, year }) => {
+            {filtered.map(({ meta, primary, secondary, year, userTitleRaw }) => {
               const isActive = meta.slug === activeSlug;
               const docDir = meta.sourceLang === 'he' || meta.sourceLang === 'yi' ? 'rtl' : 'ltr';
+              // Primary title dir: follow the displayed text's script, not the source doc lang.
+              const primaryIsRtl = userTitleRaw && (locale === 'he' || locale === 'yi');
+              const primaryDir = primaryIsRtl ? 'rtl' : docDir;
               return (
                 <li key={meta.id}>
                   <Link
-                    href={`/${routeLocale}/documents-v2/${meta.slug}`}
+                    href={`/${routeLocale}/documents-v2/${meta.slug}${catalogQuery ? `?q=${encodeURIComponent(catalogQuery)}` : ''}`}
+                    dir={uiIsRtl ? 'rtl' : 'ltr'}
                     className={cn(
                       'block border px-3.5 py-3 transition-colors no-underline',
                       isActive
@@ -207,7 +149,6 @@ export function LibraryRail({
                           'text-[10px] uppercase tracking-[0.18em]',
                           isActive ? 'text-[#ffffffcc]' : 'text-[var(--muted-foreground)]',
                         )}
-                        style={{ fontFamily: 'var(--font-docs-mono)' }}
                       >
                         {year ?? '—'} · {meta.chapterCount} ch
                       </span>
@@ -218,23 +159,21 @@ export function LibraryRail({
                       />
                     </div>
                     <div
-                      dir={docDir}
+                      dir={primaryDir}
                       className={cn(
                         'text-[14px] font-medium leading-snug line-clamp-3',
                         isActive ? 'text-[var(--docs-paper)]' : 'text-[var(--brand-primary)]',
                       )}
-                      style={{ fontFamily: 'var(--font-frl)' }}
                     >
                       {primary}
                     </div>
                     {secondary && (
                       <div
-                        dir={uiIsRtl ? 'rtl' : 'ltr'}
+                        dir={docDir}
                         className={cn(
                           'mt-1 text-[12px] italic leading-snug line-clamp-2',
                           isActive ? 'text-[#ffffffcc]' : 'text-[var(--muted-foreground)]',
                         )}
-                        style={{ fontFamily: 'var(--font-frl)' }}
                       >
                         {secondary}
                       </div>

@@ -55,6 +55,7 @@ export function DocumentReader({ doc }: DocumentReaderProps) {
       : availableLanguages.find((l) => l !== doc.meta.sourceLang) ?? doc.meta.sourceLang;
 
   const showOnlyJews = searchParams.get('mention_jews') === 'true';
+  const splitView = searchParams.get('split') === '1';
   const visibleChapters = useMemo(
     () => (showOnlyJews ? doc.chapters.filter((c) => c.mentionJews) : doc.chapters),
     [doc.chapters, showOnlyJews],
@@ -70,7 +71,7 @@ export function DocumentReader({ doc }: DocumentReaderProps) {
   const docLocale = routeLocale as unknown as DocumentV2Locale;
   const docFallback = fallbackLocale as unknown as DocumentV2Locale;
   const title = resolveI18nString(doc.meta.nameI18n, docLocale, docFallback);
-  const isRtl = docLocale === 'he' || docLocale === 'yi';
+  const displayIsRtl = docLocale === 'he' || docLocale === 'yi';
 
   const languageOptions = useMemo(
     () =>
@@ -109,6 +110,13 @@ export function DocumentReader({ doc }: DocumentReaderProps) {
     },
     [doc.meta.sourceLang, updateParams],
   );
+
+  const handleToggleSplitView = useCallback(() => {
+    updateParams((p) => {
+      if (p.get('split') === '1') p.delete('split');
+      else p.set('split', '1');
+    });
+  }, [updateParams]);
 
   const handleToggleMentionJews = useCallback(() => {
     updateParams((p) => {
@@ -192,6 +200,9 @@ export function DocumentReader({ doc }: DocumentReaderProps) {
           onLanguageChange={handleLanguageChange}
           mentionJewsActive={showOnlyJews}
           onToggleMentionJews={handleToggleMentionJews}
+          splitViewActive={splitView}
+          splitViewDisabled={translationLang === doc.meta.sourceLang}
+          onToggleSplitView={handleToggleSplitView}
           labels={{
             chapter: t('toolbarChapter'),
             of: t('toolbarOf'),
@@ -201,6 +212,7 @@ export function DocumentReader({ doc }: DocumentReaderProps) {
             zoomOut: t('toolbarZoomOut'),
             language: t('toolbarLanguage'),
             mentionJews: t('toolbarMentionJews'),
+            splitView: t('toolbarSplitView'),
           }}
         />
         <ReadingCanvas
@@ -208,9 +220,10 @@ export function DocumentReader({ doc }: DocumentReaderProps) {
           chapters={visibleChapters}
           sourceLang={doc.meta.sourceLang}
           translationLang={translationLang}
+          splitView={splitView}
           displayLocale={docLocale}
           fallbackLocale={docFallback}
-          isRtl={isRtl}
+          displayIsRtl={displayIsRtl}
           zoom={zoom}
           labels={{
             chapter: t('toolbarChapter'),
