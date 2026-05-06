@@ -20,7 +20,9 @@ function resolveMediaUrl(url: string | null | undefined): string | null {
   return `${MEDIA_BASE_URL.replace(/\/$/, '')}/${url.replace(/^\//, '')}`;
 }
 
-const AUTHORS_I18N: Record<Locale, { name: string; role: string; affiliation: string }[]> = {
+type Author = { name: string; role: string; affiliation: string };
+
+const AUTHORS_FALLBACK: Record<Locale, Author[]> = {
   he: [
     { name: 'ד"ר יניי שפיצר', role: 'חוקר ראשי', affiliation: 'האוניברסיטה העברית בירושלים' },
     { name: 'שניאור שפרינצין', role: 'עוזר מחקר', affiliation: 'האוניברסיטה העברית בירושלים' },
@@ -31,10 +33,10 @@ const AUTHORS_I18N: Record<Locale, { name: string; role: string; affiliation: st
   ],
 };
 
-const CITATION = 'Spitzer, Y., Shprintsin, S. (2024). The Eastern European Jewish Communities Project. The Hebrew University of Jerusalem.';
+const CITATION_FALLBACK = 'Spitzer, Y., Shprintsin, S. (2024). The Eastern European Jewish Communities Project. The Hebrew University of Jerusalem.';
 
 export async function getContentBlocksData(locale: Locale = "he"): Promise<ContentBlocksProps> {
-  const [datasets, posts, siteLinks, placeCount, datasetCount, layerCount] = await Promise.all([
+  const [datasets, posts, siteLinks, placeCount, datasetCount, layerCount, settings] = await Promise.all([
     prisma.dataset.findMany({
       where: { status: "published" },
       orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
@@ -52,7 +54,29 @@ export async function getContentBlocksData(locale: Locale = "he"): Promise<Conte
     prisma.place.count(),
     prisma.dataset.count({ where: { status: "published" } }),
     prisma.layer.count({ where: { status: "published" } }),
+    prisma.siteSettings.findUnique({ where: { key: "global" } }),
   ]);
+
+  const teamI18n = (settings?.researchTeamI18n ?? {}) as Record<string, Author[]>;
+  const authors: Author[] = teamI18n[locale]?.length
+    ? teamI18n[locale]
+    : teamI18n.he?.length
+      ? teamI18n.he
+      : AUTHORS_FALLBACK[locale] ?? AUTHORS_FALLBACK.he;
+
+  const citationI18n = (settings?.citationTextI18n ?? {}) as Record<string, string>;
+  const citation =
+    citationI18n[locale] ||
+    citationI18n.en ||
+    settings?.citationText ||
+    CITATION_FALLBACK;
+
+  const statsOverride = (settings?.homepageStats ?? {}) as Partial<{
+    communities: string;
+    datasets: string;
+    maps: string;
+    years: string;
+  }>;
 
   const dateLocales: Record<string, string> = { he: "he-IL", en: "en-US", pl: "pl-PL" };
   const formatDate = (d: Date, locale = "he") =>
@@ -90,13 +114,13 @@ export async function getContentBlocksData(locale: Locale = "he"): Promise<Conte
       icon: l.icon ?? "Globe",
       url: l.url,
     })),
-    authors: AUTHORS_I18N[locale] ?? AUTHORS_I18N.he,
-    citation: CITATION,
+    authors,
+    citation,
     stats: {
-      communities: placeCount > 0 ? placeCount.toLocaleString() : "1,300",
-      datasets: datasetCount > 0 ? datasetCount.toLocaleString() : "0",
-      maps: (datasetCount + layerCount).toString(),
-      years: "1000+",
+      communities: statsOverride.communities ?? (placeCount > 0 ? placeCount.toLocaleString() : "1,300"),
+      datasets: statsOverride.datasets ?? (datasetCount > 0 ? datasetCount.toLocaleString() : "0"),
+      maps: statsOverride.maps ?? (datasetCount + layerCount).toString(),
+      years: statsOverride.years ?? "1000+",
     },
   };
 }

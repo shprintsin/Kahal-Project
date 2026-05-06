@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { Heebo, Secular_One } from "next/font/google";
 import { auth } from "@/auth";
 import { AdminToolbarProvider } from "@/components/ui/admin-toolbar";
+import { Toaster } from "sonner";
 import { getLocale } from "next-intl/server";
 import { isValidLocale, defaultLocale, getDir } from "@/lib/i18n/config";
 import type { Locale } from "@/lib/i18n/config";
+import { GoogleAnalytics } from '@next/third-parties/google'; // <-- הוספה של ה-Import
 import "./globals.css";
 
 const heebo = Heebo({
@@ -41,6 +43,10 @@ export default async function RootLayout({
         <AdminToolbarProvider user={session?.user ?? null}>
           {children}
         </AdminToolbarProvider>
+        <Toaster richColors position="top-right" />
+        
+        {/* Google Analytics */}
+        <GoogleAnalytics gaId="G-3HKSYEW8V9" /> 
       </body>
     </html>
   );

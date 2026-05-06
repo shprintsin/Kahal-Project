@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Save, Eye, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { MenuSectionEditor } from "@/components/admin-menus/menu-section-editor";
 import { FooterColumnEditor } from "@/components/admin-menus/footer-column-editor";
 import { TranslatableInput } from "@/components/admin-menus/translatable-input";
@@ -87,10 +88,12 @@ export default function MenusSettingsPage() {
       }
 
       await loadSettings();
-      alert("Settings saved successfully!");
+      toast.success("Settings saved");
     } catch (error) {
       console.error("Error saving settings:", error);
-      alert("Failed to save settings. Please check the console for details.");
+      toast.error("Failed to save settings", {
+        description: "Check the console for details.",
+      });
     } finally {
       setIsSaving(false);
     }

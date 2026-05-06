@@ -125,8 +125,7 @@ export function ExpandableMenuItem({
               value={item.url || ""}
               onChange={(e) => {
                 e.stopPropagation();
-                updateField("url", e.target.value);
-                updateField("pageId", undefined);
+                onChange({ ...item, url: e.target.value, pageId: undefined });
               }}
               placeholder="/path or https://..."
               className="h-9 text-sm border-input"
@@ -137,8 +136,7 @@ export function ExpandableMenuItem({
             <PageSelector
               value={item.pageId || undefined}
               onChange={(pageId) => {
-                updateField("pageId", pageId);
-                updateField("url", undefined);
+                onChange({ ...item, pageId, url: undefined });
               }}
               placeholder="Select page..."
             />

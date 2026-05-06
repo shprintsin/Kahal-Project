@@ -681,12 +681,16 @@ model FooterColumnItem {
 }
 
 model SiteSettings {
-  id            String   @id @default(uuid()) @db.Uuid
-  key           String   @unique
-  copyrightText String   @default("") @map("copyright_text")
-  copyrightI18n Json     @default("{}") @map("copyright_i18n")
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id               String   @id @default(uuid()) @db.Uuid
+  key              String   @unique
+  copyrightText    String   @default("") @map("copyright_text")
+  copyrightI18n    Json     @default("{}") @map("copyright_i18n")
+  researchTeamI18n Json     @default("{}") @map("research_team_i18n")
+  citationText     String   @default("") @map("citation_text")
+  citationTextI18n Json     @default("{}") @map("citation_text_i18n")
+  homepageStats    Json     @default("{}") @map("homepage_stats")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("site_settings")
 }
