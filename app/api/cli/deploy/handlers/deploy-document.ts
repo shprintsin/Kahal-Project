@@ -1,4 +1,4 @@
-import { ContentStatus, type Prisma } from '@prisma/client';
+import { ContentStatus, Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import {
   DocstudioDocumentSchema,
@@ -47,7 +47,9 @@ export async function deployDocument(
     fileId: input.file_id ?? null,
     sourceLang: input.source_lang,
     nameI18n: nameI18n as Prisma.InputJsonValue,
-    excerptI18n: (excerptI18n ?? null) as Prisma.InputJsonValue | null,
+    excerptI18n: excerptI18n
+      ? (excerptI18n as Prisma.InputJsonValue)
+      : Prisma.JsonNull,
     citation: input.citation ?? null,
     url: input.url ?? null,
     dateStart: input.date_start ?? null,
@@ -99,7 +101,10 @@ export async function deployDocument(
           slug: ch.chapter_slug,
           index: ch.index,
           titleI18n: buildI18nChapterTitle(ch) as Prisma.InputJsonValue,
-          excerptI18n: (buildI18nChapterExcerpt(ch) ?? null) as Prisma.InputJsonValue | null,
+          excerptI18n: (() => {
+            const v = buildI18nChapterExcerpt(ch);
+            return v ? (v as Prisma.InputJsonValue) : Prisma.JsonNull;
+          })(),
           date: ch.date ?? null,
           mentionJews: ch.mention_jews ?? false,
           text: ch.text,

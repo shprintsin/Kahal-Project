@@ -42,7 +42,7 @@ export type CategoryOption = Pick<
 
 export type TagOption = Pick<
   Prisma.TagGetPayload<{}>,
-  "id" | "name" | "slug" | "nameI18n"
+  "id" | "name" | "slug" | "name"
 >;
 
 export type PostListItem = Pick<

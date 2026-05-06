@@ -6,7 +6,7 @@ export const tagSchema = TagOptionalDefaultsSchema
   .omit({ id: true, createdAt: true })
   .extend({
     slug: slugField,
-    nameI18n: z.object({
+    name: z.object({
       en: z.string().nullable().optional(),
       he: z.string().nullable().optional(),
     }).refine(

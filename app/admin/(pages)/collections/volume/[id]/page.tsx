@@ -30,8 +30,8 @@ export default async function VolumePage({
         <div className="p-4 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 flex items-center justify-between shrink-0">
             <div>
                  <h1 className="text-xl font-bold flex items-center gap-2">
-                    <span className="text-muted-foreground font-normal">{(volume.series?.collection?.nameI18n as any)?.en} / {(volume.series?.nameI18n as any)?.en} /</span>
-                    {(volume.titleI18n as any)?.en}
+                    <span className="text-muted-foreground font-normal">{(volume.series?.collection?.name as any)?.en} / {(volume.series?.name as any)?.en} /</span>
+                    {(volume.title as any)?.en}
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1">
                     {total} Total Pages

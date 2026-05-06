@@ -73,6 +73,7 @@ describe("compileSymbolLayer labels.filter", () => {
     field: "name",
     className: "layer-label",
     position: "top",
+    collision: "none",
     ...overrides,
   });
 

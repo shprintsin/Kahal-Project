@@ -25,8 +25,8 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
   const collectionAny = collection as any;
 
   const collectionName =
-    typeof collectionAny.nameI18n === "object" && collectionAny.nameI18n !== null
-      ? (collectionAny.nameI18n as any).en || (collectionAny.nameI18n as any).he || "Collection"
+    typeof collectionAny.name === "object" && collectionAny.name !== null
+      ? (collectionAny.name as any).en || (collectionAny.name as any).he || "Collection"
       : "Collection";
 
   return (

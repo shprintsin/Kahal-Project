@@ -19,6 +19,7 @@ import {
 import { Check, ChevronsUpDown, Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tag } from "@prisma/client";
+import { pickI18n } from "@/app/lib/pick-i18n";
 
 interface TagInputProps {
   tags: Tag[];
@@ -35,10 +36,7 @@ export function TagInput({ tags, selectedTagIds, onTagsChange, onCreateTag }: Ta
   const selectedTags = tags.filter(tag => selectedTagIds.includes(tag.id));
 
   const getTagName = (tag: Tag) => {
-    if (typeof tag.nameI18n === "object" && tag.nameI18n !== null) {
-      return (tag.nameI18n as Record<string, string>).en || (tag.nameI18n as Record<string, string>).he || Object.values(tag.nameI18n as Record<string, string>)[0] || tag.slug;
-    }
-    return tag.slug;
+    return pickI18n(tag.name, "en", "") || pickI18n(tag.name, "he", "") || tag.slug;
   };
 
   const availableTags = React.useMemo(() => {

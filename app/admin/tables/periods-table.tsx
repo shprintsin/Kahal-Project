@@ -104,7 +104,7 @@ export function PeriodsTable({ periods }: PeriodsTableProps) {
       render: (period: any) => (
         <Link href={`/admin/periods/${period.id}`}>
           <Badge variant="outline" className="hover:bg-muted cursor-pointer">
-            {getI18nText(period.nameI18n || period.name_i18n)}
+            {getI18nText(period.name || period.name_i18n)}
           </Badge>
         </Link>
       ),

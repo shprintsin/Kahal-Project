@@ -10,7 +10,6 @@ export async function GET() {
           select: {
             id: true,
             name: true,
-            nameI18n: true,
           }
         },
         _count: {
@@ -28,9 +27,7 @@ export async function GET() {
       id: s.id,
       slug: s.slug,
       name: s.name,
-      nameI18n: s.nameI18n,
       description: s.description,
-      descriptionI18n: s.descriptionI18n,
       indexNumber: s.indexNumber,
       yearMin: s.yearMin,
       yearMax: s.yearMax,

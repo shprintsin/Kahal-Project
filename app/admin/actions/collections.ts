@@ -66,18 +66,18 @@ export async function getHierarchy(): Promise<HierarchyNode[]> {
       return {
         id: col.id,
         type: "COLLECTION",
-        name: `${(col.nameI18n as Record<string, string>)?.en || "Untitled Collection"} (${col._count.series})`,
+        name: `${(col.name as Record<string, string>)?.en || "Untitled Collection"} (${col._count.series})`,
         slug: col.id,
         children: col.series.map((ser) => ({
           id: ser.id,
           type: "SERIES",
-          name: `${(ser.nameI18n as Record<string, string>)?.en || "Untitled Series"} (${ser._count.volumes})`,
+          name: `${(ser.name as Record<string, string>)?.en || "Untitled Series"} (${ser._count.volumes})`,
           slug: ser.slug,
           collectionId: col.id,
           children: ser.volumes.map((vol) => ({
             id: vol.id,
             type: "VOLUME",
-            name: `${(vol.titleI18n as Record<string, string>)?.en || "Untitled Volume"} (${vol._count.pages})`,
+            name: `${(vol.title as Record<string, string>)?.en || "Untitled Volume"} (${vol._count.pages})`,
             slug: vol.slug,
           })),
         })),
@@ -208,8 +208,8 @@ export async function listCollectionsSummary() {
   return collections.map((c) => ({
     id: c.id,
     slug: c.id,
-    nameI18n: c.nameI18n,
-    descriptionI18n: c.descriptionI18n,
+    name: c.name,
+    description: c.description,
     createdAt: c.createdAt,
     thumbnail: c.thumbnail
       ? {
@@ -246,16 +246,15 @@ export async function getCollectionDetail(slug: string) {
     id: collection.id,
     slug: collection.id,
     name: collection.name,
-    nameI18n: collection.nameI18n,
-    descriptionI18n: collection.descriptionI18n,
+    description: collection.description,
     createdAt: collection.createdAt,
     tags: collection.tags,
     series_count: collection.series.length,
     series: collection.series.map((s) => ({
       id: s.id,
       slug: s.slug,
-      nameI18n: s.nameI18n,
-      descriptionI18n: s.descriptionI18n,
+      name: s.name,
+      description: s.description,
       indexNumber: s.indexNumber,
       volumeLabelFormat: s.volumeLabelFormat,
       createdAt: s.createdAt,
@@ -311,8 +310,8 @@ export async function getSeriesDetailByPath(collectionId: string, seriesSlug: st
   return {
     id: series.id,
     slug: series.slug,
-    nameI18n: series.nameI18n,
-    descriptionI18n: series.descriptionI18n,
+    name: series.name,
+    description: series.description,
     indexNumber: series.indexNumber,
     volumeLabelFormat: series.volumeLabelFormat,
     thumbnailId: series.thumbnailId,
@@ -329,8 +328,8 @@ export async function getSeriesDetailByPath(collectionId: string, seriesSlug: st
     volumes: series.volumes.map((v) => ({
       slug: v.slug,
       indexNumber: v.indexNumber,
-      titleI18n: v.titleI18n,
-      descriptionI18n: v.descriptionI18n,
+      title: v.title,
+      description: v.description,
       publicationYear: v.year,
       languageOfContent: v.languageOfContent,
       yearContent: v.yearContent,
@@ -382,8 +381,8 @@ export async function getSeriesBySlugs(collectionSlug: string, seriesSlug: strin
     period: series.period,
     languages: series.languages,
     slug: series.slug,
-    nameI18n: series.nameI18n,
-    descriptionI18n: series.descriptionI18n,
+    name: series.name,
+    description: series.description,
     indexNumber: series.indexNumber,
     volumeLabelFormat: series.volumeLabelFormat,
     thumbnailId: series.thumbnailId,
@@ -401,8 +400,8 @@ export async function getSeriesBySlugs(collectionSlug: string, seriesSlug: strin
       id: v.id,
       slug: v.slug,
       indexNumber: v.indexNumber,
-      titleI18n: v.titleI18n,
-      descriptionI18n: v.descriptionI18n,
+      title: v.title,
+      description: v.description,
       publicationYear: v.year,
       languageOfContent: v.languageOfContent,
       yearContent: v.yearContent,
@@ -466,8 +465,8 @@ export async function getVolumeWithPagesByPath(
   return {
     slug: volume.slug,
     indexNumber: volume.indexNumber,
-    titleI18n: volume.titleI18n,
-    descriptionI18n: volume.descriptionI18n,
+    title: volume.title,
+    description: volume.description,
     publicationYear: volume.year,
     languageOfContent: volume.languageOfContent,
     yearContent: volume.yearContent,
@@ -543,8 +542,7 @@ export async function getVolumeWithPagesById(volumeId: string) {
     slug: volume.slug,
     title: volume.title,
     indexNumber: volume.indexNumber,
-    titleI18n: volume.titleI18n,
-    descriptionI18n: volume.descriptionI18n,
+    description: volume.description,
     publicationYear: volume.year,
     languageOfContent: volume.languageOfContent,
     yearContent: volume.yearContent,
@@ -652,7 +650,6 @@ export async function listAllSeries() {
         select: {
           id: true,
           name: true,
-          nameI18n: true,
         },
       },
       thumbnail: true,
@@ -670,13 +667,11 @@ export async function listAllSeries() {
     id: s.id,
     slug: s.slug,
     name: s.name,
-    nameI18n: s.nameI18n,
-    descriptionI18n: s.descriptionI18n,
+    description: s.description,
     collectionId: s.collectionId,
     collection: s.collection ? {
       id: s.collection.id,
       name: s.collection.name,
-      nameI18n: s.collection.nameI18n,
     } : null,
     indexNumber: s.indexNumber,
     createdAt: s.createdAt,
@@ -717,8 +712,7 @@ export async function getSeriesDetailById(id: string) {
     id: series.id,
     slug: series.slug,
     name: series.name,
-    nameI18n: series.nameI18n,
-    descriptionI18n: series.descriptionI18n,
+    description: series.description,
     collectionId: series.collectionId,
     collection: series.collection,
     indexNumber: series.indexNumber,
@@ -736,8 +730,7 @@ export async function getSeriesDetailById(id: string) {
       id: v.id,
       slug: v.slug,
       title: v.title,
-      titleI18n: v.titleI18n,
-      descriptionI18n: v.descriptionI18n,
+      description: v.description,
       indexNumber: v.indexNumber,
       year: v.year,
       createdAt: v.createdAt,
@@ -779,8 +772,7 @@ export async function getSeriesDetailBySlug(slug: string) {
     id: series.id,
     slug: series.slug,
     name: series.name,
-    nameI18n: series.nameI18n,
-    descriptionI18n: series.descriptionI18n,
+    description: series.description,
     collectionId: series.collectionId,
     collection: series.collection,
     indexNumber: series.indexNumber,
@@ -798,8 +790,7 @@ export async function getSeriesDetailBySlug(slug: string) {
       id: v.id,
       slug: v.slug,
       title: v.title,
-      titleI18n: v.titleI18n,
-      descriptionI18n: v.descriptionI18n,
+      description: v.description,
       seriesId: v.seriesId,
       collectionId: series.collectionId,
       indexNumber: v.indexNumber,
@@ -833,7 +824,6 @@ export async function getVolumesBySeriesId(seriesId: string) {
           id: true,
           slug: true,
           name: true,
-          nameI18n: true,
           collectionId: true,
         },
       },
@@ -844,8 +834,7 @@ export async function getVolumesBySeriesId(seriesId: string) {
     id: v.id,
     slug: v.slug,
     title: v.title,
-    titleI18n: v.titleI18n,
-    descriptionI18n: v.descriptionI18n,
+    description: v.description,
     indexNumber: v.indexNumber,
     year: v.year,
     createdAt: toISOStringSafe(v.createdAt),
@@ -881,7 +870,6 @@ export async function getVolumesBySeriesSlug(seriesSlug: string) {
           id: true,
           slug: true,
           name: true,
-          nameI18n: true,
           collectionId: true,
         },
       },
@@ -892,8 +880,7 @@ export async function getVolumesBySeriesSlug(seriesSlug: string) {
     id: v.id,
     slug: v.slug,
     title: v.title,
-    titleI18n: v.titleI18n,
-    descriptionI18n: v.descriptionI18n,
+    description: v.description,
     indexNumber: v.indexNumber,
     year: v.year,
     createdAt: toISOStringSafe(v.createdAt),
@@ -938,8 +925,7 @@ export async function listCollectionsWithSeries() {
     id: c.id,
     slug: c.id,
     name: c.name,
-    nameI18n: c.nameI18n,
-    descriptionI18n: c.descriptionI18n,
+    description: c.description,
     createdAt: toISOStringSafe(c.createdAt),
     thumbnail: c.thumbnail
       ? {
@@ -955,8 +941,7 @@ export async function listCollectionsWithSeries() {
       id: s.id,
       slug: s.slug,
       name: s.name,
-      nameI18n: s.nameI18n,
-      descriptionI18n: s.descriptionI18n,
+      description: s.description,
       collectionId: c.id,
       indexNumber: s.indexNumber,
       createdAt: toISOStringSafe(s.createdAt),
@@ -996,8 +981,8 @@ export async function createCollection(formData: FormData) {
   // TODO: Add slug support if we migrate schema
   const collection = await prisma.collection.create({
     data: {
-      nameI18n: { en: name },
-      descriptionI18n: { en: description },
+      name: { en: name },
+      description: { en: description },
     },
   });
 
@@ -1020,7 +1005,7 @@ export async function createSeries(collectionId: string, formData: FormData) {
   const series = await prisma.series.create({
     data: {
       collectionId,
-      nameI18n: { en: name },
+      name: { en: name },
       slug,
       indexNumber: (maxIndex?.indexNumber || 0) + 1,
     },
@@ -1044,7 +1029,7 @@ export async function createVolume(seriesId: string, formData: FormData) {
   const volume = await prisma.volume.create({
     data: {
       seriesId,
-      titleI18n: { en: name },
+      title: { en: name },
       slug,
       indexNumber: (maxIndex?.indexNumber || 0) + 1,
       year: new Date().getFullYear(), // Default
@@ -1091,9 +1076,9 @@ export async function deleteEntity(type: "COLLECTION" | "SERIES" | "VOLUME", id:
 }
 
 export interface EntityUpdateData {
-  nameI18n?: Record<string, string>;
-  titleI18n?: Record<string, string>;
-  descriptionI18n?: Record<string, string>;
+  name?: Record<string, string>;
+  title?: Record<string, string>;
+  description?: Record<string, string>;
   slug?: string;
   referenceCode?: string;
   license?: string;
@@ -1121,8 +1106,8 @@ export async function updateEntity(
       await prisma.collection.update({
         where: { id },
         data: {
-          nameI18n: data.nameI18n,
-          descriptionI18n: data.descriptionI18n,
+          name: data.name,
+          description: data.description,
           referenceCode: data.referenceCode,
           yearMin: data.yearMin,
           yearMax: data.yearMax,
@@ -1132,9 +1117,9 @@ export async function updateEntity(
       await prisma.series.update({
         where: { id },
         data: {
-          nameI18n: data.nameI18n,
+          name: data.name,
           slug: data.slug,
-          descriptionI18n: data.descriptionI18n,
+          description: data.description,
           referenceCode: data.referenceCode,
           license: data.license,
           editor: data.editor,
@@ -1153,9 +1138,9 @@ export async function updateEntity(
       await prisma.volume.update({
         where: { id },
         data: {
-          titleI18n: data.titleI18n || data.nameI18n,
+          title: data.title || data.name,
           slug: data.slug,
-          descriptionI18n: data.descriptionI18n,
+          description: data.description,
           indexNumber: data.indexNumber,
           year: data.year,
           yearMin: data.yearMin,

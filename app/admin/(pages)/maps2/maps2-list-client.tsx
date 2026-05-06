@@ -9,7 +9,19 @@ import { getI18nText } from "@/app/admin/components/tables/table-utils";
 
 export interface MapItem {
   id: string;
-  titleI18n?: Record<string, string> | null;
+  title: string;
+  slug: string;
+  areaI18n?: Record<string, string> | null;
+  year?: number | null;
+  version?: string | null;
+  status?: string;
+  createdAt?: Date | string;
+  [key: string]: unknown;
+}
+
+export interface MapItemInput {
+  id: string;
+  title?: Record<string, string> | null;
   slug: string;
   areaI18n?: Record<string, string> | null;
   year?: number | null;
@@ -18,8 +30,8 @@ export interface MapItem {
   createdAt?: Date | string;
 }
 
-function getTitle(row: MapItem) {
-  return getI18nText(row.titleI18n);
+function getTitle(row: MapItem | MapItemInput): string {
+  return typeof row.title === 'string' ? row.title : getI18nText(row.title);
 }
 
 const columns: ContentTableColumn<MapItem>[] = [
@@ -64,14 +76,14 @@ const columns: ContentTableColumn<MapItem>[] = [
   },
 ];
 
-export function Maps2ListClient({ initialMaps }: { initialMaps: MapItem[] }) {
-  const normalized = initialMaps.map((m) => ({
+export function Maps2ListClient({ initialMaps }: { initialMaps: MapItemInput[] }) {
+  const normalized: MapItem[] = initialMaps.map((m) => ({
     ...m,
     title: getTitle(m),
   }));
 
   return (
-    <ContentListPage
+    <ContentListPage<MapItem>
       config={{
         contentType: "maps2",
         title: "Data Studio",

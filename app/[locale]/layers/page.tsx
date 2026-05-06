@@ -5,6 +5,8 @@ import { listLayersAPI } from '@/app/admin/actions/layers';
 import { getSiteShellData } from '@/app/lib/get-navigation';
 import { createPageMetadata } from '@/lib/i18n/metadata';
 import { LayersPageClient } from './LayersPageClient';
+import { pickI18n } from '@/app/lib/pick-i18n';
+import type { Locale } from '@/lib/i18n/config';
 
 export const revalidate = 60;
 
@@ -37,8 +39,9 @@ export default async function LayersPage({ params }: { params: Promise<{ locale:
     createdAt: l.createdAt
   }));
 
+  const loc = locale as Locale;
   const categories = (categoriesData.categories || []).map((c) => ({
-    name: c.title,
+    name: pickI18n(c.title, loc),
     count: c.usageCount?.total || 0,
     slug: `/categories/${c.slug}`,
   }));

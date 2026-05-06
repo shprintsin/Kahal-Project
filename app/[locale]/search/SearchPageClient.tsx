@@ -39,7 +39,7 @@ function SearchCardItem({ item }: { item: SearchResultItem }) {
         <>
           <span className={`SearchTypeBadge inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-xs font-semibold ${cfg.color}`}>
             <Icon className="w-3 h-3" />
-            {t(cfg.labelKey, cfg.fallback)}
+            {t(cfg.labelKey as never)}
           </span>
           {item.date && <MetaIconText icon={Calendar}>{item.date}</MetaIconText>}
           {item.category && <MetaBadge>{item.category}</MetaBadge>}
@@ -181,7 +181,7 @@ export default function SearchPageClient({
                       }`}
                     >
                       <Icon className="w-3.5 h-3.5" />
-                      {t(cfg.labelKey, cfg.fallback)} ({count})
+                      {t(cfg.labelKey as never)} ({count})
                     </button>
                   )
                 })}
@@ -277,7 +277,7 @@ export default function SearchPageClient({
                           >
                             <span className="flex items-center gap-2">
                               <Icon className="w-4 h-4" />
-                              {t(cfg.labelKey, cfg.fallback)}
+                              {t(cfg.labelKey as never)}
                             </span>
                             <span className="text-sm text-muted-foreground">({count})</span>
                           </button>

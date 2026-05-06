@@ -139,7 +139,6 @@ const listPosts: ListHandler = async (sp) => {
     regionSlug: sp.get("region") || undefined,
     authorId: sp.get("authorId") || undefined,
     language: sp.get("language") || undefined,
-    translationGroup: sp.get("translationGroup") || undefined,
     search: sp.get("search") || undefined,
     page: parseIntSafe(sp.get("page")),
     limit: parseIntSafe(sp.get("limit")),

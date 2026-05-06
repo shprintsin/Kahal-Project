@@ -32,15 +32,12 @@ interface MapConfigInput {
 export interface MapInput {
   slug: string;
   status?: string;
-  title?: string;
-  description?: string;
-  summary?: string;
+  title?: Prisma.InputJsonValue;
+  description?: Prisma.InputJsonValue;
+  summary?: Prisma.InputJsonValue;
   title_i18n?: Prisma.InputJsonValue;
-  titleI18n?: Prisma.InputJsonValue;
   description_i18n?: Prisma.InputJsonValue;
-  descriptionI18n?: Prisma.InputJsonValue;
   summary_i18n?: Prisma.InputJsonValue;
-  summaryI18n?: Prisma.InputJsonValue;
   area_i18n?: Prisma.InputJsonValue;
   areaI18n?: Prisma.InputJsonValue;
   year?: string | number | null;
@@ -123,9 +120,9 @@ export async function getMap(id: string) {
           zIndex: 'asc',
         },
       },
-      category: { select: { id: true, slug: true, title: true, titleI18n: true } },
-      tags: { select: { id: true, slug: true, name: true, nameI18n: true } },
-      regions: { select: { id: true, slug: true, name: true, nameI18n: true } },
+      category: { select: { id: true, slug: true, title: true } },
+      tags: { select: { id: true, slug: true, name: true } },
+      regions: { select: { id: true, slug: true, name: true } },
       thumbnail: { select: { id: true, url: true, altTextI18n: true } },
     },
   });
@@ -159,12 +156,9 @@ export async function createMap(mapData: MapInput) {
   const data: Record<string, unknown> = {
     slug: mapData.slug,
     status: (mapData.status || 'draft') as ContentStatus,
-    ...(mapData.title && { title: mapData.title }),
-    titleI18n: mapData.title_i18n || mapData.titleI18n,
-    ...(mapData.description !== undefined && { description: mapData.description }),
-    descriptionI18n: mapData.description_i18n || mapData.descriptionI18n,
-    ...(mapData.summary !== undefined && { summary: mapData.summary }),
-    summaryI18n: mapData.summary_i18n || mapData.summaryI18n,
+    title: mapData.title_i18n || mapData.title,
+    description: mapData.description_i18n || mapData.description,
+    summary: mapData.summary_i18n || mapData.summary,
     areaI18n: mapData.area_i18n || mapData.areaI18n,
     year: mapData.year,
     yearMin: mapData.yearMin,
@@ -224,7 +218,6 @@ export async function createMap(mapData: MapInput) {
             labels: layer.labels,
             popup: layer.popup,
             filter: layer.filter,
-            hover: layer.hover,
           } as Prisma.InputJsonValue,
           interactionConfig: (layer.interactionConfig || {}) as Prisma.InputJsonValue,
         },
@@ -267,12 +260,12 @@ export async function updateMap(id: string, mapData: MapInput) {
   if (mapData.version !== undefined) data.version = mapData.version;
   if (mapConfig !== undefined) data.config = mapConfig;
 
-  const titleI18n = mapData.title_i18n || mapData.titleI18n;
-  if (titleI18n !== undefined) data.titleI18n = titleI18n;
-  const descriptionI18n = mapData.description_i18n || mapData.descriptionI18n;
-  if (descriptionI18n !== undefined) data.descriptionI18n = descriptionI18n;
-  const summaryI18n = mapData.summary_i18n || mapData.summaryI18n;
-  if (summaryI18n !== undefined) data.summaryI18n = summaryI18n;
+  const title = mapData.title_i18n || mapData.title;
+  if (title !== undefined) data.title = title;
+  const description = mapData.description_i18n || mapData.description;
+  if (description !== undefined) data.description = description;
+  const summary = mapData.summary_i18n || mapData.summary;
+  if (summary !== undefined) data.summary = summary;
   const areaI18n = mapData.area_i18n || mapData.areaI18n;
   if (areaI18n !== undefined) data.areaI18n = areaI18n;
 
@@ -343,7 +336,6 @@ export async function updateMap(id: string, mapData: MapInput) {
             labels: layer.labels,
             popup: layer.popup,
             filter: layer.filter,
-            hover: layer.hover,
           } as Prisma.InputJsonValue,
           interactionConfig: (layer.interactionConfig || {}) as Prisma.InputJsonValue,
         },
@@ -507,19 +499,18 @@ export interface GetMapOptions {
 
 // Helper function to get localized field
 function getLocalizedField(
-  defaultValue: string | null | undefined,
+  _legacy: unknown,
   i18nJson: unknown,
   lang?: string
 ): string | null {
-  if (!defaultValue && !i18nJson) return null;
-  if (!lang || !i18nJson) return defaultValue || null;
-  
-  try {
-    const i18nData = (typeof i18nJson === 'string' ? JSON.parse(i18nJson) : i18nJson) as Record<string, string>;
-    return i18nData[lang] || defaultValue || null;
-  } catch {
-    return defaultValue || null;
+  if (!i18nJson || typeof i18nJson !== "object") return null;
+  const obj = i18nJson as Record<string, unknown>;
+  const order = lang === "he" ? ["he", "en"] : lang === "en" ? ["en", "he"] : [lang, "en", "he"].filter(Boolean) as string[];
+  for (const k of order) {
+    const v = obj[k];
+    if (typeof v === "string" && v) return v;
   }
+  return null;
 }
 
 // List maps with filtering and pagination (for API)
@@ -551,7 +542,7 @@ export async function listMapsAPI(options: ListMapsOptions = {}) {
     ...(yearMin && { yearMin: { gte: yearMin } }),
     ...(yearMax && { yearMax: { lte: yearMax } }),
     ...(period && { period }),
-    // Note: Map model uses titleI18n/descriptionI18n (JSON), not simple text fields
+    // Note: Map model uses title/description (JSON), not simple text fields
     // Search functionality would need to be implemented differently (e.g., using Prisma's jsonb operators or full-text search)
     ...(categoryId && { categoryId }),
     ...(categorySlug && { category: { slug: categorySlug } }),
@@ -583,7 +574,6 @@ export async function listMapsAPI(options: ListMapsOptions = {}) {
               id: true,
               slug: true,
               title: true,
-              titleI18n: true,
             },
           },
           thumbnail: {
@@ -616,9 +606,9 @@ export async function listMapsAPI(options: ListMapsOptions = {}) {
     const transformedMaps = maps.map((map) => ({
       id: map.id,
       slug: map.slug,
-      title: getLocalizedField(map.title, map.titleI18n, lang) || map.title,
-      description: getLocalizedField(map.description, map.descriptionI18n, lang) || map.description,
-      summary: getLocalizedField(map.summary, map.summaryI18n, lang) || map.summary,
+      title: getLocalizedField(null, map.title, lang) ?? "",
+      description: getLocalizedField(null, map.description, lang) ?? "",
+      summary: getLocalizedField(null, map.summary, lang) ?? "",
       status: map.status,
       version: map.version,
       year: map.year,
@@ -629,7 +619,7 @@ export async function listMapsAPI(options: ListMapsOptions = {}) {
         ? {
             id: map.category.id,
             slug: map.category.slug,
-            title: getLocalizedField(map.category.title, map.category.titleI18n, lang) || map.category.title,
+            title: getLocalizedField(null, map.category.title, lang) ?? "",
           }
         : null,
       thumbnail: map.thumbnail
@@ -676,7 +666,6 @@ export async function getMapBySlug(
             id: true,
             slug: true,
             title: true,
-            titleI18n: true,
           },
         },
         regions: {
@@ -684,7 +673,6 @@ export async function getMapBySlug(
             id: true,
             slug: true,
             name: true,
-            nameI18n: true,
           },
         },
         tags: {
@@ -692,7 +680,6 @@ export async function getMapBySlug(
             id: true,
             slug: true,
             name: true,
-            nameI18n: true,
           },
         },
         thumbnail: {
@@ -739,9 +726,9 @@ export async function getMapBySlug(
     return {
       id: map.id,
       slug: map.slug,
-      title: getLocalizedField(map.title, map.titleI18n, lang) || map.title,
-      description: getLocalizedField(map.description, map.descriptionI18n, lang) || map.description,
-      summary: getLocalizedField(map.summary, map.summaryI18n, lang) || map.summary,
+      title: getLocalizedField(null, map.title, lang) ?? "",
+      description: getLocalizedField(null, map.description, lang) ?? "",
+      summary: getLocalizedField(null, map.summary, lang) ?? "",
       status: map.status,
       version: map.version,
       year: map.year,
@@ -751,28 +738,28 @@ export async function getMapBySlug(
       maturity: map.maturity,
       license: map.license,
       citationText: map.citationText,
-      sources: getLocalizedField(map.sources, map.sourcesI18n, lang) || map.sources,
+      sources: getLocalizedField(null, map.sources, lang) ?? "",
       isVisible: map.isVisible,
       config: map.config,
       globalStyleConfig: map.globalStyleConfig,
-      codebookText: getLocalizedField(map.codebookText, map.codebookTextI18n, lang) || map.codebookText,
+      codebookText: getLocalizedField(null, map.codebookText, lang) ?? "",
       referenceLinks: map.referenceLinks,
       category: map.category
         ? {
             id: map.category.id,
             slug: map.category.slug,
-            title: getLocalizedField(map.category.title, map.category.titleI18n, lang) || map.category.title,
+            title: getLocalizedField(null, map.category.title, lang) ?? "",
           }
         : null,
       regions: map.regions.map((region) => ({
         id: region.id,
         slug: region.slug,
-        name: getLocalizedField(region.name, region.nameI18n, lang) || region.name,
+        name: getLocalizedField(null, region.name, lang) ?? "",
       })),
       tags: map.tags.map((tag) => ({
         id: tag.id,
         slug: tag.slug,
-        name: getLocalizedField(tag.name, tag.nameI18n, lang) || tag.name,
+        name: getLocalizedField(null, tag.name, lang) ?? "",
       })),
       thumbnail: map.thumbnail
         ? {
@@ -785,8 +772,8 @@ export async function getMapBySlug(
           id: assoc.layer.id,
           slug: assoc.layer.slug,
           layerId: assoc.layerId,
-          name: getLocalizedField(assoc.layer.name, assoc.layer.nameI18n, lang) || assoc.layer.name,
-          description: getLocalizedField(assoc.layer.description, assoc.layer.descriptionI18n, lang) || assoc.layer.description,
+          name: getLocalizedField(null, assoc.layer.name, lang) ?? "",
+          description: getLocalizedField(null, assoc.layer.description, lang) ?? "",
           type: assoc.layer.type,
           sourceType: assoc.layer.sourceType,
           sourceUrl: assoc.layer.sourceUrl,

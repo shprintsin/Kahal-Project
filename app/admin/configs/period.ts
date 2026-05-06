@@ -25,13 +25,13 @@ export const createPeriodFormConfig = () => ({
 
   translations: [
     {
-      name: "nameI18n.en",
+      name: "name.en",
       label: "🇺🇸 English",
       type: "text",
       placeholder: "Post WWI",
     },
     {
-      name: "nameI18n.he",
+      name: "name.he",
       label: "🇮🇱 Hebrew (עברית)",
       type: "text",
       placeholder: "אחרי מלחמת העולם הראשונה",

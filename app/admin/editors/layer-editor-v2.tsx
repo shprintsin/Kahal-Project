@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { layerSchema, type LayerFormValues } from "@/app/admin/schema/layer";
 import { createLayer, updateLayer, deleteLayer, listLayersAPI } from "@/app/admin/actions/layers";
+import { pickI18n } from "@/lib/i18n/fallback";
 import { createLayerFieldConfigs } from "@/app/admin/(pages)/layers/field-configs";
 import { MapPreview, type MapPreviewHandle } from "@/components/map-components/map-preview";
 import { Trash2, Save, GripVertical, Camera, Plus } from "lucide-react";
@@ -73,19 +74,19 @@ export function LayerEditorV2({ layer, mode, categories = [] }: LayerEditorProps
     defaultValues: {
       slug: layer?.slug || "",
       name: layer?.name || "",
-      name_i18n: layer?.nameI18n || {},
+      name_i18n: layer?.name || {},
       description: layer?.description || "",
-      description_i18n: layer?.descriptionI18n || {},
+      description_i18n: layer?.description || {},
       status: layer?.status || "draft",
       version: layer?.version || "1.0.0",
       categoryId: layer?.categoryId || null,
       type: layer?.type || "POINTS",
       citationText: layer?.citationText || "",
-      citation_text_i18n: layer?.citationTextI18n || {},
+      citation_text_i18n: layer?.citationText || {},
       codebookText: layer?.codebookText || "",
-      codebook_text_i18n: layer?.codebookTextI18n || {},
+      codebook_text_i18n: layer?.codebookText || {},
       sources: layer?.sources || "",
-      sources_i18n: layer?.sourcesI18n || {},
+      sources_i18n: layer?.sources || {},
       license: layer?.license || "",
       maturity: layer?.maturity || "Provisional",
       minYear: layer?.minYear || undefined,
@@ -289,7 +290,7 @@ export function LayerEditorV2({ layer, mode, categories = [] }: LayerEditorProps
           <div className="max-w-3xl mx-auto px-12 py-12 space-y-0">
             <input
               type="text"
-              value={formName}
+              value={pickI18n(formName as unknown, 'en')}
               onChange={(e) => {
                 form.setValue("name", e.target.value);
                 const autoSlug = generateSlugFromTitle(e.target.value);
@@ -326,7 +327,7 @@ export function LayerEditorV2({ layer, mode, categories = [] }: LayerEditorProps
 
             <UnifiedCanvasSeparator label="Description" />
             <textarea
-              value={formDescription}
+              value={pickI18n(formDescription as unknown, 'en')}
               onChange={(e) => { form.setValue("description", e.target.value); autoResizeElement(e.target, 60); }}
               placeholder="Add a brief description of this layer..."
               rows={2}
@@ -334,13 +335,13 @@ export function LayerEditorV2({ layer, mode, categories = [] }: LayerEditorProps
             />
 
             <UnifiedCanvasSeparator label="Citation" />
-            <textarea value={citationText ?? ""} onChange={(e) => { form.setValue("citationText", e.target.value); autoResizeElement(e.target, 80); }} placeholder="Add citation information..." rows={3} className={canvasTextareaClass} />
+            <textarea value={pickI18n(citationText as unknown, 'en')} onChange={(e) => { form.setValue("citationText", e.target.value); autoResizeElement(e.target, 80); }} placeholder="Add citation information..." rows={3} className={canvasTextareaClass} />
 
             <UnifiedCanvasSeparator label="Codebook" />
-            <textarea value={codebookText ?? ""} onChange={(e) => { form.setValue("codebookText", e.target.value); autoResizeElement(e.target, 80); }} placeholder="Add codebook details..." rows={3} className={canvasTextareaClass} />
+            <textarea value={pickI18n(codebookText as unknown, 'en')} onChange={(e) => { form.setValue("codebookText", e.target.value); autoResizeElement(e.target, 80); }} placeholder="Add codebook details..." rows={3} className={canvasTextareaClass} />
 
             <UnifiedCanvasSeparator label="Sources" />
-            <textarea value={sources ?? ""} onChange={(e) => { form.setValue("sources", e.target.value); autoResizeElement(e.target, 80); }} placeholder="Add source information..." rows={3} className={cn(canvasTextareaClass, "border-b-0")} />
+            <textarea value={pickI18n(sources as unknown, 'en')} onChange={(e) => { form.setValue("sources", e.target.value); autoResizeElement(e.target, 80); }} placeholder="Add source information..." rows={3} className={cn(canvasTextareaClass, "border-b-0")} />
           </div>
         </div>
 

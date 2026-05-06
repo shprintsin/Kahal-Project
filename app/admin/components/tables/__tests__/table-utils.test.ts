@@ -69,16 +69,16 @@ describe("buildI18nColumns", () => {
 
 describe("flattenI18n", () => {
   it("flattens i18n object to flat keys", () => {
-    const item = { id: "1", nameI18n: { en: "Hello", he: "שלום" } }
-    const result = flattenI18n(item, "nameI18n", DEFAULT_LANGUAGES)
+    const item = { id: "1", name: { en: "Hello", he: "שלום" } }
+    const result = flattenI18n(item, "name", DEFAULT_LANGUAGES)
     expect(result.en).toBe("Hello")
     expect(result.he).toBe("שלום")
     expect(result.id).toBe("1")
   })
 
   it("uses empty string for missing languages", () => {
-    const item = { id: "1", nameI18n: { en: "Hello" } }
-    const result = flattenI18n(item, "nameI18n", DEFAULT_LANGUAGES)
+    const item = { id: "1", name: { en: "Hello" } }
+    const result = flattenI18n(item, "name", DEFAULT_LANGUAGES)
     expect(result.he).toBe("")
   })
 })
@@ -86,8 +86,8 @@ describe("flattenI18n", () => {
 describe("unflattenI18n", () => {
   it("reconstructs i18n object from flat keys", () => {
     const values = { en: "Hello", he: "שלום", id: "1" }
-    const result = unflattenI18n(values, "nameI18n", DEFAULT_LANGUAGES)
-    expect(result.nameI18n).toEqual({ he: "שלום", en: "Hello" })
+    const result = unflattenI18n(values, "name", DEFAULT_LANGUAGES)
+    expect(result.name).toEqual({ he: "שלום", en: "Hello" })
     expect(result.id).toBe("1")
   })
 })

@@ -148,13 +148,10 @@ export function ContactForm() {
     return (
       <div className="rounded-md border border-green-200 bg-green-50 p-6 text-green-900">
         <h2 className="text-lg font-semibold mb-2">
-          {t("public.contact.successTitle", "Message sent")}
+          {t("public.contact.successTitle")}
         </h2>
         <p className="text-sm">
-          {t(
-            "public.contact.successBody",
-            "Thanks for reaching out — we'll get back to you soon."
-          )}
+          {t("public.contact.successBody")}
         </p>
         <Button
           type="button"
@@ -162,7 +159,7 @@ export function ContactForm() {
           className="mt-4"
           onClick={() => setStatus("idle")}
         >
-          {t("public.contact.sendAnother", "Send another message")}
+          {t("public.contact.sendAnother")}
         </Button>
       </div>
     );
@@ -173,7 +170,7 @@ export function ContactForm() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div className="space-y-2">
           <Label htmlFor="contact-name">
-            {t("public.contact.name", "Name")}
+            {t("public.contact.name")}
           </Label>
           <Input
             id="contact-name"
@@ -187,7 +184,7 @@ export function ContactForm() {
         </div>
         <div className="space-y-2">
           <Label htmlFor="contact-email">
-            {t("public.contact.email", "Email")}
+            {t("public.contact.email")}
           </Label>
           <Input
             id="contact-email"
@@ -207,7 +204,7 @@ export function ContactForm() {
 
       <div className="space-y-2">
         <Label htmlFor="contact-subject">
-          {t("public.contact.subject", "Subject")}
+          {t("public.contact.subject")}
         </Label>
         <Input
           id="contact-subject"
@@ -219,7 +216,7 @@ export function ContactForm() {
 
       <div className="space-y-2">
         <Label htmlFor="contact-message">
-          {t("public.contact.message", "Message")}
+          {t("public.contact.message")}
         </Label>
         <Textarea
           id="contact-message"
@@ -264,7 +261,7 @@ export function ContactForm() {
           role="alert"
           className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-900"
         >
-          {t(`public.contact.errors.${errorKey}`, errorKey)}
+          {t(`public.contact.errors.${errorKey}` as never)}
         </div>
       )}
 
@@ -277,10 +274,10 @@ export function ContactForm() {
           {status === "submitting" ? (
             <>
               <Loader2 className="me-2 h-4 w-4 animate-spin" />
-              {t("public.contact.sending", "Sending…")}
+              {t("public.contact.sending")}
             </>
           ) : (
-            t("public.contact.send", "Send message")
+            t("public.contact.send")
           )}
         </Button>
       </div>

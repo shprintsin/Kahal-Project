@@ -19,6 +19,7 @@ import type { PageForEditor, TagOption, PageListItem } from "@/app/admin/types/e
 import { createPage, updatePage } from "@/app/admin/actions/pages";
 import { uploadMedia } from "@/app/admin/actions/posts";
 import { generateSlugFromTitle } from "@/app/admin/utils/slug-generator";
+import { pickI18n } from "@/lib/i18n/fallback";
 import { Textarea } from "@/components/ui/textarea";
 import {
   AdminSidebarCard,
@@ -53,8 +54,8 @@ function EditorInner({ page, tags, pages, regions, isNew }: PageEditorClientProp
 
   const [status, setStatus] = React.useState<ContentStatus>(page?.status || "draft");
   const [template, setTemplate] = React.useState(page?.template || "default");
-  const [allTags] = React.useState(tags.map((t) => t.name));
-  const [pageTags, setPageTags] = React.useState(page?.tags?.map((t) => t.name) || []);
+  const [allTags] = React.useState(tags.map((t) => pickI18n(t.name as unknown, 'en')));
+  const [pageTags, setPageTags] = React.useState<string[]>(page?.tags?.map((t: any) => pickI18n(t.name, 'en')) || []);
   const [author] = React.useState(page?.author?.name || "");
   const [createdAt] = React.useState(page ? new Date(page.createdAt).toLocaleDateString() : "");
   const [updatedAt] = React.useState(page ? new Date(page.updatedAt).toLocaleDateString() : "");
@@ -304,7 +305,7 @@ function EditorInner({ page, tags, pages, regions, isNew }: PageEditorClientProp
             >
               <option value="">None (root page)</option>
               {parentOptions.map((p) => (
-                <option key={p.id} value={p.id}>{p.title}</option>
+                <option key={p.id} value={p.id}>{pickI18n(p.title as unknown, 'en')}</option>
               ))}
             </select>
           </div>

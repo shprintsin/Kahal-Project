@@ -99,15 +99,15 @@ export default function MetadataDialog({ node }: MetadataDialogProps) {
                     <div className="space-y-2">
                         <Label>Name (Translated)</Label>
                         <TranslatableInput 
-                            value={node.type === "VOLUME" ? (data?.titleI18n || {}) : (data?.nameI18n || {})}
-                            onChange={(val) => updateField(node.type === "VOLUME" ? "titleI18n" : "nameI18n", val)}
+                            value={node.type === "VOLUME" ? (data?.title || {}) : (data?.name || {})}
+                            onChange={(val) => updateField(node.type === "VOLUME" ? "title" : "name", val)}
                         />
                     </div>
                     <div className="space-y-2">
                         <Label>Description (Translated)</Label>
                         <TranslatableInput 
-                            value={data?.descriptionI18n || {}}
-                            onChange={(val) => updateField("descriptionI18n", val)}
+                            value={data?.description || {}}
+                            onChange={(val) => updateField("description", val)}
                             variant="textarea"
                         />
                     </div>

@@ -22,3 +22,17 @@ export function resolveI18nField<T = string>(
   }
   return fallback;
 }
+
+/**
+ * Convenience wrapper that always returns a string.
+ * Treats `json` loosely (accepts Prisma JsonValue) and falls back to `fallback`.
+ */
+export function pickI18n(json: unknown, locale: Locale, fallback = ''): string {
+  if (!json || typeof json !== 'object') return fallback;
+  const obj = json as Record<string, unknown>;
+  for (const lang of FALLBACK_CHAIN[locale]) {
+    const v = obj[lang];
+    if (typeof v === 'string' && v !== '') return v;
+  }
+  return fallback;
+}

@@ -16,7 +16,7 @@ export const createPageFormConfig = (parentPages: any[]) => ({
         { value: "none", label: "No Parent" },
         ...parentPages.map((p) => ({
           value: p.id,
-          label: extractI18nName(p.titleI18n, p.title),
+          label: extractI18nName(p.title, p.title),
         })),
       ],
     },

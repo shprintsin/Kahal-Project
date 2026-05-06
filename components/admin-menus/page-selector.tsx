@@ -21,7 +21,7 @@ import { getPages } from "@/app/admin/actions/pages";
 
 interface Page {
   id: string;
-  title: string | Record<string, string>;
+  title: unknown;
   slug: string;
   status: string;
 }
@@ -58,11 +58,20 @@ export function PageSelector({ value, onChange, placeholder = "Select a page..."
     return pages.find(p => p.id === value);
   }, [pages, value]);
 
+  const titleOf = (t: unknown): string => {
+    if (typeof t === 'string') return t;
+    if (t && typeof t === 'object') {
+      const r = t as Record<string, string | undefined>;
+      return r.en || r.he || r.default || Object.values(r).find(Boolean) || "";
+    }
+    return "";
+  };
+
   const filteredPages = useMemo(() => {
     if (!search) return pages;
     const lowerSearch = search.toLowerCase();
     return pages.filter(page => {
-      const title = typeof page.title === 'string' ? page.title : page.title.default;
+      const title = titleOf(page.title);
       return (title?.toLowerCase() || "").includes(lowerSearch) ||
       page.slug.toLowerCase().includes(lowerSearch);
     });
@@ -81,7 +90,7 @@ export function PageSelector({ value, onChange, placeholder = "Select a page..."
             {selectedPage ? (
               <span className="flex items-center gap-2">
                 <span className="font-medium">
-                  {typeof selectedPage.title === 'string' ? selectedPage.title : (selectedPage.title.default || "Untitled")}
+                  {titleOf(selectedPage.title) || "Untitled"}
                 </span>
                 <span className="text-xs text-muted-foreground">/{selectedPage.slug}</span>
               </span>
@@ -125,7 +134,7 @@ export function PageSelector({ value, onChange, placeholder = "Select a page..."
                     />
                     <div className="flex flex-col flex-1 min-w-0">
                       <span className="font-medium truncate">
-                        {typeof page.title === 'string' ? page.title : (page.title.default || "Untitled")}
+                        {titleOf(page.title) || "Untitled"}
                       </span>
                       <span className="text-xs text-muted-foreground truncate">
                         /{page.slug}

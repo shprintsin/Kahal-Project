@@ -1,6 +1,8 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { pickI18n } from "@/lib/i18n/fallback";
+import type { Locale } from "@/i18n/routing";
 
 export type SearchContentType = 'page' | 'post' | 'layer' | 'dataset' | 'artifact' | 'series';
 
@@ -25,6 +27,18 @@ export interface SearchResponse {
   total: number;
 }
 
+const LOCALE: Locale = 'en';
+
+/** Build an OR clause matching `q` against the `he` and `en` JSON paths of each given field. */
+function buildI18nOr(fields: string[], q: string): { OR: Array<Record<string, unknown>> } {
+  const clauses: Array<Record<string, unknown>> = [];
+  for (const f of fields) {
+    clauses.push({ [f]: { path: ['he'], string_contains: q } });
+    clauses.push({ [f]: { path: ['en'], string_contains: q } });
+  }
+  return { OR: clauses };
+}
+
 async function countByType(query: string): Promise<Record<SearchContentType, number>> {
   const q = query.trim();
   if (!q || q.length < 2) {
@@ -33,42 +47,29 @@ async function countByType(query: string): Promise<Record<SearchContentType, num
 
   const [pages, posts, layers, datasets, artifacts, series] = await Promise.all([
     prisma.page.count({
-      where: { status: 'published', OR: [
-        { title: { contains: q, mode: 'insensitive' } },
-        { excerpt: { contains: q, mode: 'insensitive' } },
-        { metaDescription: { contains: q, mode: 'insensitive' } },
-      ]},
+      where: {
+        status: 'published',
+        OR: [
+          ...buildI18nOr(['title'], q).OR,
+          { excerpt: { contains: q, mode: 'insensitive' as const } },
+          { metaDescription: { contains: q, mode: 'insensitive' as const } },
+        ],
+      },
     }),
     prisma.post.count({
-      where: { status: 'published', OR: [
-        { title: { contains: q, mode: 'insensitive' } },
-        { excerpt: { contains: q, mode: 'insensitive' } },
-      ]},
+      where: { status: 'published', ...buildI18nOr(['title', 'excerpt'], q) },
     }),
     prisma.layer.count({
-      where: { status: 'published', OR: [
-        { name: { contains: q, mode: 'insensitive' } },
-        { description: { contains: q, mode: 'insensitive' } },
-      ]},
+      where: { status: 'published', ...buildI18nOr(['name', 'description'], q) },
     }),
     prisma.dataset.count({
-      where: { status: 'published', OR: [
-        { title: { contains: q, mode: 'insensitive' } },
-        { description: { contains: q, mode: 'insensitive' } },
-      ]},
+      where: { status: 'published', ...buildI18nOr(['title', 'description'], q) },
     }),
     prisma.artifact.count({
-      where: { OR: [
-        { title: { contains: q, mode: 'insensitive' } },
-        { description: { contains: q, mode: 'insensitive' } },
-        { excerpt: { contains: q, mode: 'insensitive' } },
-      ]},
+      where: buildI18nOr(['title', 'description', 'excerpt'], q),
     }),
     prisma.series.count({
-      where: { OR: [
-        { name: { contains: q, mode: 'insensitive' } },
-        { description: { contains: q, mode: 'insensitive' } },
-      ]},
+      where: buildI18nOr(['name', 'description'], q),
     }),
   ]);
 
@@ -107,16 +108,20 @@ export async function searchContent(query: string, filters?: SearchFilters): Pro
           status: 'published',
           ...regionWhere,
           OR: [
-            { title: { contains: q, mode: 'insensitive' } },
-            { excerpt: { contains: q, mode: 'insensitive' } },
-            { metaDescription: { contains: q, mode: 'insensitive' } },
+            ...buildI18nOr(['title'], q).OR,
+            { excerpt: { contains: q, mode: 'insensitive' as const } },
+            { metaDescription: { contains: q, mode: 'insensitive' as const } },
           ],
         },
-        select: { id: true, title: true, excerpt: true, slug: true, updatedAt: true, thumbnail: { select: { url: true } } },
+        include: { thumbnail: { select: { url: true } } },
         take: limit,
       }).then(rows => rows.forEach(p => results.push({
-        id: p.id, type: 'page', title: p.title, description: p.excerpt || '',
-        slug: `/${p.slug}`, thumbnail: p.thumbnail?.url, date: p.updatedAt,
+        id: p.id, type: 'page',
+        title: pickI18n(p.title, LOCALE),
+        description: p.excerpt ?? '',
+        slug: `/${p.slug}`,
+        thumbnail: p.thumbnail?.url ?? null,
+        date: p.updatedAt,
       })))
     );
   }
@@ -127,16 +132,17 @@ export async function searchContent(query: string, filters?: SearchFilters): Pro
         where: {
           status: 'published',
           ...regionWhere,
-          OR: [
-            { title: { contains: q, mode: 'insensitive' } },
-            { excerpt: { contains: q, mode: 'insensitive' } },
-          ],
+          ...buildI18nOr(['title', 'excerpt'], q),
         },
-        select: { id: true, title: true, excerpt: true, slug: true, updatedAt: true, thumbnail: { select: { url: true } } },
+        include: { thumbnail: { select: { url: true } } },
         take: limit,
       }).then(rows => rows.forEach(p => results.push({
-        id: p.id, type: 'post', title: p.title, description: p.excerpt || '',
-        slug: `/posts/${p.slug}`, thumbnail: p.thumbnail?.url, date: p.updatedAt,
+        id: p.id, type: 'post',
+        title: pickI18n(p.title, LOCALE),
+        description: pickI18n(p.excerpt, LOCALE),
+        slug: `/posts/${p.slug}`,
+        thumbnail: p.thumbnail?.url ?? null,
+        date: p.updatedAt,
       })))
     );
   }
@@ -147,16 +153,16 @@ export async function searchContent(query: string, filters?: SearchFilters): Pro
         where: {
           status: 'published',
           ...regionWhere,
-          OR: [
-            { name: { contains: q, mode: 'insensitive' } },
-            { description: { contains: q, mode: 'insensitive' } },
-          ],
+          ...buildI18nOr(['name', 'description'], q),
         },
-        select: { id: true, name: true, description: true, slug: true, updatedAt: true, thumbnail: true },
         take: limit,
       }).then(rows => rows.forEach(l => results.push({
-        id: l.id, type: 'layer', title: l.name, description: l.description || '',
-        slug: `/layers/${l.slug}`, thumbnail: l.thumbnail, date: l.updatedAt,
+        id: l.id, type: 'layer',
+        title: pickI18n(l.name, LOCALE),
+        description: pickI18n(l.description, LOCALE),
+        slug: `/layers/${l.slug}`,
+        thumbnail: l.thumbnail ?? null,
+        date: l.updatedAt,
       })))
     );
   }
@@ -167,16 +173,17 @@ export async function searchContent(query: string, filters?: SearchFilters): Pro
         where: {
           status: 'published',
           ...regionWhere,
-          OR: [
-            { title: { contains: q, mode: 'insensitive' } },
-            { description: { contains: q, mode: 'insensitive' } },
-          ],
+          ...buildI18nOr(['title', 'description'], q),
         },
-        select: { id: true, title: true, description: true, slug: true, updatedAt: true, thumbnail: { select: { url: true } } },
+        include: { thumbnail: { select: { url: true } } },
         take: limit,
       }).then(rows => rows.forEach(d => results.push({
-        id: d.id, type: 'dataset', title: d.title, description: d.description || '',
-        slug: `/data/${d.slug}`, thumbnail: d.thumbnail?.url, date: d.updatedAt,
+        id: d.id, type: 'dataset',
+        title: pickI18n(d.title, LOCALE),
+        description: pickI18n(d.description, LOCALE),
+        slug: `/data/${d.slug}`,
+        thumbnail: d.thumbnail?.url ?? null,
+        date: d.updatedAt,
       })))
     );
   }
@@ -186,17 +193,16 @@ export async function searchContent(query: string, filters?: SearchFilters): Pro
       prisma.artifact.findMany({
         where: {
           ...(regionFilter ? { regions: { some: { slug: regionFilter } } } : {}),
-          OR: [
-            { title: { contains: q, mode: 'insensitive' } },
-            { description: { contains: q, mode: 'insensitive' } },
-            { excerpt: { contains: q, mode: 'insensitive' } },
-          ],
+          ...buildI18nOr(['title', 'description', 'excerpt'], q),
         },
-        select: { id: true, title: true, excerpt: true, slug: true, createdAt: true, year: true },
         take: limit,
       }).then(rows => rows.forEach(a => results.push({
-        id: a.id, type: 'artifact', title: a.title, description: a.excerpt || '',
-        slug: `/documents/${a.slug}`, thumbnail: null, date: a.createdAt,
+        id: a.id, type: 'artifact',
+        title: pickI18n(a.title, LOCALE),
+        description: pickI18n(a.excerpt, LOCALE),
+        slug: `/documents/${a.slug}`,
+        thumbnail: null,
+        date: a.createdAt,
       })))
     );
   }
@@ -206,21 +212,20 @@ export async function searchContent(query: string, filters?: SearchFilters): Pro
       prisma.series.findMany({
         where: {
           ...(regionFilter ? { regions: { some: { slug: regionFilter } } } : {}),
-          OR: [
-            { name: { contains: q, mode: 'insensitive' } },
-            { description: { contains: q, mode: 'insensitive' } },
-          ],
+          ...buildI18nOr(['name', 'description'], q),
         },
-        select: {
-          id: true, name: true, description: true, slug: true, createdAt: true,
+        include: {
           thumbnail: { select: { url: true } },
           collection: { select: { id: true } },
         },
         take: limit,
       }).then(rows => rows.forEach(s => results.push({
-        id: s.id, type: 'series', title: s.name, description: s.description || '',
+        id: s.id, type: 'series',
+        title: pickI18n(s.name, LOCALE),
+        description: pickI18n(s.description, LOCALE),
         slug: `/archive/${s.collection?.id || ''}/${s.slug}`,
-        thumbnail: s.thumbnail?.url, date: s.createdAt,
+        thumbnail: s.thumbnail?.url ?? null,
+        date: s.createdAt,
       })))
     );
   }
@@ -232,8 +237,10 @@ export async function searchContent(query: string, filters?: SearchFilters): Pro
 
 /** Fetch all regions for filter dropdown */
 export async function getSearchRegions(): Promise<{ id: string; slug: string; name: string }[]> {
-  return prisma.region.findMany({
+  const regions = await prisma.region.findMany({
     select: { id: true, slug: true, name: true },
-    orderBy: { name: 'asc' },
   });
+  return regions
+    .map(r => ({ id: r.id, slug: r.slug, name: pickI18n(r.name, LOCALE) }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 }

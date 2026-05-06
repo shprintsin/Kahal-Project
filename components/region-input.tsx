@@ -19,6 +19,7 @@ import {
 import { Check, ChevronsUpDown, MapPin, Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Region } from "@prisma/client";
+import { pickI18n } from "@/app/lib/pick-i18n";
 
 interface RegionInputProps {
   regions: Region[];
@@ -35,10 +36,7 @@ export function RegionInput({ regions, selectedRegionIds, onRegionsChange, onCre
   const selectedRegions = regions.filter(region => selectedRegionIds.includes(region.id));
 
   const getRegionName = (region: Region) => {
-    if (typeof region.nameI18n === "object" && region.nameI18n !== null) {
-      return (region.nameI18n as Record<string, string>).en || (region.nameI18n as Record<string, string>).he || Object.values(region.nameI18n as Record<string, string>)[0] || region.name;
-    }
-    return region.name || region.slug;
+    return pickI18n(region.name, "en", "") || pickI18n(region.name, "he", "") || region.slug;
   };
 
   const availableRegions = React.useMemo(() => {
@@ -47,7 +45,6 @@ export function RegionInput({ regions, selectedRegionIds, onRegionsChange, onCre
     const query = searchQuery.toLowerCase();
     return unselected.filter(region =>
       region.slug.toLowerCase().includes(query) ||
-      region.name.toLowerCase().includes(query) ||
       getRegionName(region).toLowerCase().includes(query)
     );
   }, [regions, selectedRegionIds, searchQuery]);
@@ -56,7 +53,7 @@ export function RegionInput({ regions, selectedRegionIds, onRegionsChange, onCre
     searchQuery.trim() &&
     !regions.some(region =>
       region.slug.toLowerCase() === searchQuery.trim().toLowerCase() ||
-      region.name.toLowerCase() === searchQuery.trim().toLowerCase()
+      getRegionName(region).toLowerCase() === searchQuery.trim().toLowerCase()
     );
 
   const toggleRegion = (regionId: string) => {

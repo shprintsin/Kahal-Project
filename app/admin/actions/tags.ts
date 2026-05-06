@@ -27,16 +27,14 @@ export async function getTag(id: string) {
 
 interface TagInput {
   slug: string;
-  name?: string;
-  nameI18n?: Record<string, string>;
+  name?: Record<string, string>;
   name_i18n?: Record<string, string>;
 }
 
 export async function createTag(tagData: TagInput) {
   const data = {
     slug: tagData.slug,
-    name: tagData.name || tagData.slug,
-    nameI18n: tagData.name_i18n || tagData.nameI18n || {},
+    name: tagData.name_i18n || tagData.name || {},
   };
 
   const createdTag = await prisma.tag.create({
@@ -50,8 +48,7 @@ export async function createTag(tagData: TagInput) {
 export async function updateTag(id: string, tagData: TagInput) {
   const data = {
     slug: tagData.slug,
-    name: tagData.name,
-    nameI18n: tagData.name_i18n || tagData.nameI18n,
+    name: tagData.name_i18n || tagData.name,
   };
 
   const updatedTag = await prisma.tag.update({
@@ -131,7 +128,6 @@ export async function listTagsAPI(options: ListTagsOptions = {}) {
       id: tag.id,
       slug: tag.slug,
       name: tag.name,
-      nameI18n: tag.nameI18n,
       usageCount: {
         total:
           tag._count.posts +
@@ -228,7 +224,6 @@ export async function getTagBySlug(slug: string, options: GetTagOptions = {}) {
       id: tag.id,
       slug: tag.slug,
       name: tag.name,
-      nameI18n: tag.nameI18n,
       usageCount: {
         total:
           tag._count.posts +

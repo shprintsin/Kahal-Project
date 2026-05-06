@@ -2,11 +2,13 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "@/utils/safe-revalidate";
+import { pickI18n } from "@/lib/i18n/fallback";
 
 export async function getArtifactCategories() {
-  return await prisma.artifactCategory.findMany({
-    orderBy: { title: 'asc' },
-  });
+  const items = await prisma.artifactCategory.findMany();
+  return items.sort((a, b) =>
+    pickI18n(a.title, 'en').localeCompare(pickI18n(b.title, 'en'))
+  );
 }
 
 export async function getArtifactCategory(id: string) {
@@ -20,9 +22,8 @@ export async function getArtifactCategory(id: string) {
 export async function createArtifactCategory(data: any) {
   const created = await prisma.artifactCategory.create({
     data: {
-      title: data.title,
+      title: data.title || {},
       slug: data.slug,
-      titleI18n: data.titleI18n || {},
     },
   });
   revalidatePath("/admin/artifact-categories");
@@ -33,9 +34,8 @@ export async function updateArtifactCategory(id: string, data: any) {
   const updated = await prisma.artifactCategory.update({
     where: { id },
     data: {
-      title: data.title,
+      title: data.title || {},
       slug: data.slug,
-      titleI18n: data.titleI18n || {},
     },
   });
   revalidatePath("/admin/artifact-categories");

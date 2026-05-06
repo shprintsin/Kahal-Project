@@ -12,10 +12,10 @@ export const datasetSchema = DatasetOptionalDefaultsSchema
     id: true,
     createdAt: true,
     updatedAt: true,
-    titleI18n: true,
-    descriptionI18n: true,
-    codebookTextI18n: true,
-    sourcesI18n: true,
+    title: true,
+    description: true,
+    codebookText: true,
+    sources: true,
   })
   .extend({
     slug: slugField,

@@ -28,7 +28,7 @@ export default async function PeriodPage({ params }: PeriodPageProps) {
         <p className="text-muted-foreground">{period ? `Editing "${period.slug}"` : "Create a new period"}</p>
       </div>
 
-      <PeriodEditor period={period} />
+      <PeriodEditor period={period as any} />
     </div>
   );
 }

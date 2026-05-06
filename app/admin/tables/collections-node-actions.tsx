@@ -50,7 +50,7 @@ export default function NodeActions({ node }: { node: HierarchyNode }) {
       const slug = formData.get("slug") as string;
       try {
           await updateEntity(node.type, node.id, {
-            ...(name ? { nameI18n: { en: name }, titleI18n: { en: name } } : {}),
+            ...(name ? { name: { en: name }, title: { en: name } } : {}),
             slug,
           });
           toast.success("Updated successfully");

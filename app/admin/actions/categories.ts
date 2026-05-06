@@ -29,9 +29,8 @@ export async function getCategory(id: string) {
 
 export async function createCategory(categoryData: any) {
   const data: any = {
-    title: categoryData.title,
+    title: categoryData.title || categoryData.title_i18n || {},
     slug: categoryData.slug,
-    titleI18n: categoryData.titleI18n || categoryData.title_i18n || {},
   };
 
   const createdCategory = await prisma.category.create({
@@ -44,9 +43,8 @@ export async function createCategory(categoryData: any) {
 
 export async function updateCategory(id: string, categoryData: any) {
   const data: any = {
-    title: categoryData.title,
+    title: categoryData.title || categoryData.title_i18n || {},
     slug: categoryData.slug,
-    titleI18n: categoryData.titleI18n || categoryData.title_i18n || {},
   };
 
   const updatedCategory = await prisma.category.update({
@@ -126,7 +124,6 @@ export async function listCategoriesAPI(options: ListCategoriesOptions = {}) {
       id: category.id,
       slug: category.slug,
       title: category.title,
-      titleI18n: category.titleI18n,
       thumbnail: category.thumbnail
         ? {
             url: category.thumbnail.url,
@@ -214,7 +211,6 @@ export async function getCategoryBySlug(slug: string, options: GetCategoryOption
       id: category.id,
       slug: category.slug,
       title: category.title,
-      titleI18n: category.titleI18n,
       thumbnail: category.thumbnail
         ? {
             url: category.thumbnail.url,

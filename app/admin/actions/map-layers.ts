@@ -143,8 +143,8 @@ export async function createMapWithLayers(
     const data: any = {
       slug: mapData.slug,
       status: mapData.status || "draft",
-      titleI18n: mapData.title_i18n || mapData.titleI18n,
-      descriptionI18n: mapData.description_i18n || mapData.descriptionI18n,
+      title: mapData.title_i18n || mapData.title,
+      description: mapData.description_i18n || mapData.description,
       year: mapData.year,
       yearMin: mapData.yearMin,
       yearMax: mapData.yearMax,
@@ -248,7 +248,6 @@ export async function getDatasetWithLayers(id: string, lang?: string) {
             id: true,
             slug: true,
             title: true,
-            titleI18n: true,
           },
         },
         layers: {
@@ -270,7 +269,6 @@ export async function getDatasetWithLayers(id: string, lang?: string) {
             id: true,
             slug: true,
             name: true,
-            nameI18n: true,
           },
         },
         regions: {
@@ -278,7 +276,6 @@ export async function getDatasetWithLayers(id: string, lang?: string) {
             id: true,
             slug: true,
             name: true,
-            nameI18n: true,
           },
         },
       },
@@ -291,12 +288,12 @@ export async function getDatasetWithLayers(id: string, lang?: string) {
     // Transform with i18n
     return {
       ...map,
-      title: getLocalizedField(map.title, map.titleI18n, lang) || map.title,
-      description: getLocalizedField(map.description, map.descriptionI18n, lang) || map.description,
+      title: getLocalizedField(null, map.title, lang),
+      description: getLocalizedField(null, map.description, lang),
       category: map.category
         ? {
             ...map.category,
-            title: getLocalizedField(map.category.title, map.category.titleI18n, lang) || map.category.title,
+            title: getLocalizedField(null, map.category.title, lang),
           }
         : null,
       layers: map.layers.map((assoc: any) => ({
@@ -308,18 +305,17 @@ export async function getDatasetWithLayers(id: string, lang?: string) {
         interactionConfig: assoc.interactionConfig,
         layer: {
           ...assoc.layer,
-          name: getLocalizedField(assoc.layer.name, assoc.layer.nameI18n, lang) || assoc.layer.name,
-          description:
-            getLocalizedField(assoc.layer.description, assoc.layer.descriptionI18n, lang) || assoc.layer.description,
+          name: getLocalizedField(null, assoc.layer.name, lang),
+          description: getLocalizedField(null, assoc.layer.description, lang),
         },
       })),
       tags: map.tags.map((tag: any) => ({
         ...tag,
-        name: getLocalizedField(tag.name, tag.nameI18n, lang) || tag.name,
+        name: getLocalizedField(null, tag.name, lang),
       })),
       regions: map.regions.map((region: any) => ({
         ...region,
-        name: getLocalizedField(region.name, region.nameI18n, lang) || region.name,
+        name: getLocalizedField(null, region.name, lang),
       })),
     };
   } catch (error) {

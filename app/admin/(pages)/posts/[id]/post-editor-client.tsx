@@ -21,11 +21,11 @@ import { RegionInput } from "@/components/region-input";
 import { createPost, updatePost, uploadMedia } from "@/app/admin/actions/posts";
 import { createRegion } from "@/app/admin/actions/regions";
 import { generateSlugFromTitle } from "@/app/admin/utils/slug-generator";
+import { pickI18n } from "@/lib/i18n/fallback";
 import type { AppLanguage, Region } from "@prisma/client";
 
 const APP_LANGUAGES: { value: AppLanguage; label: string }[] = [
   { value: "HE", label: "Hebrew" },
-  { value: "PL", label: "Polish" },
   { value: "EN", label: "English" },
 ];
 
@@ -56,10 +56,10 @@ function EditorInner({ post, categories, tags, posts, regions, isNew }: PostEdit
 
   // Metadata
   const [status, setStatus] = React.useState<ContentStatus>(post?.status || "draft");
-  const [categoryOptions] = React.useState(categories.map((c) => ({ value: c.id, label: c.title })));
+  const [categoryOptions] = React.useState(categories.map((c) => ({ value: c.id, label: pickI18n(c.title as unknown, 'en') })));
   const [category, setCategory] = React.useState(post?.categories?.[0]?.id || "");
-  const [allTags] = React.useState(tags.map((t) => t.name));
-  const [postTags, setPostTags] = React.useState(post?.tags?.map((t) => t.tag?.name || t.tag?.slug || "") || []);
+  const [allTags] = React.useState<string[]>(tags.map((t) => pickI18n(t.name as unknown, 'en')));
+  const [postTags, setPostTags] = React.useState<string[]>(post?.tags?.map((t: any) => pickI18n(t.tag?.name, 'en') || t.tag?.slug || "") || []);
   const [author] = React.useState(post?.author?.name || "");
   const [createdAt] = React.useState(post ? new Date(post.createdAt).toLocaleDateString() : "");
   const [updatedAt] = React.useState(post ? new Date(post.updatedAt).toLocaleDateString() : "");
@@ -243,7 +243,7 @@ function EditorInner({ post, categories, tags, posts, regions, isNew }: PostEdit
   );
 
   const handleCreateRegion = async (slug: string) => {
-    const region = await createRegion({ slug, name: slug, nameI18n: {} });
+    const region = await createRegion({ slug, name: { he: slug } });
     return region;
   };
 

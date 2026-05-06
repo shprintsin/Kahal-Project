@@ -7,8 +7,7 @@ import { DEFAULT_LANGUAGES, buildI18nColumns, flattenI18n, unflattenI18n } from 
 interface ArtifactCategory {
     id: string;
     slug: string;
-    title: string;
-    titleI18n: any;
+    title: any;
     createdAt?: Date | string | null;
 }
 
@@ -27,7 +26,7 @@ export function ArtifactCategoriesTable({ categories }: ArtifactCategoriesTableP
         const payload = {
             slug: data.slug,
             title: data.title,
-            ...unflattenI18n(data, "titleI18n", DEFAULT_LANGUAGES),
+            ...unflattenI18n(data, "title", DEFAULT_LANGUAGES),
         };
         
         const updated = await updateArtifactCategory(id, payload);
@@ -35,16 +34,15 @@ export function ArtifactCategoriesTable({ categories }: ArtifactCategoriesTableP
             id: updated.id,
             slug: updated.slug,
             title: updated.title,
-            titleI18n: updated.titleI18n,
             createdAt: updated.createdAt,
-        }, "titleI18n", DEFAULT_LANGUAGES);
+        }, "title", DEFAULT_LANGUAGES);
     };
 
     const handleCreate = async (data: Record<string, any>) => {
         const payload = {
             slug: data.slug,
             title: data.title,
-            ...unflattenI18n(data, "titleI18n", DEFAULT_LANGUAGES),
+            ...unflattenI18n(data, "title", DEFAULT_LANGUAGES),
         };
         
         const created = await createArtifactCategory(payload);
@@ -52,9 +50,8 @@ export function ArtifactCategoriesTable({ categories }: ArtifactCategoriesTableP
             id: created.id,
             slug: created.slug,
             title: created.title,
-            titleI18n: created.titleI18n,
             createdAt: created.createdAt,
-        }, "titleI18n", DEFAULT_LANGUAGES);
+        }, "title", DEFAULT_LANGUAGES);
     };
 
     const handleDelete = async (id: string) => {
@@ -62,7 +59,7 @@ export function ArtifactCategoriesTable({ categories }: ArtifactCategoriesTableP
     };
 
     // Transform categories to include flat fields for editing
-    const transformedCategories = categories.map((cat) => flattenI18n(cat, "titleI18n", DEFAULT_LANGUAGES));
+    const transformedCategories = categories.map((cat) => flattenI18n(cat, "title", DEFAULT_LANGUAGES));
 
     return (
         <div className="border border-border rounded-xl overflow-hidden bg-card">

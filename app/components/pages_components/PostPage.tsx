@@ -10,15 +10,20 @@ import { getTranslations } from 'next-intl/server'
 import { defaultLocale } from '@/lib/i18n/config'
 import { extractTOC } from '@/lib/toc'
 
-interface PostData extends Omit<PrismaPost, 'content' | 'createdAt' | 'updatedAt' | 'sources'> {
+interface PostData extends Omit<PrismaPost, 'title' | 'content' | 'excerpt' | 'createdAt' | 'updatedAt' | 'sources' | 'thumbnailId' | 'authorId' | 'translationGroupId'> {
+  title: string
   content: string
   subtitle?: string
+  excerpt?: string
   author?: string
   category?: string
   date?: string
   imageUrl?: string
   tags: string[]
   sources?: string | null
+  thumbnailId?: string | null
+  authorId?: string | null
+  translationGroupId?: string | null
 }
 
 export default async function PostPage({ post, locale }: { post: PostData; locale?: string }) {

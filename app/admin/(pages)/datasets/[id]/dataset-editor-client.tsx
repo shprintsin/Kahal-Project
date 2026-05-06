@@ -97,13 +97,13 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
   React.useEffect(() => {
     if (!dataset) return;
 
-    const titleI18n = (dataset.titleI18n as Record<string, string>) || {};
-    const descI18n = (dataset.descriptionI18n as Record<string, string>) || {};
-    const codebookI18n = (dataset.codebookTextI18n as Record<string, string>) || {};
-    const srcI18n = (dataset.sourcesI18n as Record<string, string>) || {};
+    const title = (dataset.title as Record<string, string>) || {};
+    const descI18n = (dataset.description as Record<string, string>) || {};
+    const codebookI18n = (dataset.codebookText as Record<string, string>) || {};
+    const srcI18n = (dataset.sources as Record<string, string>) || {};
 
     const heData: Record<string, unknown> = {
-      title: dataset.title || titleI18n.he || "",
+      title: dataset.title || title.he || "",
       slug: dataset.slug || "",
       content: dataset.description || descI18n.he || "",
       codebookText: dataset.codebookText || codebookI18n.he || "",
@@ -113,7 +113,7 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
 
     for (const lang of ["en"] as ContentLanguage[]) {
       const langData: Record<string, unknown> = {};
-      if (titleI18n[lang]) langData.title = titleI18n[lang];
+      if (title[lang]) langData.title = title[lang];
       if (descI18n[lang]) langData.content = descI18n[lang];
       if (codebookI18n[lang]) langData.codebookText = codebookI18n[lang];
       if (srcI18n[lang]) langData.sources = srcI18n[lang];
@@ -157,15 +157,15 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
   };
 
   const buildSaveData = (overrideStatus?: ContentStatus) => {
-    const titleI18n = buildI18nObject(translations, "title");
-    const descriptionI18n = buildI18nObject(translations, "content");
-    const codebookTextI18n = buildI18nObject(translations, "codebookText");
-    const sourcesI18n = buildI18nObject(translations, "sources");
+    const title = buildI18nObject(translations, "title");
+    const description = buildI18nObject(translations, "content");
+    const codebookText = buildI18nObject(translations, "codebookText");
+    const sources = buildI18nObject(translations, "sources");
 
     return {
-      title: titleI18n,
+      title: title,
       slug,
-      description: descriptionI18n,
+      description: description,
       status: overrideStatus || status,
       tagNames: datasetTags,
       categoryId: categoryId || null,
@@ -175,8 +175,8 @@ function EditorInner({ dataset, tags, datasets, categories, regions, isNew }: Da
       maxYear: maxYear ? parseInt(maxYear, 10) : null,
       license: license || null,
       citationText: citationText || null,
-      codebookText: codebookTextI18n,
-      sources: sourcesI18n,
+      codebookText: codebookText,
+      sources: sources,
       isVisible,
       regions: regionIds,
       thumbnailId: thumbnailId || null,

@@ -24,16 +24,14 @@ export async function getRegion(id: string) {
 
 interface RegionInput {
   slug: string;
-  name?: string;
-  nameI18n?: Record<string, string>;
+  name?: Record<string, string>;
   name_i18n?: Record<string, string>;
 }
 
 export async function createRegion(regionData: RegionInput) {
   const data = {
     slug: regionData.slug,
-    name: regionData.name || regionData.slug,
-    nameI18n: regionData.nameI18n || regionData.name_i18n || {},
+    name: regionData.name || regionData.name_i18n || {},
   };
 
   const createdRegion = await prisma.region.create({
@@ -47,8 +45,7 @@ export async function createRegion(regionData: RegionInput) {
 export async function updateRegion(id: string, regionData: RegionInput) {
   const data = {
     slug: regionData.slug,
-    name: regionData.name,
-    nameI18n: regionData.nameI18n || regionData.name_i18n,
+    name: regionData.name || regionData.name_i18n,
   };
 
   const updatedRegion = await prisma.region.update({

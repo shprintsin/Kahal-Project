@@ -53,39 +53,26 @@ export async function getDataset(id: string) {
 
 import { datasetSchema, datasetUpdateSchema } from "../schema/dataset";
 
-const splitI18nField = (fieldData: string | Record<string, string> | null | undefined) => {
-  if (!fieldData || typeof fieldData !== 'object') {
-     return { main: (fieldData as string) || "", i18n: {} };
-  }
-  const { he, ...rest } = fieldData;
-  return { main: he || "", i18n: rest };
+const toI18nJson = (fieldData: unknown): Prisma.InputJsonValue => {
+  if (fieldData == null) return {};
+  if (typeof fieldData === 'string') return { he: fieldData };
+  if (typeof fieldData === 'object') return fieldData as Prisma.InputJsonValue;
+  return {};
 };
 
 export async function createDataset(datasetData: Record<string, unknown>) {
   const validated = datasetSchema.parse(datasetData);
   
-  const titleSplit = splitI18nField(validated.title);
-  const descriptionSplit = splitI18nField(validated.description);
-  const summarySplit = splitI18nField(validated.summary);
-  const sourcesSplit = splitI18nField(validated.sources);
-  const codebookTextSplit = splitI18nField(validated.codebookText);
-
   const data: Prisma.DatasetCreateInput = {
     slug: validated.slug,
 
-    title: titleSplit.main,
-    titleI18n: titleSplit.i18n,
+    title: toI18nJson(validated.title),
+    description: toI18nJson(validated.description),
+    summary: toI18nJson(validated.summary),
+    sources: toI18nJson(validated.sources),
+    codebookText: toI18nJson(validated.codebookText),
 
-    description: descriptionSplit.main,
-    descriptionI18n: descriptionSplit.i18n,
-    summary: summarySplit.main,
-    summaryI18n: summarySplit.i18n,
-    sources: sourcesSplit.main,
-    sourcesI18n: sourcesSplit.i18n,
-    codebookText: codebookTextSplit.main,
-    codebookTextI18n: codebookTextSplit.i18n,
-    
-    citationText: validated.citationText,
+    citationText: toI18nJson(validated.citationText),
     isVisible: validated.isVisible,
     license: validated.license,
     maturity: validated.maturity,
@@ -115,7 +102,7 @@ export async function updateDataset(id: string, datasetData: Record<string, unkn
   const data: Prisma.DatasetUpdateInput = {};
 
   if (validated.slug !== undefined) data.slug = validated.slug;
-  if (validated.citationText !== undefined) data.citationText = validated.citationText;
+  if (validated.citationText !== undefined) data.citationText = toI18nJson(validated.citationText);
   if (validated.isVisible !== undefined) data.isVisible = validated.isVisible;
   if (validated.license !== undefined) data.license = validated.license;
   if (validated.maturity !== undefined) data.maturity = validated.maturity as DataMaturity;
@@ -124,31 +111,11 @@ export async function updateDataset(id: string, datasetData: Record<string, unkn
   if (validated.yearMin !== undefined) data.yearMin = validated.yearMin;
   if (validated.yearMax !== undefined) data.yearMax = validated.yearMax;
 
-  if (validated.title !== undefined) {
-    const titleSplit = splitI18nField(validated.title);
-    data.title = titleSplit.main;
-    data.titleI18n = titleSplit.i18n;
-  }
-  if (validated.description !== undefined) {
-    const descriptionSplit = splitI18nField(validated.description);
-    data.description = descriptionSplit.main;
-    data.descriptionI18n = descriptionSplit.i18n;
-  }
-  if (validated.summary !== undefined) {
-    const summarySplit = splitI18nField(validated.summary);
-    data.summary = summarySplit.main;
-    data.summaryI18n = summarySplit.i18n;
-  }
-  if (validated.sources !== undefined) {
-    const sourcesSplit = splitI18nField(validated.sources);
-    data.sources = sourcesSplit.main;
-    data.sourcesI18n = sourcesSplit.i18n;
-  }
-  if (validated.codebookText !== undefined) {
-    const codebookTextSplit = splitI18nField(validated.codebookText);
-    data.codebookText = codebookTextSplit.main;
-    data.codebookTextI18n = codebookTextSplit.i18n;
-  }
+  if (validated.title !== undefined) data.title = toI18nJson(validated.title);
+  if (validated.description !== undefined) data.description = toI18nJson(validated.description);
+  if (validated.summary !== undefined) data.summary = toI18nJson(validated.summary);
+  if (validated.sources !== undefined) data.sources = toI18nJson(validated.sources);
+  if (validated.codebookText !== undefined) data.codebookText = toI18nJson(validated.codebookText);
 
   if (validated.categoryId !== undefined) {
     data.category = validated.categoryId ? { connect: { id: validated.categoryId } } : { disconnect: true };
@@ -369,19 +336,18 @@ export interface GetMetadataOptions {
 
 // Helper function to get localized field
 function getLocalizedField(
-  defaultValue: string | null | undefined,
+  _legacy: unknown,
   i18nJson: unknown,
   lang?: string
 ): string | null {
-  if (!defaultValue && !i18nJson) return null;
-  if (!lang || !i18nJson) return defaultValue || null;
-  
-  try {
-    const i18nData = (typeof i18nJson === 'string' ? JSON.parse(i18nJson) : i18nJson) as Record<string, string>;
-    return i18nData[lang] || defaultValue || null;
-  } catch {
-    return defaultValue || null;
+  if (!i18nJson || typeof i18nJson !== "object") return null;
+  const obj = i18nJson as Record<string, unknown>;
+  const order = lang === "he" ? ["he", "en"] : lang === "en" ? ["en", "he"] : [lang, "en", "he"].filter(Boolean) as string[];
+  for (const k of order) {
+    const v = obj[k];
+    if (typeof v === "string" && v) return v;
   }
+  return null;
 }
 
 // List datasets with filtering and pagination (for API)
@@ -412,8 +378,10 @@ export async function listDatasetsAPI(options: ListDatasetsOptions = {}) {
     ...(yearMax && { yearMax: { lte: yearMax } }),
     ...(search && {
       OR: [
-        { title: { contains: search, mode: "insensitive" } },
-        { description: { contains: search, mode: "insensitive" } },
+        { title: { path: ["he"], string_contains: search } },
+        { title: { path: ["en"], string_contains: search } },
+        { description: { path: ["he"], string_contains: search } },
+        { description: { path: ["en"], string_contains: search } },
       ],
     }),
   };
@@ -461,7 +429,6 @@ export async function listDatasetsAPI(options: ListDatasetsOptions = {}) {
               id: true,
               slug: true,
               title: true,
-              titleI18n: true,
             },
           },
           thumbnail: {
@@ -486,9 +453,9 @@ export async function listDatasetsAPI(options: ListDatasetsOptions = {}) {
     const transformedDatasets = datasets.map((dataset) => ({
       id: dataset.id,
       slug: dataset.slug,
-      title: getLocalizedField(dataset.title, dataset.titleI18n, lang) || dataset.title,
-      description: getLocalizedField(dataset.description, dataset.descriptionI18n, lang) || dataset.description,
-      summary: getLocalizedField(dataset.summary, dataset.summaryI18n, lang) || dataset.summary,
+      title: getLocalizedField(null, dataset.title, lang) ?? "",
+      description: getLocalizedField(null, dataset.description, lang) ?? "",
+      summary: getLocalizedField(null, dataset.summary, lang) ?? "",
       status: dataset.status,
       maturity: dataset.maturity,
       version: dataset.version,
@@ -498,7 +465,7 @@ export async function listDatasetsAPI(options: ListDatasetsOptions = {}) {
         ? {
             id: dataset.category.id,
             slug: dataset.category.slug,
-            title: getLocalizedField(dataset.category.title, dataset.category.titleI18n, lang) || dataset.category.title,
+            title: getLocalizedField(null, dataset.category.title, lang) ?? "",
           }
         : null,
       thumbnail: dataset.thumbnail
@@ -545,7 +512,6 @@ export async function getDatasetBySlug(
             id: true,
             slug: true,
             title: true,
-            titleI18n: true,
           },
         },
         regions: {
@@ -553,7 +519,6 @@ export async function getDatasetBySlug(
             id: true,
             slug: true,
             name: true,
-            nameI18n: true,
           },
         },
         thumbnail: {
@@ -603,9 +568,9 @@ export async function getDatasetBySlug(
     return {
       id: dataset.id,
       slug: dataset.slug,
-      title: getLocalizedField(dataset.title, dataset.titleI18n, lang) || dataset.title,
-      description: getLocalizedField(dataset.description, dataset.descriptionI18n, lang) || dataset.description,
-      summary: getLocalizedField(dataset.summary, dataset.summaryI18n, lang) || dataset.summary,
+      title: getLocalizedField(null, dataset.title, lang) ?? "",
+      description: getLocalizedField(null, dataset.description, lang) ?? "",
+      summary: getLocalizedField(null, dataset.summary, lang) ?? "",
       status: dataset.status,
       maturity: dataset.maturity,
       version: dataset.version,
@@ -613,20 +578,20 @@ export async function getDatasetBySlug(
       yearMax: dataset.yearMax,
       license: dataset.license,
       citationText: dataset.citationText,
-      codebookText: getLocalizedField(dataset.codebookText, dataset.codebookTextI18n, lang) || dataset.codebookText,
-      sources: getLocalizedField(dataset.sources, dataset.sourcesI18n, lang) || dataset.sources,
+      codebookText: getLocalizedField(null, dataset.codebookText, lang) ?? "",
+      sources: getLocalizedField(null, dataset.sources, lang) ?? "",
       isVisible: dataset.isVisible,
       category: dataset.category
         ? {
             id: dataset.category.id,
             slug: dataset.category.slug,
-            title: getLocalizedField(dataset.category.title, dataset.category.titleI18n, lang) || dataset.category.title,
+            title: getLocalizedField(null, dataset.category.title, lang) ?? "",
           }
         : null,
       regions: dataset.regions.map((region) => ({
         id: region.id,
         slug: region.slug,
-        name: getLocalizedField(region.name, region.nameI18n, lang) || region.name,
+        name: getLocalizedField(null, region.name, lang) ?? "",
       })),
       thumbnail: dataset.thumbnail
         ? {
@@ -654,8 +619,8 @@ export async function getDatasetBySlug(
           id: assoc.layer.id,
           slug: assoc.layer.slug,
           layerId: assoc.layerId,
-          name: getLocalizedField(assoc.layer.name, assoc.layer.nameI18n, lang) || assoc.layer.name,
-          description: getLocalizedField(assoc.layer.description, assoc.layer.descriptionI18n, lang) || assoc.layer.description,
+          name: getLocalizedField(null, assoc.layer.name, lang) ?? "",
+          description: getLocalizedField(null, assoc.layer.description, lang) ?? "",
           type: assoc.layer.type,
           sourceType: assoc.layer.sourceType,
           isVisible: assoc.isVisible,
@@ -739,15 +704,12 @@ export async function getDatasetMetadataBySlug(
         id: true,
         slug: true,
         title: true,
-        titleI18n: true,
         version: true,
         maturity: true,
         license: true,
         citationText: true,
         codebookText: true,
-        codebookTextI18n: true,
         sources: true,
-        sourcesI18n: true,
         yearMin: true,
         yearMax: true,
         createdAt: true,
@@ -757,7 +719,6 @@ export async function getDatasetMetadataBySlug(
             id: true,
             slug: true,
             title: true,
-            titleI18n: true,
           },
         },
         regions: {
@@ -765,7 +726,6 @@ export async function getDatasetMetadataBySlug(
             id: true,
             slug: true,
             name: true,
-            nameI18n: true,
           },
         },
       },
@@ -778,26 +738,26 @@ export async function getDatasetMetadataBySlug(
     return {
       datasetId: dataset.id,
       slug: dataset.slug,
-      title: getLocalizedField(dataset.title, dataset.titleI18n, lang) || dataset.title,
+      title: getLocalizedField(null, dataset.title, lang) ?? "",
       version: dataset.version,
       maturity: dataset.maturity,
       license: dataset.license,
       citationText: dataset.citationText,
-      codebookText: getLocalizedField(dataset.codebookText, dataset.codebookTextI18n, lang) || dataset.codebookText,
-      sources: getLocalizedField(dataset.sources, dataset.sourcesI18n, lang) || dataset.sources,
+      codebookText: getLocalizedField(null, dataset.codebookText, lang) ?? "",
+      sources: getLocalizedField(null, dataset.sources, lang) ?? "",
       yearMin: dataset.yearMin,
       yearMax: dataset.yearMax,
       category: dataset.category
         ? {
             id: dataset.category.id,
             slug: dataset.category.slug,
-            title: getLocalizedField(dataset.category.title, dataset.category.titleI18n, lang) || dataset.category.title,
+            title: getLocalizedField(null, dataset.category.title, lang) ?? "",
           }
         : null,
       regions: dataset.regions.map((region) => ({
         id: region.id,
         slug: region.slug,
-        name: getLocalizedField(region.name, region.nameI18n, lang) || region.name,
+        name: getLocalizedField(null, region.name, lang) ?? "",
       })),
       createdAt: toISOStringSafe(dataset.createdAt),
       updatedAt: toISOStringSafe(dataset.updatedAt),

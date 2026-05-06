@@ -483,6 +483,7 @@ function LabelsSection({ layer }: { layer: StudioLayer }) {
     field: "",
     className: "studio-label",
     position: "center",
+    collision: "none",
   };
 
   const updateLabels = (updates: Partial<LabelConfig>) => {

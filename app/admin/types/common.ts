@@ -23,7 +23,7 @@ export interface EntityEditorConfig {
   entityName: string;           // Display name (e.g., "Post", "Category")
   redirectPath?: string;        // Where to redirect after create/delete
   generateSlug?: boolean;       // Auto-generate slug from title
-  slugSource?: string;          // Field path to generate slug from (e.g., "title" or "nameI18n.en")
+  slugSource?: string;          // Field path to generate slug from (e.g., "title" or "name.en")
   onSuccess?: {
     create?: string;            // Custom success message for create
     update?: string;            // Custom success message for update

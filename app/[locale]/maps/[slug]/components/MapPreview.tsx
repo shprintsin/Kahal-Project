@@ -345,15 +345,15 @@ export function MapPreview({ map, locale }: MapPreviewProps) {
           setAutoBounds(null);
         }
 
-        const fullConfig: MapConfig & { basemap?: string } = {
+        const fullConfig = {
           tile: tileConfig,
           zoom: (mapConfigObj?.zoom as number) || 6,
           center: (mapConfigObj?.center as [number, number]) || [52.0, 20.0],
           layers: layerConfigs,
           customCSS: mapConfigObj?.customCSS as string | undefined,
           behaviors,
-          basemap: basemapKey,
-        };
+          basemap: (basemapKey || 'carto-light') as MapConfig['basemap'],
+        } as MapConfig;
 
         const compiled = compileMapConfig(fullConfig, dataMap);
 
@@ -665,7 +665,7 @@ export function MapPreview({ map, locale }: MapPreviewProps) {
         .filter((l) => l.isVisibleByDefault !== false)
         .map((l) => {
           const cfg = buildLayerConfig(l);
-          return { name: cfg.name, slug: cfg.id, style: cfg.style, type: cfg.type };
+          return { name: cfg.name, slug: cfg.id ?? cfg.name, style: cfg.style, type: cfg.type };
         }),
     [map.layers],
   );

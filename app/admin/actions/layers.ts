@@ -141,23 +141,17 @@ export async function createLayer(data: LayerFormData) {
     const layer = await prisma.layer.create({
       data: {
         slug,
-        name: data.name,
-        nameI18n: data.name_i18n || {},
-        description: data.description,
-        descriptionI18n: data.description_i18n || {},
-        summary: data.summary,
-        summaryI18n: data.summary_i18n || {},
+        name: data.name_i18n || {},
+        description: data.description_i18n || {},
+        summary: data.summary_i18n || {},
         status: data.status,
         version: data.version || "1.0.0",
         categoryId: data.categoryId,
         datasetId: data.datasetId,
         type: data.type,
-        citationText: data.citationText,
-        citationTextI18n: data.citation_text_i18n || {},
-        codebookText: data.codebookText,
-        codebookTextI18n: data.codebook_text_i18n || {},
-        sources: data.sources,
-        sourcesI18n: data.sources_i18n || {},
+        citationText: data.citation_text_i18n || {},
+        codebookText: data.codebook_text_i18n || {},
+        sources: data.sources_i18n || {},
         license: data.license,
         maturity: data.maturity || "Provisional",
         minYear: data.minYear,
@@ -219,22 +213,22 @@ export async function updateLayer(id: string, data: Partial<LayerFormData>) {
     const updateData: Prisma.LayerUncheckedUpdateInput = {
         ...(data.slug && { slug: data.slug }),
         ...(data.name && { name: data.name }),
-        ...(data.name_i18n && { nameI18n: data.name_i18n }),
+        ...(data.name_i18n && { name: data.name_i18n }),
         ...(data.description !== undefined && { description: data.description }),
-        ...(data.description_i18n && { descriptionI18n: data.description_i18n }),
+        ...(data.description_i18n && { description: data.description_i18n }),
         ...(data.summary !== undefined && { summary: data.summary }),
-        ...(data.summary_i18n && { summaryI18n: data.summary_i18n }),
+        ...(data.summary_i18n && { summary: data.summary_i18n }),
         ...(data.status && { status: data.status }),
         ...(data.version && { version: data.version }),
         ...(data.categoryId !== undefined && { categoryId: data.categoryId }),
         ...(data.datasetId !== undefined && { datasetId: data.datasetId }),
         ...(data.type && { type: data.type }),
         ...(data.citationText !== undefined && { citationText: data.citationText }),
-        ...(data.citation_text_i18n && { citationTextI18n: data.citation_text_i18n }),
+        ...(data.citation_text_i18n && { citationText: data.citation_text_i18n }),
         ...(data.codebookText !== undefined && { codebookText: data.codebookText }),
-        ...(data.codebook_text_i18n && { codebookTextI18n: data.codebook_text_i18n }),
+        ...(data.codebook_text_i18n && { codebookText: data.codebook_text_i18n }),
         ...(data.sources !== undefined && { sources: data.sources }),
-        ...(data.sources_i18n && { sourcesI18n: data.sources_i18n }),
+        ...(data.sources_i18n && { sources: data.sources_i18n }),
         ...(data.license !== undefined && { license: data.license }),
         ...(data.maturity && { maturity: data.maturity }),
         ...(data.minYear !== undefined && { minYear: data.minYear }),
@@ -323,7 +317,6 @@ export async function getLayer(id: string, options: GetLayerOptions = {}) {
             id: true,
             slug: true,
             title: true,
-            titleI18n: true,
           },
         },
         tags: {
@@ -331,7 +324,6 @@ export async function getLayer(id: string, options: GetLayerOptions = {}) {
             id: true,
             slug: true,
             name: true,
-            nameI18n: true,
           },
         },
         regions: {
@@ -339,7 +331,6 @@ export async function getLayer(id: string, options: GetLayerOptions = {}) {
             id: true,
             slug: true,
             name: true,
-            nameI18n: true,
           },
         },
         ...(shouldIncludeDatasets && {
@@ -350,7 +341,6 @@ export async function getLayer(id: string, options: GetLayerOptions = {}) {
                   id: true,
                   slug: true,
                   title: true,
-                  titleI18n: true,
                 },
               },
             },
@@ -366,31 +356,31 @@ export async function getLayer(id: string, options: GetLayerOptions = {}) {
     // Transform with i18n
     return {
       ...layer,
-      name: getLocalizedField(layer.name, layer.nameI18n, lang) || layer.name,
-      description: getLocalizedField(layer.description, layer.descriptionI18n, lang) || layer.description,
-      summary: getLocalizedField(layer.summary, layer.summaryI18n, lang) || layer.summary,
-      citationText: getLocalizedField(layer.citationText, layer.citationTextI18n, lang) || layer.citationText,
-      codebookText: getLocalizedField(layer.codebookText, layer.codebookTextI18n, lang) || layer.codebookText,
-      sources: getLocalizedField(layer.sources, layer.sourcesI18n, lang) || layer.sources,
+      name: getLocalizedField(null, layer.name, lang),
+      description: getLocalizedField(null, layer.description, lang),
+      summary: getLocalizedField(null, layer.summary, lang),
+      citationText: getLocalizedField(null, layer.citationText, lang),
+      codebookText: getLocalizedField(null, layer.codebookText, lang),
+      sources: getLocalizedField(null, layer.sources, lang),
       category: layer.category
         ? {
             ...layer.category,
-            title: getLocalizedField(layer.category.title, layer.category.titleI18n, lang) || layer.category.title,
+            title: getLocalizedField(null, layer.category.title, lang),
           }
         : null,
       tags: layer.tags.map((tag) => ({
         ...tag,
-        name: getLocalizedField(tag.name, tag.nameI18n, lang) || tag.name,
+        name: getLocalizedField(null, tag.name, lang),
       })),
       regions: layer.regions.map((region) => ({
         ...region,
-        name: getLocalizedField(region.name, region.nameI18n, lang) || region.name,
+        name: getLocalizedField(null, region.name, lang),
       })),
       ...(shouldIncludeDatasets && {
-        datasets: (layer as unknown as { datasets: Array<{ dataset: { id: string; slug: string; title: string; titleI18n: unknown } }> }).datasets.map((assoc) => ({
+        datasets: (layer as unknown as { datasets: Array<{ dataset: { id: string; slug: string; title: unknown } }> }).datasets.map((assoc) => ({
           id: assoc.dataset.id,
           slug: assoc.dataset.slug,
-          title: getLocalizedField(assoc.dataset.title, assoc.dataset.titleI18n, lang) || assoc.dataset.title,
+          title: getLocalizedField(null, assoc.dataset.title, lang),
         })),
       }),
     };
@@ -416,7 +406,6 @@ export async function getLayerBySlug(slug: string, options: GetLayerOptions = {}
             id: true,
             slug: true,
             title: true,
-            titleI18n: true,
           },
         },
         tags: {
@@ -424,7 +413,6 @@ export async function getLayerBySlug(slug: string, options: GetLayerOptions = {}
             id: true,
             slug: true,
             name: true,
-            nameI18n: true,
           },
         },
         regions: {
@@ -432,7 +420,6 @@ export async function getLayerBySlug(slug: string, options: GetLayerOptions = {}
             id: true,
             slug: true,
             name: true,
-            nameI18n: true,
           },
         },
         ...(shouldIncludeDatasets && {
@@ -443,7 +430,6 @@ export async function getLayerBySlug(slug: string, options: GetLayerOptions = {}
                   id: true,
                   slug: true,
                   title: true,
-                  titleI18n: true,
                 },
               },
             },
@@ -459,31 +445,31 @@ export async function getLayerBySlug(slug: string, options: GetLayerOptions = {}
     // Transform with i18n (same as getLayer)
     return {
       ...layer,
-      name: getLocalizedField(layer.name, layer.nameI18n, lang) || layer.name,
-      description: getLocalizedField(layer.description, layer.descriptionI18n, lang) || layer.description,
-      summary: getLocalizedField(layer.summary, layer.summaryI18n, lang) || layer.summary,
-      citationText: getLocalizedField(layer.citationText, layer.citationTextI18n, lang) || layer.citationText,
-      codebookText: getLocalizedField(layer.codebookText, layer.codebookTextI18n, lang) || layer.codebookText,
-      sources: getLocalizedField(layer.sources, layer.sourcesI18n, lang) || layer.sources,
+      name: getLocalizedField(null, layer.name, lang),
+      description: getLocalizedField(null, layer.description, lang),
+      summary: getLocalizedField(null, layer.summary, lang),
+      citationText: getLocalizedField(null, layer.citationText, lang),
+      codebookText: getLocalizedField(null, layer.codebookText, lang),
+      sources: getLocalizedField(null, layer.sources, lang),
       category: layer.category
         ? {
             ...layer.category,
-            title: getLocalizedField(layer.category.title, layer.category.titleI18n, lang) || layer.category.title,
+            title: getLocalizedField(null, layer.category.title, lang),
           }
         : null,
       tags: layer.tags.map((tag) => ({
         ...tag,
-        name: getLocalizedField(tag.name, tag.nameI18n, lang) || tag.name,
+        name: getLocalizedField(null, tag.name, lang),
       })),
       regions: layer.regions.map((region) => ({
         ...region,
-        name: getLocalizedField(region.name, region.nameI18n, lang) || region.name,
+        name: getLocalizedField(null, region.name, lang),
       })),
       ...(shouldIncludeDatasets && {
-        datasets: (layer as unknown as { datasets: Array<{ dataset: { id: string; slug: string; title: string; titleI18n: unknown } }> }).datasets.map((assoc) => ({
+        datasets: (layer as unknown as { datasets: Array<{ dataset: { id: string; slug: string; title: unknown } }> }).datasets.map((assoc) => ({
           id: assoc.dataset.id,
           slug: assoc.dataset.slug,
-          title: getLocalizedField(assoc.dataset.title, assoc.dataset.titleI18n, lang) || assoc.dataset.title,
+          title: getLocalizedField(null, assoc.dataset.title, lang),
         })),
       }),
     };
@@ -550,8 +536,10 @@ export async function listLayersAPI(options: ListLayersOptions = {}) {
     // Search
     if (search) {
       where.OR = [
-        { name: { contains: search, mode: "insensitive" } },
-        { description: { contains: search, mode: "insensitive" } },
+        { name: { path: ["he"], string_contains: search } },
+        { name: { path: ["en"], string_contains: search } },
+        { description: { path: ["he"], string_contains: search } },
+        { description: { path: ["en"], string_contains: search } },
       ];
     }
 
@@ -564,7 +552,6 @@ export async function listLayersAPI(options: ListLayersOptions = {}) {
               id: true,
               slug: true,
               title: true,
-              titleI18n: true,
             },
           },
           tags: {
@@ -572,7 +559,6 @@ export async function listLayersAPI(options: ListLayersOptions = {}) {
               id: true,
               slug: true,
               name: true,
-              nameI18n: true,
             },
           },
           regions: {
@@ -580,7 +566,6 @@ export async function listLayersAPI(options: ListLayersOptions = {}) {
               id: true,
               slug: true,
               name: true,
-              nameI18n: true,
             },
           },
           _count: {
@@ -602,22 +587,22 @@ export async function listLayersAPI(options: ListLayersOptions = {}) {
       
       return {
         ...layerWithoutGeoJson,
-        name: getLocalizedField(layer.name, layer.nameI18n, lang) || layer.name,
-        description: getLocalizedField(layer.description, layer.descriptionI18n, lang) || layer.description,
-        summary: getLocalizedField(layer.summary, layer.summaryI18n, lang) || layer.summary,
+        name: getLocalizedField(null, layer.name, lang),
+        description: getLocalizedField(null, layer.description, lang),
+        summary: getLocalizedField(null, layer.summary, lang),
         category: layer.category
           ? {
               ...layer.category,
-              title: getLocalizedField(layer.category.title, layer.category.titleI18n, lang) || layer.category.title,
+              title: getLocalizedField(null, layer.category.title, lang),
             }
           : null,
         tags: layer.tags.map((tag) => ({
           ...tag,
-          name: getLocalizedField(tag.name, tag.nameI18n, lang) || tag.name,
+          name: getLocalizedField(null, tag.name, lang),
         })),
         regions: layer.regions.map((region) => ({
           ...region,
-          name: getLocalizedField(region.name, region.nameI18n, lang) || region.name,
+          name: getLocalizedField(null, region.name, lang),
         })),
         datasetsCount: (layer as unknown as { _count: { datasets: number } })._count.datasets,
         geoJsonUrl: `/api/geo/layers/${layer.slug}/geojson`,
@@ -647,8 +632,10 @@ export async function searchLayers(query: string, limit = 10) {
     const layers = await prisma.layer.findMany({
       where: {
         OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { description: { contains: query, mode: "insensitive" } },
+          { name: { path: ["he"], string_contains: query } },
+          { name: { path: ["en"], string_contains: query } },
+          { description: { path: ["he"], string_contains: query } },
+          { description: { path: ["en"], string_contains: query } },
         ],
         status: "published", // Only search published layers
       },
@@ -656,7 +643,6 @@ export async function searchLayers(query: string, limit = 10) {
         id: true,
         slug: true,
         name: true,
-        nameI18n: true,
         type: true,
         minYear: true,
         maxYear: true,
@@ -679,10 +665,10 @@ export async function getLayersByDatasetId(datasetId: string) {
         layer: {
           include: {
             category: {
-              select: { id: true, slug: true, title: true, titleI18n: true },
+              select: { id: true, slug: true, title: true },
             },
             tags: {
-              select: { id: true, slug: true, name: true, nameI18n: true },
+              select: { id: true, slug: true, name: true },
             },
           },
         },

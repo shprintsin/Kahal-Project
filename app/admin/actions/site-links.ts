@@ -15,10 +15,8 @@ export async function getSiteLink(id: string) {
 }
 
 export async function createSiteLink(data: {
-  title: string;
-  titleI18n?: Record<string, string>;
-  description?: string;
-  descriptionI18n?: Record<string, string>;
+  title: Record<string, string>;
+  description?: Record<string, string>;
   icon?: string;
   url: string;
   order?: number;
@@ -32,10 +30,8 @@ export async function createSiteLink(data: {
 export async function updateSiteLink(
   id: string,
   data: {
-    title?: string;
-    titleI18n?: Record<string, string>;
-    description?: string;
-    descriptionI18n?: Record<string, string>;
+    title?: Record<string, string>;
+    description?: Record<string, string>;
     icon?: string;
     url?: string;
     order?: number;

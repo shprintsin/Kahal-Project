@@ -72,8 +72,8 @@ export interface ContentItem {
 }
 
 /** Extended content item with translatable fields */
-export interface TranslatableContentItem extends ContentItem {
-  titleI18n: TranslatableContent<string>;
+export interface TranslatableContentItem extends Omit<ContentItem, 'title'> {
+  title: TranslatableContent<string>;
   slugI18n: TranslatableContent<string>;
   language: ContentLanguage;
   translationGroupId?: string;

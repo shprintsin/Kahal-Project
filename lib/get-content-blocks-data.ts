@@ -1,15 +1,11 @@
 import prisma from "@/lib/prisma";
 import type { ContentBlocksProps } from "@/components/ui/content-blocks";
-import { resolveI18nField } from "@/lib/i18n/fallback";
+import { pickI18n } from "@/lib/i18n/fallback";
 import type { Locale } from "@/lib/i18n/config";
 
 function truncate(text: string, maxLen = 120): string {
   if (text.length <= maxLen) return text;
   return text.slice(0, maxLen).replace(/\s+\S*$/, "") + "…";
-}
-
-function pick(json: unknown, locale: Locale, fallback: string): string {
-  return resolveI18nField<string>(json as Record<string, string> | null | undefined, locale, fallback) ?? fallback;
 }
 
 const MEDIA_BASE_URL = process.env.MEDIA_BASE_URL || 'https://shtetlatlas.org';
@@ -57,19 +53,14 @@ export async function getContentBlocksData(locale: Locale = "he"): Promise<Conte
     prisma.siteSettings.findUnique({ where: { key: "global" } }),
   ]);
 
-  const teamI18n = (settings?.researchTeamI18n ?? {}) as Record<string, Author[]>;
+  const teamI18n = (settings?.researchTeam ?? {}) as Record<string, Author[]>;
   const authors: Author[] = teamI18n[locale]?.length
     ? teamI18n[locale]
     : teamI18n.he?.length
       ? teamI18n.he
       : AUTHORS_FALLBACK[locale] ?? AUTHORS_FALLBACK.he;
 
-  const citationI18n = (settings?.citationTextI18n ?? {}) as Record<string, string>;
-  const citation =
-    citationI18n[locale] ||
-    citationI18n.en ||
-    settings?.citationText ||
-    CITATION_FALLBACK;
+  const citation = pickI18n(settings?.citation, locale, CITATION_FALLBACK);
 
   const statsOverride = (settings?.homepageStats ?? {}) as Partial<{
     communities: string;
@@ -78,16 +69,16 @@ export async function getContentBlocksData(locale: Locale = "he"): Promise<Conte
     years: string;
   }>;
 
-  const dateLocales: Record<string, string> = { he: "he-IL", en: "en-US", pl: "pl-PL" };
+  const dateLocales: Record<string, string> = { he: "he-IL", en: "en-US" };
   const formatDate = (d: Date, locale = "he") =>
     d.toLocaleDateString(dateLocales[locale] || "he-IL", { day: "numeric", month: "long", year: "numeric" });
 
   return {
     datasets: datasets.map((d) => {
       const layerTypes = [...new Set(d.layers.map((a) => a.layer.type))];
-      const title = pick(d.titleI18n, locale, d.title);
-      const summary = pick(d.summaryI18n, locale, d.summary ?? "");
-      const description = pick(d.descriptionI18n, locale, d.description ?? "");
+      const title = pickI18n(d.title, locale, d.slug);
+      const summary = pickI18n(d.summary, locale, "");
+      const description = pickI18n(d.description, locale, "");
       const yearLabel = d.year
         ? String(d.year)
         : d.yearMin && d.yearMax && d.yearMin !== d.yearMax
@@ -104,13 +95,13 @@ export async function getContentBlocksData(locale: Locale = "he"): Promise<Conte
       };
     }),
     posts: posts.map((p) => ({
-      title: pick(p.titleI18n, locale, p.title),
+      title: pickI18n(p.title, locale, p.slug),
       date: formatDate(p.createdAt, locale),
       slug: p.slug,
     })),
     links: siteLinks.map((l) => ({
-      title: pick(l.titleI18n, locale, l.title),
-      description: pick(l.descriptionI18n, locale, l.description ?? ""),
+      title: pickI18n(l.title, locale, ""),
+      description: pickI18n(l.description, locale, ""),
       icon: l.icon ?? "Globe",
       url: l.url,
     })),

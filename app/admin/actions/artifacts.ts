@@ -2,6 +2,14 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "@/utils/safe-revalidate";
+import { Prisma } from "@prisma/client";
+
+const toI18nJson = (fieldData: unknown): Prisma.InputJsonValue => {
+  if (fieldData == null) return {};
+  if (typeof fieldData === 'string') return { he: fieldData };
+  if (typeof fieldData === 'object') return fieldData as Prisma.InputJsonValue;
+  return {};
+};
 
 export async function getArtifacts() {
   const artifacts = await prisma.artifact.findMany({
@@ -54,17 +62,13 @@ export async function createArtifact(data: ArtifactData) {
   const newArtifact = await prisma.artifact.create({
     data: {
       slug: data.slug,
-      title: data.title || "",
-      titleI18n: data.titleI18n || {},
-      description: data.description || null,
-      descriptionI18n: data.descriptionI18n || {},
-      content: data.content || "",
-      contentI18n: data.contentI18n || {},
+      title: data.title || {},
+      description: data.description || {},
+      content: data.content || {},
       year: data.year || null,
       dateDisplay: data.dateDisplay || null,
       dateSort: data.dateSort ? new Date(data.dateSort) : null,
-      excerpt: data.excerpt || null,
-      excerptI18n: data.excerptI18n || {},
+      excerpt: toI18nJson(data.excerptI18n ?? data.excerpt),
       displayScans: data.displayScans !== undefined ? data.displayScans : true,
       displayTexts: data.displayTexts !== undefined ? data.displayTexts : true,
       sources: data.sources || [],
@@ -98,17 +102,13 @@ export async function updateArtifact(id: string, data: ArtifactData) {
     where: { id },
     data: {
       slug: data.slug,
-      title: data.title,
-      titleI18n: data.titleI18n || {},
-      description: data.description || null,
-      descriptionI18n: data.descriptionI18n || {},
-      content: data.content || "",
-      contentI18n: data.contentI18n || {},
+      title: data.title || {},
+      description: data.description || {},
+      content: data.content || {},
       year: data.year || null,
       dateDisplay: data.dateDisplay || null,
       dateSort: data.dateSort ? new Date(data.dateSort) : null,
-      excerpt: data.excerpt || null,
-      excerptI18n: data.excerptI18n || {},
+      excerpt: toI18nJson(data.excerptI18n ?? data.excerpt),
       displayScans: data.displayScans,
       displayTexts: data.displayTexts,
       sources: data.sources || [],

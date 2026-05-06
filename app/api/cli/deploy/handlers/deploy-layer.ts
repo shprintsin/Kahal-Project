@@ -89,21 +89,18 @@ export async function deployLayer(
   let action: 'created' | 'updated';
 
   if (existing) {
+    const nameJson = input.nameI18n ?? { he: input.name };
+    const descriptionJson = input.descriptionI18n
+      ?? (input.description ? { he: input.description } : undefined);
+    const summaryJson = input.summaryI18n
+      ?? (input.summary ? { he: input.summary } : undefined);
+
     const updated = await prisma.layer.update({
       where: { id: existing.id },
       data: {
-        name: input.name,
-        ...(input.nameI18n
-          ? { nameI18n: input.nameI18n as Prisma.InputJsonValue }
-          : {}),
-        description: input.description || existing.description,
-        ...(input.descriptionI18n
-          ? { descriptionI18n: input.descriptionI18n as Prisma.InputJsonValue }
-          : {}),
-        summary: input.summary ?? existing.summary,
-        ...(input.summaryI18n
-          ? { summaryI18n: input.summaryI18n as Prisma.InputJsonValue }
-          : {}),
+        name: nameJson as Prisma.InputJsonValue,
+        ...(descriptionJson ? { description: descriptionJson as Prisma.InputJsonValue } : {}),
+        ...(summaryJson ? { summary: summaryJson as Prisma.InputJsonValue } : {}),
         type: input.type,
         status: input.status,
         geoJsonData: (input.geoJsonData ?? existing.geoJsonData) as Prisma.InputJsonValue,
@@ -117,21 +114,18 @@ export async function deployLayer(
     layer = updated;
     action = 'updated';
   } else {
+    const nameJson = input.nameI18n ?? { he: input.name };
+    const descriptionJson = input.descriptionI18n
+      ?? (input.description ? { he: input.description } : {});
+    const summaryJson = input.summaryI18n
+      ?? (input.summary ? { he: input.summary } : {});
+
     const created = await prisma.layer.create({
       data: {
         slug: input.slug,
-        name: input.name,
-        ...(input.nameI18n
-          ? { nameI18n: input.nameI18n as Prisma.InputJsonValue }
-          : {}),
-        description: input.description,
-        ...(input.descriptionI18n
-          ? { descriptionI18n: input.descriptionI18n as Prisma.InputJsonValue }
-          : {}),
-        summary: input.summary ?? '',
-        ...(input.summaryI18n
-          ? { summaryI18n: input.summaryI18n as Prisma.InputJsonValue }
-          : {}),
+        name: nameJson as Prisma.InputJsonValue,
+        description: descriptionJson as Prisma.InputJsonValue,
+        summary: summaryJson as Prisma.InputJsonValue,
         type: input.type,
         status: input.status,
         geoJsonData: (input.geoJsonData ?? {}) as Prisma.InputJsonValue,

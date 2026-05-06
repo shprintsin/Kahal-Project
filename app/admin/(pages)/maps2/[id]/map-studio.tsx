@@ -68,8 +68,8 @@ function buildInitialState(mapData: Record<string, unknown> | null): DataStudioS
   }
 
   const config = (mapData.config as Record<string, unknown>) || {};
-  const titleI18n = (mapData.titleI18n as Record<string, string>) || {};
-  const descI18n = (mapData.descriptionI18n as Record<string, string>) || {};
+  const title = (mapData.title as Record<string, string>) || {};
+  const descI18n = (mapData.description as Record<string, string>) || {};
   const mapLayers = (mapData.layers as Record<string, unknown>[]) || [];
 
   const layers: StudioLayer[] = mapLayers.map((assoc, i) => {
@@ -117,7 +117,7 @@ function buildInitialState(mapData: Record<string, unknown> | null): DataStudioS
 
   return {
     datasetId: mapData.id as string,
-    title: titleI18n.en || titleI18n.he || (mapData.title as string) || "",
+    title: title.en || title.he || (mapData.title as string) || "",
     slug: (mapData.slug as string) || "",
     description: descI18n.en || descI18n.he || "",
     status: (mapData.status as string) || "draft",
@@ -178,10 +178,8 @@ export function MapStudio({ mapData, layerLibrary, isNew, categories, tags, regi
       const mapPayload = {
         slug: state.slug || state.title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
         status: state.status,
-        title: state.title,
-        titleI18n: { en: state.title },
-        description: state.description,
-        descriptionI18n: { en: state.description },
+        title: { en: state.title },
+        description: { en: state.description },
         year: state.year,
         yearMin: state.yearMin,
         yearMax: state.yearMax,

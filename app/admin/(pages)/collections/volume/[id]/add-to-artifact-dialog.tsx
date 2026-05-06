@@ -141,13 +141,11 @@ export default function AddToArtifactDialog({
         setSubmitting(true);
         try {
             const artifact = await createArtifact({
-                title: newTitle,
-                titleI18n: { he: newTitleI18n }, // Simple assumption for now
+                title: { he: newTitleI18n || newTitle },
                 slug: newSlug,
-                description: newDesc,
+                description: { he: newDesc },
                 artifactCategoryId: newCategoryId === "uncategorized" ? undefined : newCategoryId,
-                content: "",
-                contentI18n: {},
+                content: {},
                 pageIds: pageIds,
                 // defaults for others
                 displayScans: true,

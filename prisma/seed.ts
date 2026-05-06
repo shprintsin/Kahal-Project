@@ -18,77 +18,68 @@ async function main() {
   const categories = await Promise.all([
     prisma.category.create({
       data: {
-        title: "היסטוריה",
+        title: { he: "היסטוריה", en: "History" },
         slug: "history",
-        titleI18n: { he: "היסטוריה", en: "History", pl: "Historia" },
       },
     }),
     prisma.category.create({
       data: {
-        title: "דמוגרפיה",
+        title: { he: "דמוגרפיה", en: "Demographics" },
         slug: "demographics",
-        titleI18n: { he: "דמוגרפיה", en: "Demographics", pl: "Demografia" },
       },
     }),
     prisma.category.create({
       data: {
-        title: "מפות",
+        title: { he: "מפות", en: "Maps" },
         slug: "maps-category",
-        titleI18n: { he: "מפות", en: "Maps", pl: "Mapy" },
       },
     }),
     prisma.category.create({
       data: {
-        title: "תרבות",
+        title: { he: "תרבות", en: "Culture" },
         slug: "culture",
-        titleI18n: { he: "תרבות", en: "Culture", pl: "Kultura" },
       },
     }),
     prisma.category.create({
       data: {
-        title: "קהילות",
+        title: { he: "קהילות", en: "Communities" },
         slug: "communities",
-        titleI18n: { he: "קהילות", en: "Communities", pl: "Społeczności" },
       },
     }),
   ]);
 
   const tags = await Promise.all([
-    prisma.tag.create({ data: { name: "גליציה", slug: "galicia", nameI18n: { he: "גליציה", en: "Galicia", pl: "Galicja" } } }),
-    prisma.tag.create({ data: { name: "קונגרס פולין", slug: "congress-poland", nameI18n: { he: "קונגרס פולין", en: "Congress Poland", pl: "Kongresówka" } } }),
-    prisma.tag.create({ data: { name: "מפקד אוכלוסין", slug: "census", nameI18n: { he: "מפקד אוכלוסין", en: "Census", pl: "Spis ludności" } } }),
-    prisma.tag.create({ data: { name: "בתי כנסת", slug: "synagogues", nameI18n: { he: "בתי כנסת", en: "Synagogues", pl: "Synagogi" } } }),
-    prisma.tag.create({ data: { name: "ארכיון", slug: "archive", nameI18n: { he: "ארכיון", en: "Archive", pl: "Archiwum" } } }),
-    prisma.tag.create({ data: { name: "מאה 19", slug: "19th-century", nameI18n: { he: "מאה 19", en: "19th Century", pl: "XIX wiek" } } }),
+    prisma.tag.create({ data: { name: { he: "גליציה", en: "Galicia" }, slug: "galicia" } }),
+    prisma.tag.create({ data: { name: { he: "קונגרס פולין", en: "Congress Poland" }, slug: "congress-poland" } }),
+    prisma.tag.create({ data: { name: { he: "מפקד אוכלוסין", en: "Census" }, slug: "census" } }),
+    prisma.tag.create({ data: { name: { he: "בתי כנסת", en: "Synagogues" }, slug: "synagogues" } }),
+    prisma.tag.create({ data: { name: { he: "ארכיון", en: "Archive" }, slug: "archive" } }),
+    prisma.tag.create({ data: { name: { he: "מאה 19", en: "19th Century" }, slug: "19th-century" } }),
   ]);
 
   const regions = await Promise.all([
-    prisma.region.create({ data: { name: "גליציה", slug: "galicia", nameI18n: { he: "גליציה", en: "Galicia", pl: "Galicja" } } }),
-    prisma.region.create({ data: { name: "קונגרס פולין", slug: "congress-poland", nameI18n: { he: "קונגרס פולין", en: "Congress Poland", pl: "Kongresówka" } } }),
-    prisma.region.create({ data: { name: "וולין", slug: "volhynia", nameI18n: { he: "וולין", en: "Volhynia", pl: "Wołyń" } } }),
-    prisma.region.create({ data: { name: "ליטא", slug: "lithuania", nameI18n: { he: "ליטא", en: "Lithuania", pl: "Litwa" } } }),
+    prisma.region.create({ data: { name: { he: "גליציה", en: "Galicia" }, slug: "galicia" } }),
+    prisma.region.create({ data: { name: { he: "קונגרס פולין", en: "Congress Poland" }, slug: "congress-poland" } }),
+    prisma.region.create({ data: { name: { he: "וולין", en: "Volhynia" }, slug: "volhynia" } }),
+    prisma.region.create({ data: { name: { he: "ליטא", en: "Lithuania" }, slug: "lithuania" } }),
   ]);
 
   const periods = await Promise.all([
-    prisma.period.create({ data: { name: "שלטון אוסטרי", slug: "austrian-rule", nameI18n: { he: "שלטון אוסטרי", en: "Austrian Rule", pl: "Panowanie austriackie" }, dateStart: new Date("1772-01-01"), dateEnd: new Date("1918-11-11") } }),
-    prisma.period.create({ data: { name: "שלטון רוסי", slug: "russian-rule", nameI18n: { he: "שלטון רוסי", en: "Russian Rule", pl: "Panowanie rosyjskie" }, dateStart: new Date("1795-01-01"), dateEnd: new Date("1917-01-01") } }),
-    prisma.period.create({ data: { name: "בין המלחמות", slug: "interwar", nameI18n: { he: "בין המלחמות", en: "Interwar Period", pl: "Okres międzywojenny" }, dateStart: new Date("1918-11-11"), dateEnd: new Date("1939-09-01") } }),
+    prisma.period.create({ data: { name: { he: "שלטון אוסטרי", en: "Austrian Rule" }, slug: "austrian-rule", dateStart: new Date("1772-01-01"), dateEnd: new Date("1918-11-11") } }),
+    prisma.period.create({ data: { name: { he: "שלטון רוסי", en: "Russian Rule" }, slug: "russian-rule", dateStart: new Date("1795-01-01"), dateEnd: new Date("1917-01-01") } }),
+    prisma.period.create({ data: { name: { he: "בין המלחמות", en: "Interwar Period" }, slug: "interwar", dateStart: new Date("1918-11-11"), dateEnd: new Date("1939-09-01") } }),
   ]);
 
   const posts = await Promise.all([
     prisma.post.create({
       data: {
-        title: "מפקד האוכלוסין של גליציה 1890",
-        titleI18n: { he: "מפקד האוכלוסין של גליציה 1890", en: "The Galician Census of 1890", pl: "Spis ludności Galicji 1890" },
+        title: { he: "מפקד האוכלוסין של גליציה 1890", en: "The Galician Census of 1890" },
         slug: "galician-census-1890",
-        content: "מפקד האוכלוסין של 1890 בגליציה היה אחד המפקדים המקיפים ביותר שנערכו באימפריה האוסטרו-הונגרית. המפקד כלל נתונים על דת, שפה, מקצוע ומצב משפחתי של התושבים.",
-        contentI18n: {
+        content: {
           he: "מפקד האוכלוסין של 1890 בגליציה היה אחד המפקדים המקיפים ביותר שנערכו באימפריה האוסטרו-הונגרית.",
           en: "The 1890 census in Galicia was one of the most comprehensive censuses conducted in the Austro-Hungarian Empire. It included data on religion, language, occupation, and marital status.",
-          pl: "Spis ludności z 1890 roku w Galicji był jednym z najbardziej kompleksowych spisów przeprowadzonych w Austro-Węgrzech.",
         },
-        excerpt: "סקירת מפקד האוכלוסין של גליציה משנת 1890",
-        excerptI18n: { he: "סקירת מפקד האוכלוסין", en: "Overview of the Galician census", pl: "Przegląd spisu ludności" },
+        excerpt: { he: "סקירת מפקד האוכלוסין", en: "Overview of the Galician census" },
         status: "published",
         authorId: admin.id,
         categories: { connect: [{ id: categories[1].id }] },
@@ -98,17 +89,13 @@ async function main() {
     }),
     prisma.post.create({
       data: {
-        title: "בתי הכנסת של לבוב",
-        titleI18n: { he: "בתי הכנסת של לבוב", en: "The Synagogues of Lviv", pl: "Synagogi Lwowa" },
+        title: { he: "בתי הכנסת של לבוב", en: "The Synagogues of Lviv" },
         slug: "synagogues-of-lviv",
-        content: "לבוב הייתה אחד ממרכזי החיים היהודיים החשובים ביותר בגליציה. בעיר פעלו עשרות בתי כנסת ובתי מדרש, מהגדולים והמפוארים ועד לשטיבלך קטנים.",
-        contentI18n: {
+        content: {
           he: "לבוב הייתה אחד ממרכזי החיים היהודיים החשובים ביותר בגליציה.",
           en: "Lviv was one of the most important centers of Jewish life in Galicia. The city had dozens of synagogues and study houses.",
-          pl: "Lwów był jednym z najważniejszych ośrodków życia żydowskiego w Galicji.",
         },
-        excerpt: "סיפורם של בתי הכנסת ההיסטוריים בלבוב",
-        excerptI18n: { he: "סיפורם של בתי הכנסת", en: "The story of Lviv's historic synagogues", pl: "Historia synagog Lwowa" },
+        excerpt: { he: "סיפורם של בתי הכנסת", en: "The story of Lviv's historic synagogues" },
         status: "published",
         authorId: admin.id,
         categories: { connect: [{ id: categories[3].id }] },
@@ -118,17 +105,13 @@ async function main() {
     }),
     prisma.post.create({
       data: {
-        title: "גלויות היסטוריות מערי גליציה",
-        titleI18n: { he: "גלויות היסטוריות מערי גליציה", en: "Historic Postcards from Galician Towns", pl: "Historyczne pocztówki z miast galicyjskich" },
+        title: { he: "גלויות היסטוריות מערי גליציה", en: "Historic Postcards from Galician Towns" },
         slug: "historic-postcards-galicia",
-        content: "אוסף גלויות היסטוריות מערי גליציה מספק הצצה מרתקת לחיי היומיום של הקהילות היהודיות במאה ה-19 ותחילת המאה ה-20.",
-        contentI18n: {
+        content: {
           he: "אוסף גלויות היסטוריות מערי גליציה מספק הצצה מרתקת לחיי היומיום.",
           en: "A collection of historic postcards from Galician towns provides a fascinating glimpse into daily life of Jewish communities.",
-          pl: "Kolekcja historycznych pocztówek z miast galicyjskich daje fascynujący wgląd w codzienne życie.",
         },
-        excerpt: "גלויות מימי האימפריה האוסטרו-הונגרית",
-        excerptI18n: { he: "גלויות מימי האימפריה", en: "Postcards from the Austro-Hungarian era", pl: "Pocztówki z czasów Austro-Węgier" },
+        excerpt: { he: "גלויות מימי האימפריה", en: "Postcards from the Austro-Hungarian era" },
         status: "published",
         authorId: admin.id,
         categories: { connect: [{ id: categories[0].id }] },
@@ -138,14 +121,11 @@ async function main() {
     }),
     prisma.post.create({
       data: {
-        title: "התיישבות יהודית בווהלין",
-        titleI18n: { he: "התיישבות יהודית בווהלין", en: "Jewish Settlement in Volhynia", pl: "Osadnictwo żydowskie na Wołyniu" },
+        title: { he: "התיישבות יהודית בווהלין", en: "Jewish Settlement in Volhynia" },
         slug: "jewish-settlement-volhynia",
-        content: "ההתיישבות היהודית בווהלין מתוחה לימי הביניים. האזור היה מרכז חשוב לחסידות ולחיים יהודיים מסורתיים.",
-        contentI18n: {
+        content: {
           he: "ההתיישבות היהודית בווהלין מתוחה לימי הביניים.",
           en: "Jewish settlement in Volhynia dates back to the Middle Ages. The region was an important center for Hasidism.",
-          pl: "Osadnictwo żydowskie na Wołyniu sięga średniowiecza.",
         },
         status: "published",
         authorId: admin.id,
@@ -156,10 +136,9 @@ async function main() {
     }),
     prisma.post.create({
       data: {
-        title: "טיוטה: מסחר יהודי בקראקוב",
-        titleI18n: { he: "מסחר יהודי בקראקוב", en: "Jewish Commerce in Krakow", pl: "Handel żydowski w Krakowie" },
+        title: { he: "מסחר יהודי בקראקוב", en: "Jewish Commerce in Krakow" },
         slug: "jewish-commerce-krakow",
-        content: "טיוטה של מאמר על המסחר היהודי בקראקוב.",
+        content: { he: "טיוטה של מאמר על המסחר היהודי בקראקוב." },
         status: "draft",
         authorId: admin.id,
         categories: { connect: [{ id: categories[0].id }] },
@@ -170,14 +149,11 @@ async function main() {
   const pages = await Promise.all([
     prisma.page.create({
       data: {
-        title: "אודות",
-        titleI18n: { he: "אודות", en: "About", pl: "O nas" },
+        title: { he: "אודות", en: "About" },
         slug: "about",
-        content: "# אודות הפרויקט\n\nפרויקט קהל הוא פלטפורמה מחקרית דיגיטלית המנגישה חומרים היסטוריים על קהילות יהודיות במזרח אירופה. הפלטפורמה כוללת מפות, מאגרי מידע, מסמכים היסטוריים ומאמרים מחקריים.",
-        contentI18n: {
+        content: {
           he: "# אודות הפרויקט\n\nפרויקט קהל הוא פלטפורמה מחקרית דיגיטלית.",
           en: "# About the Project\n\nThe Kahal Project is a digital research platform making historical materials about Jewish communities in Eastern Europe accessible.",
-          pl: "# O projekcie\n\nProjekt Kahal to cyfrowa platforma badawcza udostępniająca materiały historyczne.",
         },
         status: "published",
         authorId: admin.id,
@@ -186,14 +162,11 @@ async function main() {
     }),
     prisma.page.create({
       data: {
-        title: "צור קשר",
-        titleI18n: { he: "צור קשר", en: "Contact", pl: "Kontakt" },
+        title: { he: "צור קשר", en: "Contact" },
         slug: "contact",
-        content: "# צור קשר\n\nניתן ליצור איתנו קשר בכתובת: contact@kahal.org",
-        contentI18n: {
+        content: {
           he: "# צור קשר\n\nניתן ליצור איתנו קשר בכתובת: contact@kahal.org",
           en: "# Contact\n\nYou can reach us at: contact@kahal.org",
-          pl: "# Kontakt\n\nMożesz się z nami skontaktować pod adresem: contact@kahal.org",
         },
         status: "published",
         authorId: admin.id,
@@ -202,10 +175,11 @@ async function main() {
     }),
     prisma.page.create({
       data: {
-        title: "מדיניות פרטיות",
-        titleI18n: { he: "מדיניות פרטיות", en: "Privacy Policy", pl: "Polityka prywatności" },
+        title: { he: "מדיניות פרטיות", en: "Privacy Policy" },
         slug: "privacy",
-        content: "# מדיניות פרטיות\n\nאנו מכבדים את פרטיותכם ומתחייבים להגן על המידע האישי שלכם.",
+        content: {
+          he: "# מדיניות פרטיות\n\nאנו מכבדים את פרטיותכם ומתחייבים להגן על המידע האישי שלכם.",
+        },
         status: "published",
         authorId: admin.id,
         menuOrder: 3,
@@ -217,14 +191,11 @@ async function main() {
   const datasets = await Promise.all([
     prisma.dataset.create({
       data: {
-        title: "מפקד אוכלוסין גליציה 1890",
-        titleI18n: { he: "מפקד אוכלוסין גליציה 1890", en: "Galicia Census 1890", pl: "Spis ludności Galicji 1890" },
+        title: { he: "מפקד אוכלוסין גליציה 1890", en: "Galicia Census 1890" },
         slug: "galicia-census-1890",
-        description: "נתוני מפקד האוכלוסין של גליציה משנת 1890 הכוללים מידע על דת, שפה ומקצוע",
-        descriptionI18n: {
+        description: {
           he: "נתוני מפקד האוכלוסין של גליציה משנת 1890",
           en: "Census data from Galicia 1890 including religion, language and occupation",
-          pl: "Dane ze spisu ludności Galicji z 1890 roku",
         },
         status: "published",
         maturity: "Validated",
@@ -233,20 +204,17 @@ async function main() {
         yearMin: 1890,
         yearMax: 1890,
         categoryId: categories[1].id,
-        citationText: "Kahal Project, Galicia Census 1890 Dataset, v2.1.0",
+        citationText: { he: "Kahal Project, Galicia Census 1890 Dataset, v2.1.0" },
         regions: { connect: [{ id: regions[0].id }] },
       },
     }),
     prisma.dataset.create({
       data: {
-        title: "רשימת יישובים יהודיים בקונגרס פולין",
-        titleI18n: { he: "רשימת יישובים יהודיים בקונגרס פולין", en: "Jewish Settlements in Congress Poland", pl: "Osady żydowskie w Kongresówce" },
+        title: { he: "רשימת יישובים יהודיים בקונגרס פולין", en: "Jewish Settlements in Congress Poland" },
         slug: "jewish-settlements-congress-poland",
-        description: "רשימה מקיפה של יישובים יהודיים בקונגרס פולין במאה ה-19",
-        descriptionI18n: {
+        description: {
           he: "רשימה מקיפה של יישובים יהודיים",
           en: "Comprehensive list of Jewish settlements in Congress Poland in the 19th century",
-          pl: "Kompleksowa lista osad żydowskich w Kongresówce w XIX wieku",
         },
         status: "published",
         maturity: "Provisional",
@@ -260,10 +228,9 @@ async function main() {
     }),
     prisma.dataset.create({
       data: {
-        title: "בתי כנסת בגליציה - מאגר מידע",
-        titleI18n: { he: "בתי כנסת בגליציה", en: "Synagogues of Galicia Database", pl: "Baza danych synagog Galicji" },
+        title: { he: "בתי כנסת בגליציה", en: "Synagogues of Galicia Database" },
         slug: "synagogues-galicia-db",
-        description: "מאגר מידע על בתי כנסת היסטוריים בגליציה כולל מיקום, שנת בנייה ותיאור אדריכלי",
+        description: { he: "מאגר מידע על בתי כנסת היסטוריים בגליציה כולל מיקום, שנת בנייה ותיאור אדריכלי" },
         status: "published",
         maturity: "Preliminary",
         version: "0.9.0",
@@ -275,14 +242,11 @@ async function main() {
     }),
     prisma.dataset.create({
       data: {
-        title: 'נתוני שמות משפחה יהודיים',
-        titleI18n: { he: 'נתוני שמות משפחה יהודיים', en: 'Jewish Surname Data', pl: 'Dane o żydowskich nazwiskach' },
+        title: { he: 'נתוני שמות משפחה יהודיים', en: 'Jewish Surname Data' },
         slug: 'jewish-surname-data',
-        description: 'שמות משפחה יהודיים לפי אזור גאוגרפי ותקופה',
-        descriptionI18n: {
+        description: {
           he: 'שמות משפחה יהודיים לפי אזור גאוגרפי ותקופה',
           en: 'Jewish surnames by geographic region and period',
-          pl: 'Żydowskie nazwiska według regionu i okresu',
         },
         status: 'published',
         maturity: 'Preliminary',
@@ -299,13 +263,10 @@ async function main() {
   const artifacts = await Promise.all([
     prisma.artifact.create({
       data: {
-        title: 'פנקס קהילת בראד, 1743',
-        titleI18n: { he: 'פנקס קהילת בראד, 1743', en: 'Brody Community Ledger, 1743', pl: 'Księga gminy Brody, 1743' },
+        title: { he: 'פנקס קהילת בראד, 1743', en: 'Brody Community Ledger, 1743' },
         slug: 'brody-community-ledger-1743',
-        description: 'פנקס קהילה מקורי המתעד את חיי הקהילה היהודית בבראד במאה ה-18',
-        descriptionI18n: { he: 'פנקס קהילה מקורי', en: 'Original community ledger documenting Jewish life in Brody', pl: 'Oryginalna księga gminna' },
-        excerpt: 'פנקס קהילה',
-        excerptI18n: { he: 'פנקס קהילה', en: 'Community ledger', pl: 'Księga gminna' },
+        description: { he: 'פנקס קהילה מקורי', en: 'Original community ledger documenting Jewish life in Brody' },
+        excerpt: { he: 'פנקס קהילה', en: 'Community ledger' },
         year: 1743,
         dateDisplay: '1743',
         artifactCategoryId: categories[0].id,
@@ -315,11 +276,10 @@ async function main() {
     }),
     prisma.artifact.create({
       data: {
-        title: 'תעודת מסע — לבוב, 1862',
-        titleI18n: { he: 'תעודת מסע — לבוב, 1862', en: 'Travel Document — Lviv, 1862', pl: 'Dokument podróżny — Lwów, 1862' },
+        title: { he: 'תעודת מסע — לבוב, 1862', en: 'Travel Document — Lviv, 1862' },
         slug: 'travel-doc-lviv-1862',
-        description: 'תעודת מסע רשמית שהונפקה ליהודי מלבוב בשנת 1862',
-        excerpt: 'תעודה רשמית',
+        description: { he: 'תעודת מסע רשמית שהונפקה ליהודי מלבוב בשנת 1862' },
+        excerpt: { he: 'תעודה רשמית' },
         year: 1862,
         dateDisplay: '1862',
         artifactCategoryId: categories[0].id,
@@ -329,11 +289,10 @@ async function main() {
     }),
     prisma.artifact.create({
       data: {
-        title: 'רשימת נישואין — קראקוב, 1801',
-        titleI18n: { he: 'רשימת נישואין — קראקוב, 1801', en: 'Marriage Registry — Krakow, 1801', pl: 'Rejestr małżeństw — Kraków, 1801' },
+        title: { he: 'רשימת נישואין — קראקוב, 1801', en: 'Marriage Registry — Krakow, 1801' },
         slug: 'marriage-registry-krakow-1801',
-        description: 'רישום אזרחי של נישואין יהודיים בקראקוב',
-        excerpt: 'רישום אזרחי',
+        description: { he: 'רישום אזרחי של נישואין יהודיים בקראקוב' },
+        excerpt: { he: 'רישום אזרחי' },
         year: 1801,
         dateDisplay: '1801',
         artifactCategoryId: categories[0].id,
@@ -342,11 +301,10 @@ async function main() {
     }),
     prisma.artifact.create({
       data: {
-        title: 'צוואת ר׳ אליעזר — טרנופול, 1789',
-        titleI18n: { he: 'צוואת ר׳ אליעזר — טרנופול, 1789', en: "Rabbi Eliezer's Will — Ternopil, 1789", pl: 'Testament rabina Eliezera — Tarnopol, 1789' },
+        title: { he: 'צוואת ר׳ אליעזר — טרנופול, 1789', en: "Rabbi Eliezer's Will — Ternopil, 1789" },
         slug: 'rabbi-eliezer-will-ternopil-1789',
-        description: 'צוואה אישית של רב מטרנופול המתעדת חיי קהילה ומנהגים',
-        excerpt: 'מסמך אישי',
+        description: { he: 'צוואה אישית של רב מטרנופול המתעדת חיי קהילה ומנהגים' },
+        excerpt: { he: 'מסמך אישי' },
         year: 1789,
         dateDisplay: '1789',
         artifactCategoryId: categories[3].id,
@@ -359,10 +317,8 @@ async function main() {
   const siteLinks = await Promise.all([
     prisma.siteLink.create({
       data: {
-        title: 'מנוע חיפוש קהילות',
-        titleI18n: { he: 'מנוע חיפוש קהילות', en: 'Community Search Engine', pl: 'Wyszukiwarka społeczności' },
-        description: 'חיפוש לפי שם, מחוז או גוברניה',
-        descriptionI18n: { he: 'חיפוש לפי שם, מחוז או גוברניה', en: 'Search by name, district, or governorate', pl: 'Szukaj według nazwy, powiatu lub guberni' },
+        title: { he: 'מנוע חיפוש קהילות', en: 'Community Search Engine' },
+        description: { he: 'חיפוש לפי שם, מחוז או גוברניה', en: 'Search by name, district, or governorate' },
         icon: 'Globe',
         url: '/search',
         order: 1,
@@ -371,10 +327,8 @@ async function main() {
     }),
     prisma.siteLink.create({
       data: {
-        title: 'כלי השוואת מפקדים',
-        titleI18n: { he: 'כלי השוואת מפקדים', en: 'Census Comparison Tool', pl: 'Narzędzie porównywania spisów' },
-        description: 'השוואת נתונים בין מפקדים שונים',
-        descriptionI18n: { he: 'השוואת נתונים בין מפקדים שונים', en: 'Compare data across different censuses', pl: 'Porównaj dane z różnych spisów' },
+        title: { he: 'כלי השוואת מפקדים', en: 'Census Comparison Tool' },
+        description: { he: 'השוואת נתונים בין מפקדים שונים', en: 'Compare data across different censuses' },
         icon: 'Database',
         url: '/tools/census-compare',
         order: 2,
@@ -383,10 +337,8 @@ async function main() {
     }),
     prisma.siteLink.create({
       data: {
-        title: 'ארכיון מסמכים דיגיטלי',
-        titleI18n: { he: 'ארכיון מסמכים דיגיטלי', en: 'Digital Document Archive', pl: 'Cyfrowe archiwum dokumentów' },
-        description: 'דפדוף בתעודות סרוקות',
-        descriptionI18n: { he: 'דפדוף בתעודות סרוקות', en: 'Browse scanned documents', pl: 'Przeglądaj zeskanowane dokumenty' },
+        title: { he: 'ארכיון מסמכים דיגיטלי', en: 'Digital Document Archive' },
+        description: { he: 'דפדוף בתעודות סרוקות', en: 'Browse scanned documents' },
         icon: 'Scroll',
         url: '/archive',
         order: 3,
@@ -395,10 +347,8 @@ async function main() {
     }),
     prisma.siteLink.create({
       data: {
-        title: 'מפה אינטראקטיבית',
-        titleI18n: { he: 'מפה אינטראקטיבית', en: 'Interactive Map', pl: 'Mapa interaktywna' },
-        description: 'צפייה בשכבות היסטוריות',
-        descriptionI18n: { he: 'צפייה בשכבות היסטוריות', en: 'View historical layers', pl: 'Przeglądaj warstwy historyczne' },
+        title: { he: 'מפה אינטראקטיבית', en: 'Interactive Map' },
+        description: { he: 'צפייה בשכבות היסטוריות', en: 'View historical layers' },
         icon: 'Map',
         url: '/maps',
         order: 4,
@@ -410,14 +360,11 @@ async function main() {
   const maps = await Promise.all([
     prisma.dataset.create({
       data: {
-        title: "יישובים יהודיים בגליציה 1890",
-        titleI18n: { he: "יישובים יהודיים בגליציה 1890", en: "Jewish Settlements in Galicia 1890", pl: "Osady żydowskie w Galicji 1890" },
+        title: { he: "יישובים יהודיים בגליציה 1890", en: "Jewish Settlements in Galicia 1890" },
         slug: "jewish-settlements-galicia-1890",
-        description: "מפת יישובים יהודיים בגליציה על פי מפקד 1890",
-        descriptionI18n: {
+        description: {
           he: "מפת יישובים יהודיים בגליציה",
           en: "Map of Jewish settlements in Galicia based on 1890 census",
-          pl: "Mapa osad żydowskich w Galicji na podstawie spisu z 1890",
         },
         status: "published",
         year: 1890,
@@ -432,10 +379,9 @@ async function main() {
     }),
     prisma.dataset.create({
       data: {
-        title: "בתי כנסת בגליציה",
-        titleI18n: { he: "בתי כנסת בגליציה", en: "Synagogues in Galicia", pl: "Synagogi w Galicji" },
+        title: { he: "בתי כנסת בגליציה", en: "Synagogues in Galicia" },
         slug: "synagogues-galicia-map",
-        description: "מפת בתי כנסת היסטוריים בגליציה",
+        description: { he: "מפת בתי כנסת היסטוריים בגליציה" },
         status: "published",
         yearMin: 1600,
         yearMax: 1939,
@@ -450,10 +396,9 @@ async function main() {
   const layers = await Promise.all([
     prisma.layer.create({
       data: {
-        name: "יישובים יהודיים 1890",
-        nameI18n: { he: "יישובים יהודיים 1890", en: "Jewish Settlements 1890", pl: "Osady żydowskie 1890" },
+        name: { he: "יישובים יהודיים 1890", en: "Jewish Settlements 1890" },
         slug: "jewish-settlements-1890",
-        description: "שכבת נקודות של יישובים יהודיים בגליציה על פי מפקד 1890",
+        description: { he: "שכבת נקודות של יישובים יהודיים בגליציה על פי מפקד 1890" },
         status: "published",
         type: "POINTS",
         maturity: "Validated",
@@ -468,10 +413,9 @@ async function main() {
     }),
     prisma.layer.create({
       data: {
-        name: "גבולות גליציה",
-        nameI18n: { he: "גבולות גליציה", en: "Galicia Borders", pl: "Granice Galicji" },
+        name: { he: "גבולות גליציה", en: "Galicia Borders" },
         slug: "galicia-borders",
-        description: "גבולות גליציה ולודומריה בתקופת השלטון האוסטרי",
+        description: { he: "גבולות גליציה ולודומריה בתקופת השלטון האוסטרי" },
         status: "published",
         type: "POLYGONS",
         maturity: "Validated",
@@ -482,10 +426,9 @@ async function main() {
     }),
     prisma.layer.create({
       data: {
-        name: "בתי כנסת",
-        nameI18n: { he: "בתי כנסת", en: "Synagogues", pl: "Synagogi" },
+        name: { he: "בתי כנסת", en: "Synagogues" },
         slug: "synagogues-layer",
-        description: "מיקומי בתי כנסת היסטוריים בגליציה",
+        description: { he: "מיקומי בתי כנסת היסטוריים בגליציה" },
         status: "published",
         type: "POINTS",
         maturity: "Preliminary",
@@ -514,9 +457,8 @@ async function main() {
 
   const collection = await prisma.collection.create({
     data: {
-      name: "פנקסי קהילות גליציה",
-      nameI18n: { he: "פנקסי קהילות גליציה", en: "Galician Community Records", pl: "Księgi gmin Galicji" },
-      descriptionI18n: { he: "אוסף פנקסי קהילות מגליציה", en: "Collection of community records from Galicia", pl: "Zbiór ksiąg gminnych z Galicji" },
+      name: { he: "פנקסי קהילות גליציה", en: "Galician Community Records" },
+      description: { he: "אוסף פנקסי קהילות מגליציה", en: "Collection of community records from Galicia" },
       yearMin: 1780,
       yearMax: 1914,
       regions: { connect: [{ id: regions[0].id }] },
@@ -526,10 +468,9 @@ async function main() {
 
   const series1 = await prisma.series.create({
     data: {
-      name: "פנקסי קהילת לבוב",
-      nameI18n: { he: "פנקסי קהילת לבוב", en: "Lviv Community Records", pl: "Księgi gminy Lwów" },
+      name: { he: "פנקסי קהילת לבוב", en: "Lviv Community Records" },
       slug: "lviv-community-records",
-      description: "פנקסי הקהילה היהודית של לבוב",
+      description: { he: "פנקסי הקהילה היהודית של לבוב" },
       collectionId: collection.id,
       indexNumber: 1,
       yearMin: 1800,
@@ -541,10 +482,9 @@ async function main() {
 
   const volume1 = await prisma.volume.create({
     data: {
-      title: "פנקס קהילת לבוב כרך א",
-      titleI18n: { he: "פנקס קהילת לבוב כרך א", en: "Lviv Community Record Vol. 1", pl: "Księga gminy Lwów t. 1" },
+      title: { he: "פנקס קהילת לבוב כרך א", en: "Lviv Community Record Vol. 1" },
       slug: "lviv-vol-1",
-      description: "כרך ראשון של פנקס קהילת לבוב, 1800-1830",
+      description: { he: "כרך ראשון של פנקס קהילת לבוב, 1800-1830" },
       seriesId: series1.id,
       indexNumber: 1,
       year: 1800,
@@ -571,12 +511,12 @@ async function main() {
       location: "HEADER",
       items: {
         create: [
-          { label: "מאמרים", labelI18n: { he: "מאמרים", en: "Posts", pl: "Artykuły" }, url: "/posts", order: 1 },
-          { label: "מפות", labelI18n: { he: "מפות", en: "Maps", pl: "Mapy" }, url: "/maps", order: 2 },
-          { label: "שכבות", labelI18n: { he: "שכבות", en: "Layers", pl: "Warstwy" }, url: "/layers", order: 3 },
-          { label: "נתונים", labelI18n: { he: "נתונים", en: "Data", pl: "Dane" }, url: "/data", order: 4 },
-          { label: "ארכיון", labelI18n: { he: "ארכיון", en: "Archive", pl: "Archiwum" }, url: "/archive", order: 5 },
-          { label: "אודות", labelI18n: { he: "אודות", en: "About", pl: "O nas" }, url: "/about", order: 6 },
+          { label: { he: "מאמרים", en: "Posts" }, url: "/posts", order: 1 },
+          { label: { he: "מפות", en: "Maps" }, url: "/maps", order: 2 },
+          { label: { he: "שכבות", en: "Layers" }, url: "/layers", order: 3 },
+          { label: { he: "נתונים", en: "Data" }, url: "/data", order: 4 },
+          { label: { he: "ארכיון", en: "Archive" }, url: "/archive", order: 5 },
+          { label: { he: "אודות", en: "About" }, url: "/about", order: 6 },
         ],
       },
     },
@@ -587,8 +527,8 @@ async function main() {
       location: "HERO_ACTIONS",
       items: {
         create: [
-          { label: "חפשו במפות", labelI18n: { he: "חפשו במפות", en: "Explore Maps", pl: "Przeglądaj mapy" }, url: "/maps", icon: "Map", variant: "BUTTON_SOLID", order: 1 },
-          { label: "עיינו בנתונים", labelI18n: { he: "עיינו בנתונים", en: "Browse Data", pl: "Przeglądaj dane" }, url: "/data", icon: "Database", variant: "BUTTON_OUTLINE", order: 2 },
+          { label: { he: "חפשו במפות", en: "Explore Maps" }, url: "/maps", icon: "Map", variant: "BUTTON_SOLID", order: 1 },
+          { label: { he: "עיינו בנתונים", en: "Browse Data" }, url: "/data", icon: "Database", variant: "BUTTON_OUTLINE", order: 2 },
         ],
       },
     },
@@ -599,10 +539,10 @@ async function main() {
       location: "HERO_GRID",
       items: {
         create: [
-          { label: "מפות", labelI18n: { he: "מפות", en: "Maps", pl: "Mapy" }, url: "/maps", icon: "Map", variant: "CARD", order: 1 },
-          { label: "נתונים", labelI18n: { he: "נתונים", en: "Data", pl: "Dane" }, url: "/data", icon: "Database", variant: "CARD", order: 2 },
-          { label: "ארכיון", labelI18n: { he: "ארכיון", en: "Archive", pl: "Archiwum" }, url: "/archive", icon: "BookOpen", variant: "CARD", order: 3 },
-          { label: "מאמרים", labelI18n: { he: "מאמרים", en: "Posts", pl: "Artykuły" }, url: "/posts", icon: "FileText", variant: "CARD", order: 4 },
+          { label: { he: "מפות", en: "Maps" }, url: "/maps", icon: "Map", variant: "CARD", order: 1 },
+          { label: { he: "נתונים", en: "Data" }, url: "/data", icon: "Database", variant: "CARD", order: 2 },
+          { label: { he: "ארכיון", en: "Archive" }, url: "/archive", icon: "BookOpen", variant: "CARD", order: 3 },
+          { label: { he: "מאמרים", en: "Posts" }, url: "/posts", icon: "FileText", variant: "CARD", order: 4 },
         ],
       },
     },
@@ -613,9 +553,9 @@ async function main() {
       location: "HERO_STRIP",
       items: {
         create: [
-          { label: "קהילות", labelI18n: { he: "קהילות", en: "Communities", pl: "Społeczności" }, url: "/categories/communities", icon: "Users", order: 1 },
-          { label: "היסטוריה", labelI18n: { he: "היסטוריה", en: "History", pl: "Historia" }, url: "/categories/history", icon: "Clock", order: 2 },
-          { label: "דמוגרפיה", labelI18n: { he: "דמוגרפיה", en: "Demographics", pl: "Demografia" }, url: "/categories/demographics", icon: "BarChart", order: 3 },
+          { label: { he: "קהילות", en: "Communities" }, url: "/categories/communities", icon: "Users", order: 1 },
+          { label: { he: "היסטוריה", en: "History" }, url: "/categories/history", icon: "Clock", order: 2 },
+          { label: { he: "דמוגרפיה", en: "Demographics" }, url: "/categories/demographics", icon: "BarChart", order: 3 },
         ],
       },
     },
@@ -625,13 +565,12 @@ async function main() {
     data: {
       type: "LINK_LIST",
       order: 1,
-      title: "ניווט",
-      titleI18n: { he: "ניווט", en: "Navigation", pl: "Nawigacja" },
+      title: { he: "ניווט", en: "Navigation" },
       items: {
         create: [
-          { label: "מאמרים", labelI18n: { he: "מאמרים", en: "Posts", pl: "Artykuły" }, url: "/posts", order: 1 },
-          { label: "מפות", labelI18n: { he: "מפות", en: "Maps", pl: "Mapy" }, url: "/maps", order: 2 },
-          { label: "נתונים", labelI18n: { he: "נתונים", en: "Data", pl: "Dane" }, url: "/data", order: 3 },
+          { label: { he: "מאמרים", en: "Posts" }, url: "/posts", order: 1 },
+          { label: { he: "מפות", en: "Maps" }, url: "/maps", order: 2 },
+          { label: { he: "נתונים", en: "Data" }, url: "/data", order: 3 },
         ],
       },
     },
@@ -641,13 +580,10 @@ async function main() {
     data: {
       type: "RICH_TEXT",
       order: 2,
-      title: "אודות",
-      titleI18n: { he: "אודות", en: "About", pl: "O nas" },
-      content: "פרויקט קהל - פלטפורמה מחקרית להנגשת חומרים היסטוריים על קהילות יהודיות במזרח אירופה.",
-      contentI18n: {
+      title: { he: "אודות", en: "About" },
+      content: {
         he: "פרויקט קהל - פלטפורמה מחקרית להנגשת חומרים היסטוריים.",
         en: "The Kahal Project - a research platform for making historical materials accessible.",
-        pl: "Projekt Kahal - platforma badawcza udostępniająca materiały historyczne.",
       },
     },
   });
@@ -655,11 +591,9 @@ async function main() {
   await prisma.siteSettings.create({
     data: {
       key: "global",
-      copyrightText: "© 2026 פרויקט קהל. כל הזכויות שמורות.",
-      copyrightI18n: {
+      copyright: {
         he: "© 2026 פרויקט קהל. כל הזכויות שמורות.",
         en: "© 2026 Kahal Project. All rights reserved.",
-        pl: "© 2026 Projekt Kahal. Wszelkie prawa zastrzeżone.",
       },
     },
   });
@@ -684,29 +618,11 @@ async function main() {
           create: [
             {
               index: 0,
-              content: "# Regulamin Kahału Lwowskiego\n\n## Rozdział I — O wyborze starszych\n\n**Art. 1.** Starsi Kahału wybierani będą corocznie w miesiącu Nisan, przez zgromadzenie pełnoprawnych członków gminy.\n\n**Art. 2.** Kandydaci na urząd starszego muszą mieć ukończone lat trzydzieści, być osiadłymi we Lwowie od lat pięciu i opłacać podatek kahałowy w pełnej wysokości.\n\n**Art. 3.** Wybory odbywają się w Bóżnicy Wielkiej, w obecności co najmniej trzydziestu członków gminy.",
-              contentHe: "# תקנות קהל לבוב\n\n## פרק א׳ — על בחירת הזקנים\n\n**סעיף א׳.** זקני הקהל ייבחרו מדי שנה בחודש ניסן, על ידי אסיפת חברי הקהילה בעלי זכות הצבעה.\n\n**סעיף ב׳.** מועמדים לתפקיד זקן חייבים להיות בני שלושים שנה לפחות, יושבי לבוב חמש שנים, ומשלמי מס קהל במלואו.\n\n**סעיף ג׳.** הבחירות מתקיימות בבית הכנסת הגדול, בנוכחות שלושים חברי קהילה לפחות.",
-              contentEn: "# Regulations of the Lviv Kahal\n\n## Chapter I — On the Election of Elders\n\n**Art. 1.** The Kahal Elders shall be elected annually in the month of Nisan, by the assembly of full-right community members.\n\n**Art. 2.** Candidates for the office of elder must be at least thirty years of age, have resided in Lviv for five years, and pay the kahal tax in full.\n\n**Art. 3.** Elections shall take place in the Great Synagogue, in the presence of at least thirty community members.",
+              content: "# Regulamin Kahału Lwowskiego\n\n## Rozdział I — O wyborze starszych\n\n**Art. 1.** Starsi Kahału wybierani będą corocznie w miesiącu Nisan.",
+              contentHe: "# תקנות קהל לבוב",
+              contentEn: "# Regulations of the Lviv Kahal",
               filename: "001.md",
               bookmark: "Rozdział I — O wyborze starszych",
-              highlights: [],
-            },
-            {
-              index: 1,
-              content: "## Rozdział II — O podatkach i dochodach kahału\n\n**Art. 4.** Każdy członek gminy żydowskiej we Lwowie zobowiązany jest do opłacania podatku kahałowego, którego wysokość ustalana jest corocznie przez radę starszych.\n\n**Art. 5.** Podatek składa się z trzech części:\n- Podatek od majątku nieruchomego\n- Podatek od handlu i rzemiosła\n- Podatek osobisty (pogłówne)\n\n**Art. 6.** Starsi kahału mianują poborców podatkowych, którzy zobowiązani są do prowadzenia ksiąg rachunkowych i składania sprawozdań co kwartał.\n\n**Art. 7.** Dochody kahału przeznaczane są na utrzymanie synagog, cmentarza, szpitala żydowskiego, szkoły i wynagrodzenie rabina oraz urzędników kahałowych.",
-              contentHe: "## פרק ב׳ — על מיסים והכנסות הקהל\n\n**סעיף ד׳.** כל חבר הקהילה היהודית בלבוב חייב בתשלום מס קהל, שגובהו נקבע מדי שנה על ידי מועצת הזקנים.\n\n**סעיף ה׳.** המס מורכב משלושה חלקים:\n- מס על נכסי דלא ניידי\n- מס על מסחר ומלאכה\n- מס אישי (גולגולת)\n\n**סעיף ו׳.** זקני הקהל ממנים גובי מיסים, המחויבים לנהל ספרי חשבונות ולהגיש דו\"חות כל רבעון.\n\n**סעיף ז׳.** הכנסות הקהל מיועדות לאחזקת בתי הכנסת, בית העלמין, בית החולים היהודי, בית הספר ותשלום משכורת הרב ופקידי הקהל.",
-              contentEn: "## Chapter II — On Taxes and Kahal Revenue\n\n**Art. 4.** Every member of the Jewish community in Lviv is obligated to pay the kahal tax, the amount of which is determined annually by the council of elders.\n\n**Art. 5.** The tax consists of three parts:\n- Tax on immovable property\n- Tax on trade and crafts\n- Personal tax (poll tax)\n\n**Art. 6.** The kahal elders appoint tax collectors, who are required to keep account books and submit reports quarterly.\n\n**Art. 7.** Kahal revenues are allocated for the maintenance of synagogues, the cemetery, the Jewish hospital, the school, and the salaries of the rabbi and kahal officials.",
-              filename: "002.md",
-              bookmark: "Rozdział II — O podatkach",
-              highlights: [],
-            },
-            {
-              index: 2,
-              content: "## Rozdział III — O sądownictwie kahałowym\n\n**Art. 8.** Spory między członkami gminy rozstrzygane będą w pierwszej instancji przez sąd kahałowy (*bet din*), złożony z trzech sędziów mianowanych przez starszych.\n\n**Art. 9.** Sąd kahałowy orzeka w sprawach:\n- Sporów handlowych między Żydami\n- Spraw dotyczących małżeństwa i rozwodu\n- Sporów o dziedziczenie\n- Naruszenia regulaminu kahałowego\n\n**Art. 10.** Każda ze stron ma prawo odwołania się od wyroku sądu kahałowego do rabina miasta w ciągu czternastu dni.\n\n**Art. 11.** Kto ominie sąd kahałowy i zwróci się bezpośrednio do sądu miejskiego lub grodzkiego w sprawie, która podlega jurysdykcji kahału, podlega karze grzywny w wysokości dziesięciu złotych polskich.",
-              contentHe: "## פרק ג׳ — על בית הדין של הקהל\n\n**סעיף ח׳.** סכסוכים בין חברי הקהילה יידונו בערכאה ראשונה בבית הדין של הקהל, המורכב משלושה דיינים הממונים על ידי הזקנים.\n\n**סעיף ט׳.** בית הדין דן בעניינים:\n- סכסוכי מסחר בין יהודים\n- ענייני נישואין וגירושין\n- סכסוכי ירושה\n- הפרת תקנות הקהל\n\n**סעיף י׳.** לכל צד הזכות לערער על פסק בית הדין בפני רב העיר תוך ארבעה עשר יום.\n\n**סעיף י״א.** מי שעוקף את בית דין הקהל ופונה ישירות לבית המשפט העירוני או המחוזי בעניין שבסמכות הקהל, יחויב בקנס של עשרה זהובים פולניים.",
-              contentEn: "## Chapter III — On Kahal Judiciary\n\n**Art. 8.** Disputes between community members shall be adjudicated in the first instance by the kahal court (*bet din*), composed of three judges appointed by the elders.\n\n**Art. 9.** The kahal court rules on matters of:\n- Commercial disputes between Jews\n- Matters of marriage and divorce\n- Inheritance disputes\n- Violations of kahal regulations\n\n**Art. 10.** Each party has the right to appeal the kahal court's verdict to the city rabbi within fourteen days.\n\n**Art. 11.** Anyone who bypasses the kahal court and turns directly to the municipal or district court in a matter under kahal jurisdiction shall be fined ten Polish zlotys.",
-              filename: "003.md",
-              bookmark: "Rozdział III — O sądownictwie",
               highlights: [],
             },
           ],
@@ -718,8 +634,8 @@ async function main() {
         slug: "pinkos-brody-1742",
         title: "פנקס הקהילה ברודי — רשימת משפחות תש\"ב",
         titleEn: "Brody Community Pinkas — Family Register, 1742",
-        description: "רשימת המשפחות היהודיות בברודי משנת 1742, כפי שנרשמו בפנקס הקהילה. כולל שמות ראשי משפחות, מספר נפשות ועיסוק.",
-        descriptionEn: "Registry of Jewish families in Brody from 1742, as recorded in the community pinkas. Includes names of household heads, number of souls, and occupation.",
+        description: "רשימת המשפחות היהודיות בברודי משנת 1742, כפי שנרשמו בפנקס הקהילה.",
+        descriptionEn: "Registry of Jewish families in Brody from 1742, as recorded in the community pinkas.",
         category: "pinkas",
         year: 1742,
         reference: "AGAD, Archiwum Brodzkie, sygn. 45",
@@ -730,20 +646,11 @@ async function main() {
           create: [
             {
               index: 0,
-              content: "Rejestr familii żydowskich miasta Brody, roku 1742.\n\nNa rozkaz Jaśnie Wielmożnego Pana Potockiego, Starosty Brodzkiego, sporządzono niniejszy rejestr familii żydowskich w mieście Brody zamieszkałych.",
-              contentHe: "# פנקס משפחות יהודי ברודי — תק\"ב\n\nבפקודת האדון הנכבד פוטוצקי, סטארוסטא של ברודי, נערכה רשימה זו של המשפחות היהודיות היושבות בעיר ברודי.\n\n| # | שם ראש המשפחה | נפשות | עיסוק |\n|---|---|---|---|\n| 1 | הירש בן מאיר כהן | 7 | סוחר בדים |\n| 2 | אברהם ליב גולדשטיין | 5 | חייט |\n| 3 | משה בן יצחק הלוי | 9 | סוחר תבואה |\n| 4 | יעקב שמואל רוזנטל | 4 | רוכל |\n| 5 | שלמה זלמן קופרמן | 6 | נחושתר |",
-              contentEn: "# Brody Jewish Family Register — 1742\n\nBy order of the Honorable Lord Potocki, Starosta of Brody, the present registry of Jewish families residing in the town of Brody was compiled.\n\n| # | Head of Household | Souls | Occupation |\n|---|---|---|---|\n| 1 | Hirsh ben Meir Cohen | 7 | Cloth merchant |\n| 2 | Abraham Leib Goldstein | 5 | Tailor |\n| 3 | Moshe ben Yitzhak HaLevi | 9 | Grain merchant |\n| 4 | Yaakov Shmuel Rosenthal | 4 | Peddler |\n| 5 | Shlomo Zalman Kuperman | 6 | Coppersmith |",
+              content: "Rejestr familii żydowskich miasta Brody, roku 1742.",
+              contentHe: "# פנקס משפחות יהודי ברודי — תק\"ב",
+              contentEn: "# Brody Jewish Family Register — 1742",
               filename: "001.md",
               bookmark: "רשימת משפחות — דף א׳",
-              highlights: [],
-            },
-            {
-              index: 1,
-              content: "Kontynuacja rejestru familii żydowskich miasta Brody.",
-              contentHe: "| # | שם ראש המשפחה | נפשות | עיסוק |\n|---|---|---|---|\n| 6 | דוד בן נחמן פרלמוטר | 8 | סוחר עורות |\n| 7 | חיים יוסף שוורץ | 3 | מלמד |\n| 8 | בנימין וולף הורוביץ | 6 | חנווני |\n| 9 | אלעזר בן צבי פישמן | 5 | דייג |\n| 10 | נחום מנדל שטרנברג | 7 | זגג |\n\n---\n\n**סיכום:** עשר משפחות רשומות בדף זה, ובהן שישים נפשות סך הכל.",
-              contentEn: "| # | Head of Household | Souls | Occupation |\n|---|---|---|---|\n| 6 | David ben Nachman Perlmutter | 8 | Leather merchant |\n| 7 | Chaim Yosef Schwartz | 3 | Teacher (melamed) |\n| 8 | Benjamin Wolf Horowitz | 6 | Shopkeeper |\n| 9 | Elazar ben Tzvi Fishman | 5 | Fisherman |\n| 10 | Nachum Mendel Sternberg | 7 | Glazier |\n\n---\n\n**Summary:** Ten families recorded on this page, totaling sixty souls.",
-              filename: "002.md",
-              bookmark: "רשימת משפחות — דף ב׳",
               highlights: [],
             },
           ],
@@ -769,6 +676,8 @@ async function main() {
   console.log(`  1 collection, 1 series, 1 volume, 5 pages`);
   console.log(`  4 menus (header, hero_actions, hero_grid, hero_strip)`);
   console.log(`  2 footer columns`);
+  void headerMenu;
+  void footerCol1;
 }
 
 main()

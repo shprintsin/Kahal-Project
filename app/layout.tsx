@@ -6,7 +6,7 @@ import { Toaster } from "sonner";
 import { getLocale } from "next-intl/server";
 import { isValidLocale, defaultLocale, getDir } from "@/lib/i18n/config";
 import type { Locale } from "@/lib/i18n/config";
-import { GoogleAnalytics } from '@next/third-parties/google'; // <-- הוספה של ה-Import
+// import { GoogleAnalytics } from '@next/third-parties/google';
 import "./globals.css";
 
 const heebo = Heebo({
@@ -46,7 +46,7 @@ export default async function RootLayout({
         <Toaster richColors position="top-right" />
         
         {/* Google Analytics */}
-        <GoogleAnalytics gaId="G-3HKSYEW8V9" /> 
+        {/* <GoogleAnalytics gaId="G-3HKSYEW8V9" /> */}
       </body>
     </html>
   );

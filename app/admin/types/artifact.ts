@@ -1,11 +1,8 @@
 export interface ArtifactData {
   slug: string;
-  title?: string;
-  titleI18n?: any;
-  description?: string;
-  descriptionI18n?: any;
-  content?: string | null;
-  contentI18n: any;
+  title?: { he?: string; en?: string } | Record<string, string>;
+  description?: { he?: string; en?: string } | Record<string, string>;
+  content?: { he?: string; en?: string } | Record<string, string>;
   artifactCategoryId?: string;
   year?: number;
   dateDisplay?: string;

@@ -186,15 +186,11 @@ function EditorInner({
     setSaving(true);
     try {
       const data = {
-        title,
+        title: typeof title === 'string' ? { he: title } : title,
         slug,
-        content,
-        contentI18n: {},
-        titleI18n: {},
-        description: description || undefined,
-        descriptionI18n: {},
+        content: typeof content === 'string' ? { he: content } : content,
+        description: description ? (typeof description === 'string' ? { he: description } : description) : undefined,
         excerpt: excerpt || undefined,
-        excerptI18n: {},
         year: year === "" ? undefined : Number(year),
         dateDisplay: dateDisplay || undefined,
         dateSort: dateSort || undefined,

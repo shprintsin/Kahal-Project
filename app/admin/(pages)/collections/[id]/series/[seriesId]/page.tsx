@@ -26,10 +26,10 @@ export default async function SeriesDetailPage({
          <div className="flex flex-col">
              <div className="flex items-center gap-1 text-sm text-muted-foreground mb-1">
                  <Link href={`/admin/collections/${collectionId}/series`} className="hover:underline flex items-center">
-                    <ChevronLeft className="w-3 h-3" /> {(series.collection?.nameI18n as any)?.en || "Collection"}
+                    <ChevronLeft className="w-3 h-3" /> {(series.collection?.name as any)?.en || "Collection"}
                  </Link>
              </div>
-             <h1 className="text-xl font-bold">{(series.nameI18n as any)?.en || "Untitled Series"}</h1>
+             <h1 className="text-xl font-bold">{(series.name as any)?.en || "Untitled Series"}</h1>
              <p className="text-sm text-muted-foreground">{series.volumes.length} Volumes</p>
          </div>
          <ViewToggle /> 
@@ -41,7 +41,7 @@ export default async function SeriesDetailPage({
                 items={series.volumes.map(v => ({
                     id: v.id,
                     type: "VOLUME",
-                    name: (v.titleI18n as any)?.en || v.slug,
+                    name: (v.title as any)?.en || v.slug,
                     thumbnailUrl: v.thumbnail?.storageFile?.publicUrl ?? v.pages[0]?.images[0]?.storageFile?.publicUrl,
                     childCount: v._count.pages,
                     href: `/admin/collections/volume/${v.id}`
@@ -52,7 +52,7 @@ export default async function SeriesDetailPage({
                  {/* Simple List View Backup - ideally reuse PageList styled component? */}
                  {series.volumes.map(v => (
                     <div key={v.id} className="p-3 border rounded hover:bg-muted/50">
-                        {(v.titleI18n as any)?.en || v.slug}
+                        {(v.title as any)?.en || v.slug}
                     </div>
                  ))}
              </div>

@@ -21,11 +21,9 @@ model Page {
   id                 String             @id @default(uuid()) @db.Uuid
   createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt          DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
-  title              String
-  titleI18n          Json?              @default("{}") @map("title_i18n")
+  title              Json               @default("{}")
   slug               String             @unique
-  content            String?
-  contentI18n        Json?              @default("{}") @map("content_i18n")
+  content            Json               @default("{}")
   excerpt            String?
   sources            String?
   citations          String?
@@ -56,14 +54,11 @@ model Page {
 
 model Post {
   id                 String        @id @default(uuid()) @db.Uuid
-  title              String
-  titleI18n          Json?         @default("{}") @map("title_i18n")
+  title              Json          @default("{}")
   slug               String        @unique
-  content            String?
-  contentI18n        Json?         @default("{}") @map("content_i18n")
+  content            Json          @default("{}")
   sources            String?
-  excerpt            String?
-  excerptI18n        Json?         @default("{}") @map("excerpt_i18n")
+  excerpt            Json          @default("{}")
   status             ContentStatus @default(draft)
   authorId           String?       @map("author_id") @db.Uuid
   thumbnailId        String?       @map("thumbnail_id") @db.Uuid
@@ -168,8 +163,8 @@ model VerificationToken {
 model Dataset {
   id                String                    @id @default(uuid()) @db.Uuid
   slug              String                    @unique
-  titleI18n         Json?                     @default("{}") @map("title_i18n")
-  descriptionI18n   Json?                     @default("{}") @map("description_i18n")
+  title             Json                      @default("{}")
+  description       Json                      @default("{}")
   year              Int?
   version           String?                   @default("1.0.0")
   thumbnailId       String?                   @map("thumbnail_id") @db.Uuid
@@ -178,22 +173,16 @@ model Dataset {
   referenceLinks    Json?                     @default("[]") @map("reference_links")
   createdAt         DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt         DateTime                  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  description       String?
   period            String?
-  title             String                    @default("Untitled")
   yearMax           Int?                      @map("year_max")
   yearMin           Int?                      @map("year_min")
   categoryId        String?                   @map("category_id") @db.Uuid
   status            ContentStatus             @default(draft)
-  codebookText      String?                   @map("codebook_text")
-  codebookTextI18n  Json?                     @default("{}") @map("codebook_text_i18n")
+  codebookText      Json                      @default("{}")
   isFeatured        Boolean                   @default(false) @map("is_featured")
-  summary           String?                   @default("")
-  summaryI18n       Json?                     @default("{}") @map("summary_i18n")
-  citationText      String?                   @map("citation_text")
-  citationTextI18n  Json?                     @default("{}") @map("citation_text_i18n")
-  sources           String?
-  sourcesI18n       Json?                     @default("{}") @map("sources_i18n")
+  summary           Json                      @default("{}")
+  citationText      Json                      @default("{}")
+  sources           Json                      @default("{}")
   maturity          DataMaturity              @default(Provisional)
   isVisible         Boolean                   @default(true) @map("is_visible")
   license           String?
@@ -229,44 +218,38 @@ model DatasetResource {
 }
 
 model Layer {
-  id               String                    @id @default(uuid()) @db.Uuid
-  slug             String                    @unique
-  name             String                    @default("Untitled")
-  nameI18n         Json?                     @default("{}") @map("name_i18n")
-  description      String?                   @default("")
-  descriptionI18n  Json?                     @default("{}") @map("description_i18n")
-  filename         String?                   @default("")
-  status           ContentStatus             @default(draft)
-  version          String?                   @default("1.0.0")
-  categoryId       String?                   @map("category_id") @db.Uuid
-  type             LayerType                 @default(POINTS)
-  citationText     String?                   @map("citation_text")
-  citationTextI18n Json?                     @default("{}") @map("citation_text_i18n")
-  codebookText     String?                   @map("codebook_text")
-  codebookTextI18n Json?                     @default("{}") @map("codebook_text_i18n")
-  sources          String?
-  sourcesI18n      Json?                     @default("{}") @map("sources_i18n")
-  license          String?
-  maturity         DataMaturity              @default(Provisional)
-  minYear          Int?                      @map("min_year")
-  maxYear          Int?                      @map("max_year")
-  sourceType       LayerSourceType           @default(database) @map("source_type")
-  sourceUrl        String?                   @map("source_url")
-  downloadUrl      String?                   @map("download_url")
-  geoJsonData      Json?                     @map("geojson_data")
-  styleConfig      Json                      @default("{}") @map("style_config")
-  thumbnail        String?                   @map("thumbnail")
-  createdAt        DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime                  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  isFeatured       Boolean                   @default(false) @map("is_featured")
-  summary          String?                   @default("")
-  summaryI18n      Json?                     @default("{}") @map("summary_i18n")
-  datasetId        String?                   @map("dataset_id") @db.Uuid
-  category         Category?                 @relation(fields: [categoryId], references: [id])
-  dataset          Dataset?                  @relation("DatasetOwnedLayers", fields: [datasetId], references: [id])
-  datasets         DatasetLayerAssociation[]
-  regions          Region[]                  @relation("LayerToRegion")
-  tags             Tag[]                     @relation("LayerToTag")
+  id           String                    @id @default(uuid()) @db.Uuid
+  slug         String                    @unique
+  name         Json                      @default("{}")
+  description  Json                      @default("{}")
+  filename     String?                   @default("")
+  status       ContentStatus             @default(draft)
+  version      String?                   @default("1.0.0")
+  categoryId   String?                   @map("category_id") @db.Uuid
+  type         LayerType                 @default(POINTS)
+  citationText Json                      @default("{}")
+  codebookText Json                      @default("{}")
+  sources      Json                      @default("{}")
+  license      String?
+  maturity     DataMaturity              @default(Provisional)
+  minYear      Int?                      @map("min_year")
+  maxYear      Int?                      @map("max_year")
+  sourceType   LayerSourceType           @default(database) @map("source_type")
+  sourceUrl    String?                   @map("source_url")
+  downloadUrl  String?                   @map("download_url")
+  geoJsonData  Json?                     @map("geojson_data")
+  styleConfig  Json                      @default("{}") @map("style_config")
+  thumbnail    String?                   @map("thumbnail")
+  createdAt    DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime                  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  isFeatured   Boolean                   @default(false) @map("is_featured")
+  summary      Json                      @default("{}")
+  datasetId    String?                   @map("dataset_id") @db.Uuid
+  category     Category?                 @relation(fields: [categoryId], references: [id])
+  dataset      Dataset?                  @relation("DatasetOwnedLayers", fields: [datasetId], references: [id])
+  datasets     DatasetLayerAssociation[]
+  regions      Region[]                  @relation("LayerToRegion")
+  tags         Tag[]                     @relation("LayerToTag")
 
   @@index([status])
   @@index([categoryId])
@@ -308,19 +291,18 @@ model DatasetDeployment {
 }
 
 model Collection {
-  id              String   @id @default(uuid()) @db.Uuid
-  nameI18n        Json     @default("{}") @map("name_i18n")
-  descriptionI18n Json?    @default("{}") @map("description_i18n")
-  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  thumbnailId     String?  @map("thumbnail_id") @db.Uuid
-  name            String   @default("Untitled")
-  referenceCode   String?  @map("reference_code")
-  yearMax         Int?     @map("year_max")
-  yearMin         Int?     @map("year_min")
-  thumbnail       Media?   @relation("CollectionThumbnail", fields: [thumbnailId], references: [id])
-  series          Series[]
-  regions         Region[] @relation("CollectionToRegion")
-  tags            Tag[]    @relation("CollectionToTag")
+  id            String   @id @default(uuid()) @db.Uuid
+  name          Json     @default("{}")
+  description   Json     @default("{}")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  thumbnailId   String?  @map("thumbnail_id") @db.Uuid
+  referenceCode String?  @map("reference_code")
+  yearMax       Int?     @map("year_max")
+  yearMin       Int?     @map("year_min")
+  thumbnail     Media?   @relation("CollectionThumbnail", fields: [thumbnailId], references: [id])
+  series        Series[]
+  regions       Region[] @relation("CollectionToRegion")
+  tags          Tag[]    @relation("CollectionToTag")
 
   @@map("collections")
 }
@@ -328,15 +310,13 @@ model Collection {
 model Series {
   id                String            @id @default(uuid()) @db.Uuid
   collectionId      String?           @map("collection_id") @db.Uuid
-  nameI18n          Json              @default("{}") @map("name_i18n")
-  descriptionI18n   Json?             @default("{}") @map("description_i18n")
+  name              Json              @default("{}")
+  description       Json              @default("{}")
   indexNumber       Int?              @map("index_number")
   volumeLabelFormat String?           @map("volume_label_format")
   thumbnailId       String?           @map("thumbnail_id") @db.Uuid
   createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
   slug              String            @unique
-  name              String            @default("Untitled")
-  description       String?
   license           String?
   period            String?
   sourceLink        String?           @map("source_link")
@@ -361,15 +341,13 @@ model Volume {
   id                String            @id @default(uuid()) @db.Uuid
   seriesId          String?           @map("series_id") @db.Uuid
   indexNumber       Int?              @map("index_number")
-  titleI18n         Json              @default("{}") @map("title_i18n")
-  descriptionI18n   Json?             @default("{}") @map("description_i18n")
+  title             Json              @default("{}")
+  description       Json              @default("{}")
   languageOfContent String?           @map("language_of_content")
   yearContent       Int?              @map("year_content")
   thumbnailId       String?           @map("thumbnail_id") @db.Uuid
   createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
   slug              String            @unique
-  title             String            @default("Untitled")
-  description       String?
   license           String?
   sourceLink        String?           @map("source_link")
   sources           String?
@@ -406,21 +384,17 @@ model VolumePage {
 model Artifact {
   id                 String            @id @default(uuid()) @db.Uuid
   slug               String            @unique
-  content            String            @default("")
-  contentI18n        Json              @default("{}") @map("content_i18n")
+  content            Json              @default("{}")
   year               Int?
   dateDisplay        String?           @map("date_display")
   dateSort           DateTime?         @map("date_sort")
-  excerpt            String?
-  excerptI18n        Json?             @default("{}") @map("excerpt_i18n")
+  excerpt            Json              @default("{}")
   createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
-  description        String?
-  descriptionI18n    Json?             @default("{}") @map("description_i18n")
+  description        Json              @default("{}")
   displayScans       Boolean           @default(true) @map("display_scans")
   displayTexts       Boolean           @default(true) @map("display_texts")
   sources            Json              @default("[]")
-  title              String            @default("")
-  titleI18n          Json              @default("{}") @map("title_i18n")
+  title              Json              @default("{}")
   artifactCategoryId String?           @map("artifact_category_id") @db.Uuid
   artifactCategory   ArtifactCategory? @relation(fields: [artifactCategoryId], references: [id])
   periods            Period[]          @relation("ArtifactToPeriod")
@@ -542,9 +516,8 @@ model AdministrativePlace {
 model Tag {
   id          String       @id @default(uuid()) @db.Uuid
   slug        String       @unique
-  nameI18n    Json         @default("{}") @map("name_i18n")
+  name        Json         @default("{}")
   createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
-  name        String       @default("Untitled")
   posts       PostTag[]
   artifacts   Artifact[]   @relation("ArtifactToTag")
   collections Collection[] @relation("CollectionToTag")
@@ -559,8 +532,7 @@ model Tag {
 model Region {
   id          String       @id @default(uuid()) @db.Uuid
   slug        String       @unique
-  name        String       @default("Untitled")
-  nameI18n    Json         @default("{}") @map("name_i18n")
+  name        Json         @default("{}")
   createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
   artifacts   Artifact[]   @relation("ArtifactToRegion")
   collections Collection[] @relation("CollectionToRegion")
@@ -576,11 +548,10 @@ model Region {
 
 model Category {
   id          String    @id @default(uuid()) @db.Uuid
-  title       String
   slug        String    @unique
   thumbnailId String?   @map("thumbnail_id") @db.Uuid
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  titleI18n   Json      @default("{}") @map("title_i18n")
+  title       Json      @default("{}")
   thumbnail   Media?    @relation("CategoryThumbnail", fields: [thumbnailId], references: [id])
   layers      Layer[]
   datasets    Dataset[]
@@ -593,8 +564,7 @@ model Category {
 model ArtifactCategory {
   id        String     @id @default(uuid()) @db.Uuid
   slug      String     @unique
-  title     String     @default("Untitled")
-  titleI18n Json       @default("{}") @map("title_i18n")
+  title     Json       @default("{}")
   createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
   artifacts Artifact[]
 
@@ -604,8 +574,7 @@ model ArtifactCategory {
 model Period {
   id        String     @id @default(uuid()) @db.Uuid
   slug      String     @unique
-  name      String     @default("Untitled")
-  nameI18n  Json       @default("{}") @map("name_i18n")
+  name      Json       @default("{}")
   dateStart DateTime?  @map("date_start") @db.Timestamptz(6)
   dateEnd   DateTime?  @map("date_end") @db.Timestamptz(6)
   createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
@@ -628,8 +597,7 @@ model MenuItem {
   id        String      @id @default(uuid()) @db.Uuid
   menuId    String      @map("menu_id") @db.Uuid
   parentId  String?     @map("parent_id") @db.Uuid
-  label     String      @default("")
-  labelI18n Json        @default("{}") @map("label_i18n")
+  label     Json        @default("{}")
   icon      String?
   variant   ItemVariant @default(DEFAULT)
   order     Int         @default(0)
@@ -648,16 +616,14 @@ model MenuItem {
 }
 
 model FooterColumn {
-  id          String             @id @default(uuid()) @db.Uuid
-  type        MenuType
-  order       Int                @default(0)
-  title       String             @default("")
-  titleI18n   Json               @default("{}") @map("title_i18n")
-  content     String?            @default("")
-  contentI18n Json?              @default("{}") @map("content_i18n")
-  createdAt   DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
-  items       FooterColumnItem[]
+  id        String             @id @default(uuid()) @db.Uuid
+  type      MenuType
+  order     Int                @default(0)
+  title     Json               @default("{}")
+  content   Json               @default("{}")
+  createdAt DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  items     FooterColumnItem[]
 
   @@map("footer_columns")
 }
@@ -665,8 +631,7 @@ model FooterColumn {
 model FooterColumnItem {
   id             String       @id @default(uuid()) @db.Uuid
   footerColumnId String       @map("footer_column_id") @db.Uuid
-  label          String       @default("")
-  labelI18n      Json         @default("{}") @map("label_i18n")
+  label          Json         @default("{}")
   icon           String?
   order          Int          @default(0)
   pageId         String?      @map("page_id") @db.Uuid
@@ -681,32 +646,28 @@ model FooterColumnItem {
 }
 
 model SiteSettings {
-  id               String   @id @default(uuid()) @db.Uuid
-  key              String   @unique
-  copyrightText    String   @default("") @map("copyright_text")
-  copyrightI18n    Json     @default("{}") @map("copyright_i18n")
-  researchTeamI18n Json     @default("{}") @map("research_team_i18n")
-  citationText     String   @default("") @map("citation_text")
-  citationTextI18n Json     @default("{}") @map("citation_text_i18n")
-  homepageStats    Json     @default("{}") @map("homepage_stats")
-  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id            String   @id @default(uuid()) @db.Uuid
+  key           String   @unique
+  copyright     Json     @default("{}")
+  researchTeam  Json     @default("{}")
+  citation      Json     @default("{}")
+  homepageStats Json     @default("{}") @map("homepage_stats")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("site_settings")
 }
 
 model SiteLink {
-  id              String        @id @default(uuid()) @db.Uuid
-  title           String        @default("")
-  titleI18n       Json          @default("{}") @map("title_i18n")
-  description     String?
-  descriptionI18n Json?         @default("{}") @map("description_i18n")
-  icon            String?
-  url             String
-  order           Int           @default(0)
-  status          ContentStatus @default(draft)
-  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id          String        @id @default(uuid()) @db.Uuid
+  title       Json          @default("{}")
+  description Json          @default("{}")
+  icon        String?
+  url         String
+  order       Int           @default(0)
+  status      ContentStatus @default(draft)
+  createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@index([status, order])
   @@map("site_links")

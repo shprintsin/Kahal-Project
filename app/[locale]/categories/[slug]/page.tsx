@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { CategoryPageClient } from './CategoryPageClient'
 import { getSiteShellData } from '@/app/lib/get-navigation'
 import { getDateLocale, type Locale } from '@/lib/i18n/config'
+import { pickI18n } from '@/app/lib/pick-i18n'
 
 export default async function CategoryPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;
@@ -21,28 +22,36 @@ export default async function CategoryPage({ params }: { params: Promise<{ local
     notFound();
   }
 
+  const loc = locale as Locale;
   const posts = (postsData.posts || []).map((p) => ({
     id: p.id,
-    title: p.title,
-    excerpt: p.excerpt || undefined,
-    thumbnail: p.thumbnail?.url,
+    title: pickI18n(p.title, loc),
+    excerpt: typeof p.excerpt === 'string' ? p.excerpt : pickI18n(p.excerpt, loc) || undefined,
+    thumbnail: p.thumbnail?.url ?? null,
     slug: `/posts/${p.slug}`,
     date: p.createdAt ? new Date(p.createdAt).toLocaleDateString(dateLocale) : null,
   }));
 
   const categories = (categoriesData.categories || []).map((c) => ({
-    name: c.title,
+    name: pickI18n(c.title, loc),
     count: c.usageCount?.total || 0,
     slug: `/categories/${c.slug}`,
   }));
 
   const recentPosts = (postsData.posts || []).slice(0, 3).map((p) => ({
-    title: p.title,
+    title: pickI18n(p.title, loc),
     slug: `/posts/${p.slug}`,
   }));
 
+  const category = {
+    id: categoryData.id,
+    title: pickI18n(categoryData.title, loc),
+    slug: categoryData.slug,
+    postsCount: categoryData.usageCount?.total ?? 0,
+  };
+
   return <CategoryPageClient
-    category={categoryData}
+    category={category}
     initialPosts={posts}
     categories={categories}
     recentPosts={recentPosts}

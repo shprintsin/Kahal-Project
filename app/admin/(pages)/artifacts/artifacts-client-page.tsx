@@ -9,7 +9,7 @@ interface Artifact extends ContentListItem {
   year: number | null;
   dateDisplay: string | null;
   excerpt: string | null;
-  contentI18n?: any;
+  content?: any;
   artifactCategory: { id: string; title: string } | null;
   periods: { id: string; name: string }[];
   regions: { id: string; name: string }[];
@@ -130,7 +130,7 @@ export function ArtifactsClientPage({ initialArtifacts }: { initialArtifacts: Ar
           await updateArtifact(id, {
             ...data,
             slug: (data.slug as string) || artifact?.slug || "",
-            contentI18n: {},
+            content: {},
           } as any);
         },
         onDelete: async (id) => {

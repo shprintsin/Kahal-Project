@@ -259,9 +259,11 @@ export async function listPagesAPI(options: ListPagesOptions = {}) {
       ...(parentId !== undefined && { parentId }),
       ...(search && {
         OR: [
-          { title: { contains: search, mode: "insensitive" } },
-          { excerpt: { contains: search, mode: "insensitive" } },
-          { content: { contains: search, mode: "insensitive" } },
+          { title: { path: ["he"], string_contains: search } },
+          { title: { path: ["en"], string_contains: search } },
+          { excerpt: { contains: search, mode: "insensitive" as const } },
+          { content: { path: ["he"], string_contains: search } },
+          { content: { path: ["en"], string_contains: search } },
         ],
       }),
     };
@@ -373,7 +375,6 @@ export async function getPageBySlug(slug: string, options: GetPageOptions = {}) 
             id: true,
             slug: true,
             name: true,
-            nameI18n: true,
           },
         },
         regions: {
@@ -381,7 +382,6 @@ export async function getPageBySlug(slug: string, options: GetPageOptions = {}) 
             id: true,
             slug: true,
             name: true,
-            nameI18n: true,
           },
         },
         parent: {

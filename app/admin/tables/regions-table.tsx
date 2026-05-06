@@ -22,8 +22,7 @@ import { codeCell, rightActions } from "@/app/admin/components/tables/table-util
 interface Region {
     id: string;
     slug: string;
-    name: string | null;
-    nameI18n: any;
+    name: any;
 }
 
 export default function RegionsClient({ initialRegions }: { initialRegions: any[] }) {
@@ -82,7 +81,7 @@ export default function RegionsClient({ initialRegions }: { initialRegions: any[
         setSubmitting(true);
         try {
             const data = {
-                name: formData.name,
+                name: { en: formData.name, he: formData.name },
                 slug: formData.slug || formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
             };
 

@@ -6,6 +6,7 @@ import { getSiteShellData } from '@/app/lib/get-navigation';
 import { getDateLocale, type Locale } from '@/lib/i18n/config';
 import { createPageMetadata } from '@/lib/i18n/metadata';
 import { MapsPageClient } from './MapsPageClient';
+import { pickI18n } from '@/app/lib/pick-i18n';
 
 export const revalidate = 60;
 
@@ -38,8 +39,9 @@ export default async function MapsPage({ params }: { params: Promise<{ locale: s
     layerTypes: m.layerTypes || []
   }));
 
+  const loc = locale as Locale;
   const categories = (categoriesData.categories || []).map((c) => ({
-    name: c.title,
+    name: pickI18n(c.title, loc),
     count: c.usageCount?.datasets || 0,
     slug: `/categories/${c.slug}`,
   }));

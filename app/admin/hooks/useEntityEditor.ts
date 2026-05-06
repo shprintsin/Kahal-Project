@@ -69,7 +69,7 @@ export function useEntityEditor<
         const sourceField = config.slugSource!;
         const watchValue = value[sourceField as keyof typeof value];
         
-        // For nested fields like "nameI18n.en", we need to access nested value
+        // For nested fields like "name.en", we need to access nested value
         const fieldValue = sourceField.includes(".")
           ? sourceField.split(".").reduce((obj, key) => obj?.[key], watchValue as any)
           : watchValue;

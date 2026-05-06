@@ -18,7 +18,7 @@ import { PrismaClient, Prisma, MenuLocation, MenuType } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-type I18n<T> = { he: T; en: T; pl?: T } & Record<string, T | undefined>;
+type I18n<T> = { he: T; en: T };
 type Author = { name: string; role: string; affiliation: string };
 
 // ---------------------------------------------------------------------------
@@ -28,7 +28,6 @@ type Author = { name: string; role: string; affiliation: string };
 const COPYRIGHT_I18N: I18n<string> = {
   he: "© 2026 ShtetlAtlas. כל הזכויות שמורות.",
   en: "© 2026 The ShtetlAtlas Project. All rights reserved.",
-  pl: "© 2026 Projekt ShtetlAtlas. Wszelkie prawa zastrzeżone.",
 };
 
 const RESEARCH_TEAM_I18N: I18n<Author[]> = {
@@ -57,11 +56,9 @@ const HOMEPAGE_STATS: { communities: string; datasets: string; maps: string; yea
 };
 
 const SITE_SETTINGS_DATA = {
-  copyrightText: COPYRIGHT_I18N.he,
-  copyrightI18n: COPYRIGHT_I18N as Prisma.InputJsonValue,
-  researchTeamI18n: RESEARCH_TEAM_I18N as unknown as Prisma.InputJsonValue,
-  citationText: CITATION_I18N.en,
-  citationTextI18n: CITATION_I18N as Prisma.InputJsonValue,
+  copyright: COPYRIGHT_I18N as Prisma.InputJsonValue,
+  researchTeam: RESEARCH_TEAM_I18N as unknown as Prisma.InputJsonValue,
+  citation: CITATION_I18N as Prisma.InputJsonValue,
   homepageStats: HOMEPAGE_STATS as Prisma.InputJsonValue,
 } satisfies Prisma.SiteSettingsUpdateInput;
 
@@ -76,33 +73,33 @@ type MenuItemSeed = Omit<
 
 const MENUS: Record<MenuLocation, MenuItemSeed[]> = {
   HEADER: [
-    { label: "מאמרים", labelI18n: { he: "מאמרים", en: "Posts", pl: "Artykuły" }, url: "/posts" },
-    { label: "מפות", labelI18n: { he: "מפות", en: "Maps", pl: "Mapy" }, url: "/maps" },
-    { label: "שכבות", labelI18n: { he: "שכבות", en: "Layers", pl: "Warstwy" }, url: "/layers" },
-    { label: "נתונים", labelI18n: { he: "נתונים", en: "Data", pl: "Dane" }, url: "/data" },
-    { label: "ארכיון", labelI18n: { he: "ארכיון", en: "Archive", pl: "Archiwum" }, url: "/archive" },
-    { label: "אודות", labelI18n: { he: "אודות", en: "About", pl: "O nas" }, url: "/about" },
+    { label: { he: "מאמרים", en: "Posts" }, url: "/posts" },
+    { label: { he: "מפות", en: "Maps" }, url: "/maps" },
+    { label: { he: "שכבות", en: "Layers" }, url: "/layers" },
+    { label: { he: "נתונים", en: "Data" }, url: "/data" },
+    { label: { he: "ארכיון", en: "Archive" }, url: "/archive" },
+    { label: { he: "אודות", en: "About" }, url: "/about" },
   ],
   HERO_ACTIONS: [
-    { label: "חפשו במפות", labelI18n: { he: "חפשו במפות", en: "Explore Maps", pl: "Przeglądaj mapy" }, url: "/maps", icon: "Map", variant: "BUTTON_SOLID" },
-    { label: "עיינו בנתונים", labelI18n: { he: "עיינו בנתונים", en: "Browse Data", pl: "Przeglądaj dane" }, url: "/data", icon: "Database", variant: "BUTTON_OUTLINE" },
+    { label: { he: "חפשו במפות", en: "Explore Maps" }, url: "/maps", icon: "Map", variant: "BUTTON_SOLID" },
+    { label: { he: "עיינו בנתונים", en: "Browse Data" }, url: "/data", icon: "Database", variant: "BUTTON_OUTLINE" },
   ],
   HERO_GRID: [
-    { label: "מפות", labelI18n: { he: "מפות", en: "Maps", pl: "Mapy" }, url: "/maps", icon: "Map", variant: "CARD" },
-    { label: "נתונים", labelI18n: { he: "נתונים", en: "Data", pl: "Dane" }, url: "/data", icon: "Database", variant: "CARD" },
-    { label: "ארכיון", labelI18n: { he: "ארכיון", en: "Archive", pl: "Archiwum" }, url: "/archive", icon: "BookOpen", variant: "CARD" },
-    { label: "מאמרים", labelI18n: { he: "מאמרים", en: "Posts", pl: "Artykuły" }, url: "/posts", icon: "FileText", variant: "CARD" },
+    { label: { he: "מפות", en: "Maps" }, url: "/maps", icon: "Map", variant: "CARD" },
+    { label: { he: "נתונים", en: "Data" }, url: "/data", icon: "Database", variant: "CARD" },
+    { label: { he: "ארכיון", en: "Archive" }, url: "/archive", icon: "BookOpen", variant: "CARD" },
+    { label: { he: "מאמרים", en: "Posts" }, url: "/posts", icon: "FileText", variant: "CARD" },
   ],
   HERO_STRIP: [
-    { label: "קהילות", labelI18n: { he: "קהילות", en: "Communities", pl: "Społeczności" }, url: "/categories/communities", icon: "Users" },
-    { label: "היסטוריה", labelI18n: { he: "היסטוריה", en: "History", pl: "Historia" }, url: "/categories/history", icon: "Clock" },
-    { label: "דמוגרפיה", labelI18n: { he: "דמוגרפיה", en: "Demographics", pl: "Demografia" }, url: "/categories/demographics", icon: "BarChart" },
+    { label: { he: "קהילות", en: "Communities" }, url: "/categories/communities", icon: "Users" },
+    { label: { he: "היסטוריה", en: "History" }, url: "/categories/history", icon: "Clock" },
+    { label: { he: "דמוגרפיה", en: "Demographics" }, url: "/categories/demographics", icon: "BarChart" },
   ],
   FOOTER: [
-    { label: "מדיניות פרטיות", labelI18n: { he: "מדיניות פרטיות", en: "Privacy Policy", pl: "Polityka prywatności" }, url: "/privacy" },
-    { label: "תנאי שימוש", labelI18n: { he: "תנאי שימוש", en: "Terms of Use", pl: "Warunki użytkowania" }, url: "/terms" },
-    { label: "נגישות", labelI18n: { he: "נגישות", en: "Accessibility", pl: "Dostępność" }, url: "/accessibility" },
-    { label: "צור קשר", labelI18n: { he: "צור קשר", en: "Contact", pl: "Kontakt" }, url: "/contact" },
+    { label: { he: "מדיניות פרטיות", en: "Privacy Policy" }, url: "/privacy" },
+    { label: { he: "תנאי שימוש", en: "Terms of Use" }, url: "/terms" },
+    { label: { he: "נגישות", en: "Accessibility" }, url: "/accessibility" },
+    { label: { he: "צור קשר", en: "Contact" }, url: "/contact" },
   ],
 };
 
@@ -118,52 +115,43 @@ type FooterItemSeed = Omit<
 type FooterColumnSeed =
   | {
       type: Extract<MenuType, "LINK_LIST">;
-      title: string;
-      titleI18n: Prisma.InputJsonValue;
+      title: Prisma.InputJsonValue;
       items: FooterItemSeed[];
     }
   | {
       type: Extract<MenuType, "RICH_TEXT">;
-      title: string;
-      titleI18n: Prisma.InputJsonValue;
-      content: string;
-      contentI18n: Prisma.InputJsonValue;
+      title: Prisma.InputJsonValue;
+      content: Prisma.InputJsonValue;
     };
 
 const FOOTER_COLUMNS: FooterColumnSeed[] = [
   {
     type: "LINK_LIST",
-    title: "ניווט",
-    titleI18n: { he: "ניווט", en: "Navigation", pl: "Nawigacja" },
+    title: { he: "ניווט", en: "Navigation" },
     items: [
-      { label: "מאמרים", labelI18n: { he: "מאמרים", en: "Posts", pl: "Artykuły" }, url: "/posts" },
-      { label: "מפות", labelI18n: { he: "מפות", en: "Maps", pl: "Mapy" }, url: "/maps" },
-      { label: "נתונים", labelI18n: { he: "נתונים", en: "Data", pl: "Dane" }, url: "/data" },
-      { label: "ארכיון", labelI18n: { he: "ארכיון", en: "Archive", pl: "Archiwum" }, url: "/archive" },
+      { label: { he: "מאמרים", en: "Posts" }, url: "/posts" },
+      { label: { he: "מפות", en: "Maps" }, url: "/maps" },
+      { label: { he: "נתונים", en: "Data" }, url: "/data" },
+      { label: { he: "ארכיון", en: "Archive" }, url: "/archive" },
     ],
   },
   {
     type: "LINK_LIST",
-    title: "מידע",
-    titleI18n: { he: "מידע", en: "Information", pl: "Informacje" },
+    title: { he: "מידע", en: "Information" },
     items: [
-      { label: "אודות", labelI18n: { he: "אודות", en: "About", pl: "O nas" }, url: "/about" },
-      { label: "צור קשר", labelI18n: { he: "צור קשר", en: "Contact", pl: "Kontakt" }, url: "/contact" },
-      { label: "מדיניות פרטיות", labelI18n: { he: "מדיניות פרטיות", en: "Privacy Policy", pl: "Polityka prywatności" }, url: "/privacy" },
-      { label: "תנאי שימוש", labelI18n: { he: "תנאי שימוש", en: "Terms of Use", pl: "Warunki użytkowania" }, url: "/terms" },
-      { label: "נגישות", labelI18n: { he: "נגישות", en: "Accessibility", pl: "Dostępność" }, url: "/accessibility" },
+      { label: { he: "אודות", en: "About" }, url: "/about" },
+      { label: { he: "צור קשר", en: "Contact" }, url: "/contact" },
+      { label: { he: "מדיניות פרטיות", en: "Privacy Policy" }, url: "/privacy" },
+      { label: { he: "תנאי שימוש", en: "Terms of Use" }, url: "/terms" },
+      { label: { he: "נגישות", en: "Accessibility" }, url: "/accessibility" },
     ],
   },
   {
     type: "RICH_TEXT",
-    title: "אודות",
-    titleI18n: { he: "אודות", en: "About", pl: "O nas" },
-    content:
-      "פרויקט קהילות יהודי מזרח אירופה הוא יוזמת מחקר המתעדת אלף שנות היסטוריה של קהילות יהודיות במזרח אירופה.",
-    contentI18n: {
+    title: { he: "אודות", en: "About" },
+    content: {
       he: "פרויקט קהילות יהודי מזרח אירופה הוא יוזמת מחקר המתעדת אלף שנות היסטוריה של קהילות יהודיות במזרח אירופה.",
       en: "The Eastern European Jewish Communities Project is a research initiative documenting 1000 years of history of Jewish communities in Eastern Europe.",
-      pl: "Projekt Społeczności Żydowskich Europy Wschodniej to inicjatywa badawcza dokumentująca 1000 lat historii społeczności żydowskich w Europie Wschodniej.",
     },
   },
 ];
@@ -179,34 +167,26 @@ type SiteLinkSeed = Omit<
 
 const SITE_LINKS: SiteLinkSeed[] = [
   {
-    title: "מנוע חיפוש קהילות",
-    titleI18n: { he: "מנוע חיפוש קהילות", en: "Community Search Engine", pl: "Wyszukiwarka społeczności" },
-    description: "חיפוש לפי שם, מחוז או גוברניה",
-    descriptionI18n: { he: "חיפוש לפי שם, מחוז או גוברניה", en: "Search by name, district, or governorate", pl: "Szukaj według nazwy, powiatu lub guberni" },
+    title: { he: "מנוע חיפוש קהילות", en: "Community Search Engine" },
+    description: { he: "חיפוש לפי שם, מחוז או גוברניה", en: "Search by name, district, or governorate" },
     icon: "Globe",
     url: "/search",
   },
   {
-    title: "כלי השוואת מפקדים",
-    titleI18n: { he: "כלי השוואת מפקדים", en: "Census Comparison Tool", pl: "Narzędzie porównywania spisów" },
-    description: "השוואת נתונים בין מפקדים שונים",
-    descriptionI18n: { he: "השוואת נתונים בין מפקדים שונים", en: "Compare data across different censuses", pl: "Porównaj dane z różnych spisów" },
+    title: { he: "כלי השוואת מפקדים", en: "Census Comparison Tool" },
+    description: { he: "השוואת נתונים בין מפקדים שונים", en: "Compare data across different censuses" },
     icon: "Database",
     url: "/tools/census-compare",
   },
   {
-    title: "ארכיון מסמכים דיגיטלי",
-    titleI18n: { he: "ארכיון מסמכים דיגיטלי", en: "Digital Document Archive", pl: "Cyfrowe archiwum dokumentów" },
-    description: "דפדוף בתעודות סרוקות",
-    descriptionI18n: { he: "דפדוף בתעודות סרוקות", en: "Browse scanned documents", pl: "Przeglądaj zeskanowane dokumenty" },
+    title: { he: "ארכיון מסמכים דיגיטלי", en: "Digital Document Archive" },
+    description: { he: "דפדוף בתעודות סרוקות", en: "Browse scanned documents" },
     icon: "Scroll",
     url: "/archive",
   },
   {
-    title: "מפה אינטראקטיבית",
-    titleI18n: { he: "מפה אינטראקטיבית", en: "Interactive Map", pl: "Mapa interaktywna" },
-    description: "צפייה בשכבות היסטוריות",
-    descriptionI18n: { he: "צפייה בשכבות היסטוריות", en: "View historical layers", pl: "Przeglądaj warstwy historyczne" },
+    title: { he: "מפה אינטראקטיבית", en: "Interactive Map" },
+    description: { he: "צפייה בשכבות היסטוריות", en: "View historical layers" },
     icon: "Map",
     url: "/maps",
   },
@@ -245,7 +225,7 @@ async function seedFooterColumns(): Promise<void> {
   await prisma.footerColumn.deleteMany({});
   for (let i = 0; i < FOOTER_COLUMNS.length; i++) {
     const col = FOOTER_COLUMNS[i];
-    const base = { type: col.type, order: i + 1, title: col.title, titleI18n: col.titleI18n };
+    const base = { type: col.type, order: i + 1, title: col.title };
     const data: Prisma.FooterColumnCreateInput =
       col.type === "LINK_LIST"
         ? {
@@ -257,7 +237,7 @@ async function seedFooterColumns(): Promise<void> {
               })),
             },
           }
-        : { ...base, content: col.content, contentI18n: col.contentI18n };
+        : { ...base, content: col.content };
     await prisma.footerColumn.create({ data });
   }
 }

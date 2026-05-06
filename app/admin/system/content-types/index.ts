@@ -12,11 +12,11 @@ import "./period";
 import "./place";
 import "./artifact-category";
 import "./site-link";
-import "./dataset";
-import "./layer";
 import "./category";
 import "./tag";
+import "./dataset";
 import "./region";
+import "./layer";
 
 // Re-export for direct access
 export { ArticleType } from "./article";
@@ -29,5 +29,5 @@ export { PlaceType } from "./place";
 export { ArtifactCategoryType } from "./artifact-category";
 export { SiteLinkType } from "./site-link";
 export { DatasetType } from "./dataset";
-export { LayerType } from "./layer";
 export { RegionType } from "./region";
+export { LayerType } from "./layer";

@@ -66,7 +66,7 @@ export function MapEditor({ map, mode }: MapEditorProps) {
       const reconstructedLayers = dbLayers.map((dbLayer: any) => {
         const layer = {
           id: dbLayer.id,
-          name: (dbLayer.nameI18n as any)?.en || 'Untitled Layer',
+          name: (dbLayer.name as any)?.en || 'Untitled Layer',
           type: dbLayer.type === 'POINTS' ? 'point' : 'polygon', // Convert from DB enum to frontend format
           sourceType: dbLayer.sourceType || 'url', // Add sourceType
           visible: dbLayer.isVisibleByDefault,
@@ -98,8 +98,8 @@ export function MapEditor({ map, mode }: MapEditorProps) {
   const form = useForm<MapFormValues>({
     resolver: zodResolver(mapSchema) as unknown as Resolver<MapFormValues>,
     defaultValues: {
-      title_i18n: map?.titleI18n || map?.title_i18n || { en: "" },
-      description_i18n: map?.descriptionI18n || map?.description_i18n || { en: "" },
+      title_i18n: map?.title || map?.title_i18n || { en: "" },
+      description_i18n: map?.description || map?.description_i18n || { en: "" },
       slug: map?.slug || "",
       status: map?.status || "published",
       period_start_date: map?.period_start_date

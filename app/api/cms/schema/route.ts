@@ -38,19 +38,16 @@ const SCHEMA = {
     "posts.create": {
       description: "Create a new post",
       data: {
-        title: "string (required)",
+        title: "object (required) - { en?: string, he?: string, ... }",
         slug: "string (required)",
-        content: "string? - Lexical JSON",
-        excerpt: "string? - short summary",
+        content: "object? - { en?: string, he?: string, ... } (Lexical JSON per language)",
+        excerpt: "object? - { en?: string, he?: string, ... }",
         language: "string? - 'he' | 'en' | 'yi' | 'ru' | 'pl'",
         status: "string? - 'draft' | 'published'",
         category_id: "string?",
         author_id: "string?",
         thumbnail_id: "string?",
         tagIds: "string[]?",
-        titleI18n: "object? - { en?: string, he?: string, ... }",
-        contentI18n: "object? - { en?: string, he?: string, ... }",
-        excerptI18n: "object? - { en?: string, he?: string, ... }",
       },
       returns: "Created post object",
     },
@@ -58,17 +55,14 @@ const SCHEMA = {
       description: "Update an existing post. Only send fields you want to change.",
       data: {
         id: "string (required)",
-        title: "string?",
+        title: "object?",
         slug: "string?",
-        content: "string?",
-        excerpt: "string?",
+        content: "object?",
+        excerpt: "object?",
         language: "string?",
         status: "string?",
         category_id: "string?",
         tagIds: "string[]?",
-        titleI18n: "object?",
-        contentI18n: "object?",
-        excerptI18n: "object?",
       },
       returns: "Updated post object",
     },
@@ -97,14 +91,13 @@ const SCHEMA = {
     "categories.create": {
       description: "Create a category",
       data: {
-        title: "string (required)",
+        title: "object (required) - { he?: string, en?: string, ... }",
         slug: "string (required)",
-        titleI18n: "object? - { he?: string, en?: string, ... }",
       },
     },
     "categories.update": {
       description: "Update a category",
-      data: { id: "string (required)", title: "string?", slug: "string?", titleI18n: "object?" },
+      data: { id: "string (required)", title: "object?", slug: "string?" },
     },
     "categories.delete": {
       description: "Delete a category",
@@ -121,11 +114,11 @@ const SCHEMA = {
     },
     "tags.create": {
       description: "Create a tag",
-      data: { slug: "string (required)", nameI18n: "object - { he?: string, en?: string }" },
+      data: { slug: "string (required)", name: "object - { he?: string, en?: string }" },
     },
     "tags.update": {
       description: "Update a tag",
-      data: { id: "string (required)", slug: "string?", nameI18n: "object?" },
+      data: { id: "string (required)", slug: "string?", name: "object?" },
     },
     "tags.delete": {
       description: "Delete a tag",
@@ -317,11 +310,11 @@ const SCHEMA = {
     },
     "regions.create": {
       description: "Create a geographic region",
-      data: { name: "string (required)", slug: "string (required)", nameI18n: "object?" },
+      data: { name: "object (required) - { he?: string, en?: string }", slug: "string (required)" },
     },
     "regions.update": {
       description: "Update a region",
-      data: { id: "string (required)", name: "string?", slug: "string?", nameI18n: "object?" },
+      data: { id: "string (required)", name: "object?", slug: "string?" },
     },
     "regions.delete": {
       description: "Delete a region",

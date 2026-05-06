@@ -16,14 +16,14 @@ export const LayerType: ContentTypeDefinition = {
 
   fields: [
     createField.text("name", "Name", { required: true, order: 1 }),
-    createField.translatable("nameI18n", "Name (i18n)"),
+    createField.translatable("name", "Name (i18n)"),
     createField.slug("slug", "name", "/layers/"),
     createField.text("description", "Description", {
       showInList: false,
       rows: 3,
       order: 2,
     }),
-    createField.translatable("descriptionI18n", "Description (i18n)"),
+    createField.translatable("description", "Description (i18n)"),
     createField.text("summary", "Summary", {
       showInList: false,
       order: 3,

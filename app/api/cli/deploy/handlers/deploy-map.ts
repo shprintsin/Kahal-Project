@@ -51,11 +51,6 @@ function bumpPatchVersion(current: string | null | undefined): string {
   return '1.0.1';
 }
 
-function pickPrimary(i18n: Record<string, string> | undefined, fallback = ''): string {
-  if (!i18n) return fallback;
-  return i18n.he || i18n.en || Object.values(i18n)[0] || fallback;
-}
-
 // ── Handler ────────────────────────────────────────────────────────
 export async function deployMap(
   body: unknown,
@@ -86,9 +81,9 @@ export async function deployMap(
     cliVersion,
   } = input;
 
-  const resolvedTitle = pickPrimary(titleI18n, slug);
-  const resolvedDescription = pickPrimary(descriptionI18n, '');
   const mapConfig = (config ?? {}) as Prisma.InputJsonValue;
+  const summaryJson: Record<string, string> | undefined = summaryI18n
+    ?? (summary ? { he: summary } : undefined);
 
   const existing = await prisma.dataset.findUnique({ where: { slug } });
   const nextVersion = bumpPatchVersion(existing?.version);
@@ -100,17 +95,11 @@ export async function deployMap(
     const updated = await prisma.dataset.update({
       where: { id: existing.id },
       data: {
-        title: resolvedTitle,
-        titleI18n: titleI18n as Prisma.InputJsonValue,
-        description: resolvedDescription || existing.description,
-        descriptionI18n: (descriptionI18n ?? existing.descriptionI18n) as Prisma.InputJsonValue,
-        summary: summary ?? existing.summary,
-        ...(summaryI18n ? { summaryI18n: summaryI18n as Prisma.InputJsonValue } : {}),
+        title: titleI18n as Prisma.InputJsonValue,
+        ...(descriptionI18n ? { description: descriptionI18n as Prisma.InputJsonValue } : {}),
+        ...(summaryJson ? { summary: summaryJson as Prisma.InputJsonValue } : {}),
         ...(codebookTextI18n
-          ? {
-              codebookText: pickPrimary(codebookTextI18n) || null,
-              codebookTextI18n: codebookTextI18n as Prisma.InputJsonValue,
-            }
+          ? { codebookText: codebookTextI18n as Prisma.InputJsonValue }
           : {}),
         ...(thumbnailId ? { thumbnail: { connect: { id: thumbnailId } } } : {}),
         status,
@@ -126,17 +115,11 @@ export async function deployMap(
     const created = await prisma.dataset.create({
       data: {
         slug,
-        title: resolvedTitle,
-        titleI18n: titleI18n as Prisma.InputJsonValue,
-        description: resolvedDescription,
-        descriptionI18n: (descriptionI18n ?? {}) as Prisma.InputJsonValue,
-        summary: summary ?? '',
-        ...(summaryI18n ? { summaryI18n: summaryI18n as Prisma.InputJsonValue } : {}),
+        title: titleI18n as Prisma.InputJsonValue,
+        description: (descriptionI18n ?? {}) as Prisma.InputJsonValue,
+        summary: (summaryJson ?? {}) as Prisma.InputJsonValue,
         ...(codebookTextI18n
-          ? {
-              codebookText: pickPrimary(codebookTextI18n) || null,
-              codebookTextI18n: codebookTextI18n as Prisma.InputJsonValue,
-            }
+          ? { codebookText: codebookTextI18n as Prisma.InputJsonValue }
           : {}),
         ...(thumbnailId ? { thumbnail: { connect: { id: thumbnailId } } } : {}),
         status,

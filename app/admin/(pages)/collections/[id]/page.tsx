@@ -22,7 +22,7 @@ export default async function CollectionPage({
     <div className="flex flex-col h-full">
       <div className="p-4 border-b bg-background/95 backdrop-blur flex items-center justify-between">
          <div>
-             <h1 className="text-xl font-bold">{(collection.nameI18n as any)?.en || "Untitled Collection"}</h1>
+             <h1 className="text-xl font-bold">{(collection.name as any)?.en || "Untitled Collection"}</h1>
              <p className="text-sm text-muted-foreground">{collection.series.length} Series</p>
          </div>
          <ViewToggle /> 
@@ -34,7 +34,7 @@ export default async function CollectionPage({
                 items={collection.series.map(s => ({
                     id: s.id,
                     type: "SERIES",
-                    name: (s.nameI18n as any)?.en || s.slug,
+                    name: (s.name as any)?.en || s.slug,
                     thumbnailUrl: s.thumbnail?.storageFile?.publicUrl ?? s.volumes[0]?.pages[0]?.images[0]?.storageFile?.publicUrl,
                     childCount: s._count.volumes,
                     href: `/admin/collections/${collection.id}/series/${s.id}`
@@ -45,7 +45,7 @@ export default async function CollectionPage({
                  {/* Simple List View Backup */}
                  {collection.series.map(s => (
                     <div key={s.id} className="p-3 border rounded hover:bg-muted/50">
-                        {(s.nameI18n as any)?.en || s.slug}
+                        {(s.name as any)?.en || s.slug}
                     </div>
                  ))}
              </div>

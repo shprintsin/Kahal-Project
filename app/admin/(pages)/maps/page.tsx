@@ -20,7 +20,7 @@ import { getI18nText } from "@/app/admin/components/tables/table-utils";
 
 interface Map {
   id: string;
-  titleI18n?: any;
+  title?: any;
   title_i18n?: any;
   slug: string;
   areaI18n?: any;
@@ -81,7 +81,7 @@ export default function MapsPage({ searchParams }: MapsPageProps) {
       const query = searchValue.toLowerCase();
       result = result.filter(
         (map) =>
-          getI18nText(map.titleI18n || map.title_i18n).toLowerCase().includes(query) ||
+          getI18nText(map.title || map.title_i18n).toLowerCase().includes(query) ||
           map.slug.toLowerCase().includes(query) ||
           getI18nText(map.areaI18n || map.area_i18n).toLowerCase().includes(query)
       );
@@ -113,11 +113,11 @@ export default function MapsPage({ searchParams }: MapsPageProps) {
     {
       id: "title",
       header: "Title",
-      accessor: (row) => getI18nText(row.titleI18n || row.title_i18n),
+      accessor: (row) => getI18nText(row.title || row.title_i18n),
       width: "w-[250px]",
       render: (row) => (
         <span className="font-medium">
-          {getI18nText(row.titleI18n || row.title_i18n)}
+          {getI18nText(row.title || row.title_i18n)}
         </span>
       ),
     },

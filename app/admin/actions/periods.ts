@@ -23,8 +23,7 @@ export async function getPeriod(id: string) {
 
 interface PeriodInput {
   slug: string;
-  name?: string;
-  nameI18n?: Record<string, string>;
+  name?: Record<string, string>;
   name_i18n?: Record<string, string>;
   dateStart?: string | Date | null;
   dateEnd?: string | Date | null;
@@ -32,9 +31,8 @@ interface PeriodInput {
 
 export async function createPeriod(periodData: PeriodInput) {
   const data = {
-    name: periodData.name || periodData.slug,
     slug: periodData.slug,
-    nameI18n: periodData.nameI18n || periodData.name_i18n || {},
+    name: periodData.name || periodData.name_i18n || { he: periodData.slug },
     dateStart: periodData.dateStart ? new Date(periodData.dateStart) : null,
     dateEnd: periodData.dateEnd ? new Date(periodData.dateEnd) : null,
   };
@@ -49,9 +47,8 @@ export async function createPeriod(periodData: PeriodInput) {
 
 export async function updatePeriod(id: string, periodData: PeriodInput) {
   const data = {
-    name: periodData.name,
     slug: periodData.slug,
-    nameI18n: periodData.nameI18n || periodData.name_i18n || {},
+    name: periodData.name || periodData.name_i18n || {},
     dateStart: periodData.dateStart ? new Date(periodData.dateStart) : null,
     dateEnd: periodData.dateEnd ? new Date(periodData.dateEnd) : null,
   };

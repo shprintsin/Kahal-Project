@@ -71,7 +71,7 @@ export function LoopMapEditor({ map, categories = [], tags = [], regions = [] }:
       const reconstructedLayers = dbLayers.map((dbLayer: any) => {
         const layer = {
           id: dbLayer.id,
-          name: (dbLayer.nameI18n as any)?.en || 'Untitled Layer',
+          name: (dbLayer.name as any)?.en || 'Untitled Layer',
           type: dbLayer.type === 'POINTS' ? 'point' : 'polygon',
           sourceType: dbLayer.sourceType || 'url',
           visible: dbLayer.isVisibleByDefault,
@@ -113,8 +113,8 @@ export function LoopMapEditor({ map, categories = [], tags = [], regions = [] }:
   const form = useForm<MapFormValues>({
     resolver: zodResolver(mapSchema) as unknown as Resolver<MapFormValues>,
     defaultValues: {
-      title_i18n: map?.titleI18n || map?.title_i18n || { en: "", he: "" },
-      description_i18n: map?.descriptionI18n || map?.description_i18n || { en: "", he: "" },
+      title_i18n: map?.title || map?.title_i18n || { en: "", he: "" },
+      description_i18n: map?.description || map?.description_i18n || { en: "", he: "" },
       slug: map?.slug || "",
       status: map?.status || "draft",
       version: map?.version || "1.0.0",

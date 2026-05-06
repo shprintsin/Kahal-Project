@@ -317,6 +317,6 @@ export const MapstudioConfigSchema = z.object({
   defaults: z.object({
     basemap: BasemapKeySchema.default('carto-light'),
     palette: z.string().default('Vintage'),
-  }).default({}),
+  }).default(() => ({ basemap: 'carto-light' as const, palette: 'Vintage' })),
 });
 export type MapstudioConfig = z.infer<typeof MapstudioConfigSchema>;

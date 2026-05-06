@@ -19,6 +19,8 @@ import { Check, ChevronsUpDown, Plus, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Category, Language } from "@/app/admin/types";
 import { toast } from "sonner";
+import { pickI18n } from "@/app/lib/pick-i18n";
+import type { Locale } from "@/i18n/routing";
 
 interface CategorySelectorProps {
   categories: Category[];
@@ -40,11 +42,8 @@ export function CategorySelector({
   const [isCreating, setIsCreating] = React.useState(false);
 
   const getCategoryName = (category: Category) => {
-    const nameMap = category.titleI18n as Record<string, string> | null;
-    if (typeof nameMap === "object" && nameMap !== null) {
-      return nameMap[language] || nameMap.en || category.title;
-    }
-    return category.title || category.slug;
+    const lang: Locale = language === "HE" ? "he" : "en";
+    return pickI18n(category.title, lang, "") || category.slug;
   };
 
   const selectedCategory = categories.find(c => c.id === selectedCategoryId);

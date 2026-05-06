@@ -18,22 +18,21 @@ export function PeriodEditor({ period }: PeriodEditorProps) {
     entity: period,
     schema: periodSchema,
     actions: {
-      create: createPeriod,
-      update: updatePeriod,
+      create: createPeriod as any,
+      update: updatePeriod as any,
       delete: deletePeriod,
     },
     config: {
       entityName: "Period",
       redirectPath: "/admin/periods",
       generateSlug: true,
-      slugSource: "nameI18n.en",
+      slugSource: "name.en",
     },
     defaultValues: {
       slug: period?.slug || "",
-      name: period?.nameI18n?.en || period?.name_i18n?.en || "",
-      nameI18n: {
-        en: period?.nameI18n?.en || period?.name_i18n?.en || "",
-        he: period?.nameI18n?.he || period?.name_i18n?.he || "",
+      name: {
+        en: (period?.name as { en?: string })?.en || (period?.name_i18n as { en?: string })?.en || "",
+        he: (period?.name as { he?: string })?.he || (period?.name_i18n as { he?: string })?.he || "",
       },
       dateStart: period?.dateStart
         ? new Date(period.dateStart).toISOString().split("T")[0]

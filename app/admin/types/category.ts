@@ -1,8 +1,7 @@
 export interface Category {
   id: string;
-  title: string;
   slug: string;
-  titleI18n?: any;
+  title?: any;
   thumbnailId?: string | null;
   createdAt?: Date;
   updatedAt?: Date;

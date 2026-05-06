@@ -55,11 +55,6 @@ export const DataDeployV2Schema = z.object({
 });
 export type DataDeployV2Input = z.infer<typeof DataDeployV2Schema>;
 
-function pickPrimary(i18n: Record<string, string> | undefined, fallback = ''): string {
-  if (!i18n) return fallback;
-  return i18n.he || i18n.en || Object.values(i18n)[0] || fallback;
-}
-
 function bumpPatchVersion(current: string | null | undefined): string {
   const v = current ?? '1.0.0';
   const parts = v.split('.').map(Number);
@@ -83,8 +78,17 @@ export async function deployData(
   }
   const input = parsed.data;
 
-  const resolvedTitle = input.title ?? pickPrimary(input.titleI18n, input.slug);
-  const resolvedDescription = input.description ?? pickPrimary(input.descriptionI18n, '');
+  // Build i18n JSON shape: prefer input.titleI18n; if only `title` plain
+  // string was provided, treat it as the HE entry.
+  const titleJson: Record<string, string> | undefined = input.titleI18n
+    ?? (input.title ? { he: input.title } : undefined);
+  const descriptionJson: Record<string, string> | undefined = input.descriptionI18n
+    ?? (input.description ? { he: input.description } : undefined);
+  const summaryJson: Record<string, string> | undefined = input.summaryI18n
+    ?? (input.summary ? { he: input.summary } : undefined);
+  const citationJson: Record<string, string> | undefined = input.citationText
+    ? { he: input.citationText }
+    : undefined;
 
   // Resolve category slug -> id
   let categoryId: string | undefined;
@@ -124,25 +128,14 @@ export async function deployData(
     const updated = await prisma.dataset.update({
       where: { id: existing.id },
       data: {
-        title: resolvedTitle,
-        titleI18n: (input.titleI18n ?? existing.titleI18n) as Prisma.InputJsonValue,
-        description: resolvedDescription,
-        descriptionI18n: (input.descriptionI18n ?? existing.descriptionI18n) as Prisma.InputJsonValue,
-        summary: input.summary ?? existing.summary,
-        ...(input.summaryI18n
-          ? { summaryI18n: input.summaryI18n as Prisma.InputJsonValue }
-          : {}),
+        ...(titleJson ? { title: titleJson as Prisma.InputJsonValue } : {}),
+        ...(descriptionJson ? { description: descriptionJson as Prisma.InputJsonValue } : {}),
+        ...(summaryJson ? { summary: summaryJson as Prisma.InputJsonValue } : {}),
         ...(input.codebookTextI18n
-          ? {
-              codebookText: pickPrimary(input.codebookTextI18n) || null,
-              codebookTextI18n: input.codebookTextI18n as Prisma.InputJsonValue,
-            }
+          ? { codebookText: input.codebookTextI18n as Prisma.InputJsonValue }
           : {}),
         ...(input.sourcesI18n
-          ? {
-              sources: pickPrimary(input.sourcesI18n) || null,
-              sourcesI18n: input.sourcesI18n as Prisma.InputJsonValue,
-            }
+          ? { sources: input.sourcesI18n as Prisma.InputJsonValue }
           : {}),
         ...(input.thumbnailId ? { thumbnail: { connect: { id: input.thumbnailId } } } : {}),
         ...(categoryId ? { category: { connect: { id: categoryId } } } : {}),
@@ -150,7 +143,7 @@ export async function deployData(
         maturity: input.maturity,
         version: nextVersion,
         license: input.license ?? existing.license,
-        citationText: input.citationText ?? existing.citationText,
+        ...(citationJson ? { citationText: citationJson as Prisma.InputJsonValue } : {}),
         yearMin: input.minYear ?? existing.yearMin,
         yearMax: input.maxYear ?? existing.yearMax,
         isVisible: input.isVisible ?? existing.isVisible,
@@ -163,25 +156,14 @@ export async function deployData(
     const created = await prisma.dataset.create({
       data: {
         slug: input.slug,
-        title: resolvedTitle,
-        titleI18n: (input.titleI18n ?? {}) as Prisma.InputJsonValue,
-        description: resolvedDescription,
-        descriptionI18n: (input.descriptionI18n ?? {}) as Prisma.InputJsonValue,
-        summary: input.summary ?? '',
-        ...(input.summaryI18n
-          ? { summaryI18n: input.summaryI18n as Prisma.InputJsonValue }
-          : {}),
+        title: (titleJson ?? {}) as Prisma.InputJsonValue,
+        description: (descriptionJson ?? {}) as Prisma.InputJsonValue,
+        summary: (summaryJson ?? {}) as Prisma.InputJsonValue,
         ...(input.codebookTextI18n
-          ? {
-              codebookText: pickPrimary(input.codebookTextI18n) || null,
-              codebookTextI18n: input.codebookTextI18n as Prisma.InputJsonValue,
-            }
+          ? { codebookText: input.codebookTextI18n as Prisma.InputJsonValue }
           : {}),
         ...(input.sourcesI18n
-          ? {
-              sources: pickPrimary(input.sourcesI18n) || null,
-              sourcesI18n: input.sourcesI18n as Prisma.InputJsonValue,
-            }
+          ? { sources: input.sourcesI18n as Prisma.InputJsonValue }
           : {}),
         ...(input.thumbnailId ? { thumbnail: { connect: { id: input.thumbnailId } } } : {}),
         ...(categoryId ? { category: { connect: { id: categoryId } } } : {}),
@@ -189,7 +171,7 @@ export async function deployData(
         maturity: input.maturity,
         version: nextVersion,
         license: input.license ?? null,
-        citationText: input.citationText ?? null,
+        ...(citationJson ? { citationText: citationJson as Prisma.InputJsonValue } : {}),
         yearMin: input.minYear ?? null,
         yearMax: input.maxYear ?? null,
         isVisible: input.isVisible ?? true,

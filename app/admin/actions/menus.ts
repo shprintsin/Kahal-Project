@@ -26,7 +26,7 @@ function dbToMenuItem(item: any): MenuItem {
     parentId: item.parentId,
     label: {
       default: item.label || "",
-      translations: item.labelI18n || {},
+      translations: item.label || {},
     },
     icon: item.icon,
     variant: item.variant,
@@ -42,8 +42,7 @@ function dbToMenuItem(item: any): MenuItem {
  */
 function menuItemToDb(item: MenuItem, menuId: string, parentId?: string) {
   return {
-    label: item.label.default,
-    labelI18n: item.label.translations,
+    label: item.label.translations,
     icon: item.icon,
     variant: item.variant,
     order: item.order,
@@ -63,7 +62,7 @@ function dbToFooterColumn(column: any): FooterColumn {
     order: column.order,
     title: {
       default: column.title || "",
-      translations: column.titleI18n || {},
+      translations: column.title || {},
     },
   };
 
@@ -73,7 +72,7 @@ function dbToFooterColumn(column: any): FooterColumn {
       type: "RICH_TEXT",
       content: {
         default: column.content || "",
-        translations: column.contentI18n || {},
+        translations: column.content || {},
       },
     };
   } else {
@@ -86,7 +85,7 @@ function dbToFooterColumn(column: any): FooterColumn {
             footerColumnId: item.footerColumnId,
             label: {
               default: item.label || "",
-              translations: item.labelI18n || {},
+              translations: item.label || {},
             },
             icon: item.icon,
             order: item.order,
@@ -245,13 +244,12 @@ export async function createFooterColumn(
   const data: any = {
     type: column.type,
     order: column.order,
-    title: column.title.default,
-    titleI18n: column.title.translations,
+    title: column.title.translations,
   };
 
   if (column.type === "RICH_TEXT") {
     data.content = (column as any).content.default;
-    data.contentI18n = (column as any).content.translations;
+    data.content = (column as any).content.translations;
   }
 
   const created = await prisma.footerColumn.create({
@@ -267,8 +265,7 @@ export async function createFooterColumn(
       await prisma.footerColumnItem.create({
         data: {
           footerColumnId: created.id,
-          label: item.label.default,
-          labelI18n: item.label.translations,
+          label: item.label.translations,
           icon: item.icon,
           order: item.order,
           pageId: item.pageId,
@@ -294,13 +291,12 @@ export async function updateFooterColumn(
   const data: any = {
     type: column.type,
     order: column.order,
-    title: column.title?.default ?? "",
-    titleI18n: column.title?.translations ?? {},
+    title: column.title?.translations ?? {},
   };
 
   if (column.type === "RICH_TEXT" && (column as any).content) {
     data.content = (column as any).content.default ?? "";
-    data.contentI18n = (column as any).content.translations ?? {};
+    data.content = (column as any).content.translations ?? {};
   }
 
   const updated = await prisma.footerColumn.update({
@@ -324,8 +320,7 @@ export async function updateFooterColumn(
         await prisma.footerColumnItem.create({
           data: {
             footerColumnId: id,
-            label: item.label.default,
-            labelI18n: item.label.translations,
+            label: item.label.translations,
             icon: item.icon,
             order: item.order,
             pageId: item.pageId,
@@ -387,10 +382,11 @@ export async function getSiteSettings(): Promise<{ copyrightText: LocalizedText 
 
   if (!settings) return null;
 
+  const copyrightObj = (settings.copyright as Record<string, string> | null) || {};
   return {
     copyrightText: {
-      default: settings.copyrightText || "",
-      translations: settings.copyrightI18n as Record<string, string>,
+      default: copyrightObj.en || copyrightObj.he || "",
+      translations: copyrightObj,
     },
   };
 }
@@ -403,12 +399,10 @@ export async function updateSiteSettings(copyrightText: LocalizedText): Promise<
     where: { key: "global" },
     create: {
       key: "global",
-      copyrightText: copyrightText.default,
-      copyrightI18n: copyrightText.translations,
+      copyright: copyrightText.translations,
     },
     update: {
-      copyrightText: copyrightText.default,
-      copyrightI18n: copyrightText.translations,
+      copyright: copyrightText.translations,
     },
   });
 

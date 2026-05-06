@@ -17,13 +17,13 @@ export function generateSlug(text: string, includeUnicode = false): string {
 
 /**
  * Extract a name from an i18n object, trying multiple languages
- * @param nameI18n - The i18n object containing translations
+ * @param name - The i18n object containing translations
  * @param fallback - Fallback value if no translation found
  * @returns The extracted name or fallback
  */
-export function extractI18nName(nameI18n: any, fallback = ""): string {
-  if (typeof nameI18n === "object" && nameI18n !== null) {
-    return nameI18n.en || nameI18n.he || Object.values(nameI18n)[0] || fallback;
+export function extractI18nName(name: any, fallback = ""): string {
+  if (typeof name === "object" && name !== null) {
+    return name.en || name.he || Object.values(name)[0] || fallback;
   }
   return fallback;
 }

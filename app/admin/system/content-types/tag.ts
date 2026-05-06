@@ -16,7 +16,7 @@ export const TagType: ContentTypeDefinition = {
   
   fields: [
     createField.text("name", "Name", { required: true, order: 1 }),
-    createField.translatable("nameI18n", "Name (i18n)"),
+    createField.translatable("name", "Name (i18n)"),
     createField.slug("slug", "name", "/tag/"),
     createField.date("createdAt", "Created"),
   ],

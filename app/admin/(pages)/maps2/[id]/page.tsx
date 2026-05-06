@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getDatasetWithLayers } from "@/app/admin/actions/map-layers";
 import { MapStudio } from "./map-studio";
 import prisma from "@/lib/prisma";
+import { pickI18n } from "@/lib/i18n/fallback";
 
 interface MapEditorPageProps {
   params: Promise<{ id: string }>;
@@ -45,7 +46,7 @@ export default async function MapEditorPage({ params }: MapEditorPageProps) {
 
   layerLibrary = allLayers.map((l) => ({
     id: l.id,
-    name: l.name,
+    name: pickI18n(l.name, 'en'),
     slug: l.slug,
     type: l.type,
     featureCount: 0,
@@ -53,11 +54,11 @@ export default async function MapEditorPage({ params }: MapEditorPageProps) {
 
   const categories = allCategories.map((c) => ({
     value: c.id,
-    label: c.title,
+    label: pickI18n(c.title, 'en'),
   }));
 
-  const tagsData = allTags.map((t) => ({ id: t.id, name: t.name }));
-  const regionsData = allRegions.map((r) => ({ id: r.id, name: r.name }));
+  const tagsData = allTags.map((t) => ({ id: t.id, name: pickI18n(t.name, 'en') }));
+  const regionsData = allRegions.map((r) => ({ id: r.id, name: pickI18n(r.name, 'en') }));
 
   return (
     <MapStudio

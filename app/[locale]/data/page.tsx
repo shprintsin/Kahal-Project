@@ -6,6 +6,7 @@ import { getSiteShellData } from '@/app/lib/get-navigation';
 import { getDateLocale, type Locale } from '@/lib/i18n/config';
 import { createPageMetadata } from '@/lib/i18n/metadata';
 import { DatasetsPageClient } from './DatasetsPageClient';
+import { pickI18n } from '@/app/lib/pick-i18n';
 
 export const revalidate = 60;
 
@@ -23,19 +24,20 @@ export default async function DatasetsPage({ params }: { params: Promise<{ local
     getSiteShellData(locale),
   ]);
 
+  const loc = locale as Locale;
   const datasets = (datasetsData.datasets || []).map((d) => ({
     id: d.id,
-    title: d.title,
-    excerpt: d.summary || d.description || undefined,
-    thumbnail: d.thumbnail?.url,
+    title: pickI18n(d.title, loc),
+    excerpt: pickI18n(d.summary, loc) || pickI18n(d.description, loc) || undefined,
+    thumbnail: d.thumbnail?.url ?? null,
     slug: `/data/${d.slug}`,
-    date: d.createdAt ? new Date(d.createdAt).toLocaleDateString(getDateLocale(locale as Locale)) : null,
-    category: d.category?.title,
+    date: d.createdAt ? new Date(d.createdAt).toLocaleDateString(getDateLocale(loc)) : null,
+    category: d.category?.title ? pickI18n(d.category.title, loc) : null,
     resourceCount: d.resourceCount
   }));
 
   const categories = (categoriesData.categories || []).map((c) => ({
-    name: c.title,
+    name: pickI18n(c.title, loc),
     count: c.usageCount?.datasets || 0,
     slug: `/categories/${c.slug}`,
   }));

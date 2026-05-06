@@ -36,10 +36,10 @@ async function resolveTagNames(tagNames?: string[]): Promise<string[]> {
   for (const name of tagNames) {
     const trimmed = name.trim();
     if (!trimmed) continue;
-    let tag = await prisma.tag.findFirst({ where: { name: { equals: trimmed, mode: "insensitive" } } });
+    let tag = await prisma.tag.findFirst({ where: { name: { path: ['en'], equals: trimmed } } });
     if (!tag) {
       const slug = trimmed.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-      tag = await prisma.tag.create({ data: { name: trimmed, slug, nameI18n: {} } });
+      tag = await prisma.tag.create({ data: { name: { he: trimmed, en: trimmed }, slug } });
     }
     tagIds.push(tag.id);
   }
@@ -289,9 +289,12 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
     ...(authorId && { authorId }),
     ...(search && {
       OR: [
-        { title: { contains: search, mode: "insensitive" } },
-        { excerpt: { contains: search, mode: "insensitive" } },
-        { content: { contains: search, mode: "insensitive" } },
+        { title: { path: ["he"], string_contains: search } },
+        { title: { path: ["en"], string_contains: search } },
+        { excerpt: { path: ["he"], string_contains: search } },
+        { excerpt: { path: ["en"], string_contains: search } },
+        { content: { path: ["he"], string_contains: search } },
+        { content: { path: ["en"], string_contains: search } },
       ],
     }),
   };
@@ -347,7 +350,6 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
               id: true,
               slug: true,
               title: true,
-              titleI18n: true,
             },
           },
           tags: {
@@ -357,7 +359,6 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
                   id: true,
                   slug: true,
                   name: true,
-                  nameI18n: true,
                 },
               },
             },
@@ -367,7 +368,6 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
               id: true,
               slug: true,
               name: true,
-              nameI18n: true,
             },
           },
         },
@@ -470,7 +470,6 @@ export async function getPostBySlug(slug: string) {
             id: true,
             slug: true,
             title: true,
-            titleI18n: true,
           },
         },
         tags: {
@@ -480,7 +479,6 @@ export async function getPostBySlug(slug: string) {
                 id: true,
                 slug: true,
                 name: true,
-                nameI18n: true,
               },
             },
           },
@@ -490,7 +488,6 @@ export async function getPostBySlug(slug: string) {
             id: true,
             slug: true,
             name: true,
-            nameI18n: true,
           },
         },
       },
