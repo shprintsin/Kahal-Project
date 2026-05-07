@@ -137,5 +137,8 @@
     "typescript": "^5",
     "vitest": "^4.0.18",
     "zod-prisma-types": "^3.3.11"
+  },
+  "overrides": {
+    "@swc/helpers": "^0.5.21"
   }
 }
