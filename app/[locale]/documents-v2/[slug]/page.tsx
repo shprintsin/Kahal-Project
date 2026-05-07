@@ -11,8 +11,14 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const slugs = await getPublishedSlugs();
-  return slugs.map((slug) => ({ slug }));
+  try {
+    const slugs = await getPublishedSlugs();
+    return slugs.map((slug) => ({ slug }));
+  } catch {
+    // DB unreachable during build (e.g. Docker build with placeholder URL).
+    // Pages will be rendered on-demand at runtime instead.
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
