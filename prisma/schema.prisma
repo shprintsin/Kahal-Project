@@ -178,10 +178,10 @@ model Dataset {
   yearMin           Int?                      @map("year_min")
   categoryId        String?                   @map("category_id") @db.Uuid
   status            ContentStatus             @default(draft)
-  codebookText      Json                      @default("{}")
+  codebookText      Json                      @default("{}") @map("codebook_text")
   isFeatured        Boolean                   @default(false) @map("is_featured")
   summary           Json                      @default("{}")
-  citationText      Json                      @default("{}")
+  citationText      Json                      @default("{}") @map("citation_text")
   sources           Json                      @default("{}")
   maturity          DataMaturity              @default(Provisional)
   isVisible         Boolean                   @default(true) @map("is_visible")
@@ -227,8 +227,8 @@ model Layer {
   version      String?                   @default("1.0.0")
   categoryId   String?                   @map("category_id") @db.Uuid
   type         LayerType                 @default(POINTS)
-  citationText Json                      @default("{}")
-  codebookText Json                      @default("{}")
+  citationText Json                      @default("{}") @map("citation_text")
+  codebookText Json                      @default("{}") @map("codebook_text")
   sources      Json                      @default("{}")
   license      String?
   maturity     DataMaturity              @default(Provisional)
@@ -649,7 +649,7 @@ model SiteSettings {
   id            String   @id @default(uuid()) @db.Uuid
   key           String   @unique
   copyright     Json     @default("{}")
-  researchTeam  Json     @default("{}")
+  researchTeam  Json     @default("{}") @map("research_team")
   citation      Json     @default("{}")
   homepageStats Json     @default("{}") @map("homepage_stats")
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
