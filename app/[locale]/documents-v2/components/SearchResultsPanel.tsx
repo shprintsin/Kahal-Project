@@ -69,7 +69,7 @@ export function SearchResultsPanel({
         <header className="mb-4 flex items-baseline gap-3">
           <h2 className="text-lg tracking-tight" style={{ fontFamily: 'var(--docs-font-serif)' }}>{labels.title}</h2>
           <span className="font-mono text-[11px] text-muted-foreground">
-            "{query}" · {scope === 'doc' ? 'doc' : 'all'} · {results.length}
+            &ldquo;{query}&rdquo; · {scope === 'doc' ? 'doc' : 'all'} · {results.length}
           </span>
         </header>
 

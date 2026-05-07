@@ -78,7 +78,7 @@ export function InlineMenuList({
 
   const handleAddChild = (parentIndex: number) => {
     const newChild: MenuItem = {
-      id: `child-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      id: `child-${crypto.randomUUID()}`,
       label: { default: "", translations: {} },
       variant: "DEFAULT",
       order: (items[parentIndex].children?.length || 0),
