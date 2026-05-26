@@ -33,7 +33,8 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
         notFound();
     }
 
-    const htmlContent = serializeLexical(page.content);
+    const localizedContent = pickI18n(page.content, locale as Locale);
+    const htmlContent = serializeLexical(localizedContent);
 
     return (
         <SiteShell {...shellData} bg="bg-white" locale={locale}>

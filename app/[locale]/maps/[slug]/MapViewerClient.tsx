@@ -24,6 +24,8 @@ import type { SiteShellData } from '@/app/lib/get-navigation'
 import { SetEditUrl } from '@/components/ui/admin-toolbar'
 import { useTranslations } from 'next-intl'
 import { getDateLocale, type Locale } from '@/lib/i18n/config'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { HelpCircle } from 'lucide-react'
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
@@ -73,8 +75,10 @@ interface MapViewerClientProps {
 export function MapViewerClient({ map, shellData, deployments = [], locale }: MapViewerClientProps) {
   const t = useTranslations()
   const [csvPreview, setCsvPreview] = useState<{ url: string; name: string } | null>(null)
+  const [showPubTypes, setShowPubTypes] = useState(false)
   const { requestDownload } = useDownloadTerms()
   const dateLocale = getDateLocale(locale as Locale)
+  const isRtl = locale === 'he'
   return (
     <SiteShell {...shellData} locale={locale}>
       <SetEditUrl url={`/admin/maps/${map.id}`} />
@@ -142,6 +146,14 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                       <PublishStatusBadge status={map.status} />
                       {map.maturity && <MaturityBadge maturity={normalizeMaturity(map.maturity) as any} />}
                     </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowPubTypes(true)}
+                      className="flex items-center gap-1 text-xs text-muted-foreground hover:text-brand-primary transition-colors mt-1 cursor-pointer"
+                    >
+                      <HelpCircle className="w-3 h-3" />
+                      {t('public.datasets.publicationTypesLink')}
+                    </button>
                   </DlField>
 
                   {(map.year || map.period) && (
@@ -232,7 +244,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                 <SidebarCard title={t('public.map.downloads')}>
                   <div className="space-y-3">
                     {map.resources.map((resource) => (
-                      <div key={resource.id} className="flex items-stretch border border-border-strong shadow-sm bg-white hover:border-brand-primary transition-all">
+                      <div key={resource.id} className="flex items-stretch border border-border-strong bg-white hover:border-brand-primary transition-all">
                         <button
                           type="button"
                           onClick={() => requestDownload(() => triggerBrowserDownload(resource.url, resource.filename || resource.name))}
@@ -293,7 +305,7 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
                 </SidebarCard>
               )}
 
-              <div className="bg-white p-4 border border-border shadow-sm">
+              <div className="bg-white p-4 border border-border">
                 <a
                   href={`/${locale}/contact?subject=${encodeURIComponent(`דיווח על שגיאה: ${map.title}`)}`}
                   className="flex items-center gap-2 text-xs text-body-secondary hover:text-brand-primary transition-colors justify-center py-1"
@@ -315,6 +327,33 @@ export function MapViewerClient({ map, shellData, deployments = [], locale }: Ma
           name={csvPreview.name}
         />
       )}
+      <Dialog open={showPubTypes} onOpenChange={setShowPubTypes}>
+        <DialogContent dir={isRtl ? "rtl" : "ltr"} className={isRtl ? "text-right sm:max-w-lg" : "text-left sm:max-w-lg"}>
+          <DialogHeader className={isRtl ? "text-right sm:text-right" : "text-left sm:text-left"}>
+            <DialogTitle className="font-display">{t('public.datasets.publicationTypesTitle')}</DialogTitle>
+            <DialogDescription>{t('public.datasets.publicationTypesIntro')}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 text-sm">
+            <div>
+              <h4 className="font-bold mb-2">{t('public.datasets.publicationStatusTitle')}</h4>
+              <ul className="space-y-1 list-disc list-inside">
+                <li>{t('public.datasets.publicationStatusDraft')}</li>
+                <li>{t('public.datasets.publicationStatusPublished')}</li>
+                <li>{t('public.datasets.publicationStatusArchived')}</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bold mb-2">{t('public.datasets.maturityTitle')}</h4>
+              <ul className="space-y-1 list-disc list-inside">
+                <li>{t('public.datasets.maturityRaw')}</li>
+                <li>{t('public.datasets.maturityPreliminary')}</li>
+                <li>{t('public.datasets.maturityProvisional')}</li>
+                <li>{t('public.datasets.maturityValidated')}</li>
+              </ul>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </SiteShell>
   );
 }

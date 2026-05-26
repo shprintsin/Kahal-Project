@@ -214,6 +214,8 @@
 
 .markdown-content p {
   @apply mb-3 leading-relaxed;
+  direction: auto;
+  unicode-bidi: plaintext;
 }
 
 .markdown-content ul,
@@ -223,6 +225,8 @@
 
 .markdown-content li {
   @apply mb-1;
+  direction: auto;
+  unicode-bidi: plaintext;
 }
 
 .markdown-content table {

@@ -252,7 +252,19 @@
       "description": "תיאור",
       "preview": "צפה בנתונים",
       "license": "רישיון",
-      "reportIssue": "דווח על בעיה"
+      "reportIssue": "דווח על בעיה",
+      "publicationTypesLink": "הסבר על סוגי הפרסומים",
+      "publicationTypesTitle": "סוגי סטטוסי פרסום ובשלות נתונים",
+      "publicationTypesIntro": "הנתונים באתר מסווגים לפי שני ממדים: סטטוס פרסום ורמת בשלות הנתונים.",
+      "publicationStatusTitle": "סטטוס פרסום",
+      "publicationStatusDraft": "טיוטה — נתונים בשלבי עריכה ראשוניים, טרם פורסמו.",
+      "publicationStatusPublished": "פורסם — נתונים זמינים לציבור.",
+      "publicationStatusArchived": "בארכיון — נתונים שהוחלפו בגרסה חדשה יותר או שאינם רלוונטיים עוד.",
+      "maturityTitle": "רמת בשלות נתונים",
+      "maturityRaw": "גולמי (Raw) — נתונים שלא עברו עיבוד או בדיקה.",
+      "maturityPreliminary": "ראשוני (Preliminary) — נתונים שעברו עיבוד בסיסי אך טרם נבדקו לעומק.",
+      "maturityProvisional": "זמני (Provisional) — נתונים שעברו בדיקות חלקיות, עשויים להשתנות.",
+      "maturityValidated": "מאומת (Validated) — נתונים שעברו ביקורת מלאה ואומתו."
     },
     "layers": {
       "title": "שכבות"

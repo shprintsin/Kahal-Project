@@ -78,7 +78,7 @@ function CardImage({ src, alt, href }: { src?: string | null; alt: string; href:
     <div className="CardImage w-full md:w-1/3 h-48 md:h-auto flex-shrink-0">
       {src ? (
         <a href={href}>
-          <img src={src} alt={alt} className="CardImage-img w-full h-full object-cover rounded-none shadow-sm" />
+          <img src={src} alt={alt} className="CardImage-img w-full h-full object-cover rounded-none" />
         </a>
       ) : (
         <PlaceholderImage />

@@ -14,7 +14,7 @@ export default async function LayerDetailPage({
     import("@/app/admin/actions/layers"),
     getSiteShellData(locale),
   ]);
-  const layer = await getLayerBySlug(slug);
+  const layer = await getLayerBySlug(slug, { lang: locale, includeMaps: true });
 
   if (!layer) {
     notFound();

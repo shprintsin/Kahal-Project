@@ -65,7 +65,7 @@ export function DownloadTermsDialog({ open, onOpenChange, onAccept }: DownloadTe
           <button
             type="button"
             onClick={onAccept}
-            className="px-4 py-2 rounded-md text-sm font-semibold bg-brand-primary hover:bg-brand-primary-dark text-white transition-colors shadow-sm"
+            className="px-4 py-2 rounded-md text-sm font-semibold bg-brand-primary hover:bg-brand-primary-dark text-white transition-colors"
           >
             {t("public.downloadTerms.accept")}
           </button>

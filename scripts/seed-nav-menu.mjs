@@ -3,11 +3,11 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const NAV_ITEMS = [
-  { label: 'מאמרים', en: 'Posts', icon: 'FileText', url: '/posts', order: 1 },
-  { label: 'מפות', en: 'Maps', icon: 'Map', url: '/maps', order: 2 },
-  { label: 'שכבות', en: 'Layers', icon: 'Layers', url: '/layers', order: 3 },
-  { label: 'נתונים', en: 'Data', icon: 'Database', url: '/data', order: 4 },
-  { label: 'ארכיון', en: 'Archive', icon: 'BookOpen', url: '/archive', order: 5 },
+  { label: 'בית', en: 'Home', icon: 'Home', url: '/', order: 1 },
+  { label: 'מפות ונתונים', en: 'Maps & Data', icon: 'Database', url: '/data', order: 2 },
+  { label: 'דוקומנטציה', en: 'Documentation', icon: 'BookOpen', url: '/docs', order: 3 },
+  { label: 'רשימות', en: 'Posts', icon: 'FileText', url: '/posts', order: 4 },
+  { label: 'יצירת קשר', en: 'Contact', icon: 'Mail', url: '/contact', order: 5 },
   { label: 'אודות', en: 'About', icon: 'Info', url: '/about', order: 6 },
 ];
 

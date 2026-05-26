@@ -2,7 +2,7 @@
 
 import { MapPreview } from "../../maps/[slug]/components/MapPreview"
 import type { SiteShellData } from "@/app/lib/get-navigation"
-import { Calendar, FileText, Link as LinkIcon, Download, Info } from "lucide-react"
+import { Calendar, FileText, Link as LinkIcon, Download, Info, Map } from "lucide-react"
 import { StatusBadgeLarge } from "@/components/ui/status-badge"
 import { ContentCard, SidebarInfoCard } from "@/components/ui/sections"
 import { SiteShell, SiteMain } from "@/components/ui/site-shell"
@@ -41,23 +41,25 @@ export function LayerDetailClient({ layer, shellData, locale }: { layer: any; sh
     <SiteShell {...shellData} locale={locale}>
       <SetEditUrl url={`/admin/layers/${layer.id}`} />
       <SiteMain>
+         <div className="mb-6 sm:mb-8">
+            <div className="flex items-center gap-3 mb-4 flex-wrap">
+                <StatusBadgeLarge variant="blue" className="uppercase">
+                    {layer.type}
+                </StatusBadgeLarge>
+                {layer.category && (
+                     <StatusBadgeLarge variant="emerald">
+                        {layer.category.title}
+                     </StatusBadgeLarge>
+                )}
+            </div>
+            <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl text-brand-primary leading-tight">{layer.name}</h1>
+         </div>
+
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
 
             <div className="lg:col-span-2 space-y-6 sm:space-y-8">
                 <div>
-                     <div className="flex items-center gap-3 mb-4 flex-wrap">
-                        <StatusBadgeLarge variant="blue" className="uppercase">
-                            {layer.type}
-                        </StatusBadgeLarge>
-                        {layer.category && (
-                             <StatusBadgeLarge variant="emerald">
-                                {layer.category.title}
-                             </StatusBadgeLarge>
-                        )}
-                     </div>
-                     <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl text-brand-primary mb-4 sm:mb-6 leading-tight">{layer.name}</h1>
-
-                     <div className="h-[300px] sm:h-[400px] lg:h-[500px] mb-6 sm:mb-8 shadow-md overflow-hidden border border-gray-200 bg-gray-100">
+                     <div className="h-[300px] sm:h-[400px] lg:h-[500px] mb-6 sm:mb-8 overflow-hidden border border-gray-200 bg-gray-100">
                         <MapPreview map={previewMap as any} />
                      </div>
 
@@ -77,7 +79,7 @@ export function LayerDetailClient({ layer, shellData, locale }: { layer: any; sh
                                     <h3 className="text-lg sm:text-xl font-bold mb-3 flex items-center gap-2 text-gray-800 font-display">
                                         <FileText className="w-5 h-5 text-emerald-600"/> {t('public.map.citation')}
                                     </h3>
-                                    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg text-sm text-gray-700 border border-gray-200 font-mono break-words" dir="ltr">
+                                    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg text-sm text-gray-700 border border-gray-200 font-mono break-words text-left" dir="ltr">
                                         {layer.citationText}
                                     </div>
                                 </div>
@@ -107,7 +109,7 @@ export function LayerDetailClient({ layer, shellData, locale }: { layer: any; sh
                 </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-6 lg:self-start">
                 <SidebarInfoCard>
                     <h3 className="text-lg font-bold mb-4 border-b pb-2 text-gray-800 font-display">{t('public.layer.moreDetails')}</h3>
                     <ul className="space-y-4 text-sm">
@@ -136,7 +138,7 @@ export function LayerDetailClient({ layer, shellData, locale }: { layer: any; sh
                                 className={cn(
                                     "flex items-center justify-center gap-2 w-full",
                                     "bg-brand-primary hover:bg-brand-primary-dark text-white font-bold py-3 px-4",
-                                    "rounded-lg transition-colors shadow-lg hover:shadow-xl",
+                                    "rounded-lg transition-colors",
                                 )}
                             >
                                 <Download className="w-4 h-4" />
@@ -145,6 +147,27 @@ export function LayerDetailClient({ layer, shellData, locale }: { layer: any; sh
                         </div>
                     )}
                 </SidebarInfoCard>
+
+                {layer.datasets && layer.datasets.length > 0 && (
+                    <SidebarInfoCard>
+                        <h3 className="text-lg font-bold mb-4 border-b pb-2 text-gray-800 font-display flex items-center gap-2">
+                            <Map className="w-5 h-5 text-brand-primary" />
+                            {t('public.maps.title')}
+                        </h3>
+                        <ul className="space-y-2">
+                            {layer.datasets.map((ds: { id: string; slug: string; title: string }) => (
+                                <li key={ds.id}>
+                                    <a
+                                        href={`/${locale}/data/${ds.slug}`}
+                                        className="text-sm text-brand-primary hover:underline font-medium"
+                                    >
+                                        {ds.title}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </SidebarInfoCard>
+                )}
             </div>
 
          </div>

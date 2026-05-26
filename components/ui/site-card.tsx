@@ -7,7 +7,7 @@ interface CardProps {
 }
 
 export const SiteCard = ({ children, className }: CardProps) => (
-  <div className={cn("bg-white shadow-sm p-6 flex flex-col", className)}>
+  <div className={cn("bg-white p-6 flex flex-col", className)}>
     {children}
   </div>
 )

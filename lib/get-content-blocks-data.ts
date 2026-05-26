@@ -60,7 +60,7 @@ export async function getContentBlocksData(locale: Locale = "he"): Promise<Conte
       ? teamI18n.he
       : AUTHORS_FALLBACK[locale] ?? AUTHORS_FALLBACK.he;
 
-  const citation = pickI18n(settings?.citation, locale, CITATION_FALLBACK);
+  const citation = pickI18n(settings?.citation, "en", CITATION_FALLBACK);
 
   const statsOverride = (settings?.homepageStats ?? {}) as Partial<{
     communities: string;

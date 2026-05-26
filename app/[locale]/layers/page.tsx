@@ -23,23 +23,22 @@ export default async function LayersPage({ params }: { params: Promise<{ locale:
     getSiteShellData(locale),
   ]);
 
+  const loc = locale as Locale;
   const layers = (layersData.layers || []).map((l: any) => ({
     id: l.id,
-    title: l.name,
-    name: l.name,
-    excerpt: l.description,
-    description: l.description,
+    title: pickI18n(l.name, loc),
+    name: pickI18n(l.name, loc),
+    excerpt: pickI18n(l.description, loc),
+    description: pickI18n(l.description, loc),
     slug: l.slug,
     type: l.type,
-    category: l.category?.title,
+    category: l.category?.title ? pickI18n(l.category.title, loc) : undefined,
     minYear: l.minYear,
     maxYear: l.maxYear,
     mapCount: l.mapsCount || 0,
     thumbnail: l.thumbnail,
     createdAt: l.createdAt
   }));
-
-  const loc = locale as Locale;
   const categories = (categoriesData.categories || []).map((c) => ({
     name: pickI18n(c.title, loc),
     count: c.usageCount?.total || 0,

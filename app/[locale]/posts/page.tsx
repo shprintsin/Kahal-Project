@@ -24,15 +24,23 @@ export default async function PostsPage({ params }: { params: Promise<{ locale: 
   ]);
 
   const loc = locale as Locale;
-  const posts = (postsData.posts || []).map((p) => ({
-    id: p.id,
-    title: pickI18n(p.title, loc),
-    excerpt: typeof p.excerpt === 'string' ? p.excerpt : pickI18n(p.excerpt, loc) || undefined,
-    thumbnail: p.thumbnail?.url || null,
-    slug: p.slug,
-    date: p.createdAt ? new Date(p.createdAt).toLocaleDateString(getDateLocale(loc)) : null,
-    category: p.categories?.[0]?.title ? pickI18n(p.categories[0].title, loc) : null,
-  }));
+  const posts = (postsData.posts || []).map((p: any) => {
+    let excerpt = typeof p.excerpt === 'string' ? p.excerpt : pickI18n(p.excerpt, loc) || '';
+    if (!excerpt && p.content) {
+      const rawContent = typeof p.content === 'string' ? p.content : pickI18n(p.content, loc) || '';
+      const textOnly = rawContent.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+      excerpt = textOnly.length > 200 ? textOnly.slice(0, 200).replace(/\s+\S*$/, '') + '…' : textOnly;
+    }
+    return {
+      id: p.id,
+      title: pickI18n(p.title, loc),
+      excerpt: excerpt || undefined,
+      thumbnail: p.thumbnail?.url || null,
+      slug: `/posts/${p.slug}`,
+      date: p.createdAt ? new Date(p.createdAt).toLocaleDateString(getDateLocale(loc)) : null,
+      category: p.categories?.[0]?.title ? pickI18n(p.categories[0].title, loc) : null,
+    };
+  });
 
   const categories = (categoriesData.categories || []).map((c) => ({
     name: pickI18n(c.title, loc),

@@ -73,22 +73,22 @@ type MenuItemSeed = Omit<
 
 const MENUS: Record<MenuLocation, MenuItemSeed[]> = {
   HEADER: [
-    { label: { he: "מאמרים", en: "Posts" }, url: "/posts" },
-    { label: { he: "מפות", en: "Maps" }, url: "/maps" },
-    { label: { he: "שכבות", en: "Layers" }, url: "/layers" },
-    { label: { he: "נתונים", en: "Data" }, url: "/data" },
-    { label: { he: "ארכיון", en: "Archive" }, url: "/archive" },
-    { label: { he: "אודות", en: "About" }, url: "/about" },
+    { label: { he: "בית", en: "Home" }, url: "/", icon: "Home" },
+    { label: { he: "מפות ונתונים", en: "Maps & Data" }, url: "/data", icon: "Database" },
+    { label: { he: "דוקומנטציה", en: "Documentation" }, url: "/docs", icon: "BookOpen" },
+    { label: { he: "רשימות", en: "Posts" }, url: "/posts", icon: "FileText" },
+    { label: { he: "יצירת קשר", en: "Contact" }, url: "/contact", icon: "Mail" },
+    { label: { he: "אודות", en: "About" }, url: "/about", icon: "Info" },
   ],
   HERO_ACTIONS: [
-    { label: { he: "חפשו במפות", en: "Explore Maps" }, url: "/maps", icon: "Map", variant: "BUTTON_SOLID" },
+    { label: { he: "חפשו במפות", en: "Explore Maps" }, url: "/data", icon: "Map", variant: "BUTTON_SOLID" },
     { label: { he: "עיינו בנתונים", en: "Browse Data" }, url: "/data", icon: "Database", variant: "BUTTON_OUTLINE" },
   ],
   HERO_GRID: [
-    { label: { he: "מפות", en: "Maps" }, url: "/maps", icon: "Map", variant: "CARD" },
-    { label: { he: "נתונים", en: "Data" }, url: "/data", icon: "Database", variant: "CARD" },
-    { label: { he: "ארכיון", en: "Archive" }, url: "/archive", icon: "BookOpen", variant: "CARD" },
-    { label: { he: "מאמרים", en: "Posts" }, url: "/posts", icon: "FileText", variant: "CARD" },
+    { label: { he: "מפות ונתונים", en: "Maps & Data" }, url: "/data", icon: "Database", variant: "CARD" },
+    { label: { he: "שכבות", en: "Layers" }, url: "/layers", icon: "Layers", variant: "CARD" },
+    { label: { he: "תעודות", en: "Documents" }, url: "/documents-v2", icon: "BookOpen", variant: "CARD" },
+    { label: { he: "רשימות", en: "Posts" }, url: "/posts", icon: "FileText", variant: "CARD" },
   ],
   HERO_STRIP: [
     { label: { he: "קהילות", en: "Communities" }, url: "/categories/communities", icon: "Users" },
@@ -129,10 +129,11 @@ const FOOTER_COLUMNS: FooterColumnSeed[] = [
     type: "LINK_LIST",
     title: { he: "ניווט", en: "Navigation" },
     items: [
-      { label: { he: "מאמרים", en: "Posts" }, url: "/posts" },
-      { label: { he: "מפות", en: "Maps" }, url: "/maps" },
-      { label: { he: "נתונים", en: "Data" }, url: "/data" },
-      { label: { he: "ארכיון", en: "Archive" }, url: "/archive" },
+      { label: { he: "רשימות", en: "Posts" }, url: "/posts" },
+      { label: { he: "מפות ונתונים", en: "Maps & Data" }, url: "/data" },
+      { label: { he: "שכבות", en: "Layers" }, url: "/layers" },
+      { label: { he: "תעודות", en: "Documents" }, url: "/documents-v2" },
+      { label: { he: "דוקומנטציה", en: "Documentation" }, url: "/docs" },
     ],
   },
   {
@@ -147,12 +148,11 @@ const FOOTER_COLUMNS: FooterColumnSeed[] = [
     ],
   },
   {
-    type: "RICH_TEXT",
-    title: { he: "אודות", en: "About" },
-    content: {
-      he: "פרויקט קהילות יהודי מזרח אירופה הוא יוזמת מחקר המתעדת אלף שנות היסטוריה של קהילות יהודיות במזרח אירופה.",
-      en: "The Eastern European Jewish Communities Project is a research initiative documenting 1000 years of history of Jewish communities in Eastern Europe.",
-    },
+    type: "LINK_LIST",
+    title: { he: "קישורים", en: "Links" },
+    items: [
+      { label: { he: "בלוג מדעי השטעטל", en: "ShtetlAtlas Science Blog" }, url: "https://blog.shtetlatlas.org/" },
+    ],
   },
 ];
 
@@ -189,6 +189,99 @@ const SITE_LINKS: SiteLinkSeed[] = [
     description: { he: "צפייה בשכבות היסטוריות", en: "View historical layers" },
     icon: "Map",
     url: "/maps",
+  },
+];
+
+// ---------------------------------------------------------------------------
+// 5. Static pages (about, privacy, terms)
+// ---------------------------------------------------------------------------
+
+type PageSeed = {
+  slug: string;
+  title: I18n<string>;
+  content: I18n<string>;
+};
+
+const STATIC_PAGES: PageSeed[] = [
+  {
+    slug: "about",
+    title: { he: "אודות", en: "About" },
+    content: {
+      he: `<h2>אודות הפרויקט</h2>
+<p>פרויקט קהילות יהודי מזרח אירופה (ShtetlAtlas) הוא מיזם מחקרי המתעד אלף שנות היסטוריה של קהילות יהודיות במזרח אירופה.</p>
+<p>הפרויקט מרכז נתונים גיאוגרפיים, דמוגרפיים והיסטוריים ממקורות ארכיוניים מגוונים, ומנגיש אותם לציבור החוקרים והמתעניינים באמצעות מפות אינטראקטיביות, מערכי נתונים פתוחים וכלי ויזואליזציה.</p>
+<h2>צוות המחקר</h2>
+<p>הפרויקט מתנהל במסגרת האוניברסיטה העברית בירושלים, בהובלת ד"ר יניי שפיצר ובסיוע שניאור שפרינצין.</p>
+<h2>יצירת קשר</h2>
+<p>לשאלות, הצעות לשיתוף פעולה או דיווח על שגיאות, ניתן לפנות אלינו דרך <a href="/he/contact">טופס יצירת הקשר</a>.</p>`,
+      en: `<h2>About the Project</h2>
+<p>The Eastern European Jewish Communities Project (ShtetlAtlas) is a research initiative documenting 1000 years of history of Jewish communities in Eastern Europe.</p>
+<p>The project aggregates geographic, demographic, and historical data from diverse archival sources and makes them accessible to researchers and the public through interactive maps, open datasets, and visualization tools.</p>
+<h2>Research Team</h2>
+<p>The project is conducted at The Hebrew University of Jerusalem, led by Dr. Yannay Spitzer with the assistance of Shneor Shprintsin.</p>
+<h2>Contact</h2>
+<p>For questions, collaboration proposals, or error reports, please reach out via our <a href="/en/contact">contact form</a>.</p>`,
+    },
+  },
+  {
+    slug: "privacy",
+    title: { he: "מדיניות פרטיות", en: "Privacy Policy" },
+    content: {
+      he: `<h2>מדיניות פרטיות</h2>
+<p>אתר ShtetlAtlas מכבד את פרטיות המשתמשים. מדיניות זו מסבירה כיצד אנו אוספים, משתמשים ומגנים על מידע אישי.</p>
+<h3>מידע שאנו אוספים</h3>
+<p>אנו אוספים מידע מינימלי הנדרש לתפעול האתר, כולל נתוני שימוש אנונימיים לצורכי שיפור השירות. בעת יצירת קשר דרך הטופס, אנו שומרים את שמכם, כתובת הדוא"ל ותוכן ההודעה.</p>
+<h3>שימוש במידע</h3>
+<p>המידע שנאסף משמש אך ורק לצורך מתן מענה לפניות, שיפור חוויית המשתמש ותחזוקת האתר. איננו מעבירים מידע אישי לצדדים שלישיים.</p>
+<h3>עוגיות (Cookies)</h3>
+<p>האתר משתמש בעוגיות טכניות הנדרשות לתפעולו התקין. אין שימוש בעוגיות מעקב של צדדים שלישיים.</p>
+<h3>יצירת קשר</h3>
+<p>לשאלות בנושא פרטיות, ניתן לפנות אלינו דרך <a href="/he/contact">טופס יצירת הקשר</a>.</p>`,
+      en: `<h2>Privacy Policy</h2>
+<p>ShtetlAtlas respects user privacy. This policy explains how we collect, use, and protect personal information.</p>
+<h3>Information We Collect</h3>
+<p>We collect minimal information required for site operation, including anonymous usage data for service improvement. When you contact us via the form, we store your name, email address, and message content.</p>
+<h3>Use of Information</h3>
+<p>Collected information is used solely for responding to inquiries, improving user experience, and site maintenance. We do not share personal information with third parties.</p>
+<h3>Cookies</h3>
+<p>The site uses technical cookies required for proper operation. No third-party tracking cookies are used.</p>
+<h3>Contact</h3>
+<p>For privacy-related questions, please reach out via our <a href="/en/contact">contact form</a>.</p>`,
+    },
+  },
+  {
+    slug: "terms",
+    title: { he: "תנאי שימוש", en: "Terms of Use" },
+    content: {
+      he: `<h2>תנאי שימוש</h2>
+<p>השימוש באתר ShtetlAtlas ובנתונים המפורסמים בו כפוף לתנאים הבאים.</p>
+<h3>נתונים ומחקר</h3>
+<p>הנתונים והשכבות הגיאוגרפיות באתר הם חלק ממחקר פעיל ומסופקים כמות שהם (As-Is). הנתונים עשויים להשתנות, להתעדכן או להיות מתוקנים בכל עת.</p>
+<h3>שימוש מותר</h3>
+<p>ניתן לצפות בנתונים ולהשתמש בהם למטרות לימוד אישי. לשימוש אקדמי, מחקרי או מסחרי נדרש אישור מראש מצוות המחקר.</p>
+<h3>ציטוט</h3>
+<p>בכל שימוש בנתונים או התייחסות אליהם, יש לצטט את הפרויקט בהתאם לציטוט המומלץ המופיע באתר.</p>
+<h3>זכויות יוצרים</h3>
+<p>כל הזכויות בנתונים, במפות ובתוכן האתר שמורות לצוות המחקר, אלא אם צוין אחרת.</p>
+<h3>הגבלת אחריות</h3>
+<p>האתר והנתונים מסופקים ללא אחריות מכל סוג. צוות המחקר אינו אחראי לנזק שייגרם משימוש בנתונים.</p>
+<h3>יצירת קשר</h3>
+<p>לשאלות בנושא תנאי השימוש, ניתן לפנות אלינו דרך <a href="/he/contact">טופס יצירת הקשר</a>.</p>`,
+      en: `<h2>Terms of Use</h2>
+<p>Use of the ShtetlAtlas website and the data published on it is subject to the following terms.</p>
+<h3>Data and Research</h3>
+<p>The data and geographic layers on the site are part of active research and are provided as-is. Data may change, be updated, or corrected at any time.</p>
+<h3>Permitted Use</h3>
+<p>You may view and use the data for personal study purposes. Academic, research, or commercial use requires prior approval from the research team.</p>
+<h3>Citation</h3>
+<p>Any use of or reference to the data must cite the project according to the recommended citation on the site.</p>
+<h3>Copyright</h3>
+<p>All rights to the data, maps, and site content are reserved to the research team, unless otherwise noted.</p>
+<h3>Limitation of Liability</h3>
+<p>The site and data are provided without warranty of any kind. The research team is not responsible for any damage caused by use of the data.</p>
+<h3>Contact</h3>
+<p>For questions about the terms of use, please reach out via our <a href="/en/contact">contact form</a>.</p>`,
+    },
   },
 ];
 
@@ -254,6 +347,26 @@ async function seedSiteLinks(): Promise<void> {
   }
 }
 
+async function seedStaticPages(): Promise<void> {
+  for (const page of STATIC_PAGES) {
+    await prisma.page.upsert({
+      where: { slug: page.slug },
+      create: {
+        slug: page.slug,
+        title: page.title as Prisma.InputJsonValue,
+        content: page.content as Prisma.InputJsonValue,
+        status: "published",
+        language: "HE",
+      },
+      update: {
+        title: page.title as Prisma.InputJsonValue,
+        content: page.content as Prisma.InputJsonValue,
+        status: "published",
+      },
+    });
+  }
+}
+
 async function main(): Promise<void> {
   console.log("Seeding site content...");
   await seedSiteSettings();
@@ -264,6 +377,8 @@ async function main(): Promise<void> {
   console.log(`  ✓ ${FOOTER_COLUMNS.length} footer columns`);
   await seedSiteLinks();
   console.log(`  ✓ ${SITE_LINKS.length} site links`);
+  await seedStaticPages();
+  console.log(`  ✓ ${STATIC_PAGES.length} static pages (about, privacy, terms)`);
   console.log("Done.");
 }
 

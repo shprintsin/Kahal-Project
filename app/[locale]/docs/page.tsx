@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation"
+import { cn } from "@/lib/utils"
 import { MDXRemote } from "next-mdx-remote/rsc"
 import remarkGfm from "remark-gfm"
 import remarkMath from "remark-math"
@@ -26,13 +27,12 @@ export default async function DocsIndexPage({ params }: { params: Promise<{ loca
   if (!doc) notFound()
 
   const toc = extractToc(doc.rawContent)
-  const lang = doc.frontmatter.lang || "he"
-  const isRtl = lang === "he"
+  const isRtl = locale === "he"
 
   return (
     <>
       <article className="flex-1 min-w-0" dir={isRtl ? "rtl" : "ltr"}>
-        <h1 className="text-3xl font-bold text-brand-dark mb-8 font-display">
+        <h1 className={cn("text-3xl font-bold text-brand-dark mb-8 font-display", isRtl && "text-right")}>
           {doc.frontmatter.title}
         </h1>
         <div className={isRtl ? "text-right" : "text-left"}>

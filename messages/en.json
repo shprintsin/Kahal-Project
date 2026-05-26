@@ -251,7 +251,19 @@
       "version": "Version",
       "description": "Description",
       "preview": "Preview data",
-      "license": "License"
+      "license": "License",
+      "publicationTypesLink": "About publication types",
+      "publicationTypesTitle": "Publication Status & Data Maturity Types",
+      "publicationTypesIntro": "Data on the site is classified along two dimensions: publication status and data maturity level.",
+      "publicationStatusTitle": "Publication Status",
+      "publicationStatusDraft": "Draft — Data in early editing stages, not yet published.",
+      "publicationStatusPublished": "Published — Data available to the public.",
+      "publicationStatusArchived": "Archived — Data replaced by a newer version or no longer relevant.",
+      "maturityTitle": "Data Maturity Level",
+      "maturityRaw": "Raw — Data that has not been processed or reviewed.",
+      "maturityPreliminary": "Preliminary — Data that has undergone basic processing but not yet deeply reviewed.",
+      "maturityProvisional": "Provisional — Data that has been partially reviewed and may change.",
+      "maturityValidated": "Validated — Data that has been fully reviewed and verified."
     },
     "layers": {
       "title": "Layers"

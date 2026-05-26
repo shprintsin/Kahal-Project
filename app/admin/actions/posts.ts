@@ -380,6 +380,7 @@ export async function listPostsAPI(options: ListPostsOptions = {}) {
       slug: post.slug,
       title: post.title,
       excerpt: post.excerpt,
+      content: post.content,
       status: post.status,
       thumbnail: post.thumbnail
         ? {

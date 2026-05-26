@@ -155,7 +155,6 @@
 
 .actionButton:hover {
   background-color: rgba(var(--green-darker-rgb), 0.8);
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
 }
 
 .actionButtonIcon {
@@ -191,12 +190,7 @@
   cursor: pointer;
   height: 165px;
   width: 220px;
-  transition: box-shadow 0.3s;
   margin: 0 auto;
-}
-
-.categoryBlock:hover {
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
 }
 
 .categoryIcon {

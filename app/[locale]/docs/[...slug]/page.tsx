@@ -62,14 +62,13 @@ export default async function DocPage({
 }: {
   params: Promise<{ locale: string; slug: string[] }>
 }) {
-  const { slug } = await params
+  const { locale, slug } = await params
   const doc = getDocBySlug(slug)
   if (!doc) notFound()
 
   const toc = extractToc(doc.rawContent)
   const breadcrumbs = buildBreadcrumbSegments(slug)
-  const lang = doc.frontmatter.lang || "he"
-  const isRtl = lang === "he"
+  const isRtl = locale === "he"
 
   return (
     <>
