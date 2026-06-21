@@ -8,9 +8,9 @@ describe("SiteCard components", () => {
     expect(screen.getByText("Content")).toBeInTheDocument()
   })
 
-  it("SiteCard has bg-white and shadow classes", () => {
+  it("SiteCard has bg-white and layout classes", () => {
     const { container } = render(<SiteCard>Test</SiteCard>)
-    expect(container.firstChild).toHaveClass("bg-white", "shadow-sm")
+    expect(container.firstChild).toHaveClass("bg-white", "p-6", "flex", "flex-col")
   })
 
   it("SiteCardHeader renders as h3", () => {

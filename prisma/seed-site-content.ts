@@ -75,14 +75,12 @@ const MENUS: Record<MenuLocation, MenuItemSeed[]> = {
   HEADER: [
     { label: { he: "בית", en: "Home" }, url: "/", icon: "Home" },
     { label: { he: "מפות ונתונים", en: "Maps & Data" }, url: "/data", icon: "Database" },
-    { label: { he: "דוקומנטציה", en: "Documentation" }, url: "/docs", icon: "BookOpen" },
-    { label: { he: "רשימות", en: "Posts" }, url: "/posts", icon: "FileText" },
     { label: { he: "יצירת קשר", en: "Contact" }, url: "/contact", icon: "Mail" },
     { label: { he: "אודות", en: "About" }, url: "/about", icon: "Info" },
   ],
   HERO_ACTIONS: [
     { label: { he: "חפשו במפות", en: "Explore Maps" }, url: "/data", icon: "Map", variant: "BUTTON_SOLID" },
-    { label: { he: "עיינו בנתונים", en: "Browse Data" }, url: "/data", icon: "Database", variant: "BUTTON_OUTLINE" },
+    { label: { he: "מה חדש", en: "What's New" }, url: "/posts/28-04-overview", icon: "ArrowLeft", variant: "BUTTON_OUTLINE" },
   ],
   HERO_GRID: [
     { label: { he: "מפות ונתונים", en: "Maps & Data" }, url: "/data", icon: "Database", variant: "CARD" },
@@ -147,13 +145,6 @@ const FOOTER_COLUMNS: FooterColumnSeed[] = [
       { label: { he: "נגישות", en: "Accessibility" }, url: "/accessibility" },
     ],
   },
-  {
-    type: "LINK_LIST",
-    title: { he: "קישורים", en: "Links" },
-    items: [
-      { label: { he: "בלוג מדעי השטעטל", en: "ShtetlAtlas Science Blog" }, url: "https://blog.shtetlatlas.org/" },
-    ],
-  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -167,28 +158,10 @@ type SiteLinkSeed = Omit<
 
 const SITE_LINKS: SiteLinkSeed[] = [
   {
-    title: { he: "מנוע חיפוש קהילות", en: "Community Search Engine" },
-    description: { he: "חיפוש לפי שם, מחוז או גוברניה", en: "Search by name, district, or governorate" },
-    icon: "Globe",
-    url: "/search",
-  },
-  {
-    title: { he: "כלי השוואת מפקדים", en: "Census Comparison Tool" },
-    description: { he: "השוואת נתונים בין מפקדים שונים", en: "Compare data across different censuses" },
-    icon: "Database",
-    url: "/tools/census-compare",
-  },
-  {
-    title: { he: "ארכיון מסמכים דיגיטלי", en: "Digital Document Archive" },
-    description: { he: "דפדוף בתעודות סרוקות", en: "Browse scanned documents" },
-    icon: "Scroll",
-    url: "/archive",
-  },
-  {
-    title: { he: "מפה אינטראקטיבית", en: "Interactive Map" },
-    description: { he: "צפייה בשכבות היסטוריות", en: "View historical layers" },
-    icon: "Map",
-    url: "/maps",
+    title: { he: "בלוג מדעי השטעטל", en: "ShtetlAtlas Science Blog" },
+    description: { he: "מאמרים ועדכונים על מחקר השטעטל", en: "Articles and updates on Shtetl research" },
+    icon: "BookOpen",
+    url: "https://blog.shtetlatlas.org/",
   },
 ];
 
@@ -207,80 +180,136 @@ const STATIC_PAGES: PageSeed[] = [
     slug: "about",
     title: { he: "אודות", en: "About" },
     content: {
-      he: `<h2>אודות הפרויקט</h2>
-<p>פרויקט קהילות יהודי מזרח אירופה (ShtetlAtlas) הוא מיזם מחקרי המתעד אלף שנות היסטוריה של קהילות יהודיות במזרח אירופה.</p>
-<p>הפרויקט מרכז נתונים גיאוגרפיים, דמוגרפיים והיסטוריים ממקורות ארכיוניים מגוונים, ומנגיש אותם לציבור החוקרים והמתעניינים באמצעות מפות אינטראקטיביות, מערכי נתונים פתוחים וכלי ויזואליזציה.</p>
-<h2>צוות המחקר</h2>
-<p>הפרויקט מתנהל במסגרת האוניברסיטה העברית בירושלים, בהובלת ד"ר יניי שפיצר ובסיוע שניאור שפרינצין.</p>
-<h2>יצירת קשר</h2>
-<p>לשאלות, הצעות לשיתוף פעולה או דיווח על שגיאות, ניתן לפנות אלינו דרך <a href="/he/contact">טופס יצירת הקשר</a>.</p>`,
-      en: `<h2>About the Project</h2>
-<p>The Eastern European Jewish Communities Project (ShtetlAtlas) is a research initiative documenting 1000 years of history of Jewish communities in Eastern Europe.</p>
-<p>The project aggregates geographic, demographic, and historical data from diverse archival sources and makes them accessible to researchers and the public through interactive maps, open datasets, and visualization tools.</p>
-<h2>Research Team</h2>
-<p>The project is conducted at The Hebrew University of Jerusalem, led by Dr. Yannay Spitzer with the assistance of Shneor Shprintsin.</p>
-<h2>Contact</h2>
-<p>For questions, collaboration proposals, or error reports, please reach out via our <a href="/en/contact">contact form</a>.</p>`,
+      he: `## אודות הפרויקט
+
+פרויקט קהילות יהודי מזרח אירופה (ShtetlAtlas) הוא מיזם מחקרי המתעד אלף שנות היסטוריה של קהילות יהודיות במזרח אירופה.
+
+הפרויקט מרכז נתונים גיאוגרפיים, דמוגרפיים והיסטוריים ממקורות ארכיוניים מגוונים, ומנגיש אותם לציבור החוקרים והמתעניינים באמצעות מפות אינטראקטיביות, מערכי נתונים פתוחים וכלי ויזואליזציה.
+
+## צוות המחקר
+
+הפרויקט מתנהל במסגרת האוניברסיטה העברית בירושלים, בהובלת ד"ר יניי שפיצר ובסיוע שניאור שפרינצין.
+
+## יצירת קשר
+
+לשאלות, הצעות לשיתוף פעולה או דיווח על שגיאות, ניתן לפנות אלינו דרך [טופס יצירת הקשר](/he/contact).`,
+      en: `## About the Project
+
+The Eastern European Jewish Communities Project (ShtetlAtlas) is a research initiative documenting 1000 years of history of Jewish communities in Eastern Europe.
+
+The project aggregates geographic, demographic, and historical data from diverse archival sources and makes them accessible to researchers and the public through interactive maps, open datasets, and visualization tools.
+
+## Research Team
+
+The project is conducted at The Hebrew University of Jerusalem, led by Dr. Yannay Spitzer with the assistance of Shneor Shprintsin.
+
+## Contact
+
+For questions, collaboration proposals, or error reports, please reach out via our [contact form](/en/contact).`,
     },
   },
   {
     slug: "privacy",
     title: { he: "מדיניות פרטיות", en: "Privacy Policy" },
     content: {
-      he: `<h2>מדיניות פרטיות</h2>
-<p>אתר ShtetlAtlas מכבד את פרטיות המשתמשים. מדיניות זו מסבירה כיצד אנו אוספים, משתמשים ומגנים על מידע אישי.</p>
-<h3>מידע שאנו אוספים</h3>
-<p>אנו אוספים מידע מינימלי הנדרש לתפעול האתר, כולל נתוני שימוש אנונימיים לצורכי שיפור השירות. בעת יצירת קשר דרך הטופס, אנו שומרים את שמכם, כתובת הדוא"ל ותוכן ההודעה.</p>
-<h3>שימוש במידע</h3>
-<p>המידע שנאסף משמש אך ורק לצורך מתן מענה לפניות, שיפור חוויית המשתמש ותחזוקת האתר. איננו מעבירים מידע אישי לצדדים שלישיים.</p>
-<h3>עוגיות (Cookies)</h3>
-<p>האתר משתמש בעוגיות טכניות הנדרשות לתפעולו התקין. אין שימוש בעוגיות מעקב של צדדים שלישיים.</p>
-<h3>יצירת קשר</h3>
-<p>לשאלות בנושא פרטיות, ניתן לפנות אלינו דרך <a href="/he/contact">טופס יצירת הקשר</a>.</p>`,
-      en: `<h2>Privacy Policy</h2>
-<p>ShtetlAtlas respects user privacy. This policy explains how we collect, use, and protect personal information.</p>
-<h3>Information We Collect</h3>
-<p>We collect minimal information required for site operation, including anonymous usage data for service improvement. When you contact us via the form, we store your name, email address, and message content.</p>
-<h3>Use of Information</h3>
-<p>Collected information is used solely for responding to inquiries, improving user experience, and site maintenance. We do not share personal information with third parties.</p>
-<h3>Cookies</h3>
-<p>The site uses technical cookies required for proper operation. No third-party tracking cookies are used.</p>
-<h3>Contact</h3>
-<p>For privacy-related questions, please reach out via our <a href="/en/contact">contact form</a>.</p>`,
+      he: `## מדיניות פרטיות
+
+אתר ShtetlAtlas מכבד את פרטיות המשתמשים. מדיניות זו מסבירה כיצד אנו אוספים, משתמשים ומגנים על מידע אישי.
+
+### מידע שאנו אוספים
+
+אנו אוספים מידע מינימלי הנדרש לתפעול האתר, כולל נתוני שימוש אנונימיים לצורכי שיפור השירות. בעת יצירת קשר דרך הטופס, אנו שומרים את שמכם, כתובת הדוא"ל ותוכן ההודעה.
+
+### שימוש במידע
+
+המידע שנאסף משמש אך ורק לצורך מתן מענה לפניות, שיפור חוויית המשתמש ותחזוקת האתר. איננו מעבירים מידע אישי לצדדים שלישיים.
+
+### עוגיות (Cookies)
+
+האתר משתמש בעוגיות טכניות הנדרשות לתפעולו התקין. אין שימוש בעוגיות מעקב של צדדים שלישיים.
+
+### יצירת קשר
+
+לשאלות בנושא פרטיות, ניתן לפנות אלינו דרך [טופס יצירת הקשר](/he/contact).`,
+      en: `## Privacy Policy
+
+ShtetlAtlas respects user privacy. This policy explains how we collect, use, and protect personal information.
+
+### Information We Collect
+
+We collect minimal information required for site operation, including anonymous usage data for service improvement. When you contact us via the form, we store your name, email address, and message content.
+
+### Use of Information
+
+Collected information is used solely for responding to inquiries, improving user experience, and site maintenance. We do not share personal information with third parties.
+
+### Cookies
+
+The site uses technical cookies required for proper operation. No third-party tracking cookies are used.
+
+### Contact
+
+For privacy-related questions, please reach out via our [contact form](/en/contact).`,
     },
   },
   {
     slug: "terms",
     title: { he: "תנאי שימוש", en: "Terms of Use" },
     content: {
-      he: `<h2>תנאי שימוש</h2>
-<p>השימוש באתר ShtetlAtlas ובנתונים המפורסמים בו כפוף לתנאים הבאים.</p>
-<h3>נתונים ומחקר</h3>
-<p>הנתונים והשכבות הגיאוגרפיות באתר הם חלק ממחקר פעיל ומסופקים כמות שהם (As-Is). הנתונים עשויים להשתנות, להתעדכן או להיות מתוקנים בכל עת.</p>
-<h3>שימוש מותר</h3>
-<p>ניתן לצפות בנתונים ולהשתמש בהם למטרות לימוד אישי. לשימוש אקדמי, מחקרי או מסחרי נדרש אישור מראש מצוות המחקר.</p>
-<h3>ציטוט</h3>
-<p>בכל שימוש בנתונים או התייחסות אליהם, יש לצטט את הפרויקט בהתאם לציטוט המומלץ המופיע באתר.</p>
-<h3>זכויות יוצרים</h3>
-<p>כל הזכויות בנתונים, במפות ובתוכן האתר שמורות לצוות המחקר, אלא אם צוין אחרת.</p>
-<h3>הגבלת אחריות</h3>
-<p>האתר והנתונים מסופקים ללא אחריות מכל סוג. צוות המחקר אינו אחראי לנזק שייגרם משימוש בנתונים.</p>
-<h3>יצירת קשר</h3>
-<p>לשאלות בנושא תנאי השימוש, ניתן לפנות אלינו דרך <a href="/he/contact">טופס יצירת הקשר</a>.</p>`,
-      en: `<h2>Terms of Use</h2>
-<p>Use of the ShtetlAtlas website and the data published on it is subject to the following terms.</p>
-<h3>Data and Research</h3>
-<p>The data and geographic layers on the site are part of active research and are provided as-is. Data may change, be updated, or corrected at any time.</p>
-<h3>Permitted Use</h3>
-<p>You may view and use the data for personal study purposes. Academic, research, or commercial use requires prior approval from the research team.</p>
-<h3>Citation</h3>
-<p>Any use of or reference to the data must cite the project according to the recommended citation on the site.</p>
-<h3>Copyright</h3>
-<p>All rights to the data, maps, and site content are reserved to the research team, unless otherwise noted.</p>
-<h3>Limitation of Liability</h3>
-<p>The site and data are provided without warranty of any kind. The research team is not responsible for any damage caused by use of the data.</p>
-<h3>Contact</h3>
-<p>For questions about the terms of use, please reach out via our <a href="/en/contact">contact form</a>.</p>`,
+      he: `## תנאי שימוש
+
+השימוש באתר ShtetlAtlas ובנתונים המפורסמים בו כפוף לתנאים הבאים.
+
+### נתונים ומחקר
+
+הנתונים והשכבות הגיאוגרפיות באתר הם חלק ממחקר פעיל ומסופקים כמות שהם (As-Is). הנתונים עשויים להשתנות, להתעדכן או להיות מתוקנים בכל עת.
+
+### שימוש מותר
+
+ניתן לצפות בנתונים ולהשתמש בהם למטרות לימוד אישי. לשימוש אקדמי, מחקרי או מסחרי נדרש אישור מראש מצוות המחקר.
+
+### ציטוט
+
+בכל שימוש בנתונים או התייחסות אליהם, יש לצטט את הפרויקט בהתאם לציטוט המומלץ המופיע באתר.
+
+### זכויות יוצרים
+
+כל הזכויות בנתונים, במפות ובתוכן האתר שמורות לצוות המחקר, אלא אם צוין אחרת.
+
+### הגבלת אחריות
+
+האתר והנתונים מסופקים ללא אחריות מכל סוג. צוות המחקר אינו אחראי לנזק שייגרם משימוש בנתונים.
+
+### יצירת קשר
+
+לשאלות בנושא תנאי השימוש, ניתן לפנות אלינו דרך [טופס יצירת הקשר](/he/contact).`,
+      en: `## Terms of Use
+
+Use of the ShtetlAtlas website and the data published on it is subject to the following terms.
+
+### Data and Research
+
+The data and geographic layers on the site are part of active research and are provided as-is. Data may change, be updated, or corrected at any time.
+
+### Permitted Use
+
+You may view and use the data for personal study purposes. Academic, research, or commercial use requires prior approval from the research team.
+
+### Citation
+
+Any use of or reference to the data must cite the project according to the recommended citation on the site.
+
+### Copyright
+
+All rights to the data, maps, and site content are reserved to the research team, unless otherwise noted.
+
+### Limitation of Liability
+
+The site and data are provided without warranty of any kind. The research team is not responsible for any damage caused by use of the data.
+
+### Contact
+
+For questions about the terms of use, please reach out via our [contact form](/en/contact).`,
     },
   },
 ];

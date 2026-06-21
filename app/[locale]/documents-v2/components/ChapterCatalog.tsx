@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useDeferredValue, useMemo, useState } from 'react';
-import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Search, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Search, X } from 'lucide-react';
 import {
   resolveI18nString,
   type DocumentV2Locale,
@@ -16,6 +15,7 @@ export interface ChapterCatalogRow {
   documentTitleI18n: I18nString;
   documentCitation?: string;
   sourceLang: DocumentV2Locale;
+  availableLangs: DocumentV2Locale[];
   chapterSlug: string;
   chapterIndex: number;
   titleI18n: I18nString;
@@ -38,6 +38,13 @@ interface ChapterCatalogProps {
     clear: string;
     /** Template with `{n}` and `{total}` placeholders. */
     resultsTemplate: string;
+    colDate: string;
+    colTitle: string;
+    colDocument: string;
+    colLangs: string;
+    colJews: string;
+    /** Template with `{col}` placeholder. */
+    sortByTemplate: string;
   };
 }
 
@@ -74,15 +81,10 @@ interface ScoredRow {
   score: number;
 }
 
-interface ScoredGroup {
-  documentSlug: string;
-  documentTitleI18n: I18nString;
-  sourceLang: DocumentV2Locale;
-  /** Earliest non-empty chapter date string (used as the year hint). */
-  yearHint?: string;
-  totalChapters: number;
-  chapters: ScoredRow[];
-  bestScore: number;
+type SortKey = 'date' | 'title';
+interface SortState {
+  key: SortKey;
+  dir: 'asc' | 'desc';
 }
 
 export function ChapterCatalog({
@@ -98,6 +100,7 @@ export function ChapterCatalog({
   const initialQuery = searchParams.get('q') ?? '';
   const [query, setQuery] = useState(initialQuery);
   const deferredQuery = useDeferredValue(query.trim());
+  const [sort, setSort] = useState<SortState>({ key: 'date', dir: 'asc' });
 
   const updateQuery = (next: string) => {
     setQuery(next);
@@ -109,77 +112,103 @@ export function ChapterCatalog({
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   };
 
-  const { groups, matchedCount } = useMemo(() => {
-    // Bucket rows by document, preserving first-seen order from `rows`.
-    const byDoc = new Map<string, ScoredGroup>();
-    let matched = 0;
+  // Search overrides manual sorting: when a query is active, rows rank by
+  // relevance and the column headers are inert.
+  const searching = Boolean(deferredQuery);
 
-    for (const row of rows) {
-      let score = 1;
-      if (deferredQuery) {
-        const title = resolveI18nString(row.titleI18n, locale, fallback);
-        const excerpt = resolveI18nString(row.excerptI18n, locale, fallback);
-        const docTitle = resolveI18nString(row.documentTitleI18n, locale, fallback);
-        score = Math.max(
-          fuzzyScore(title, deferredQuery) * 3,
-          fuzzyScore(excerpt, deferredQuery),
-          fuzzyScore(docTitle, deferredQuery) * 1.5,
+  const toggleSort = (key: SortKey) => {
+    setSort((prev) =>
+      prev.key === key ? { key, dir: prev.dir === 'asc' ? 'desc' : 'asc' } : { key, dir: 'asc' },
+    );
+  };
+
+  const list = useMemo<ScoredRow[]>(() => {
+    const titleOf = (r: ChapterCatalogRow) => resolveI18nString(r.titleI18n, locale, fallback);
+
+    if (searching) {
+      const docTitleOf = (r: ChapterCatalogRow) =>
+        resolveI18nString(r.documentTitleI18n, locale, fallback);
+      const scored: ScoredRow[] = [];
+      for (const row of rows) {
+        const score = Math.max(
+          fuzzyScore(titleOf(row), deferredQuery) * 3,
+          fuzzyScore(resolveI18nString(row.excerptI18n, locale, fallback), deferredQuery),
+          fuzzyScore(docTitleOf(row), deferredQuery) * 1.5,
           fuzzyScore(row.chapterSlug, deferredQuery),
         );
-        if (score <= 0) {
-          // Still count toward the doc's total but exclude from chapters list.
-          let g = byDoc.get(row.documentSlug);
-          if (!g) {
-            g = {
-              documentSlug: row.documentSlug,
-              documentTitleI18n: row.documentTitleI18n,
-              sourceLang: row.sourceLang,
-              yearHint: row.date,
-              totalChapters: 0,
-              chapters: [],
-              bestScore: 0,
-            };
-            byDoc.set(row.documentSlug, g);
-          }
-          g.totalChapters += 1;
-          if (row.date && (!g.yearHint || row.date < g.yearHint)) g.yearHint = row.date;
-          continue;
+        if (score > 0) scored.push({ row, score });
+      }
+      scored.sort((a, b) => b.score - a.score);
+      return scored;
+    }
+
+    // No query: sort by the active column.
+    const factor = sort.dir === 'asc' ? 1 : -1;
+    const tie = (a: ChapterCatalogRow, b: ChapterCatalogRow) =>
+      a.documentSlug < b.documentSlug
+        ? -1
+        : a.documentSlug > b.documentSlug
+          ? 1
+          : a.chapterIndex - b.chapterIndex;
+
+    const scored = rows.map((row) => ({ row, score: 1 }));
+    scored.sort((x, y) => {
+      const a = x.row;
+      const b = y.row;
+      // Date column: undated rows always sink to the bottom, regardless of
+      // sort direction (so the `factor` must not touch that decision).
+      if (sort.key === 'date') {
+        if (a.date && b.date) {
+          if (a.date !== b.date) return (a.date < b.date ? -1 : 1) * factor;
+        } else if (a.date || b.date) {
+          return a.date ? -1 : 1;
         }
+        return tie(a, b);
       }
-
-      let g = byDoc.get(row.documentSlug);
-      if (!g) {
-        g = {
-          documentSlug: row.documentSlug,
-          documentTitleI18n: row.documentTitleI18n,
-          sourceLang: row.sourceLang,
-          yearHint: row.date,
-          totalChapters: 0,
-          chapters: [],
-          bestScore: 0,
-        };
-        byDoc.set(row.documentSlug, g);
+      let cmp = 0;
+      switch (sort.key) {
+        case 'title':
+          cmp = norm(titleOf(a)).localeCompare(norm(titleOf(b)));
+          break;
       }
-      g.totalChapters += 1;
-      g.chapters.push({ row, score });
-      if (score > g.bestScore) g.bestScore = score;
-      if (row.date && (!g.yearHint || row.date < g.yearHint)) g.yearHint = row.date;
-      matched += 1;
-    }
+      if (cmp !== 0) return cmp * factor;
+      return tie(a, b);
+    });
+    return scored;
+  }, [rows, deferredQuery, searching, sort, locale, fallback]);
 
-    const result = Array.from(byDoc.values()).filter((g) => g.chapters.length > 0);
+  const matchedCount = list.length;
 
-    if (deferredQuery) {
-      // Sort groups by best match; sort chapters within group by score desc.
-      result.sort((a, b) => b.bestScore - a.bestScore);
-      for (const g of result) g.chapters.sort((a, b) => b.score - a.score);
-    } else {
-      // Stable: preserve repository order; chapters by index asc.
-      for (const g of result) g.chapters.sort((a, b) => a.row.chapterIndex - b.row.chapterIndex);
-    }
+  const buildHref = (row: ChapterCatalogRow) => {
+    const params = new URLSearchParams({ chapter: row.chapterSlug });
+    if (deferredQuery) params.set('q', deferredQuery);
+    return `/${routeLocale}/documents-v2/${row.documentSlug}?${params.toString()}`;
+  };
 
-    return { groups: result, matchedCount: matched };
-  }, [rows, deferredQuery, locale, fallback]);
+  const headerSort = (key: SortKey, label: string, className: string, align: 'start' | 'center') => {
+    const active = !searching && sort.key === key;
+    const Arrow = sort.dir === 'asc' ? ChevronUp : ChevronDown;
+    return (
+      <th
+        className={`${className} border-b px-3 py-2 font-medium text-muted-foreground`}
+        style={{ background: 'var(--docs-cream)', borderColor: 'var(--docs-cream-3)' }}
+        aria-sort={active ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none'}
+      >
+        <button
+          type="button"
+          disabled={searching}
+          onClick={() => toggleSort(key)}
+          aria-label={labels.sortByTemplate.replace('{col}', label)}
+          className={`inline-flex items-center gap-1 ${
+            align === 'center' ? 'justify-center' : ''
+          } ${searching ? 'cursor-default opacity-60' : 'hover:text-foreground'}`}
+        >
+          <span>{label}</span>
+          {active && <Arrow className="h-3 w-3" aria-hidden />}
+        </button>
+      </th>
+    );
+  };
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden">
@@ -225,113 +254,82 @@ export function ChapterCatalog({
         className="docs-scroll-y--paper flex-1 min-h-0"
         style={{ background: 'var(--docs-paper)' }}
       >
-        <div className="mx-auto max-w-[80ch] px-4 py-6 sm:px-8 sm:py-8">
-          {groups.length === 0 ? (
+        {list.length === 0 ? (
+          <div className="mx-auto max-w-[60ch] px-4 py-8">
             <p
               className="border border-dashed p-8 text-center text-sm text-muted-foreground"
               style={{ borderColor: 'var(--docs-cream-3)' }}
             >
               {labels.empty}
             </p>
-          ) : (
-            <div className="flex flex-col gap-8">
-              {groups.map((group) => {
+          </div>
+        ) : (
+          <table className="w-full border-collapse text-[13px]">
+            <thead className="sticky top-0 z-10 text-[10px] uppercase tracking-[0.14em]">
+              <tr>
+                {headerSort('date', labels.colDate, 'w-28 text-end', 'start')}
+                <th
+                  className="hidden w-px whitespace-nowrap border-b px-3 py-2 text-start font-medium text-muted-foreground md:table-cell"
+                  style={{ background: 'var(--docs-cream)', borderColor: 'var(--docs-cream-3)' }}
+                >
+                  {labels.colLangs}
+                </th>
+                {headerSort('title', labels.colTitle, 'text-start', 'start')}
+              </tr>
+            </thead>
+            <tbody>
+              {list.map(({ row }) => {
+                const title =
+                  resolveI18nString(row.titleI18n, locale, fallback) || row.chapterSlug;
                 const docTitle =
-                  resolveI18nString(group.documentTitleI18n, locale, fallback) ||
-                  group.documentSlug;
-                const groupIsRtl = locale === 'he' || locale === 'yi';
-                const yearText = group.yearHint?.slice(0, 4);
+                  resolveI18nString(row.documentTitleI18n, locale, fallback) || row.documentSlug;
+                const href = buildHref(row);
                 return (
-                  <section
-                    key={group.documentSlug}
-                    className="border bg-[var(--docs-paper)]"
+                  <tr
+                    key={`${row.documentSlug}/${row.chapterSlug}`}
+                    role="link"
+                    tabIndex={0}
+                    onClick={() => router.push(href)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        router.push(href);
+                      }
+                    }}
+                    className="cursor-pointer border-b align-top transition-colors even:bg-[var(--docs-cream)] hover:bg-[var(--docs-cream-2)] focus:bg-[var(--docs-cream-2)] focus:outline-none"
                     style={{ borderColor: 'var(--docs-cream-3)' }}
                   >
-                    <header
-                      dir={groupIsRtl ? 'rtl' : 'ltr'}
-                      className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b px-4 py-3"
-                      style={{
-                        background: 'var(--docs-cream)',
-                        borderColor: 'var(--docs-cream-3)',
-                      }}
+                    <td
+                      dir="ltr"
+                      className="w-28 whitespace-nowrap px-3 py-1.5 text-end tabular-nums text-[11px] text-muted-foreground"
                     >
-                      <Link
-                        href={`/${routeLocale}/documents-v2/${group.documentSlug}${
-                          deferredQuery ? `?q=${encodeURIComponent(deferredQuery)}` : ''
-                        }`}
-                        className="text-[18px] font-medium leading-snug text-[var(--brand-primary)] no-underline hover:underline"
-                        style={{ fontFamily: 'var(--docs-font-serif)' }}
-                      >
-                        {docTitle}
-                      </Link>
-                      <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                        {yearText && <>{yearText} · </>}
-                        {group.chapters.length}
-                        {deferredQuery && group.chapters.length !== group.totalChapters
-                          ? ` / ${group.totalChapters}`
-                          : ''}
-                        {' '}ch
+                      {row.date ?? ''}
+                    </td>
+                    <td className="hidden whitespace-nowrap px-3 py-1.5 text-end md:table-cell">
+                      <LangAvailChips
+                        sourceLang={row.sourceLang}
+                        availableLangs={row.availableLangs}
+                      />
+                    </td>
+                    <td dir="auto" className="px-3 py-1.5 leading-snug">
+                      <span className="block text-[13px] font-medium">
+                        {title}
                       </span>
-                      <span className="ms-auto">
-                        <LangAvailChips
-                          sourceLang={group.sourceLang}
-                          availableLangs={[group.sourceLang]}
-                        />
+                      <span className="mt-0.5 flex items-baseline gap-1 text-[11px] leading-snug text-muted-foreground">
+                        <span className="min-w-0 truncate" title={docTitle}>
+                          {docTitle}
+                        </span>
+                        <span className="shrink-0 whitespace-nowrap">
+                          · {labels.chapter} {row.chapterIndex}
+                        </span>
                       </span>
-                    </header>
-                    <ul className="divide-y" style={{ borderColor: 'var(--docs-cream-3)' }}>
-                      {group.chapters.map(({ row }) => {
-                        const title =
-                          resolveI18nString(row.titleI18n, locale, fallback) || row.chapterSlug;
-                        const excerpt = resolveI18nString(row.excerptI18n, locale, fallback);
-                        const linkParams = new URLSearchParams({ chapter: row.chapterSlug });
-                        if (deferredQuery) linkParams.set('q', deferredQuery);
-                        const href = `/${routeLocale}/documents-v2/${row.documentSlug}?${linkParams.toString()}`;
-                        return (
-                          <li key={`${row.documentSlug}/${row.chapterSlug}`}>
-                            <Link
-                              href={href}
-                              dir={groupIsRtl ? 'rtl' : 'ltr'}
-                              className="flex gap-3 px-4 py-3 transition-colors hover:bg-[var(--docs-cream-2)]"
-                            >
-                              <span
-                                className="shrink-0 tabular-nums text-[12px] leading-[1.4] text-muted-foreground"
-                                title={row.mentionJews ? labels.mentionsJews : undefined}
-                              >
-                                {row.chapterIndex}
-                                {row.mentionJews && (
-                                  <span
-                                    aria-hidden
-                                    className="ms-1 text-[var(--docs-accent)]"
-                                  >
-                                    ★
-                                  </span>
-                                )}
-                              </span>
-                              <span className="min-w-0 flex-1">
-                                <span className="block text-[14px] leading-snug">{title}</span>
-                                {row.date && (
-                                  <span className="mt-0.5 block text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
-                                    {row.date}
-                                  </span>
-                                )}
-                                {excerpt && (
-                                  <span className="mt-1 block text-[12px] leading-snug text-muted-foreground line-clamp-2">
-                                    {excerpt}
-                                  </span>
-                                )}
-                              </span>
-                            </Link>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </section>
+                    </td>
+                  </tr>
                 );
               })}
-            </div>
-          )}
-        </div>
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

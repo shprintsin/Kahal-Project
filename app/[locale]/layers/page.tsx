@@ -17,22 +17,22 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function LayersPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  const loc = locale as Locale;
   const [layersData, categoriesData, shellData] = await Promise.all([
-    listLayersAPI({ status: 'published', limit: 100 }),
+    listLayersAPI({ status: 'published', limit: 100, lang: loc }),
     listCategoriesAPI({}),
     getSiteShellData(locale),
   ]);
 
-  const loc = locale as Locale;
   const layers = (layersData.layers || []).map((l: any) => ({
     id: l.id,
-    title: pickI18n(l.name, loc),
-    name: pickI18n(l.name, loc),
-    excerpt: pickI18n(l.description, loc),
-    description: pickI18n(l.description, loc),
+    title: l.name,
+    name: l.name,
+    excerpt: l.description,
+    description: l.description,
     slug: l.slug,
     type: l.type,
-    category: l.category?.title ? pickI18n(l.category.title, loc) : undefined,
+    category: l.category?.title || undefined,
     minYear: l.minYear,
     maxYear: l.maxYear,
     mapCount: l.mapsCount || 0,

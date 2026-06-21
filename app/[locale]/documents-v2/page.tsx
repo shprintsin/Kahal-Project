@@ -30,6 +30,12 @@ export default async function DocumentsV2IndexPage({ params }: PageProps) {
         mentionsJews: t('mentionsJews'),
         clear: t('catalogClear'),
         resultsTemplate: t.raw('catalogResults') as string,
+        colDate: t('catalogColDate'),
+        colTitle: t('catalogColTitle'),
+        colDocument: t('catalogColDocument'),
+        colLangs: t('catalogColLangs'),
+        colJews: t('catalogColJews'),
+        sortByTemplate: t.raw('catalogSortBy') as string,
       }}
     />
   );

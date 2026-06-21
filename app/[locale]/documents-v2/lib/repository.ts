@@ -151,6 +151,8 @@ export interface ChapterCatalogItem {
   documentTitleI18n: I18nString;
   documentCitation?: string;
   sourceLang: DocumentV2Locale;
+  /** Source language plus any languages this chapter is translated into. */
+  availableLangs: DocumentV2Locale[];
   chapterSlug: string;
   chapterIndex: number;
   titleI18n: I18nString;
@@ -170,6 +172,9 @@ export async function getChapterCatalog(): Promise<ChapterCatalogItem[]> {
       excerptI18n: true,
       date: true,
       mentionJews: true,
+      // Per-chapter translation langs so the catalog can show availability
+      // chips without a second fetch.
+      translations: { select: { lang: true } },
       document: {
         select: {
           slug: true,
@@ -182,11 +187,16 @@ export async function getChapterCatalog(): Promise<ChapterCatalogItem[]> {
   });
   return rows.flatMap((r) => {
     if (!isLocale(r.document.sourceLang)) return [];
+    const langs = new Set<DocumentV2Locale>([r.document.sourceLang]);
+    for (const t of r.translations) {
+      if (isLocale(t.lang)) langs.add(t.lang);
+    }
     return [{
       documentSlug: r.document.slug,
       documentTitleI18n: (r.document.nameI18n ?? {}) as I18nString,
       documentCitation: r.document.citation ?? undefined,
       sourceLang: r.document.sourceLang,
+      availableLangs: [...langs],
       chapterSlug: r.slug,
       chapterIndex: r.index,
       titleI18n: (r.titleI18n ?? {}) as I18nString,

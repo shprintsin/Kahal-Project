@@ -62,3 +62,6 @@ CLAUDE.md
 *.CLAUDE.md
 # Mock scan datasets — too heavy for git, generated/copied from D:/extract
 /public/mock-scans/
+
+.dev-server.log
+.tsc-out.txt

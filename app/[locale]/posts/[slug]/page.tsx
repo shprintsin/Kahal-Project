@@ -36,9 +36,12 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
     }
 
     const t = await getTranslations({ locale });
-    const serializedContent = serializeLexical(post.content);
-
     const loc = locale as Locale;
+    // content may be a plain string, an i18n object {he,en}, or a Lexical JSON object
+    const contentForLocale = typeof post.content === 'string'
+        ? post.content
+        : (pickI18n(post.content, loc) || post.content);
+    const serializedContent = serializeLexical(contentForLocale);
     const viewPost = {
         ...post,
         title: pickI18n(post.title, loc),

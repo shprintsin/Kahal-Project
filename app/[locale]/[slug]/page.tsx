@@ -8,6 +8,7 @@ import { getTranslations } from 'next-intl/server';
 import { createLocaleAlternates } from '@/lib/i18n/metadata';
 import { serializeLexical } from '@/lib/lexical';
 import { pickI18n } from '@/app/lib/pick-i18n';
+import { Prose } from '@/components/ui/prose';
 import type { Locale } from '@/lib/i18n/config';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
@@ -41,11 +42,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
             <SiteMain>
                 <div className="w-full lg:w-10/12 mx-auto">
                     <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 font-display text-foreground border-b pb-4">{pickI18n(page.title, locale as Locale)}</h1>
-                    <div
-                        className="prose prose-lg max-w-none"
-                        dir="auto"
-                        dangerouslySetInnerHTML={{ __html: htmlContent }}
-                    />
+                    <Prose html={htmlContent} dir={locale === 'he' ? 'rtl' : 'ltr'} />
                 </div>
             </SiteMain>
         </SiteShell>

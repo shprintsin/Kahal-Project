@@ -54,17 +54,20 @@ export default function HomePageComponent({
                 </div>
                 {heroActions.length > 0 && (
                   <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row mb-8 sm:mb-16 justify-center md:justify-end gap-3 sm:gap-4 font-sans">
-                    {heroActions.map((action) => (
-                      <ActionButtonUI
-                        key={action.id}
-                        href={action.href}
-                        icon={action.icon ? <GetIcons icon={action.icon} className="text-white" /> : undefined}
-                        iconPosition="start"
-                        className="justify-center"
-                      >
-                        {action.title}
-                      </ActionButtonUI>
-                    ))}
+                    {heroActions.map((action) => {
+                      const isArrow = /^(Fa)?Arrow/.test(action.icon);
+                      return (
+                        <ActionButtonUI
+                          key={action.id}
+                          href={action.href}
+                          icon={action.icon ? <GetIcons icon={action.icon} className="text-white" /> : undefined}
+                          iconPosition={isArrow ? "end" : "start"}
+                          className="justify-center"
+                        >
+                          {action.title}
+                        </ActionButtonUI>
+                      );
+                    })}
                   </div>
                 )}
               </Col>

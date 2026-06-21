@@ -27,12 +27,12 @@ export default async function DatasetsPage({ params }: { params: Promise<{ local
   const loc = locale as Locale;
   const datasets = (datasetsData.datasets || []).map((d) => ({
     id: d.id,
-    title: pickI18n(d.title, loc),
-    excerpt: pickI18n(d.summary, loc) || pickI18n(d.description, loc) || undefined,
+    title: d.title,
+    excerpt: d.summary || d.description || undefined,
     thumbnail: d.thumbnail?.url ?? null,
     slug: `/data/${d.slug}`,
     date: d.createdAt ? new Date(d.createdAt).toLocaleDateString(getDateLocale(loc)) : null,
-    category: d.category?.title ? pickI18n(d.category.title, loc) : null,
+    category: d.category?.title || null,
     resourceCount: d.resourceCount
   }));
 
